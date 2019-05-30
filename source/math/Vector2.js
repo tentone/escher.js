@@ -8,8 +8,6 @@ function Vector2(x, y)
 
 Object.assign(Vector2.prototype,
 {
-	isVector2: true,
-
 	set: function(x, y)
 	{
 		this.x = x;

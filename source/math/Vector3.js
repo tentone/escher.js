@@ -9,8 +9,6 @@ function Vector3(x, y, z)
 
 Object.assign(Vector3.prototype,
 {
-	isVector3: true,
-
 	set: function(x, y, z)
 	{
 		this.x = x;
