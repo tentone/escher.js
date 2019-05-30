@@ -1,0 +1,29 @@
+{
+	"name": "diagram.js",
+	"version": "0.1.0",
+	"description": "Web based diagram editing library.",
+	"main": "build/diagram.min.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tentone/crosstabtalk.git"
+	},
+	"scripts": {
+		"build": "rollup -c && npm run uglify",
+		"docs": "jsdoc -d docs source",
+		"uglify": "uglifyjs --compress --mangle --output build/crosstabtalk.min.js -- build/crosstabtalk.js",
+		"pub": "npm run build && npm run docs && npm publish --access public ."
+	},
+	"keywords": [
+		"diagram",
+		"canvas"
+	],
+	"author": "Tentone",
+	"license": "MIT",
+	"dependencies": {},
+	"devDependencies": {
+		"jsdoc": "^3.5.0",
+		"rollup": "^1.0.0",
+		"rollup-plugin-strip": "^1.2.1",
+		"uglify-js": "^3.4.9"
+	}
+}
