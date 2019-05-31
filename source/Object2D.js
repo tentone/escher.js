@@ -48,15 +48,29 @@ function Object2D()
 	 * Local transformation matrix applied to the object. 
 	 */
 	this.matrix = new Matrix();
-
-	/**
-	 * Global transformation matrix used to project the object to screen space.
-	 */
-	this.globalMatrix = new Matrix();
 }
 
 /**
+ * Traverse the object tree and run a function for all objects.
+ *
+ * @param callback Callback function that receives the object as parameter.
+ */
+Object2D.prototype.traverse = function(callback)
+{
+	callback(this);
+
+	var children = this.children;
+
+	for(var i = 0; i < children.length; i++)
+	{
+		children[i].traverse(callback);
+	}
+};
+
+/**
  * Attach a children to the object.
+ *
+ * @param object Object to attach to this object.
  */ 
 Object2D.prototype.add = function(object)
 {
@@ -66,6 +80,8 @@ Object2D.prototype.add = function(object)
 
 /**
  * Remove object from the children list.
+ *
+ * @param object Object to be removed.
  */
 Object2D.prototype.remove = function(object)
 {
@@ -79,8 +95,16 @@ Object2D.prototype.remove = function(object)
 
 /**
  * Draw the object into the canvas.
+ *
+ * Has to be implemented by underlying classes.
+ *
+ * @param context Canvas 2d drawing context.
+ * @param canvas The canvas DOM element where its being drawn.
  */
-Object2D.prototype.draw = function(context)
+Object2D.prototype.draw = function(context, canvas)
 {
+	this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.rotation);
+	this.matrix.setContextTransform(context);
 
+	context.fillRect(-20, -20, 40, 40);
 };

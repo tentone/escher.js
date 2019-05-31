@@ -22,15 +22,10 @@
 		canvas.height = 600;
 		document.body.appendChild(canvas);
 
-		//var m = matrix.elements;
-		///context.setTransform(m[0], m[3], m[1], m[4], m[2], m[5]);
-		
-		var a = new Matrix();
-		a.translate(100, 100);
-		a.rotate(1);
-		
-		var b = new Matrix();
-		b.translate(50, 20);
+
+		var o = new Object2D();
+		o.position.set(100, 100);
+		o.scale.set(1, 2);
 
 		var context = canvas.getContext("2d");
 
@@ -39,17 +34,13 @@
 			context.setTransform(1, 0, 0, 1, 0, 0);
 			context.clearRect(0, 0, canvas.width, canvas.height);
 
-			a.rotate(0.02);
-			a.setContextTransform(context);
-			context.fillRect(0, 0, 40, 60);
+			o.rotation += 0.01;
+			o.draw(context, canvas);
 
 			requestAnimationFrame(loop);
 		}
 
 		loop();
-
-
-
 	</script>
 </body>
 </html>

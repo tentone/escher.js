@@ -7,7 +7,7 @@
  */
 function Matrix(values)
 {
-	if(value !== undefined)
+	if(values !== undefined)
 	{
 		this.m = values;
 	}
@@ -28,6 +28,8 @@ Matrix.prototype.reset = function()
 
 /**
  * Multiply another matrix by this one and store the result.
+ *
+ * @param mat Matrix array.
  */
 Matrix.prototype.multiply = function(mat)
 {
@@ -42,13 +44,35 @@ Matrix.prototype.multiply = function(mat)
 };
 
 /**
- * Set position of the transformation matrix.
+ * Premultiply another matrix by this one and store the result.
+ *
+ * @param mat Matrix array to multiply.
  */
-Matrix.prototype.setPosition = function(x, y)
+Matrix.prototype.premultiply = function(mat)
 {
-	this.m[4] = x;
-	this.m[5] = y;
-}
+	var m0 = mat[0] * this.m[0] + mat[2] * this.m[1];
+	var m1 = mat[1] * this.m[0] + mat[3] * this.m[1];
+	var m2 = mat[0] * this.m[2] + mat[2] * this.m[3];
+	var m3 = mat[1] * this.m[2] + mat[3] * this.m[3];
+	var m4 = mat[0] * this.m[4] + mat[2] * this.m[5] + mat[4];
+	var m5 = mat[1] * this.m[4] + mat[3] * this.m[5] + mat[5];
+	
+	this.m = [m0, m1, m2, m3, m4, m5];
+};
+
+/**
+ * Compose this transformation matrix with position scale and rotation.
+ */
+Matrix.prototype.compose = function(px, py, sx, sy, a)
+{
+	this.m = [1, 0, 0, 1, px, py];
+
+	var c = Math.cos(a);
+	var s = Math.sin(a);
+	this.multiply([c, s, -s, c, 0, 0]);
+
+	this.scale(sx, sy);
+};
 
 /**
  * Apply translation to this matrix.
@@ -60,11 +84,13 @@ Matrix.prototype.translate = function(x, y)
 
 /**
  * Apply rotation to this matrix.
+ *
+ * @param angle Angle in radians.
  */
-Matrix.prototype.rotate = function(rAngle)
+Matrix.prototype.rotate = function(angle)
 {
-	var c = Math.cos(rAngle);
-	var s = Math.sin(rAngle);
+	var c = Math.cos(angle);
+	var s = Math.sin(angle);
 	var mat = [c, s, -s, c, 0, 0];
 
 	this.multiply(mat);
@@ -111,25 +137,3 @@ Matrix.prototype.setContextTransform = function(context)
 {
 	context.setTransform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
 };
-
-/*
-	var screenPoint=(transformedX, transformedY) =>
-	{
-		// invert
-		var d =1/(this.m[0] * this.m[3] - this.m[1] * this.m[2]);
-		var im = [m[3] * d, -m[1] * d, -m[2] * d, this.m[0] * d, d * (this.m[2] * this.m[5] - this.m[3] * this.m[4]), d * (this.m[1] * this.m[4] - this.m[0] * this.m[5])];
-
-		// point
-		return(
-		{
-			x: transformedX * im[0] + transformedY * im[2] + im[4],
-			y: transformedX * im[1] + transformedY * im[3] + im[5]
-		});
-	};
-
-	var transformedPoint = (screenX, screenY) => (
-	{
-		x: screenX * this.m[0] + screenY * this.m[2] + this.m[4],
-		y: screenX * this.m[1] + screenY * this.m[3] + this.m[5]
-	});
-*/
