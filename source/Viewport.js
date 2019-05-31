@@ -44,14 +44,12 @@ function Viewport()
  * @param context Canvas 2d drawing context.
  * @param canvas The canvas DOM element where its being drawn.
  */
-Viewport.prototype.transform = function(context, canvas)
+Viewport.prototype.updateMatrix = function(context, canvas)
 {
-	if(this.matrixNeedsUpdate)
+	if(true) //this.matrixNeedsUpdate)
 	{
 		this.matrix.compose(this.position.x, this.position.y, this.scale, this.scale, this.rotation);
 		this.matrixNeedsUpdate = false;
 	}
-
-	this.matrix.setContextTransform(context);
 };
 

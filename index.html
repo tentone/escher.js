@@ -9,6 +9,7 @@
 	<script type="text/javascript" src="source/Object2D.js"></script>
 	<script type="text/javascript" src="source/Viewport.js"></script>
 	<script type="text/javascript" src="source/Renderer.js"></script>
+	<script type="text/javascript" src="source/Image.js"></script>
 
 	<script type="text/javascript" src="source/math/Vector2.js"></script>
 	<script type="text/javascript" src="source/math/UUID.js"></script>
@@ -18,34 +19,63 @@
 		var canvas = document.createElement("canvas");
 		canvas.width = 800;
 		canvas.height = 600;
+		canvas.style.border = "1px solid #000000";
 		document.body.appendChild(canvas);
 
 		var o = new Object2D();
-		o.position.set(100, 100);
-		o.scale.set(1, 2);
+
+		var i = new Image("image.jpg");
+		i.position.set(100, 100);
+		i.scale.set(1, 2);
+		o.add(i);
+
+		//var re = new Rect();
+		//o.add(re);
 
 		var v = new Viewport();
 
+		var pressed = false;
+		var x, y;
+		var dx, dy;
+
 		var m = new EventManager();
+		m.add(canvas, "mousedown", function(event)
+		{
+			pressed = true;
+		});
+		m.add(canvas, "mouseup", function(event)
+		{
+			pressed = false;
+		});
 		m.add(canvas, "mousemove", function(event)
 		{
+			dx = event.clientX - x;
+			dy = event.clientY - y;
+			x = event.clientX;
+			y = event.clientY;
 
+			if(pressed)
+			{
+				v.position.x += dx;
+				v.position.y += dy;
+			}
+		});
+		m.add(canvas, "wheel", function(event)
+		{
+			v.scale -= event.deltaY * 0.01;
 		});
 		m.create();
 
 
-		var r = new Renderer();
-
-		var context = canvas.getContext("2d");
+		var r = new Renderer(canvas);
 
 		function loop()
 		{
-			context.setTransform(1, 0, 0, 1, 0, 0);
-			context.clearRect(0, 0, canvas.width, canvas.height);
+			i.rotation += 0.01;
+			//re.rotation -= 0.005;
 
-			o.rotation += 0.01;
-			o.draw(context, canvas);
-
+			//o.draw(context, canvas);
+			r.render(o, v)
 			requestAnimationFrame(loop);
 		}
 

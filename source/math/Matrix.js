@@ -137,3 +137,11 @@ Matrix.prototype.setContextTransform = function(context)
 {
 	context.setTransform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
 };
+
+/**
+ * Transform on top of the current context transformation.
+ */
+Matrix.prototype.tranformContext = function(context)
+{
+	context.transform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
+};

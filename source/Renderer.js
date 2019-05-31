@@ -10,22 +10,32 @@
 function Renderer(canvas)
 {
 	this.canvas = canvas;
+
+	this.context = canvas.getContext("2d");
 }
 
 /**
  * Render the object using the viewport into a canvas element.
  */
-Renderer.render = function(object, viewport)
+Renderer.prototype.render = function(object, viewport)
 {
-	// Update matrixes
-	this.object.traverse(function(child)
-	{
+	var context = this.context;
 
-	});
+	// Clear canvas
+	context.setTransform(1, 0, 0, 1, 0, 0);
+	context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+	// Update viewport transform matrix
+	viewport.updateMatrix();
 
 	// Render into the canvas
-	this.object.traverse(function(child)
+	object.traverse(function(child)
 	{
+		viewport.matrix.setContextTransform(context);
 
+		child.updateMatrix();
+		
+		child.matrix.tranformContext(context);
+		child.draw(context);
 	});
 };

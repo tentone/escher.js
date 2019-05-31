@@ -99,6 +99,18 @@ Object2D.prototype.remove = function(object)
 };
 
 /**
+ * Update the transformation matrix of the object.
+ */
+Object2D.prototype.updateMatrix = function(context)
+{
+	if(true) //this.matrixNeedsUpdate)
+	{
+		this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.rotation);
+		this.matrixNeedsUpdate = false;
+	}
+};
+
+/**
  * Draw the object into the canvas.
  *
  * Has to be implemented by underlying classes.
@@ -106,14 +118,4 @@ Object2D.prototype.remove = function(object)
  * @param context Canvas 2d drawing context.
  * @param canvas The canvas DOM element where its being drawn.
  */
-Object2D.prototype.draw = function(context, canvas)
-{
-	if(this.matrixNeedsUpdate)
-	{
-		this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.rotation);
-		this.matrixNeedsUpdate = false;
-	}
-	this.matrix.setContextTransform(context);
-
-	context.fillRect(-20, -20, 40, 40);
-};
+Object2D.prototype.draw = function(context){};
