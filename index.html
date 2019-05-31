@@ -62,7 +62,7 @@
 		});
 		m.add(canvas, "wheel", function(event)
 		{
-			v.scale -= event.deltaY * 0.01;
+			v.scale -= (event.deltaY * 0.001) * v.scale;
 		});
 		m.create();
 
