@@ -47,12 +47,12 @@ function Object2D()
 	/**
 	 * Local transformation matrix applied to the object. 
 	 */
-	this.matrix = new Matrix3();
+	this.matrix = new Matrix();
 
 	/**
 	 * Global transformation matrix used to project the object to screen space.
 	 */
-	this.globalMatrix = new Matrix3();
+	this.globalMatrix = new Matrix();
 }
 
 /**

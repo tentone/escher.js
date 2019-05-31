@@ -14,7 +14,7 @@
 	<script type="text/javascript" src="source/math/Matrix3.js"></script>
 	<script type="text/javascript" src="source/math/Box2.js"></script>
 	<script type="text/javascript" src="source/math/UUID.js"></script>
-	<script type="text/javascript" src="source/math/Matrix32.js"></script>
+	<script type="text/javascript" src="source/math/Matrix.js"></script>
 
 	<script type="text/javascript">
 		var canvas = document.createElement("canvas");
@@ -25,19 +25,21 @@
 		//var m = matrix.elements;
 		///context.setTransform(m[0], m[3], m[1], m[4], m[2], m[5]);
 		
-		var a = new Matrix32();
+		var a = new Matrix();
+		a.translate(100, 100);
 		a.rotate(1);
-
-		var b = new Matrix32();
+		
+		var b = new Matrix();
 		b.translate(50, 20);
 
 		var context = canvas.getContext("2d");
 
 		function loop()
 		{
+			context.setTransform(1, 0, 0, 1, 0, 0);
 			context.clearRect(0, 0, canvas.width, canvas.height);
 
-			a.rotate(0.01);
+			a.rotate(0.02);
 			a.setContextTransform(context);
 			context.fillRect(0, 0, 40, 60);
 
