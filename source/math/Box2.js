@@ -172,4 +172,4 @@ Object.assign(Box2.prototype,
 	}
 });
 
-export {Box2};
+//export {Box2};

@@ -327,4 +327,4 @@ Object.assign(Matrix3.prototype,
 	}
 });
 
-export {Matrix3};
+//export {Matrix3};

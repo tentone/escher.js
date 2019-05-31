@@ -38,6 +38,13 @@ function Object2D()
 	this.rotation = 0.0;
 
 	/**
+	 * Layer of this object, objects are sorted by layer value.
+	 *
+	 * Lower layer value is draw first.
+	 */
+	this.layer = 0;
+
+	/**
 	 * Local transformation matrix applied to the object. 
 	 */
 	this.matrix = new Matrix3();
@@ -55,4 +62,25 @@ Object2D.prototype.add = function(object)
 {
 	object.parent = this;
 	this.children.push(object);
+};
+
+/**
+ * Remove object from the children list.
+ */
+Object2D.prototype.remove = function(object)
+{
+	var index = this.children.indexOf(object);
+	if(index !== -1)
+	{
+		this.children[index].parent = null;
+		this.children.splice(index, 1)
+	}
+};
+
+/**
+ * Draw the object into the canvas.
+ */
+Object2D.prototype.draw = function(context)
+{
+
 };
