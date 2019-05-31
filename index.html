@@ -8,11 +8,9 @@
 	<script type="text/javascript" src="source/EventManager.js"></script>
 	<script type="text/javascript" src="source/Object2D.js"></script>
 	<script type="text/javascript" src="source/Viewport.js"></script>
+	<script type="text/javascript" src="source/Renderer.js"></script>
 
-	<script type="text/javascript" src="source/math/Vector3.js"></script>
 	<script type="text/javascript" src="source/math/Vector2.js"></script>
-	<script type="text/javascript" src="source/math/Matrix3.js"></script>
-	<script type="text/javascript" src="source/math/Box2.js"></script>
 	<script type="text/javascript" src="source/math/UUID.js"></script>
 	<script type="text/javascript" src="source/math/Matrix.js"></script>
 
@@ -22,10 +20,21 @@
 		canvas.height = 600;
 		document.body.appendChild(canvas);
 
-
 		var o = new Object2D();
 		o.position.set(100, 100);
 		o.scale.set(1, 2);
+
+		var v = new Viewport();
+
+		var m = new EventManager();
+		m.add(canvas, "mousemove", function(event)
+		{
+
+		});
+		m.create();
+
+
+		var r = new Renderer();
 
 		var context = canvas.getContext("2d");
 

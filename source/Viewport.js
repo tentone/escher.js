@@ -13,13 +13,45 @@ function Viewport()
 	this.uuid = UUID.generate(); 
 
 	/**
-	 * Position of the viewport.
+	 * Position of the object.
 	 */
 	this.position = new Vector2(0, 0);
 
 	/**
-	 * Zoom level of the viewport.
+	 * Scale of the object.
 	 */
-	this.zoom = 1.0;
+	this.scale = 1.0
 
+	/**
+	 * Rotation of the object relative to its center.
+	 */
+	this.rotation = 0.0;
+
+	/**
+	 * Local transformation matrix applied to the object. 
+	 */
+	this.matrix = new Matrix();
+
+	/**
+	 * If true the matrix is updated before rendering the object.
+	 */
+	this.matrixNeedsUpdate = true;
 }
+
+/**
+ * Set the transformation of the canvas context.
+ *
+ * @param context Canvas 2d drawing context.
+ * @param canvas The canvas DOM element where its being drawn.
+ */
+Viewport.prototype.transform = function(context, canvas)
+{
+	if(this.matrixNeedsUpdate)
+	{
+		this.matrix.compose(this.position.x, this.position.y, this.scale, this.scale, this.rotation);
+		this.matrixNeedsUpdate = false;
+	}
+
+	this.matrix.setContextTransform(context);
+};
+

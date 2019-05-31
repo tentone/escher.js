@@ -48,6 +48,11 @@ function Object2D()
 	 * Local transformation matrix applied to the object. 
 	 */
 	this.matrix = new Matrix();
+
+	/**
+	 * If true the matrix is updated before rendering the object.
+	 */
+	this.matrixNeedsUpdate = true;
 }
 
 /**
@@ -103,7 +108,11 @@ Object2D.prototype.remove = function(object)
  */
 Object2D.prototype.draw = function(context, canvas)
 {
-	this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.rotation);
+	if(this.matrixNeedsUpdate)
+	{
+		this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.rotation);
+		this.matrixNeedsUpdate = false;
+	}
 	this.matrix.setContextTransform(context);
 
 	context.fillRect(-20, -20, 40, 40);
