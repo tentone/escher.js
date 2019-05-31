@@ -99,15 +99,23 @@ Object2D.prototype.remove = function(object)
 };
 
 /**
+ * Check if a point is inside of the object.
+ */
+Object2D.prototype.isInside = function(point)
+{
+	return false;
+};
+
+/**
  * Update the transformation matrix of the object.
  */
 Object2D.prototype.updateMatrix = function(context)
 {
-	if(true) //this.matrixNeedsUpdate)
-	{
+	//if(this.matrixNeedsUpdate)
+	//{
 		this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.rotation);
 		this.matrixNeedsUpdate = false;
-	}
+	//}
 };
 
 /**
