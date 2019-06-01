@@ -33,12 +33,12 @@ Matrix.prototype.reset = function()
  */
 Matrix.prototype.multiply = function(mat)
 {
-	var m0 = this.m[0] * mat[0] + this.m[2] * mat[1];
-	var m1 = this.m[1] * mat[0] + this.m[3] * mat[1];
-	var m2 = this.m[0] * mat[2] + this.m[2] * mat[3];
-	var m3 = this.m[1] * mat[2] + this.m[3] * mat[3];
-	var m4 = this.m[0] * mat[4] + this.m[2] * mat[5] + this.m[4];
-	var m5 = this.m[1] * mat[4] + this.m[3] * mat[5] + this.m[5];
+	var m0 = this.m[0] * mat.m[0] + this.m[2] * mat.m[1];
+	var m1 = this.m[1] * mat.m[0] + this.m[3] * mat.m[1];
+	var m2 = this.m[0] * mat.m[2] + this.m[2] * mat.m[3];
+	var m3 = this.m[1] * mat.m[2] + this.m[3] * mat.m[3];
+	var m4 = this.m[0] * mat.m[4] + this.m[2] * mat.m[5] + this.m[4];
+	var m5 = this.m[1] * mat.m[4] + this.m[3] * mat.m[5] + this.m[5];
 	
 	this.m = [m0, m1, m2, m3, m4, m5];
 };
@@ -50,12 +50,12 @@ Matrix.prototype.multiply = function(mat)
  */
 Matrix.prototype.premultiply = function(mat)
 {
-	var m0 = mat[0] * this.m[0] + mat[2] * this.m[1];
-	var m1 = mat[1] * this.m[0] + mat[3] * this.m[1];
-	var m2 = mat[0] * this.m[2] + mat[2] * this.m[3];
-	var m3 = mat[1] * this.m[2] + mat[3] * this.m[3];
-	var m4 = mat[0] * this.m[4] + mat[2] * this.m[5] + mat[4];
-	var m5 = mat[1] * this.m[4] + mat[3] * this.m[5] + mat[5];
+	var m0 = mat.m[0] * this.m[0] + mat.m[2] * this.m[1];
+	var m1 = mat.m[1] * this.m[0] + mat.m[3] * this.m[1];
+	var m2 = mat.m[0] * this.m[2] + mat.m[2] * this.m[3];
+	var m3 = mat.m[1] * this.m[2] + mat.m[3] * this.m[3];
+	var m4 = mat.m[0] * this.m[4] + mat.m[2] * this.m[5] + mat.m[4];
+	var m5 = mat.m[1] * this.m[4] + mat.m[3] * this.m[5] + mat.m[5];
 	
 	this.m = [m0, m1, m2, m3, m4, m5];
 };
@@ -69,7 +69,7 @@ Matrix.prototype.compose = function(px, py, sx, sy, a)
 
 	var c = Math.cos(a);
 	var s = Math.sin(a);
-	this.multiply([c, s, -s, c, 0, 0]);
+	this.multiply(new Matrix([c, s, -s, c, 0, 0]));
 
 	this.scale(sx, sy);
 };
@@ -79,7 +79,8 @@ Matrix.prototype.compose = function(px, py, sx, sy, a)
  */
 Matrix.prototype.translate = function(x, y)
 {
-	this.multiply([1, 0, 0, 1, x, y]);
+	this.m[4] += this.m[0] * x + this.m[2] * y;
+	this.m[5] += this.m[1] * x + this.m[3] * y;
 };
 
 /**
@@ -87,21 +88,30 @@ Matrix.prototype.translate = function(x, y)
  *
  * @param angle Angle in radians.
  */
-Matrix.prototype.rotate = function(angle)
+Matrix.prototype.rotate = function(rad)
 {
-	var c = Math.cos(angle);
-	var s = Math.sin(angle);
-	var mat = [c, s, -s, c, 0, 0];
+	var c = Math.cos(rad);
+	var s = Math.sin(rad);
 
-	this.multiply(mat);
+	var m11 = this.m[0] * c + this.m[2] * s;
+	var m12 = this.m[1] * c + this.m[3] * s;
+	var m21 = this.m[0] * -s + this.m[2] * c;
+	var m22 = this.m[1] * -s + this.m[3] * c;
+	this.m[0] = m11;
+	this.m[1] = m12;
+	this.m[2] = m21;
+	this.m[3] = m22;
 };
 
 /**
  * Apply scale to this matrix.
  */
-Matrix.prototype.scale = function(x, y)
+Matrix.prototype.scale = function(sx, sy)
 {
-	this.multiply([x, 0, 0, y, 0, 0]);
+	this.m[0] *= sx;
+	this.m[1] *= sx;
+	this.m[2] *= sy;
+	this.m[3] *= sy;
 };
 
 /**
@@ -109,7 +119,7 @@ Matrix.prototype.scale = function(x, y)
  */
 Matrix.prototype.skew = function(radianX, radianY)
 {
-	this.multiply([1, Math.tan(radianY), Math.tan(radianX), 1, 0, 0]);
+	this.multiply(new Matrix([1, Math.tan(radianY), Math.tan(radianX), 1, 0, 0]));
 };
 
 /**
@@ -144,4 +154,18 @@ Matrix.prototype.setContextTransform = function(context)
 Matrix.prototype.tranformContext = function(context)
 {
 	context.transform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
+};
+
+/**
+ * Transform a point using this matrix.
+ */
+Matrix.prototype.transformPoint = function(px, py)
+{
+	var x = px;
+	var y = py;
+
+	px = x * this.m[0] + y * this.m[2] + this.m[4];
+	py = x * this.m[1] + y * this.m[3] + this.m[5];
+
+	return new Vector2(px, py);
 };

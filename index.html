@@ -9,9 +9,17 @@
 	<script type="text/javascript" src="source/Object2D.js"></script>
 	<script type="text/javascript" src="source/Viewport.js"></script>
 	<script type="text/javascript" src="source/Renderer.js"></script>
-	<script type="text/javascript" src="source/Image.js"></script>
+
+	<script type="text/javascript" src="source/controls/ViewportControls.js"></script>
+
+	<script type="text/javascript" src="source/objects/Image.js"></script>
+	<script type="text/javascript" src="source/objects/Rect.js"></script>
+	<script type="text/javascript" src="source/objects/Text.js"></script>
+	<script type="text/javascript" src="source/objects/Box.js"></script>
+	<script type="text/javascript" src="source/objects/ConnectionLine.js"></script>
 
 	<script type="text/javascript" src="source/math/Vector2.js"></script>
+	<script type="text/javascript" src="source/math/Box2.js"></script>
 	<script type="text/javascript" src="source/math/UUID.js"></script>
 	<script type="text/javascript" src="source/math/Matrix.js"></script>
 
@@ -29,52 +37,26 @@
 		i.scale.set(1, 2);
 		o.add(i);
 
-		//var re = new Rect();
-		//o.add(re);
+		var re = new Box();
+		re.position.set(50, 50);
+		o.add(re);
+
+		var rb = new Box();
+		rb.position.set(50, 300);
+		o.add(rb);
 
 		var v = new Viewport();
 
-		var pressed = false;
-		var x, y;
-		var dx, dy;
-
-		var m = new EventManager();
-		m.add(canvas, "mousedown", function(event)
-		{
-			pressed = true;
-		});
-		m.add(canvas, "mouseup", function(event)
-		{
-			pressed = false;
-		});
-		m.add(canvas, "mousemove", function(event)
-		{
-			dx = event.clientX - x;
-			dy = event.clientY - y;
-			x = event.clientX;
-			y = event.clientY;
-
-			if(pressed)
-			{
-				v.position.x += dx;
-				v.position.y += dy;
-			}
-		});
-		m.add(canvas, "wheel", function(event)
-		{
-			v.scale -= (event.deltaY * 0.001) * v.scale;
-		});
-		m.create();
-
+		var c = new ViewportControls(v);
+		c.create();
 
 		var r = new Renderer(canvas);
 
 		function loop()
 		{
 			i.rotation += 0.01;
-			//re.rotation -= 0.005;
+			re.rotation -= 0.005;
 
-			//o.draw(context, canvas);
 			r.render(o, v)
 			requestAnimationFrame(loop);
 		}

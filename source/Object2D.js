@@ -98,10 +98,14 @@ Object2D.prototype.remove = function(object)
 	}
 };
 
+Object2D.prototype.onPressDown = function(point){};
+Object2D.prototype.onPressUp = function(point){};
+Object2D.prototype.onOver = function(point){};
+
 /**
  * Check if a point is inside of the object.
  */
-Object2D.prototype.isInside = function(point)
+Object2D.prototype.inside = function(point)
 {
 	return false;
 };
