@@ -43,9 +43,10 @@ function ViewportControls(viewport)
 		}
 	});
 
+
 	this.manager.add(canvas, "wheel", function(event)
 	{
-		self.viewport.scale -= (event.deltaY * 0.001) * self.viewport.scale;
+		self.viewport.scale -= (event.deltaY * 0.01) * self.viewport.scale;
 	});
 }
 
