@@ -160,16 +160,6 @@ Object.assign(Vector2.prototype,
 		return this.multiplyScalar(1 / scalar);
 	},
 
-	applyMatrix3: function(m)
-	{
-		var x = this.x,
-			y = this.y;
-		var e = m.elements;
-
-		this.x = e[0] * x + e[3] * y + e[6];
-		this.y = e[1] * x + e[4] * y + e[7];
-	},
-
 	min: function(v)
 	{
 		this.x = Math.min(this.x, v.x);
@@ -225,7 +215,6 @@ Object.assign(Vector2.prototype,
 
 	roundToZero: function()
 	{
-
 		this.x = (this.x < 0) ? Math.ceil(this.x) : Math.floor(this.x);
 		this.y = (this.y < 0) ? Math.ceil(this.y) : Math.floor(this.y);
 	},
