@@ -16,7 +16,8 @@
 	<script type="text/javascript" src="../source/objects/Image.js"></script>
 	<script type="text/javascript" src="../source/objects/Text.js"></script>
 	<script type="text/javascript" src="../source/objects/Box.js"></script>
-	<script type="text/javascript" src="../source/objects/ConnectionLine.js"></script>
+	<script type="text/javascript" src="../source/objects/Circle.js"></script>
+	<script type="text/javascript" src="../source/objects/Line.js"></script>
 
 	<script type="text/javascript" src="../source/math/Vector2.js"></script>
 	<script type="text/javascript" src="../source/math/Box2.js"></script>
@@ -44,6 +45,11 @@
 
 		var box = new Box();
 		group.add(box);
+
+
+		var circle = new Circle();
+		circle.position.set(300, 0);
+		group.add(circle);
 
 		var viewport = new Viewport();
 

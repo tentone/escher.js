@@ -1,6 +1,6 @@
 "use strict";
 
-function ConnectionLine()
+function Line()
 {
 	Object2D.call(this);
 
@@ -17,15 +17,15 @@ function ConnectionLine()
 	/**
 	 * Color of the line.
 	 */
-	this.color = "#000000";
+	this.strokeStyle = "#000000";
 }
 
-ConnectionLine.prototype = Object.create(Object2D.prototype);
+Line.prototype = Object.create(Object2D.prototype);
 
-ConnectionLine.prototype.draw = function(context)
+Line.prototype.draw = function(context)
 {
 	context.lineWidth = 2;
-	context.strokeStyle = this.color;
+	context.strokeStyle = this.strokeStyle;
 	context.setLineDash([10, 10]);
 	
 	context.beginPath();

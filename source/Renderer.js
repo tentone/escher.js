@@ -20,7 +20,7 @@ function Renderer(canvas)
 	this.context = canvas.getContext("2d");
 	this.context.imageSmoothingEnabled = true;
 	this.context.globalCompositeOperation = "source-over";
-	
+
 	/**
 	 * Mouse input handler object.
 	 */
@@ -30,6 +30,9 @@ function Renderer(canvas)
 
 /**
  * Update the renderer state, update the input handlers, calculate the object and viewport transformation matrices.
+ *
+ * @param object Object to be updated.
+ * @param viewport Viewport to be updated (should be the one where the objects will be rendered after).
  */
 Renderer.prototype.update = function(object, viewport)
 {
@@ -73,27 +76,27 @@ Renderer.prototype.update = function(object, viewport)
 			// Pointer pressed
 			if(mouse.buttonPressed(Mouse.LEFT))
 			{
-				if(child.onPointerPressed !== null)
+				if(child.onButtonPressed !== null)
 				{
-					child.onPointerPressed(mouse, viewport);
+					child.onButtonPressed(mouse, viewport);
 				}
 			}
 
 			// Just pressed
 			if(mouse.buttonJustPressed(Mouse.LEFT))
 			{	
-				if(child.onPointerDown !== null)
+				if(child.onButtonDown !== null)
 				{
-					child.onPointerDown(mouse, viewport);
+					child.onButtonDown(mouse, viewport);
 				}
 			}
 
 			// Just released
 			if(mouse.buttonJustReleased(Mouse.LEFT))
 			{	
-				if(child.onPointerUp !== null)
+				if(child.onButtonUp !== null)
 				{
-					child.onPointerUp(mouse, viewport);
+					child.onButtonUp(mouse, viewport);
 				}
 			}
 
@@ -114,6 +117,11 @@ Renderer.prototype.update = function(object, viewport)
 
 /**
  * Render the object using the viewport into a canvas element.
+ *
+ * The canvas state is saved and restored for each individual object, ensuring that the code of one object does not affect another one.
+ *
+ * @param object Object to be rendered.
+ * @param viewport Viewport to render the objects.
  */
 Renderer.prototype.render = function(object, viewport)
 {
@@ -123,11 +131,17 @@ Renderer.prototype.render = function(object, viewport)
 	context.setTransform(1, 0, 0, 1, 0, 0);
 	context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+	// Set viewport matrix transform
+	viewport.matrix.setContextTransform(context);
+
 	// Render into the canvas
 	object.traverse(function(child)
 	{
-		viewport.matrix.setContextTransform(context);		
+		context.save();
+
 		child.globalMatrix.tranformContext(context);
 		child.draw(context);
+		
+		context.restore();
 	});
 };

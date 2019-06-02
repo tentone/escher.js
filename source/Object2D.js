@@ -50,13 +50,6 @@ function Object2D()
 	this.matrix = new Matrix();
 
 	/**
-	 * Flag indicating if the pointer is inside of the element.
-	 *
-	 * Used to control object event.
-	 */
-	this.pointerInside = false;
-
-	/**
 	 * Global transformation matrix multiplied by the parent matrix.
 	 *
 	 * Used to transform the object before projecting into screen coordinates.
@@ -74,6 +67,20 @@ function Object2D()
 	 * If true the matrix is updated before rendering the object.
 	 */
 	this.matrixNeedsUpdate = true;
+
+	/**
+	 * Flag to indicate if its possible to drag the object around.
+	 *
+	 * If true the onPointerDrag callback is used to update the state of the object.
+	 */
+	this.draggable = true;
+
+	/**
+	 * Flag indicating if the pointer is inside of the element.
+	 *
+	 * Used to control object event.
+	 */
+	this.pointerInside = false;
 }
 
 /**
@@ -158,30 +165,46 @@ Object2D.prototype.draw = function(context){};
 
 /**
  * Callback method called when the pointer enters the object.
+ *
+ * Receives (mouse, viewport) as arguments.
  */
 Object2D.prototype.onPointerEnter = null;
 
 /**
  * Callback method called when the was inside of the object and leaves the object.
+ *
+ * Receives (mouse, viewport) as arguments.
  */
 Object2D.prototype.onPointerLeave = null;
 
 /**
  * Callback method while the pointer is over (inside) of the object.
+ *
+ * Receives (mouse, viewport) as arguments.
  */
 Object2D.prototype.onPointerOver = null;
 
 /**
- * Callback method called while the pointer button is pressed.
+ * Callback method while the object is being dragged across the screen.
+ *
+ * Receives (mouse, viewport, delta) as arguments. Delta is the movement of the mouse already translated into local object coordinates.
  */
-Object2D.prototype.onPointerPressed = null;
+Object2D.prototype.onPointerDrag = null;
+
+/**
+ * Callback method called while the p
+ ointer button is pressed.
+ *
+ * Receives (mouse, viewport) as arguments.
+ */
+Object2D.prototype.onButtonPressed = null;
 
 /**
  * Callback method called when the pointer button is pressed down (single time).
  */
-Object2D.prototype.onPointerDown = null;
+Object2D.prototype.onButtonDown = null;
 
 /**
  * Callback method called when the pointer button is released (single time).
  */
-Object2D.prototype.onPointerUp = null;
+Object2D.prototype.onButtonUp = null;

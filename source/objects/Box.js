@@ -12,24 +12,24 @@ function Box()
 	/**
 	 * Color of the box border line.
 	 */
-	this.borderColor = "#000000";
+	this.strokeStyle = "#000000";
 
 	/**
 	 * Background color of the box.
 	 */
-	this.backgroundColor = "#FFFFFF";
-
+	this.fillStyle = "#FFFFFF";
+	
 	this.dragging = false;
 }
 
 Box.prototype = Object.create(Object2D.prototype);
 
-Box.prototype.onPointerDown = function(mouse, viewport)
+Box.prototype.onButtonDown = function(mouse, viewport)
 {
 	this.dragging = true;
 };
 
-Box.prototype.onPointerUp = function(mouse, viewport)
+Box.prototype.onButtonUp = function(mouse, viewport)
 {
 	this.dragging = false;
 };
@@ -48,15 +48,14 @@ Box.prototype.onPointerOver = function(mouse, viewport)
 	}
 };
 
-
 Box.prototype.onPointerEnter = function(mouse, viewport)
 {
-	this.backgroundColor = "#CCCCCC";
+	this.fillStyle = "#CCCCCC";
 };
 
 Box.prototype.onPointerLeave = function(mouse, viewport)
 {
-	this.backgroundColor = "#FFFFFF";
+	this.fillStyle = "#FFFFFF";
 };
 
 
@@ -70,11 +69,11 @@ Box.prototype.draw = function(context)
 	var width = this.box.max.x - this.box.min.x;
 	var height = this.box.max.y - this.box.min.y;
 
-	context.fillStyle = this.backgroundColor;
+	context.fillStyle = this.fillStyle;
 	context.fillRect(this.box.min.x, this.box.min.y, width, height);
 
 	context.setLineDash([]);
-	context.lineWidth = 1;
-	context.strokeStyle = this.borderColor;
+	context.lineWidth = 3;
+	context.strokeStyle = this.strokeStyle;
 	context.strokeRect(this.box.min.x, this.box.min.y, width, height);
 };
