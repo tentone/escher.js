@@ -12,8 +12,10 @@
 
 	<script type="text/javascript" src="source/controls/ViewportControls.js"></script>
 
+	<script type="text/javascript" src="source/input/Key.js"></script>
+	<script type="text/javascript" src="source/input/Mouse.js"></script>
+
 	<script type="text/javascript" src="source/objects/Image.js"></script>
-	<script type="text/javascript" src="source/objects/Rect.js"></script>
 	<script type="text/javascript" src="source/objects/Text.js"></script>
 	<script type="text/javascript" src="source/objects/Box.js"></script>
 	<script type="text/javascript" src="source/objects/ConnectionLine.js"></script>
@@ -38,8 +40,12 @@
 		o.add(i);
 
 		var re = new Box();
-		re.position.set(50, 50);
+		re.position.set(0, 0);
 		o.add(re);
+
+		var ra = new Box();
+		ra.position.set(200, 0);
+		re.add(ra);
 
 		var rb = new Box();
 		rb.position.set(50, 300);

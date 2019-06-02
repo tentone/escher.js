@@ -33,6 +33,11 @@ function Viewport()
 	this.matrix = new Matrix();
 
 	/**
+	 * Inverse of the local transformation matrix.
+	 */
+	this.inverseMatrix = new Matrix();
+
+	/**
 	 * If true the matrix is updated before rendering the object.
 	 */
 	this.matrixNeedsUpdate = true;
@@ -46,10 +51,11 @@ function Viewport()
  */
 Viewport.prototype.updateMatrix = function(context, canvas)
 {
-	if(true) //this.matrixNeedsUpdate)
+	if(this.matrixNeedsUpdate)
 	{
 		this.matrix.compose(this.position.x, this.position.y, this.scale, this.scale, this.rotation);
-		this.matrixNeedsUpdate = false;
+		this.inverseMatrix = this.matrix.getInverse();
+		//this.matrixNeedsUpdate = false;
 	}
 };
 

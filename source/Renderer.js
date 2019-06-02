@@ -12,6 +12,9 @@ function Renderer(canvas)
 	this.canvas = canvas;
 
 	this.context = canvas.getContext("2d");
+
+	this.mouse = new Mouse(canvas);
+	this.mouse.setCanvas(canvas);
 }
 
 /**
@@ -19,6 +22,9 @@ function Renderer(canvas)
  */
 Renderer.prototype.render = function(object, viewport)
 {
+	this.mouse.update();
+
+	var mouse = this.mouse;
 	var context = this.context;
 
 	// Clear canvas
@@ -28,14 +34,26 @@ Renderer.prototype.render = function(object, viewport)
 	// Update viewport transform matrix
 	viewport.updateMatrix();
 
+	// Update object transformation matrices
+	object.traverse(function(child)
+	{
+		child.updateMatrix();
+		
+		var point = mouse.position.clone();
+		point = viewport.inverseMatrix.transformPoint(point);
+		point = child.inverseGlobalMatrix.transformPoint(point);
+
+		if(child.isInside(point))
+		{
+			child.onOver();
+		}
+	});
+
 	// Render into the canvas
 	object.traverse(function(child)
 	{
-		viewport.matrix.setContextTransform(context);
-
-		child.updateMatrix();
-		
-		child.matrix.tranformContext(context);
+		viewport.matrix.setContextTransform(context);		
+		child.globalMatrix.tranformContext(context);
 		child.draw(context);
 	});
 };

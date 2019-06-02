@@ -19,6 +19,14 @@ function Matrix(values)
 }
 
 /**
+ * Copy the content of another matrix and store in this one.
+ */
+Matrix.prototype.copy = function(mat)
+{
+	this.m = mat.m.slice(0);
+};
+
+/**
  * Reset this matrix to indentity.
  */
 Matrix.prototype.reset = function()
@@ -97,6 +105,7 @@ Matrix.prototype.rotate = function(rad)
 	var m12 = this.m[1] * c + this.m[3] * s;
 	var m21 = this.m[0] * -s + this.m[2] * c;
 	var m22 = this.m[1] * -s + this.m[3] * c;
+
 	this.m[0] = m11;
 	this.m[1] = m12;
 	this.m[2] = m21;
@@ -131,14 +140,14 @@ Matrix.prototype.determinant = function()
 };
 
 /**
- * Get the ivnerse matrix.
+ * Get the inverse matrix.
  */
 Matrix.prototype.getInverse = function()
 {
 	var d = this.determinant();
 
-	return [this.m[3] * d, -this.m[1] * d, -this.m[2] * d, this.m[0] * d, d * (this.m[2] * this.m[5] - this.m[3] * this.m[4]), d * (this.m[1] * this.m[4] - this.m[0] * this.m[5])];
-}
+	return new Matrix([this.m[3] * d, -this.m[1] * d, -this.m[2] * d, this.m[0] * d, d * (this.m[2] * this.m[5] - this.m[3] * this.m[4]), d * (this.m[1] * this.m[4] - this.m[0] * this.m[5])]);
+};
 
 /**
  * Set a canvas context to use this transformation.
@@ -159,13 +168,10 @@ Matrix.prototype.tranformContext = function(context)
 /**
  * Transform a point using this matrix.
  */
-Matrix.prototype.transformPoint = function(px, py)
+Matrix.prototype.transformPoint = function(p)
 {
-	var x = px;
-	var y = py;
-
-	px = x * this.m[0] + y * this.m[2] + this.m[4];
-	py = x * this.m[1] + y * this.m[3] + this.m[5];
+	var px = p.x * this.m[0] + p.y * this.m[2] + this.m[4];
+	var py = p.x * this.m[1] + p.y * this.m[3] + this.m[5];
 
 	return new Vector2(px, py);
 };

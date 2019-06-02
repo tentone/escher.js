@@ -50,6 +50,20 @@ function Object2D()
 	this.matrix = new Matrix();
 
 	/**
+	 * Global transformation matrix multiplied by the parent matrix.
+	 *
+	 * Used to transform the object before projecting into screen coordinates.
+	 */
+	this.globalMatrix = new Matrix();
+
+	/**
+	 * Inverse of the global matrix.
+	 *
+	 * Used to convert mouse input points into object coordinates.
+	 */
+	this.inverseGlobalMatrix = new Matrix();
+
+	/**
 	 * If true the matrix is updated before rendering the object.
 	 */
 	this.matrixNeedsUpdate = true;
@@ -98,14 +112,12 @@ Object2D.prototype.remove = function(object)
 	}
 };
 
-Object2D.prototype.onPressDown = function(point){};
-Object2D.prototype.onPressUp = function(point){};
-Object2D.prototype.onOver = function(point){};
+Object2D.prototype.onOver = function(){};
 
 /**
  * Check if a point is inside of the object.
  */
-Object2D.prototype.inside = function(point)
+Object2D.prototype.isInside = function(point)
 {
 	return false;
 };
@@ -115,11 +127,19 @@ Object2D.prototype.inside = function(point)
  */
 Object2D.prototype.updateMatrix = function(context)
 {
-	//if(this.matrixNeedsUpdate)
-	//{
+	if(this.matrixNeedsUpdate)
+	{
 		this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.rotation);
-		this.matrixNeedsUpdate = false;
-	//}
+		this.globalMatrix.copy(this.matrix);
+
+		if(this.parent !== null)
+		{	
+			this.globalMatrix.premultiply(this.parent.globalMatrix);
+		}
+
+		this.inverseGlobalMatrix = this.globalMatrix.getInverse()
+		//this.matrixNeedsUpdate = false;
+	}
 };
 
 /**
