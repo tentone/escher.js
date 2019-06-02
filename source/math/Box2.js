@@ -1,5 +1,7 @@
 "use strict";
 
+import {Vector2} from "./Vector2.js";
+
 /**
  * Box is described by a minimum and maximum points.
  *
@@ -169,4 +171,4 @@ Object.assign(Box2.prototype,
 	}
 });
 
-//export {Box2};
+export {Box2};

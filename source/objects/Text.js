@@ -1,5 +1,7 @@
 "use strict";
 
+import {Object2D} from "../Object2D.js";
+
 function Text()
 {
 	Object2D.call(this);
@@ -12,7 +14,7 @@ function Text()
 	/**
 	 * Font of the text.
 	 */
-	this.font = "30px Arial";
+	this.font = "16px Arial";
 
 	/**
 	 * Color (style) of the text.
@@ -30,3 +32,5 @@ Text.prototype.draw = function(context)
 
 	context.fillText(this.text, 0, 0);
 };
+
+export {Text};

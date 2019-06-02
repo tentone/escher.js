@@ -37,4 +37,4 @@ UUID.generate = (function ()
 	};
 })();
 
-//export {UUID};
+export {UUID};

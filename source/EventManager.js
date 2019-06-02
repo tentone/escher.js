@@ -66,4 +66,4 @@ EventManager.prototype.destroy = function()
 	}
 };
 
-//export {EventManager};
+export {EventManager};

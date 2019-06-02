@@ -1,5 +1,7 @@
 "use strict";
 
+import {Mouse} from "./input/Mouse.js";
+
 /**
  * The renderer is resposible for drawing the structure into the canvas element.
  *
@@ -177,3 +179,5 @@ Renderer.prototype.render = function(object, viewport)
 		context.restore();
 	}
 };
+
+export {Renderer};

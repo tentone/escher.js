@@ -1,5 +1,7 @@
 "use strict";
 
+import {Vector2} from "./Vector2.js";
+
 /**
  * 2D 3x2 transformation matrix, applied to the canvas elements.
  *
@@ -207,3 +209,5 @@ Matrix.prototype.tranformContext = function(context)
 {
 	context.transform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
 };
+
+export {Matrix};

@@ -1,11 +1,17 @@
 "use strict";
 
+import {Object2D} from "../Object2D.js";
+import {Vector2} from "../math/Vector2.js";
+import {Box2} from "../math/Box2.js";
+import {Circle} from "./Circle.js";
 /**
  * Box object draw a box.
  */
-function Box()
+function Box(resizable)
 {
 	Object2D.call(this);
+
+	var self = this;
 
 	/**
 	 * Box object containing the size of the object.
@@ -21,9 +27,67 @@ function Box()
 	 * Background color of the box.
 	 */
 	this.fillStyle = "#FFFFFF";
+
+	if(resizable)
+	{
+		this.createResizeHelpers();
+	}
 }
 
 Box.prototype = Object.create(Object2D.prototype);
+
+Box.prototype.createResizeHelpers = function(first_argument)
+{
+	var self = this;
+
+	function updateHelpers()
+	{
+		topRight.position.copy(self.box.min);
+		bottomLeft.position.copy(self.box.max);
+		topLeft.position.set(self.box.max.x, self.box.min.y);
+		bottomRight.position.set(self.box.min.x, self.box.max.y);
+	}
+
+	var topRight = new Circle();
+	topRight.radius = 4;
+	topRight.onPointerDrag = function()
+	{
+		self.box.min.copy(topRight.position);
+		updateHelpers();
+	};
+	this.add(topRight);
+
+	var topLeft = new Circle();
+	topLeft.radius = 4;
+	topLeft.onPointerDrag = function()
+	{
+		self.box.max.x = topLeft.position.x;
+		self.box.min.y = topLeft.position.y;
+		updateHelpers();
+	};
+	this.add(topLeft);
+
+	var bottomLeft = new Circle();
+	bottomLeft.radius = 4;
+	bottomLeft.onPointerDrag = function()
+	{
+		self.box.max.copy(bottomLeft.position);
+		updateHelpers();
+	};
+	this.add(bottomLeft);
+
+	var bottomRight = new Circle();
+	bottomRight.radius = 4;
+	bottomRight.onPointerDrag = function()
+	{
+		self.box.min.x = bottomRight.position.x;
+		self.box.max.y = bottomRight.position.y;
+		updateHelpers();
+	};
+	this.add(bottomRight);
+
+	updateHelpers();
+};
 
 Box.prototype.onPointerEnter = function(mouse, viewport)
 {
@@ -34,7 +98,6 @@ Box.prototype.onPointerLeave = function(mouse, viewport)
 {
 	this.fillStyle = "#FFFFFF";
 };
-
 
 Box.prototype.isInside = function(point)
 {
@@ -53,3 +116,5 @@ Box.prototype.draw = function(context)
 	context.strokeStyle = this.strokeStyle;
 	context.strokeRect(this.box.min.x, this.box.min.y, width, height);
 };
+
+export {Box};

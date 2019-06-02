@@ -1,5 +1,8 @@
 "use strict";
 
+import {Object2D} from "../Object2D.js";
+import {Vector2} from "../math/Vector2.js";
+
 /**
  * Line object draw a line from one point to another.
  */
@@ -40,3 +43,5 @@ Line.prototype.draw = function(context)
 	context.lineTo(this.to.x, this.to.y);
 	context.stroke();
 };
+
+export {Line};

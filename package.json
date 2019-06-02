@@ -5,12 +5,12 @@
 	"main": "build/diagram.min.js",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/tentone/crosstabtalk.git"
+		"url": "https://github.com/tentone/diagram.git"
 	},
 	"scripts": {
 		"build": "rollup -c && npm run uglify",
 		"docs": "jsdoc -d docs source",
-		"uglify": "uglifyjs --compress --mangle --output build/crosstabtalk.min.js -- build/crosstabtalk.js",
+		"uglify": "uglifyjs --compress --mangle --output build/diagram.min.js -- build/diagram.js",
 		"pub": "npm run build && npm run docs && npm publish --access public ."
 	},
 	"keywords": [

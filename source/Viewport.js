@@ -1,5 +1,10 @@
 "use strict";
 
+import {Vector2} from "./math/Vector2.js";
+import {Matrix} from "./math/Matrix.js";
+import {UUID} from "./math/UUID.js";
+import {Mouse} from "./input/Mouse.js";
+
 /**
  * Used to indicate how the user views the content inside of the canvas.
  *
@@ -90,3 +95,4 @@ Viewport.prototype.updateMatrix = function()
 	}
 };
 
+export {Viewport};

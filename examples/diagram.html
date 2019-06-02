@@ -5,24 +5,7 @@
 	<title>diagram.js</title>
 </head>
 <body>
-	<script type="text/javascript" src="../source/EventManager.js"></script>
-	<script type="text/javascript" src="../source/Object2D.js"></script>
-	<script type="text/javascript" src="../source/Viewport.js"></script>
-	<script type="text/javascript" src="../source/Renderer.js"></script>
-
-	<script type="text/javascript" src="../source/input/Key.js"></script>
-	<script type="text/javascript" src="../source/input/Mouse.js"></script>
-
-	<script type="text/javascript" src="../source/objects/Image.js"></script>
-	<script type="text/javascript" src="../source/objects/Text.js"></script>
-	<script type="text/javascript" src="../source/objects/Box.js"></script>
-	<script type="text/javascript" src="../source/objects/Circle.js"></script>
-	<script type="text/javascript" src="../source/objects/Line.js"></script>
-
-	<script type="text/javascript" src="../source/math/Vector2.js"></script>
-	<script type="text/javascript" src="../source/math/Box2.js"></script>
-	<script type="text/javascript" src="../source/math/UUID.js"></script>
-	<script type="text/javascript" src="../source/math/Matrix.js"></script>
+	<script type="text/javascript" src="../build/diagram.js"></script>
 
 	<script type="text/javascript">
 		var canvas = document.createElement("canvas");
@@ -36,39 +19,58 @@
 		};
 		document.body.appendChild(canvas);
 
-		var group = new Object2D();
+		var group = new Diagram.Object2D();
 
-		var background = new Image("pfd.png");
-		background.position.set(0, 0);
+		var background = new Diagram.Image("hexagon.jpg");
+		background.position.set(-300, -400);
 		background.scale.set(1, 1);
 		background.layer = -2;
 		group.add(background);
 
-		var boxA = new Box();
+		var boxA = new Diagram.Box(true);
 		group.add(boxA);
 
-		var boxB = new Box();
+		var text = new Diagram.Text();
+		text.text = "diagram.js";
+		boxA.add(text);
+
+		var boxB = new Diagram.Box();
 		boxB.position.set(100, 100);
 		group.add(boxB);
+		
+		var circle = new Diagram.Circle();
+		circle.radius = 40;
+		circle.position.set(300, 0);
+		group.add(circle);
 
-		var line = new Line();
+		var line = new Diagram.Line();
 		line.from = boxA.position;
 		line.to = boxB.position;
 		line.layer = -1;
 		group.add(line);
 
-		var circle = new Circle();
-		circle.position.set(300, 0);
-		group.add(circle);
+		var line = new Diagram.Line();
+		line.from = boxA.position;
+		line.to = circle.position;
+		line.layer = -1;
+		group.add(line);
 
-		var viewport = new Viewport();
+		var line = new Diagram.Line();
+		line.from = boxB.position;
+		line.to = circle.position;
+		line.layer = -1;
+		group.add(line);
 
-		var renderer = new Renderer(canvas);
+
+		var viewport = new Diagram.Viewport();
+
+		var renderer = new Diagram.Renderer(canvas);
 
 		function loop()
 		{
 			renderer.update(group, viewport);
 			renderer.render(group, viewport);
+
 			requestAnimationFrame(loop);
 		}
 

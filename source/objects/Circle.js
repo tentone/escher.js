@@ -1,5 +1,8 @@
 "use strict";
 
+import {Object2D} from "../Object2D.js";
+import {Vector2} from "../math/Vector2.js";
+
 /**
  * Circle object draw a circular object.
  */
@@ -55,3 +58,5 @@ Circle.prototype.draw = function(context)
 	context.arc(0, 0, this.radius, 0, 2 * Math.PI);
 	context.stroke();
 };
+
+export {Circle};

@@ -1,12 +1,15 @@
 "use strict";
 
+import {EventManager} from "../EventManager.js";
+import {Vector2} from "../math/Vector2.js";
+import {Key} from "./Key.js";
+
 /**
  * Mouse instance for input in sync with the running 3D application.
  *
  * The mouse object provided by scripts is automatically updated by the runtime handler.
  * 
- * @class Mouse
- * @module Input
+ * @class
  * @param {DOM} domElement DOM element to craete the mouse events.
  * @param {Boolean} dontInitialize If true the mouse events are not created.
  */
@@ -23,57 +26,36 @@ function Mouse(domElement, dontInitialize)
 
 	/**
 	 * Array with mouse buttons status.
-	 *
-	 * @type {array}
-	 * @property keys
 	 */
 	this.keys = new Array(5);
 
 	/**
 	 * Mouse position inside of the window (coordinates in window space).
-	 *
-	 * @type {Vector2}
-	 * @property position
 	 */
 	this.position = new Vector2(0, 0);
 
 	/**
 	 * Mouse movement (coordinates in window space).
-	 *
-	 * @type {Vector2}
-	 * @property delta
 	 */
 	this.delta = new Vector2(0, 0);
 
 	/**
 	 * Mouse scroll wheel movement.
-	 *
-	 * @type {Number}
-	 * @property wheel
 	 */
 	this.wheel = 0;
 	
 	/**
 	 * Indicates a button of the mouse was double clicked.
-	 *
-	 * @type {Array}
-	 * @property doubleClicked
 	 */
 	this.doubleClicked = new Array(5);
 
 	/**
 	 * DOM element where to attach the mouse events.
-	 *
-	 * @property domElement
-	 * @type {DOM}
 	 */
 	this.domElement = (domElement !== undefined) ? domElement : window;
 
 	/**
 	 * Canvas attached to this mouse instance used to calculate position and delta in element space coordinates.
-	 *
-	 * @type {DOM}
-	 * @property canvas
 	 */
 	this.canvas = null;
 	
@@ -83,9 +65,6 @@ function Mouse(domElement, dontInitialize)
 	 * Diferent events are used depending on the host platform.
 	 *
 	 * When the update method is called the raw data is reset.
-	 *
-	 * @property events
-	 * @type {EventManager} 
 	 */
 	this.events = new EventManager();
 
@@ -208,48 +187,32 @@ Mouse.prototype.constructor = Mouse;
 
 /**
  * Left mouse button.
- *
- * @attribute LEFT
- * @type {Number}
  */
 Mouse.LEFT = 0;
 
 /**
  * Middle mouse button.
- *
- * @attribute MIDDLE
- * @type {Number}
  */
 Mouse.MIDDLE = 1;
 
 /**
  * Right mouse button.
- *
- * @attribute RIGHT
- * @type {Number}
  */
 Mouse.RIGHT = 2;
 
 /**
  * Back mouse navigation button.
- *
- * @attribute BACK
- * @type {Number}
  */
 Mouse.BACK = 3;
 
 /**
  * Forward mouse navigation button.
- *
- * @attribute FORWARD
- * @type {Number}
  */
 Mouse.FORWARD = 4;
 
 /**
  * Element to be used for coordinates calculation relative to that canvas.
  * 
- * @method setCanvas
  * @param {DOM} canvas Canvas to be attached to the Mouse instance
  */
 Mouse.setCanvas = function(element)
@@ -272,7 +235,6 @@ Mouse.setCanvas = function(element)
 /**
  * Check if mouse is inside attached canvas (updated async).
  * 
- * @method insideCanvas
  * @return {boolean} True if mouse is currently inside the canvas
  */
 Mouse.insideCanvas = function()
@@ -281,52 +243,8 @@ Mouse.insideCanvas = function()
 };
 
 /**
- * Set mouse lock state.
- * 
- * @method setLock
- * @param {boolean} value If true pointer lock will be requested for the canvas attached to the Mouse instance
- */
-Mouse.setLock = function(value)
-{
-	if(this.canvas !== null)
-	{
-		if(value)
-		{
-			if(this.canvas.requestPointerLock)
-			{
-				this.canvas.requestPointerLock();
-			}
-			else if(this.canvas.mozRequestPointerLock)
-			{
-				this.canvas.mozRequestPointerLock();
-			}
-			else if(this.canvas.webkitRequestPointerLock)
-			{
-				this.canvas.webkitRequestPointerLock();
-			}
-		}
-		else
-		{
-			if(document.exitPointerLock)
-			{
-				document.exitPointerLock();
-			}
-			else if(document.mozExitPointerLock)
-			{
-				document.mozExitPointerLock();
-			}
-			else if(document.webkitExitPointerLock)
-			{
-				document.webkitExitPointerLock();
-			}
-		}
-	}
-};
-
-/**
  * Check if mouse button is currently pressed.
  * 
- * @method buttonPressed
  * @param {Number} button Button to check status of
  * @return {boolean} True if button is currently pressed
  */
@@ -338,7 +256,6 @@ Mouse.buttonPressed = function(button)
 /**
  * Check if mouse button was double clicked.
  * 
- * @method buttonDoubleClicked
  * @param {Number} button Button to check status of
  * @return {boolean} True if some mouse button was just double clicked
  */
@@ -350,7 +267,6 @@ Mouse.buttonDoubleClicked = function(button)
 /**
  * Check if a mouse button was just pressed.
  * 
- * @method buttonJustPressed
  * @param {Number} button Button to check status of
  * @return {boolean} True if button was just pressed
  */
@@ -362,7 +278,6 @@ Mouse.buttonJustPressed = function(button)
 /**
  * Check if a mouse button was just released.
  * 
- * @method buttonJustReleased
  * @param {Number} button Button to check status of
  * @return {boolean} True if button was just released
  */
@@ -376,7 +291,6 @@ Mouse.buttonJustReleased = function(button)
  *
  * Automatically called by the runtime.
  * 
- * @method updatePosition
  * @param {Number} x
  * @param {Number} y
  * @param {Number} xDiff
@@ -402,7 +316,6 @@ Mouse.updatePosition = function(x, y, xDiff, yDiff)
  * 
  * Automatically called by the runtime.
  *
- * @method updateKey
  * @param {Number} button
  * @param {Number} action
  */
@@ -416,8 +329,6 @@ Mouse.updateKey = function(button, action)
 
 /**
  * Update mouse buttons state, position, wheel and delta synchronously.
- * 
- * @method update
  */
 Mouse.update = function()
 {
@@ -476,8 +387,6 @@ Mouse.update = function()
 
 /**
  * Create mouse events.
- * 
- * @method create
  */
 Mouse.create = function()
 {
@@ -486,10 +395,11 @@ Mouse.create = function()
 
 /**
  * Dispose mouse events.
- * 
- * @method dispose
  */
 Mouse.dispose = function()
 {
 	this.events.destroy();
 };
+
+
+export {Mouse};

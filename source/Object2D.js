@@ -1,5 +1,9 @@
 "use strict";
 
+import {Vector2} from "./math/Vector2.js";
+import {Matrix} from "./math/Matrix.js";
+import {UUID} from "./math/UUID.js";
+
 /**
  * Base 2D object class, implements all the object positioning and scalling features.
  *
@@ -212,3 +216,5 @@ Object2D.prototype.onButtonDown = null;
  * Callback method called when the pointer button is released (single time).
  */
 Object2D.prototype.onButtonUp = null;
+
+export {Object2D};
