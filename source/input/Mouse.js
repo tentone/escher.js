@@ -336,7 +336,7 @@ Mouse.buttonPressed = function(button)
 };
 
 /**
- * Check if Mouse button was double clicked.
+ * Check if mouse button was double clicked.
  * 
  * @method buttonDoubleClicked
  * @param {Number} button Button to check status of

@@ -18,34 +18,14 @@ function Box()
 	 * Background color of the box.
 	 */
 	this.fillStyle = "#FFFFFF";
-	
-	this.dragging = false;
 }
 
 Box.prototype = Object.create(Object2D.prototype);
 
-Box.prototype.onButtonDown = function(mouse, viewport)
+Box.prototype.onPointerDrag = function(mouse, viewport, delta)
 {
-	this.dragging = true;
-};
-
-Box.prototype.onButtonUp = function(mouse, viewport)
-{
-	this.dragging = false;
-};
-
-Box.prototype.onPointerOver = function(mouse, viewport)
-{
-	if(this.dragging)
-	{
-		var matrix = viewport.inverseMatrix.clone();
-		matrix.multiply(this.inverseGlobalMatrix);
-
-		var scale = matrix.getScale();
-
-		this.position.x += mouse.delta.x * scale.x;
-		this.position.y += mouse.delta.y * scale.y;
-	}
+	this.position.x += delta.x;
+	this.position.y += delta.y;
 };
 
 Box.prototype.onPointerEnter = function(mouse, viewport)

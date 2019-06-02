@@ -59,12 +59,9 @@ Renderer.prototype.update = function(object, viewport)
 		if(child.isInside(childPoint))
 		{
 			// Pointer enter
-			if(!child.pointerInside)
+			if(!child.pointerInside && child.onPointerEnter !== null)
 			{			
-				if(child.onPointerEnter !== null)
-				{
-					child.onPointerEnter(mouse, viewport);
-				}
+				child.onPointerEnter(mouse, viewport);
 			}
 
 			// Pointer over
@@ -80,24 +77,23 @@ Renderer.prototype.update = function(object, viewport)
 				{
 					child.onButtonPressed(mouse, viewport);
 				}
+
+				if(child.draggable)
+				{
+					child.beingDragged = true;
+				}
 			}
 
 			// Just pressed
-			if(mouse.buttonJustPressed(Mouse.LEFT))
+			if(mouse.buttonJustPressed(Mouse.LEFT) && child.onButtonDown !== null)
 			{	
-				if(child.onButtonDown !== null)
-				{
-					child.onButtonDown(mouse, viewport);
-				}
+				child.onButtonDown(mouse, viewport);
 			}
 
 			// Just released
-			if(mouse.buttonJustReleased(Mouse.LEFT))
+			if(mouse.buttonJustReleased(Mouse.LEFT) && child.onButtonUp !== null)
 			{	
-				if(child.onButtonUp !== null)
-				{
-					child.onButtonUp(mouse, viewport);
-				}
+				child.onButtonUp(mouse, viewport);
 			}
 
 			child.pointerInside = true;
@@ -111,6 +107,27 @@ Renderer.prototype.update = function(object, viewport)
 			}
 
 			child.pointerInside = false;
+		}
+
+		// Stop object drag
+		if(mouse.buttonJustReleased(Mouse.LEFT))
+		{	
+			if(child.draggable)
+			{
+				child.beingDragged = false;
+			}
+		}
+
+		// Pointer drag event
+		if(child.beingDragged && child.onPointerDrag !== null)
+		{
+			var matrix = viewport.inverseMatrix.clone();
+			matrix.multiply(child.inverseGlobalMatrix);
+			matrix.setPosition(0, 0);
+
+			var delta = matrix.transformPoint(mouse.delta);
+
+			child.onPointerDrag(mouse, viewport, delta)
 		}
 	});
 };

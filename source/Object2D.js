@@ -69,7 +69,7 @@ function Object2D()
 	this.matrixNeedsUpdate = true;
 
 	/**
-	 * Flag to indicate if its possible to drag the object around.
+	 * Indicates if its possible to drag the object around.
 	 *
 	 * If true the onPointerDrag callback is used to update the state of the object.
 	 */
@@ -81,6 +81,11 @@ function Object2D()
 	 * Used to control object event.
 	 */
 	this.pointerInside = false;
+
+	/**
+	 * Flag to indicate if the object is currently being dragged.
+	 */
+	this.beingDragged = false;
 }
 
 /**

@@ -131,6 +131,15 @@ Matrix.prototype.scale = function(sx, sy)
 };
 
 /**
+ * Set the position of the transformation matrix.
+ */
+Matrix.prototype.setPosition = function(x, y)
+{
+	this.m[4] = x;
+	this.m[5] = y;
+};
+
+/**
  * Get the scale from the transformation matrix.
  */
 Matrix.prototype.getScale = function()
@@ -143,7 +152,7 @@ Matrix.prototype.getScale = function()
  */
 Matrix.prototype.getPosition = function()
 {
-	return new Vector2(this.m[5], this.m[6]);
+	return new Vector2(this.m[4], this.m[5]);
 };
 
 /**
