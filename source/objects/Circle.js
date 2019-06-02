@@ -1,5 +1,8 @@
 "use strict";
 
+/**
+ * Circle object draw a circular object.
+ */
 function Circle()
 {
 	Object2D.call(this);
@@ -34,8 +37,7 @@ Circle.prototype.onPointerLeave = function(mouse, viewport)
 
 Circle.prototype.draw = function(context)
 {
-	//context.setLineDash([]);
-	//context.lineWidth = 1;
+	context.lineWidth = 1;
 	context.strokeStyle = this.strokeStyle;
 
 	context.beginPath();

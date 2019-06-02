@@ -197,8 +197,7 @@ Object2D.prototype.onPointerOver = null;
 Object2D.prototype.onPointerDrag = null;
 
 /**
- * Callback method called while the p
- ointer button is pressed.
+ * Callback method called while the pointer button is pressed.
  *
  * Receives (mouse, viewport) as arguments.
  */

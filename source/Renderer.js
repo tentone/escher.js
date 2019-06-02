@@ -70,12 +70,12 @@ Renderer.prototype.update = function(object, viewport)
 				child.onPointerOver(mouse, viewport);
 			}
 
-			// Pointer pressed
-			if(mouse.buttonPressed(Mouse.LEFT))
+			// Pointer just pressed
+			if(mouse.buttonJustPressed(Mouse.LEFT))
 			{
-				if(child.onButtonPressed !== null)
+				if(child.onButtonDown !== null)
 				{
-					child.onButtonPressed(mouse, viewport);
+					child.onButtonDown(mouse, viewport);
 				}
 
 				if(child.draggable)
@@ -84,10 +84,10 @@ Renderer.prototype.update = function(object, viewport)
 				}
 			}
 
-			// Just pressed
-			if(mouse.buttonJustPressed(Mouse.LEFT) && child.onButtonDown !== null)
+			// Pointer pressed
+			if(mouse.buttonPressed(Mouse.LEFT) && child.onButtonPressed !== null)
 			{	
-				child.onButtonDown(mouse, viewport);
+				child.onButtonPressed(mouse, viewport);
 			}
 
 			// Just released
@@ -119,15 +119,19 @@ Renderer.prototype.update = function(object, viewport)
 		}
 
 		// Pointer drag event
-		if(child.beingDragged && child.onPointerDrag !== null)
+		if(child.beingDragged)
 		{
 			var matrix = viewport.inverseMatrix.clone();
 			matrix.multiply(child.inverseGlobalMatrix);
 			matrix.setPosition(0, 0);
 
 			var delta = matrix.transformPoint(mouse.delta);
+			child.position.add(delta);
 
-			child.onPointerDrag(mouse, viewport, delta)
+			if(child.onPointerDrag !== null)
+			{
+				child.onPointerDrag(mouse, viewport, delta)
+			}
 		}
 	});
 };
@@ -151,14 +155,25 @@ Renderer.prototype.render = function(object, viewport)
 	// Set viewport matrix transform
 	viewport.matrix.setContextTransform(context);
 
-	// Render into the canvas
+	// Get objects to be rendered
+	var objects = []
 	object.traverse(function(child)
 	{
-		context.save();
-
-		child.globalMatrix.tranformContext(context);
-		child.draw(context);
-		
-		context.restore();
+		objects.push(child);
 	});
+
+	// Sort objects by layer
+	objects.sort(function(a, b)
+	{
+		return a.layer - b.layer;
+	});
+
+	// Render into the canvas
+	for(var i = 0; i < objects.length; i++)
+	{
+		context.save();
+		objects[i].globalMatrix.tranformContext(context);
+		objects[i].draw(context);
+		context.restore();
+	}
 };

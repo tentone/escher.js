@@ -1,5 +1,8 @@
 "use strict";
 
+/**
+ * Box object draw a box.
+ */
 function Box()
 {
 	Object2D.call(this);
@@ -21,12 +24,6 @@ function Box()
 }
 
 Box.prototype = Object.create(Object2D.prototype);
-
-Box.prototype.onPointerDrag = function(mouse, viewport, delta)
-{
-	this.position.x += delta.x;
-	this.position.y += delta.y;
-};
 
 Box.prototype.onPointerEnter = function(mouse, viewport)
 {
@@ -52,8 +49,7 @@ Box.prototype.draw = function(context)
 	context.fillStyle = this.fillStyle;
 	context.fillRect(this.box.min.x, this.box.min.y, width, height);
 
-	context.setLineDash([]);
-	context.lineWidth = 3;
+	context.lineWidth = 1;
 	context.strokeStyle = this.strokeStyle;
 	context.strokeRect(this.box.min.x, this.box.min.y, width, height);
 };

@@ -41,11 +41,21 @@
 		var background = new Image("pfd.png");
 		background.position.set(0, 0);
 		background.scale.set(1, 1);
+		background.layer = -2;
 		group.add(background);
 
-		var box = new Box();
-		group.add(box);
+		var boxA = new Box();
+		group.add(boxA);
 
+		var boxB = new Box();
+		boxB.position.set(100, 100);
+		group.add(boxB);
+
+		var line = new Line();
+		line.from = boxA.position;
+		line.to = boxB.position;
+		line.layer = -1;
+		group.add(line);
 
 		var circle = new Circle();
 		circle.position.set(300, 0);
