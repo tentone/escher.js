@@ -1,6 +1,6 @@
 "use strict";
 
-function ConnectionLine(src)
+function ConnectionLine()
 {
 	Object2D.call(this);
 
@@ -26,7 +26,8 @@ ConnectionLine.prototype.draw = function(context)
 {
 	context.lineWidth = 2;
 	context.strokeStyle = this.color;
-
+	context.setLineDash([10, 10]);
+	
 	context.beginPath();
 	context.moveTo(this.from.x, this.from.y);
 	context.lineTo(this.to.x, this.to.y);

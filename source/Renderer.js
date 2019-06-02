@@ -18,7 +18,9 @@ function Renderer(canvas)
 	 * Canvas 2D rendering context used to draw content.
 	 */
 	this.context = canvas.getContext("2d");
-
+	this.context.imageSmoothingEnabled = true;
+	this.context.globalCompositeOperation = "source-over";
+	
 	/**
 	 * Mouse input handler object.
 	 */
@@ -41,19 +43,71 @@ Renderer.prototype.update = function(object, viewport)
 
 	// Project mouse coordinates
 	var point = mouse.position.clone();
-	point = viewport.inverseMatrix.transformPoint(point);
+	var viewportPoint = viewport.inverseMatrix.transformPoint(point);
 
 	// Object transformation matrices
 	object.traverse(function(child)
 	{
 		child.updateMatrix();
 		
-		var childPoint = child.inverseGlobalMatrix.transformPoint(point);
-		
+		var childPoint = child.inverseGlobalMatrix.transformPoint(viewportPoint);
+
 		// Check if the mouse pointer is inside
 		if(child.isInside(childPoint))
 		{
-			child.onOver();
+			// Pointer enter
+			if(!child.pointerInside)
+			{			
+				if(child.onPointerEnter !== null)
+				{
+					child.onPointerEnter(mouse, viewport);
+				}
+			}
+
+			// Pointer over
+			if(child.onPointerOver !== null)
+			{
+				child.onPointerOver(mouse, viewport);
+			}
+
+			// Pointer pressed
+			if(mouse.buttonPressed(Mouse.LEFT))
+			{
+				if(child.onPointerPressed !== null)
+				{
+					child.onPointerPressed(mouse, viewport);
+				}
+			}
+
+			// Just pressed
+			if(mouse.buttonJustPressed(Mouse.LEFT))
+			{	
+				if(child.onPointerDown !== null)
+				{
+					child.onPointerDown(mouse, viewport);
+				}
+			}
+
+			// Just released
+			if(mouse.buttonJustReleased(Mouse.LEFT))
+			{	
+				if(child.onPointerUp !== null)
+				{
+					child.onPointerUp(mouse, viewport);
+				}
+			}
+
+			child.pointerInside = true;
+		}
+		else if(child.pointerInside)
+		{
+			// Pointer leave
+			if(child.onPointerLeave !== null)
+			{
+				child.onPointerLeave(mouse, viewport);
+			}
+
+			child.pointerInside = false;
 		}
 	});
 };

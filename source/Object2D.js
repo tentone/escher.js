@@ -50,6 +50,13 @@ function Object2D()
 	this.matrix = new Matrix();
 
 	/**
+	 * Flag indicating if the pointer is inside of the element.
+	 *
+	 * Used to control object event.
+	 */
+	this.pointerInside = false;
+
+	/**
 	 * Global transformation matrix multiplied by the parent matrix.
 	 *
 	 * Used to transform the object before projecting into screen coordinates.
@@ -112,8 +119,6 @@ Object2D.prototype.remove = function(object)
 	}
 };
 
-Object2D.prototype.onOver = function(){};
-
 /**
  * Check if a point is inside of the object.
  */
@@ -148,6 +153,35 @@ Object2D.prototype.updateMatrix = function(context)
  * Has to be implemented by underlying classes.
  *
  * @param context Canvas 2d drawing context.
- * @param canvas The canvas DOM element where its being drawn.
  */
 Object2D.prototype.draw = function(context){};
+
+/**
+ * Callback method called when the pointer enters the object.
+ */
+Object2D.prototype.onPointerEnter = null;
+
+/**
+ * Callback method called when the was inside of the object and leaves the object.
+ */
+Object2D.prototype.onPointerLeave = null;
+
+/**
+ * Callback method while the pointer is over (inside) of the object.
+ */
+Object2D.prototype.onPointerOver = null;
+
+/**
+ * Callback method called while the pointer button is pressed.
+ */
+Object2D.prototype.onPointerPressed = null;
+
+/**
+ * Callback method called when the pointer button is pressed down (single time).
+ */
+Object2D.prototype.onPointerDown = null;
+
+/**
+ * Callback method called when the pointer button is released (single time).
+ */
+Object2D.prototype.onPointerUp = null;

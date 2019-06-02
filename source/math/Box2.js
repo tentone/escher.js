@@ -1,5 +1,10 @@
 "use strict";
 
+/**
+ * Box is described by a minimum and maximum points.
+ *
+ * Can be used for collision detection with points and other boxes.
+ */
 function Box2(min, max)
 {
 	this.min = (min !== undefined) ? min : new Vector2();

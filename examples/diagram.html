@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>diagram.js</title>
+</head>
+<body>
+	<script type="text/javascript" src="../source/EventManager.js"></script>
+	<script type="text/javascript" src="../source/Object2D.js"></script>
+	<script type="text/javascript" src="../source/Viewport.js"></script>
+	<script type="text/javascript" src="../source/Renderer.js"></script>
+
+	<script type="text/javascript" src="../source/input/Key.js"></script>
+	<script type="text/javascript" src="../source/input/Mouse.js"></script>
+
+	<script type="text/javascript" src="../source/objects/Image.js"></script>
+	<script type="text/javascript" src="../source/objects/Text.js"></script>
+	<script type="text/javascript" src="../source/objects/Box.js"></script>
+	<script type="text/javascript" src="../source/objects/ConnectionLine.js"></script>
+
+	<script type="text/javascript" src="../source/math/Vector2.js"></script>
+	<script type="text/javascript" src="../source/math/Box2.js"></script>
+	<script type="text/javascript" src="../source/math/UUID.js"></script>
+	<script type="text/javascript" src="../source/math/Matrix.js"></script>
+
+	<script type="text/javascript">
+		var canvas = document.createElement("canvas");
+		canvas.width = 800;
+		canvas.height = 600;
+		canvas.style.border = "1px solid #000000";
+		canvas.oncontextmenu = function(event)
+		{
+			event.preventDefault();
+			return false;
+		};
+		document.body.appendChild(canvas);
+
+		var group = new Object2D();
+
+		var background = new Image("pfd.png");
+		background.position.set(0, 0);
+		background.scale.set(1, 1);
+		group.add(background);
+
+		var box = new Box();
+		group.add(box);
+
+		var viewport = new Viewport();
+
+		var renderer = new Renderer(canvas);
+
+		function loop()
+		{
+			renderer.update(group, viewport);
+			renderer.render(group, viewport);
+			requestAnimationFrame(loop);
+		}
+
+		loop();
+	</script>
+</body>
+</html>

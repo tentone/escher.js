@@ -13,8 +13,7 @@ function Matrix(values)
 	}
 	else
 	{
-		this.m = null;
-		this.reset();
+		this.identity();
 	}
 }
 
@@ -27,9 +26,17 @@ Matrix.prototype.copy = function(mat)
 };
 
 /**
+ * Create a new matrix object with a copy of the content of this one.
+ */
+Matrix.prototype.clone = function()
+{
+	return new Matrix(this.m.slice(0))
+};
+
+/**
  * Reset this matrix to indentity.
  */
-Matrix.prototype.reset = function()
+Matrix.prototype.identity = function()
 {
 	this.m = [1, 0, 0, 1, 0, 0];
 };
@@ -124,6 +131,22 @@ Matrix.prototype.scale = function(sx, sy)
 };
 
 /**
+ * Get the scale from the transformation matrix.
+ */
+Matrix.prototype.getScale = function()
+{
+	return new Vector2(this.m[0], this.m[3]);
+};
+
+/**
+ * Get the position from the transformation matrix.
+ */
+Matrix.prototype.getPosition = function()
+{
+	return new Vector2(this.m[5], this.m[6]);
+};
+
+/**
  * Apply skew to this matrix.
  */
 Matrix.prototype.skew = function(radianX, radianY)
@@ -150,6 +173,17 @@ Matrix.prototype.getInverse = function()
 };
 
 /**
+ * Transform a point using this matrix.
+ */
+Matrix.prototype.transformPoint = function(p)
+{
+	var px = p.x * this.m[0] + p.y * this.m[2] + this.m[4];
+	var py = p.x * this.m[1] + p.y * this.m[3] + this.m[5];
+
+	return new Vector2(px, py);
+};
+
+/**
  * Set a canvas context to use this transformation.
  */
 Matrix.prototype.setContextTransform = function(context)
@@ -163,15 +197,4 @@ Matrix.prototype.setContextTransform = function(context)
 Matrix.prototype.tranformContext = function(context)
 {
 	context.transform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
-};
-
-/**
- * Transform a point using this matrix.
- */
-Matrix.prototype.transformPoint = function(p)
-{
-	var px = p.x * this.m[0] + p.y * this.m[2] + this.m[4];
-	var py = p.x * this.m[1] + p.y * this.m[3] + this.m[5];
-
-	return new Vector2(px, py);
 };

@@ -41,14 +41,34 @@ function Viewport()
 	 * If true the matrix is updated before rendering the object.
 	 */
 	this.matrixNeedsUpdate = true;
+
+	/**
+	 * Flag to indicate if the viewport should move when scalling.
+	 *
+	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
+	 */
+	this.moveOnScale = true;
 }
 
 /**
  * Update the viewport controls using the mouse object.
  */
 Viewport.prototype.updateControls = function(mouse)
-{
-	this.scale -= mouse.wheel * 1e-3 * this.scale;
+{	
+	if(mouse.wheel !== 0)
+	{
+		this.scale -= mouse.wheel * 1e-3 * this.scale;
+
+		if(this.moveOnScale)
+		{	
+			var speed = mouse.wheel / this.scale;
+			var halfWidth = mouse.canvas.width / 2;
+			var halfWeight = mouse.canvas.height / 2;
+
+			this.position.x += ((mouse.position.x - halfWidth) / halfWidth) * speed;
+			this.position.y += ((mouse.position.y - halfWeight) / halfWeight) * speed;
+		}
+	}
 
 	if(mouse.buttonPressed(Mouse.RIGHT))
 	{
