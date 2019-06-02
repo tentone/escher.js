@@ -10,8 +10,6 @@
 	<script type="text/javascript" src="source/Viewport.js"></script>
 	<script type="text/javascript" src="source/Renderer.js"></script>
 
-	<script type="text/javascript" src="source/controls/ViewportControls.js"></script>
-
 	<script type="text/javascript" src="source/input/Key.js"></script>
 	<script type="text/javascript" src="source/input/Mouse.js"></script>
 
@@ -30,6 +28,11 @@
 		canvas.width = 800;
 		canvas.height = 600;
 		canvas.style.border = "1px solid #000000";
+		canvas.oncontextmenu = function(event)
+		{
+			event.preventDefault();
+			return false;
+		};
 		document.body.appendChild(canvas);
 
 		var o = new Object2D();
@@ -53,9 +56,6 @@
 
 		var v = new Viewport();
 
-		var c = new ViewportControls(v);
-		c.create();
-
 		var r = new Renderer(canvas);
 
 		function loop()
@@ -63,6 +63,7 @@
 			i.rotation += 0.01;
 			re.rotation -= 0.005;
 
+			r.update(o, v)
 			r.render(o, v)
 			requestAnimationFrame(loop);
 		}

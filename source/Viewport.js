@@ -44,12 +44,23 @@ function Viewport()
 }
 
 /**
- * Set the transformation of the canvas context.
- *
- * @param context Canvas 2d drawing context.
- * @param canvas The canvas DOM element where its being drawn.
+ * Update the viewport controls using the mouse object.
  */
-Viewport.prototype.updateMatrix = function(context, canvas)
+Viewport.prototype.updateControls = function(mouse)
+{
+	this.scale -= mouse.wheel * 1e-3 * this.scale;
+
+	if(mouse.buttonPressed(Mouse.RIGHT))
+	{
+		this.position.x += mouse.delta.x;
+		this.position.y += mouse.delta.y;
+	}
+};
+
+/**
+ * Calculate and update the viewport transformation matrix.
+ */
+Viewport.prototype.updateMatrix = function()
 {
 	if(this.matrixNeedsUpdate)
 	{
