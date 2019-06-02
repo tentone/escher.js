@@ -13,9 +13,14 @@ function Circle()
 	this.radius = 10.0;
 
 	/**
-	 * Color of the box border line.
+	 * Color of the circle border line.
 	 */
 	this.strokeStyle = "#000000";
+
+	/**
+	 * Background color of the circle.
+	 */
+	this.fillStyle = "#FFFFFF";
 }
 
 Circle.prototype = Object.create(Object2D.prototype);
@@ -27,16 +32,22 @@ Circle.prototype.isInside = function(point)
 
 Circle.prototype.onPointerEnter = function(mouse, viewport)
 {
-	this.strokeStyle = "#FF0000";
+	this.fillStyle = "#CCCCCC";
 };
 
 Circle.prototype.onPointerLeave = function(mouse, viewport)
 {
-	this.strokeStyle = "#000000";
+	this.fillStyle = "#FFFFFF";
 };
 
 Circle.prototype.draw = function(context)
 {
+	context.fillStyle = this.fillStyle;
+
+	context.beginPath();
+	context.arc(0, 0, this.radius, 0, 2 * Math.PI);
+	context.fill();
+
 	context.lineWidth = 1;
 	context.strokeStyle = this.strokeStyle;
 
