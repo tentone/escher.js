@@ -8,10 +8,17 @@
 	<script type="text/javascript" src="../build/diagram.js"></script>
 
 	<script type="text/javascript">
+
+		// Setup the display canvas
 		var canvas = document.createElement("canvas");
-		canvas.width = 800;
-		canvas.height = 600;
-		canvas.style.border = "1px solid #000000";
+		canvas.style.position = "absolute";
+		canvas.style.width = "100%";
+		canvas.style.height = "100%";
+		canvas.style.top = "0px";
+		canvas.style.left = "0px";
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+
 		canvas.oncontextmenu = function(event)
 		{
 			event.preventDefault();
@@ -19,6 +26,13 @@
 		};
 		document.body.appendChild(canvas);
 
+		window.onresize = function()
+		{
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		};
+
+		// Create the diagram
 		var group = new Diagram.Object2D();
 
 		var background = new Diagram.Image("hexagon.jpg");
@@ -61,11 +75,11 @@
 		line.layer = -1;
 		group.add(line);
 
-
 		var viewport = new Diagram.Viewport();
 
 		var renderer = new Diagram.Renderer(canvas);
 
+		// Update and render the diagram
 		function loop()
 		{
 			renderer.update(group, viewport);
