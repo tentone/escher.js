@@ -1,6 +1,6 @@
 "use strict";
 
-import {Mouse} from "./input/Mouse.js";
+import {Pointer} from "./input/Pointer.js";
 
 /**
  * The renderer is resposible for drawing the structure into the canvas element.
@@ -24,10 +24,10 @@ function Renderer(canvas)
 	this.context.globalCompositeOperation = "source-over";
 
 	/**
-	 * Mouse input handler object.
+	 * Pointer input handler object.
 	 */
-	this.mouse = new Mouse();
-	this.mouse.setCanvas(canvas);
+	this.pointer = new Pointer();
+	this.pointer.setCanvas(canvas);
 }
 
 /**
@@ -38,46 +38,44 @@ function Renderer(canvas)
  */
 Renderer.prototype.update = function(object, viewport)
 {
-	this.mouse.update();
+	this.pointer.update();
 
-	var mouse = this.mouse;
+	var pointer = this.pointer;
 
 	// Viewport transform matrix
-	viewport.updateControls(mouse);
+	viewport.updateControls(pointer);
 	viewport.updateMatrix();
 
-	// Project mouse coordinates
-	var point = mouse.position.clone();
+	// Project pointer coordinates
+	var point = pointer.position.clone();
 	var viewportPoint = viewport.inverseMatrix.transformPoint(point);
 
 	// Object transformation matrices
 	object.traverse(function(child)
-	{
-		child.updateMatrix();
-		
+	{		
 		var childPoint = child.inverseGlobalMatrix.transformPoint(viewportPoint);
 
-		// Check if the mouse pointer is inside
+		// Check if the pointer pointer is inside
 		if(child.isInside(childPoint))
 		{
 			// Pointer enter
 			if(!child.pointerInside && child.onPointerEnter !== null)
 			{			
-				child.onPointerEnter(mouse, viewport);
+				child.onPointerEnter(pointer, viewport);
 			}
 
 			// Pointer over
 			if(child.onPointerOver !== null)
 			{
-				child.onPointerOver(mouse, viewport);
+				child.onPointerOver(pointer, viewport);
 			}
 
 			// Pointer just pressed
-			if(mouse.buttonJustPressed(Mouse.LEFT))
+			if(pointer.buttonJustPressed(Pointer.LEFT))
 			{
 				if(child.onButtonDown !== null)
 				{
-					child.onButtonDown(mouse, viewport);
+					child.onButtonDown(pointer, viewport);
 				}
 
 				if(child.draggable)
@@ -87,15 +85,15 @@ Renderer.prototype.update = function(object, viewport)
 			}
 
 			// Pointer pressed
-			if(mouse.buttonPressed(Mouse.LEFT) && child.onButtonPressed !== null)
+			if(pointer.buttonPressed(Pointer.LEFT) && child.onButtonPressed !== null)
 			{	
-				child.onButtonPressed(mouse, viewport);
+				child.onButtonPressed(pointer, viewport);
 			}
 
 			// Just released
-			if(mouse.buttonJustReleased(Mouse.LEFT) && child.onButtonUp !== null)
+			if(pointer.buttonJustReleased(Pointer.LEFT) && child.onButtonUp !== null)
 			{	
-				child.onButtonUp(mouse, viewport);
+				child.onButtonUp(pointer, viewport);
 			}
 
 			child.pointerInside = true;
@@ -105,14 +103,14 @@ Renderer.prototype.update = function(object, viewport)
 			// Pointer leave
 			if(child.onPointerLeave !== null)
 			{
-				child.onPointerLeave(mouse, viewport);
+				child.onPointerLeave(pointer, viewport);
 			}
 
 			child.pointerInside = false;
 		}
 
 		// Stop object drag
-		if(mouse.buttonJustReleased(Mouse.LEFT))
+		if(pointer.buttonJustReleased(Pointer.LEFT))
 		{	
 			if(child.draggable)
 			{
@@ -127,14 +125,22 @@ Renderer.prototype.update = function(object, viewport)
 			matrix.multiply(child.inverseGlobalMatrix);
 			matrix.setPosition(0, 0);
 
-			var delta = matrix.transformPoint(mouse.delta);
+			var delta = matrix.transformPoint(pointer.delta);
 			child.position.add(delta);
 
 			if(child.onPointerDrag !== null)
 			{
-				child.onPointerDrag(mouse, viewport, delta)
+				child.onPointerDrag(pointer, viewport, delta);
 			}
 		}
+
+		// On update
+		if(child.onUpdate !== null)
+		{
+			child.onUpdate();
+		}
+
+		child.updateMatrix();
 	});
 };
 
@@ -161,7 +167,10 @@ Renderer.prototype.render = function(object, viewport)
 	var objects = []
 	object.traverse(function(child)
 	{
-		objects.push(child);
+		if(child.visible)
+		{
+			objects.push(child);
+		}
 	});
 
 	// Sort objects by layer

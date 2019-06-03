@@ -50,7 +50,7 @@ Box.prototype.createResizeHelpers = function(first_argument)
 
 	var topRight = new Circle();
 	topRight.radius = 4;
-	topRight.onPointerDrag = function()
+	topRight.onPointerDrag = function(pointer, viewport, delta)
 	{
 		self.box.min.copy(topRight.position);
 		updateHelpers();
@@ -59,7 +59,7 @@ Box.prototype.createResizeHelpers = function(first_argument)
 
 	var topLeft = new Circle();
 	topLeft.radius = 4;
-	topLeft.onPointerDrag = function()
+	topLeft.onPointerDrag = function(pointer, viewport, delta)
 	{
 		self.box.max.x = topLeft.position.x;
 		self.box.min.y = topLeft.position.y;
@@ -69,7 +69,7 @@ Box.prototype.createResizeHelpers = function(first_argument)
 
 	var bottomLeft = new Circle();
 	bottomLeft.radius = 4;
-	bottomLeft.onPointerDrag = function()
+	bottomLeft.onPointerDrag = function(pointer, viewport, delta)
 	{
 		self.box.max.copy(bottomLeft.position);
 		updateHelpers();
@@ -78,7 +78,7 @@ Box.prototype.createResizeHelpers = function(first_argument)
 
 	var bottomRight = new Circle();
 	bottomRight.radius = 4;
-	bottomRight.onPointerDrag = function()
+	bottomRight.onPointerDrag = function(pointer, viewport, delta)
 	{
 		self.box.min.x = bottomRight.position.x;
 		self.box.max.y = bottomRight.position.y;
@@ -89,12 +89,12 @@ Box.prototype.createResizeHelpers = function(first_argument)
 	updateHelpers();
 };
 
-Box.prototype.onPointerEnter = function(mouse, viewport)
+Box.prototype.onPointerEnter = function(pointer, viewport)
 {
 	this.fillStyle = "#CCCCCC";
 };
 
-Box.prototype.onPointerLeave = function(mouse, viewport)
+Box.prototype.onPointerLeave = function(pointer, viewport)
 {
 	this.fillStyle = "#FFFFFF";
 };

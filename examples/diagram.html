@@ -35,6 +35,12 @@
 		// Create the diagram
 		var group = new Diagram.Object2D();
 
+		var image = new Diagram.Image("grid.png");
+		image.position.set(-300, -400);
+		image.scale.set(1, 1);
+		image.layer = 5;
+		group.add(image);
+
 		var background = new Diagram.Image("hexagon.jpg");
 		background.position.set(-300, -400);
 		background.scale.set(1, 1);
@@ -81,7 +87,10 @@
 
 		// Update and render the diagram
 		function loop()
-		{
+		{	
+			group.rotation += 0.001;
+			image.rotation += 0.01;
+
 			renderer.update(group, viewport);
 			renderer.render(group, viewport);
 

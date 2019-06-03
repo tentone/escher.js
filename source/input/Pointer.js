@@ -5,15 +5,15 @@ import {Vector2} from "../math/Vector2.js";
 import {Key} from "./Key.js";
 
 /**
- * Mouse instance for input in sync with the running 3D application.
+ * Pointer instance for input in sync with the running 3D application.
  *
- * The mouse object provided by scripts is automatically updated by the runtime handler.
+ * The pointer object provided by scripts is automatically updated by the runtime handler.
  * 
  * @class
- * @param {DOM} domElement DOM element to craete the mouse events.
- * @param {Boolean} dontInitialize If true the mouse events are not created.
+ * @param {DOM} domElement DOM element to craete the pointer events.
+ * @param {Boolean} dontInitialize If true the pointer events are not created.
  */
-function Mouse(domElement, dontInitialize)
+function Pointer(domElement)
 {
 	//Raw data
 	this._keys = new Array(5);
@@ -25,37 +25,37 @@ function Mouse(domElement, dontInitialize)
 	this._doubleClicked = new Array(5);
 
 	/**
-	 * Array with mouse buttons status.
+	 * Array with pointer buttons status.
 	 */
 	this.keys = new Array(5);
 
 	/**
-	 * Mouse position inside of the window (coordinates in window space).
+	 * Pointer position inside of the window (coordinates in window space).
 	 */
 	this.position = new Vector2(0, 0);
 
 	/**
-	 * Mouse movement (coordinates in window space).
+	 * Pointer movement (coordinates in window space).
 	 */
 	this.delta = new Vector2(0, 0);
 
 	/**
-	 * Mouse scroll wheel movement.
+	 * Pointer scroll wheel movement.
 	 */
 	this.wheel = 0;
 	
 	/**
-	 * Indicates a button of the mouse was double clicked.
+	 * Indicates a button of the pointer was double clicked.
 	 */
 	this.doubleClicked = new Array(5);
 
 	/**
-	 * DOM element where to attach the mouse events.
+	 * DOM element where to attach the pointer events.
 	 */
 	this.domElement = (domElement !== undefined) ? domElement : window;
 
 	/**
-	 * Canvas attached to this mouse instance used to calculate position and delta in element space coordinates.
+	 * Canvas attached to this pointer instance used to calculate position and delta in element space coordinates.
 	 */
 	this.canvas = null;
 	
@@ -120,7 +120,7 @@ function Mouse(domElement, dontInitialize)
 			var touch = event.touches[0];
 
 			self.updatePosition(touch.clientX, touch.clientY, 0, 0);
-			self.updateKey(Mouse.LEFT, Key.DOWN);
+			self.updateKey(Pointer.LEFT, Key.DOWN);
 
 			lastTouch.set(touch.clientX, touch.clientY);
 		});
@@ -128,13 +128,13 @@ function Mouse(domElement, dontInitialize)
 		//Touch end event
 		this.events.add(this.domElement, "touchend", function(event)
 		{
-			self.updateKey(Mouse.LEFT, Key.UP);
+			self.updateKey(Pointer.LEFT, Key.UP);
 		});
 
 		//Touch cancel event
 		this.events.add(this.domElement, "touchcancel", function(event)
 		{
-			self.updateKey(Mouse.LEFT, Key.UP);
+			self.updateKey(Pointer.LEFT, Key.UP);
 		});
 
 		//Touch move event
@@ -170,124 +170,121 @@ function Mouse(domElement, dontInitialize)
 		self.updateKey(event.which - 1, Key.UP);
 	});
 
-	//Mouse double click
+	//Pointer double click
 	this.events.add(this.domElement, "dblclick", function(event)
 	{	
 		self._doubleClicked[event.which - 1] = true;
 	});
 
-	if(dontInitialize !== true)
-	{
-		this.create();
-	}
+	this.create();
 }
 
-Mouse.prototype = Mouse;
-Mouse.prototype.constructor = Mouse;
+Pointer.prototype = Pointer;
+Pointer.prototype.constructor = Pointer;
 
 /**
- * Left mouse button.
+ * Left pointer button.
  */
-Mouse.LEFT = 0;
+Pointer.LEFT = 0;
 
 /**
- * Middle mouse button.
+ * Middle pointer button.
  */
-Mouse.MIDDLE = 1;
+Pointer.MIDDLE = 1;
 
 /**
- * Right mouse button.
+ * Right pointer button.
  */
-Mouse.RIGHT = 2;
+Pointer.RIGHT = 2;
 
 /**
- * Back mouse navigation button.
+ * Back pointer navigation button.
  */
-Mouse.BACK = 3;
+Pointer.BACK = 3;
 
 /**
- * Forward mouse navigation button.
+ * Forward pointer navigation button.
  */
-Mouse.FORWARD = 4;
+Pointer.FORWARD = 4;
 
 /**
  * Element to be used for coordinates calculation relative to that canvas.
  * 
- * @param {DOM} canvas Canvas to be attached to the Mouse instance
+ * @param {DOM} canvas Canvas to be attached to the Pointer instance
  */
-Mouse.setCanvas = function(element)
+Pointer.setCanvas = function(element)
 {
 	this.canvas = element;
 
-	element.mouseInside = false;
+	element.pointerInside = false;
 
 	element.addEventListener("mouseenter", function()
 	{
-		this.mouseInside = true;
+		this.pointerInside = true;
 	});
 
 	element.addEventListener("mouseleave", function()
 	{
-		this.mouseInside = false;
+		this.pointerInside = false;
 	});
 };
 
 /**
- * Check if mouse is inside attached canvas (updated async).
+ * Check if pointer is inside attached canvas (updated async).
  * 
- * @return {boolean} True if mouse is currently inside the canvas
+ * @return {boolean} True if pointer is currently inside the canvas
  */
-Mouse.insideCanvas = function()
+Pointer.insideCanvas = function()
 {
-	return this.canvas !== null && this.canvas.mouseInside;
+	return this.canvas !== null && this.canvas.pointerInside;
 };
 
 /**
- * Check if mouse button is currently pressed.
+ * Check if pointer button is currently pressed.
  * 
  * @param {Number} button Button to check status of
  * @return {boolean} True if button is currently pressed
  */
-Mouse.buttonPressed = function(button)
+Pointer.buttonPressed = function(button)
 {
 	return this.keys[button].pressed;
 };
 
 /**
- * Check if mouse button was double clicked.
+ * Check if pointer button was double clicked.
  * 
  * @param {Number} button Button to check status of
- * @return {boolean} True if some mouse button was just double clicked
+ * @return {boolean} True if some pointer button was just double clicked
  */
-Mouse.buttonDoubleClicked = function(button)
+Pointer.buttonDoubleClicked = function(button)
 {
 	return this.doubleClicked[button];
 };
 
 /**
- * Check if a mouse button was just pressed.
+ * Check if a pointer button was just pressed.
  * 
  * @param {Number} button Button to check status of
  * @return {boolean} True if button was just pressed
  */
-Mouse.buttonJustPressed = function(button)
+Pointer.buttonJustPressed = function(button)
 {
 	return this.keys[button].justPressed;
 };
 
 /**
- * Check if a mouse button was just released.
+ * Check if a pointer button was just released.
  * 
  * @param {Number} button Button to check status of
  * @return {boolean} True if button was just released
  */
-Mouse.buttonJustReleased = function(button)
+Pointer.buttonJustReleased = function(button)
 {
 	return this.keys[button].justReleased;
 };
 
 /**
- * Update mouse position.
+ * Update pointer position.
  *
  * Automatically called by the runtime.
  * 
@@ -296,7 +293,7 @@ Mouse.buttonJustReleased = function(button)
  * @param {Number} xDiff
  * @param {Number} yDiff
  */
-Mouse.updatePosition = function(x, y, xDiff, yDiff)
+Pointer.updatePosition = function(x, y, xDiff, yDiff)
 {
 	if(this.canvas !== null)
 	{
@@ -312,14 +309,14 @@ Mouse.updatePosition = function(x, y, xDiff, yDiff)
 };
 
 /**
- * Update a mouse button.
+ * Update a pointer button.
  * 
  * Automatically called by the runtime.
  *
  * @param {Number} button
  * @param {Number} action
  */
-Mouse.updateKey = function(button, action)
+Pointer.updateKey = function(button, action)
 {
 	if(button > -1)
 	{
@@ -328,11 +325,11 @@ Mouse.updateKey = function(button, action)
 };
 
 /**
- * Update mouse buttons state, position, wheel and delta synchronously.
+ * Update pointer buttons state, position, wheel and delta synchronously.
  */
-Mouse.update = function()
+Pointer.update = function()
 {
-	//Update mouse keys state
+	//Update pointer keys state
 	for(var i = 0; i < 5; i++)
 	{
 		if(this._keys[i].justPressed && this.keys[i].justPressed)
@@ -346,7 +343,7 @@ Mouse.update = function()
 
 		this.keys[i].set(this._keys[i].justPressed, this._keys[i].pressed, this._keys[i].justReleased);
 
-		//Update mouse double click
+		//Update pointer double click
 		if(this._doubleClicked[i] === true)
 		{
 			this.doubleClicked[i] = true;
@@ -358,7 +355,7 @@ Mouse.update = function()
 		}
 	}
 
-	//Update mouse wheel
+	//Update pointer wheel
 	if(this._wheelUpdated)
 	{
 		this.wheel = this._wheel;
@@ -369,7 +366,7 @@ Mouse.update = function()
 		this.wheel = 0;
 	}
 
-	//Update mouse Position if needed
+	//Update pointer Position if needed
 	if(this._positionUpdated)
 	{
 		this.delta.copy(this._delta);
@@ -386,20 +383,20 @@ Mouse.update = function()
 };
 
 /**
- * Create mouse events.
+ * Create pointer events.
  */
-Mouse.create = function()
+Pointer.create = function()
 {
 	this.events.create();
 };
 
 /**
- * Dispose mouse events.
+ * Dispose pointer events.
  */
-Mouse.dispose = function()
+Pointer.dispose = function()
 {
 	this.events.destroy();
 };
 
 
-export {Mouse};
+export {Pointer};

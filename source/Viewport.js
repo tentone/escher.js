@@ -3,7 +3,7 @@
 import {Vector2} from "./math/Vector2.js";
 import {Matrix} from "./math/Matrix.js";
 import {UUID} from "./math/UUID.js";
-import {Mouse} from "./input/Mouse.js";
+import {Pointer} from "./input/Pointer.js";
 
 /**
  * Used to indicate how the user views the content inside of the canvas.
@@ -56,29 +56,29 @@ function Viewport()
 }
 
 /**
- * Update the viewport controls using the mouse object.
+ * Update the viewport controls using the pointer object.
  */
-Viewport.prototype.updateControls = function(mouse)
+Viewport.prototype.updateControls = function(pointer)
 {	
-	if(mouse.wheel !== 0)
+	if(pointer.wheel !== 0)
 	{
-		this.scale -= mouse.wheel * 1e-3 * this.scale;
+		this.scale -= pointer.wheel * 1e-3 * this.scale;
 
 		if(this.moveOnScale)
 		{	
-			var speed = mouse.wheel / this.scale;
-			var halfWidth = mouse.canvas.width / 2;
-			var halfWeight = mouse.canvas.height / 2;
+			var speed = pointer.wheel / this.scale;
+			var halfWidth = pointer.canvas.width / 2;
+			var halfWeight = pointer.canvas.height / 2;
 
-			this.position.x += ((mouse.position.x - halfWidth) / halfWidth) * speed;
-			this.position.y += ((mouse.position.y - halfWeight) / halfWeight) * speed;
+			this.position.x += ((pointer.position.x - halfWidth) / halfWidth) * speed;
+			this.position.y += ((pointer.position.y - halfWeight) / halfWeight) * speed;
 		}
 	}
 
-	if(mouse.buttonPressed(Mouse.RIGHT))
+	if(pointer.buttonPressed(Pointer.RIGHT))
 	{
-		this.position.x += mouse.delta.x;
-		this.position.y += mouse.delta.y;
+		this.position.x += pointer.delta.x;
+		this.position.y += pointer.delta.y;
 	}
 };
 

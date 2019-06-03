@@ -42,6 +42,11 @@ function Object2D()
 	this.rotation = 0.0;
 
 	/**
+	 * Indicates if the object is visible.
+	 */
+	this.visible = true;
+
+	/**
 	 * Layer of this object, objects are sorted by layer value.
 	 *
 	 * Lower layer value is draw first.
@@ -63,7 +68,7 @@ function Object2D()
 	/**
 	 * Inverse of the global matrix.
 	 *
-	 * Used to convert mouse input points into object coordinates.
+	 * Used to convert pointer input points into object coordinates.
 	 */
 	this.inverseGlobalMatrix = new Matrix();
 
@@ -173,37 +178,44 @@ Object2D.prototype.updateMatrix = function(context)
 Object2D.prototype.draw = function(context){};
 
 /**
+ * Callback method called every time before the object is draw into the canvas.
+ *
+ * Can be used to run preparation code, move the object, etc.
+ */
+Object2D.prototype.onUpdate = null;
+
+/**
  * Callback method called when the pointer enters the object.
  *
- * Receives (mouse, viewport) as arguments.
+ * Receives (pointer, viewport) as arguments.
  */
 Object2D.prototype.onPointerEnter = null;
 
 /**
  * Callback method called when the was inside of the object and leaves the object.
  *
- * Receives (mouse, viewport) as arguments.
+ * Receives (pointer, viewport) as arguments.
  */
 Object2D.prototype.onPointerLeave = null;
 
 /**
  * Callback method while the pointer is over (inside) of the object.
  *
- * Receives (mouse, viewport) as arguments.
+ * Receives (pointer, viewport) as arguments.
  */
 Object2D.prototype.onPointerOver = null;
 
 /**
  * Callback method while the object is being dragged across the screen.
  *
- * Receives (mouse, viewport, delta) as arguments. Delta is the movement of the mouse already translated into local object coordinates.
+ * Receives (pointer, viewport, delta) as arguments. Delta is the movement of the pointer already translated into local object coordinates.
  */
 Object2D.prototype.onPointerDrag = null;
 
 /**
  * Callback method called while the pointer button is pressed.
  *
- * Receives (mouse, viewport) as arguments.
+ * Receives (pointer, viewport) as arguments.
  */
 Object2D.prototype.onButtonPressed = null;
 

@@ -576,15 +576,15 @@
 
 		return function generateUUID()
 		{
-			var d0 = Math.random() * 0xffffffff | 0;
-			var d1 = Math.random() * 0xffffffff | 0;
-			var d2 = Math.random() * 0xffffffff | 0;
-			var d3 = Math.random() * 0xffffffff | 0;
+			var d0 = Math.random() * 0XFFFFFFFF | 0;
+			var d1 = Math.random() * 0XFFFFFFFF | 0;
+			var d2 = Math.random() * 0XFFFFFFFF | 0;
+			var d3 = Math.random() * 0XFFFFFFFF | 0;
 
-			var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + "-" +
-				lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + "-" + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + "-" +
-				lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + "-" + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
-				lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+			var uuid = lut[d0 & 0xff] + lut[d0 >> 8 & 0xff] + lut[d0 >> 16 & 0xff] + lut[d0 >> 24 & 0xff] + "-" +
+				lut[d1 & 0xff] + lut[d1 >> 8 & 0xff] + "-" + lut[d1 >> 16 & 0x0f | 0x40] + lut[d1 >> 24 & 0xff] + "-" +
+				lut[d2 & 0x3f | 0x80] + lut[d2 >> 8 & 0xff] + "-" + lut[d2 >> 16 & 0xff] + lut[d2 >> 24 & 0xff] +
+				lut[d3 & 0xff] + lut[d3 >> 8 & 0xff] + lut[d3 >> 16 & 0xff] + lut[d3 >> 24 & 0xff];
 
 			return uuid.toUpperCase();
 		};
@@ -628,6 +628,11 @@
 		this.rotation = 0.0;
 
 		/**
+		 * Indicates if the object is visible.
+		 */
+		this.visible = true;
+
+		/**
 		 * Layer of this object, objects are sorted by layer value.
 		 *
 		 * Lower layer value is draw first.
@@ -649,7 +654,7 @@
 		/**
 		 * Inverse of the global matrix.
 		 *
-		 * Used to convert mouse input points into object coordinates.
+		 * Used to convert pointer input points into object coordinates.
 		 */
 		this.inverseGlobalMatrix = new Matrix();
 
@@ -759,37 +764,44 @@
 	Object2D.prototype.draw = function(context){};
 
 	/**
+	 * Callback method called every time before the object is draw into the canvas.
+	 *
+	 * Can be used to run preparation code, move the object, etc.
+	 */
+	Object2D.prototype.onUpdate = null;
+
+	/**
 	 * Callback method called when the pointer enters the object.
 	 *
-	 * Receives (mouse, viewport) as arguments.
+	 * Receives (pointer, viewport) as arguments.
 	 */
 	Object2D.prototype.onPointerEnter = null;
 
 	/**
 	 * Callback method called when the was inside of the object and leaves the object.
 	 *
-	 * Receives (mouse, viewport) as arguments.
+	 * Receives (pointer, viewport) as arguments.
 	 */
 	Object2D.prototype.onPointerLeave = null;
 
 	/**
 	 * Callback method while the pointer is over (inside) of the object.
 	 *
-	 * Receives (mouse, viewport) as arguments.
+	 * Receives (pointer, viewport) as arguments.
 	 */
 	Object2D.prototype.onPointerOver = null;
 
 	/**
 	 * Callback method while the object is being dragged across the screen.
 	 *
-	 * Receives (mouse, viewport, delta) as arguments. Delta is the movement of the mouse already translated into local object coordinates.
+	 * Receives (pointer, viewport, delta) as arguments. Delta is the movement of the pointer already translated into local object coordinates.
 	 */
 	Object2D.prototype.onPointerDrag = null;
 
 	/**
 	 * Callback method called while the pointer button is pressed.
 	 *
-	 * Receives (mouse, viewport) as arguments.
+	 * Receives (pointer, viewport) as arguments.
 	 */
 	Object2D.prototype.onButtonPressed = null;
 
@@ -804,7 +816,7 @@
 	Object2D.prototype.onButtonUp = null;
 
 	/**
-	 * Key is used by Keyboard, Mouse, etc, to represent a key state.
+	 * Key is used by Keyboard, Pointer, etc, to represent a key state.
 	 *
 	 * @class
 	*/
@@ -885,15 +897,15 @@
 	};
 
 	/**
-	 * Mouse instance for input in sync with the running 3D application.
+	 * Pointer instance for input in sync with the running 3D application.
 	 *
-	 * The mouse object provided by scripts is automatically updated by the runtime handler.
+	 * The pointer object provided by scripts is automatically updated by the runtime handler.
 	 * 
 	 * @class
-	 * @param {DOM} domElement DOM element to craete the mouse events.
-	 * @param {Boolean} dontInitialize If true the mouse events are not created.
+	 * @param {DOM} domElement DOM element to craete the pointer events.
+	 * @param {Boolean} dontInitialize If true the pointer events are not created.
 	 */
-	function Mouse(domElement, dontInitialize)
+	function Pointer(domElement)
 	{
 		//Raw data
 		this._keys = new Array(5);
@@ -905,37 +917,37 @@
 		this._doubleClicked = new Array(5);
 
 		/**
-		 * Array with mouse buttons status.
+		 * Array with pointer buttons status.
 		 */
 		this.keys = new Array(5);
 
 		/**
-		 * Mouse position inside of the window (coordinates in window space).
+		 * Pointer position inside of the window (coordinates in window space).
 		 */
 		this.position = new Vector2(0, 0);
 
 		/**
-		 * Mouse movement (coordinates in window space).
+		 * Pointer movement (coordinates in window space).
 		 */
 		this.delta = new Vector2(0, 0);
 
 		/**
-		 * Mouse scroll wheel movement.
+		 * Pointer scroll wheel movement.
 		 */
 		this.wheel = 0;
 		
 		/**
-		 * Indicates a button of the mouse was double clicked.
+		 * Indicates a button of the pointer was double clicked.
 		 */
 		this.doubleClicked = new Array(5);
 
 		/**
-		 * DOM element where to attach the mouse events.
+		 * DOM element where to attach the pointer events.
 		 */
 		this.domElement = (domElement !== undefined) ? domElement : window;
 
 		/**
-		 * Canvas attached to this mouse instance used to calculate position and delta in element space coordinates.
+		 * Canvas attached to this pointer instance used to calculate position and delta in element space coordinates.
 		 */
 		this.canvas = null;
 		
@@ -1000,7 +1012,7 @@
 				var touch = event.touches[0];
 
 				self.updatePosition(touch.clientX, touch.clientY, 0, 0);
-				self.updateKey(Mouse.LEFT, Key.DOWN);
+				self.updateKey(Pointer.LEFT, Key.DOWN);
 
 				lastTouch.set(touch.clientX, touch.clientY);
 			});
@@ -1008,13 +1020,13 @@
 			//Touch end event
 			this.events.add(this.domElement, "touchend", function(event)
 			{
-				self.updateKey(Mouse.LEFT, Key.UP);
+				self.updateKey(Pointer.LEFT, Key.UP);
 			});
 
 			//Touch cancel event
 			this.events.add(this.domElement, "touchcancel", function(event)
 			{
-				self.updateKey(Mouse.LEFT, Key.UP);
+				self.updateKey(Pointer.LEFT, Key.UP);
 			});
 
 			//Touch move event
@@ -1050,124 +1062,121 @@
 			self.updateKey(event.which - 1, Key.UP);
 		});
 
-		//Mouse double click
+		//Pointer double click
 		this.events.add(this.domElement, "dblclick", function(event)
 		{	
 			self._doubleClicked[event.which - 1] = true;
 		});
 
-		if(dontInitialize !== true)
-		{
-			this.create();
-		}
+		this.create();
 	}
 
-	Mouse.prototype = Mouse;
-	Mouse.prototype.constructor = Mouse;
+	Pointer.prototype = Pointer;
+	Pointer.prototype.constructor = Pointer;
 
 	/**
-	 * Left mouse button.
+	 * Left pointer button.
 	 */
-	Mouse.LEFT = 0;
+	Pointer.LEFT = 0;
 
 	/**
-	 * Middle mouse button.
+	 * Middle pointer button.
 	 */
-	Mouse.MIDDLE = 1;
+	Pointer.MIDDLE = 1;
 
 	/**
-	 * Right mouse button.
+	 * Right pointer button.
 	 */
-	Mouse.RIGHT = 2;
+	Pointer.RIGHT = 2;
 
 	/**
-	 * Back mouse navigation button.
+	 * Back pointer navigation button.
 	 */
-	Mouse.BACK = 3;
+	Pointer.BACK = 3;
 
 	/**
-	 * Forward mouse navigation button.
+	 * Forward pointer navigation button.
 	 */
-	Mouse.FORWARD = 4;
+	Pointer.FORWARD = 4;
 
 	/**
 	 * Element to be used for coordinates calculation relative to that canvas.
 	 * 
-	 * @param {DOM} canvas Canvas to be attached to the Mouse instance
+	 * @param {DOM} canvas Canvas to be attached to the Pointer instance
 	 */
-	Mouse.setCanvas = function(element)
+	Pointer.setCanvas = function(element)
 	{
 		this.canvas = element;
 
-		element.mouseInside = false;
+		element.pointerInside = false;
 
 		element.addEventListener("mouseenter", function()
 		{
-			this.mouseInside = true;
+			this.pointerInside = true;
 		});
 
 		element.addEventListener("mouseleave", function()
 		{
-			this.mouseInside = false;
+			this.pointerInside = false;
 		});
 	};
 
 	/**
-	 * Check if mouse is inside attached canvas (updated async).
+	 * Check if pointer is inside attached canvas (updated async).
 	 * 
-	 * @return {boolean} True if mouse is currently inside the canvas
+	 * @return {boolean} True if pointer is currently inside the canvas
 	 */
-	Mouse.insideCanvas = function()
+	Pointer.insideCanvas = function()
 	{
-		return this.canvas !== null && this.canvas.mouseInside;
+		return this.canvas !== null && this.canvas.pointerInside;
 	};
 
 	/**
-	 * Check if mouse button is currently pressed.
+	 * Check if pointer button is currently pressed.
 	 * 
 	 * @param {Number} button Button to check status of
 	 * @return {boolean} True if button is currently pressed
 	 */
-	Mouse.buttonPressed = function(button)
+	Pointer.buttonPressed = function(button)
 	{
 		return this.keys[button].pressed;
 	};
 
 	/**
-	 * Check if mouse button was double clicked.
+	 * Check if pointer button was double clicked.
 	 * 
 	 * @param {Number} button Button to check status of
-	 * @return {boolean} True if some mouse button was just double clicked
+	 * @return {boolean} True if some pointer button was just double clicked
 	 */
-	Mouse.buttonDoubleClicked = function(button)
+	Pointer.buttonDoubleClicked = function(button)
 	{
 		return this.doubleClicked[button];
 	};
 
 	/**
-	 * Check if a mouse button was just pressed.
+	 * Check if a pointer button was just pressed.
 	 * 
 	 * @param {Number} button Button to check status of
 	 * @return {boolean} True if button was just pressed
 	 */
-	Mouse.buttonJustPressed = function(button)
+	Pointer.buttonJustPressed = function(button)
 	{
 		return this.keys[button].justPressed;
 	};
 
 	/**
-	 * Check if a mouse button was just released.
+	 * Check if a pointer button was just released.
 	 * 
 	 * @param {Number} button Button to check status of
 	 * @return {boolean} True if button was just released
 	 */
-	Mouse.buttonJustReleased = function(button)
+	Pointer.buttonJustReleased = function(button)
 	{
 		return this.keys[button].justReleased;
 	};
 
 	/**
-	 * Update mouse position.
+	 * Update pointer position.
 	 *
 	 * Automatically called by the runtime.
 	 * 
@@ -1176,7 +1185,7 @@
 	 * @param {Number} xDiff
 	 * @param {Number} yDiff
 	 */
-	Mouse.updatePosition = function(x, y, xDiff, yDiff)
+	Pointer.updatePosition = function(x, y, xDiff, yDiff)
 	{
 		if(this.canvas !== null)
 		{
@@ -1192,14 +1201,14 @@
 	};
 
 	/**
-	 * Update a mouse button.
+	 * Update a pointer button.
 	 * 
 	 * Automatically called by the runtime.
 	 *
 	 * @param {Number} button
 	 * @param {Number} action
 	 */
-	Mouse.updateKey = function(button, action)
+	Pointer.updateKey = function(button, action)
 	{
 		if(button > -1)
 		{
@@ -1208,11 +1217,11 @@
 	};
 
 	/**
-	 * Update mouse buttons state, position, wheel and delta synchronously.
+	 * Update pointer buttons state, position, wheel and delta synchronously.
 	 */
-	Mouse.update = function()
+	Pointer.update = function()
 	{
-		//Update mouse keys state
+		//Update pointer keys state
 		for(var i = 0; i < 5; i++)
 		{
 			if(this._keys[i].justPressed && this.keys[i].justPressed)
@@ -1226,7 +1235,7 @@
 
 			this.keys[i].set(this._keys[i].justPressed, this._keys[i].pressed, this._keys[i].justReleased);
 
-			//Update mouse double click
+			//Update pointer double click
 			if(this._doubleClicked[i] === true)
 			{
 				this.doubleClicked[i] = true;
@@ -1238,7 +1247,7 @@
 			}
 		}
 
-		//Update mouse wheel
+		//Update pointer wheel
 		if(this._wheelUpdated)
 		{
 			this.wheel = this._wheel;
@@ -1249,7 +1258,7 @@
 			this.wheel = 0;
 		}
 
-		//Update mouse Position if needed
+		//Update pointer Position if needed
 		if(this._positionUpdated)
 		{
 			this.delta.copy(this._delta);
@@ -1266,17 +1275,17 @@
 	};
 
 	/**
-	 * Create mouse events.
+	 * Create pointer events.
 	 */
-	Mouse.create = function()
+	Pointer.create = function()
 	{
 		this.events.create();
 	};
 
 	/**
-	 * Dispose mouse events.
+	 * Dispose pointer events.
 	 */
-	Mouse.dispose = function()
+	Pointer.dispose = function()
 	{
 		this.events.destroy();
 	};
@@ -1303,10 +1312,10 @@
 		this.context.globalCompositeOperation = "source-over";
 
 		/**
-		 * Mouse input handler object.
+		 * Pointer input handler object.
 		 */
-		this.mouse = new Mouse();
-		this.mouse.setCanvas(canvas);
+		this.pointer = new Pointer();
+		this.pointer.setCanvas(canvas);
 	}
 
 	/**
@@ -1317,46 +1326,44 @@
 	 */
 	Renderer.prototype.update = function(object, viewport)
 	{
-		this.mouse.update();
+		this.pointer.update();
 
-		var mouse = this.mouse;
+		var pointer = this.pointer;
 
 		// Viewport transform matrix
-		viewport.updateControls(mouse);
+		viewport.updateControls(pointer);
 		viewport.updateMatrix();
 
-		// Project mouse coordinates
-		var point = mouse.position.clone();
+		// Project pointer coordinates
+		var point = pointer.position.clone();
 		var viewportPoint = viewport.inverseMatrix.transformPoint(point);
 
 		// Object transformation matrices
 		object.traverse(function(child)
-		{
-			child.updateMatrix();
-			
+		{		
 			var childPoint = child.inverseGlobalMatrix.transformPoint(viewportPoint);
 
-			// Check if the mouse pointer is inside
+			// Check if the pointer pointer is inside
 			if(child.isInside(childPoint))
 			{
 				// Pointer enter
 				if(!child.pointerInside && child.onPointerEnter !== null)
 				{			
-					child.onPointerEnter(mouse, viewport);
+					child.onPointerEnter(pointer, viewport);
 				}
 
 				// Pointer over
 				if(child.onPointerOver !== null)
 				{
-					child.onPointerOver(mouse, viewport);
+					child.onPointerOver(pointer, viewport);
 				}
 
 				// Pointer just pressed
-				if(mouse.buttonJustPressed(Mouse.LEFT))
+				if(pointer.buttonJustPressed(Pointer.LEFT))
 				{
 					if(child.onButtonDown !== null)
 					{
-						child.onButtonDown(mouse, viewport);
+						child.onButtonDown(pointer, viewport);
 					}
 
 					if(child.draggable)
@@ -1366,15 +1373,15 @@
 				}
 
 				// Pointer pressed
-				if(mouse.buttonPressed(Mouse.LEFT) && child.onButtonPressed !== null)
+				if(pointer.buttonPressed(Pointer.LEFT) && child.onButtonPressed !== null)
 				{	
-					child.onButtonPressed(mouse, viewport);
+					child.onButtonPressed(pointer, viewport);
 				}
 
 				// Just released
-				if(mouse.buttonJustReleased(Mouse.LEFT) && child.onButtonUp !== null)
+				if(pointer.buttonJustReleased(Pointer.LEFT) && child.onButtonUp !== null)
 				{	
-					child.onButtonUp(mouse, viewport);
+					child.onButtonUp(pointer, viewport);
 				}
 
 				child.pointerInside = true;
@@ -1384,14 +1391,14 @@
 				// Pointer leave
 				if(child.onPointerLeave !== null)
 				{
-					child.onPointerLeave(mouse, viewport);
+					child.onPointerLeave(pointer, viewport);
 				}
 
 				child.pointerInside = false;
 			}
 
 			// Stop object drag
-			if(mouse.buttonJustReleased(Mouse.LEFT))
+			if(pointer.buttonJustReleased(Pointer.LEFT))
 			{	
 				if(child.draggable)
 				{
@@ -1406,14 +1413,22 @@
 				matrix.multiply(child.inverseGlobalMatrix);
 				matrix.setPosition(0, 0);
 
-				var delta = matrix.transformPoint(mouse.delta);
+				var delta = matrix.transformPoint(pointer.delta);
 				child.position.add(delta);
 
 				if(child.onPointerDrag !== null)
 				{
-					child.onPointerDrag(mouse, viewport, delta);
+					child.onPointerDrag(pointer, viewport, delta);
 				}
 			}
+
+			// On update
+			if(child.onUpdate !== null)
+			{
+				child.onUpdate();
+			}
+
+			child.updateMatrix();
 		});
 	};
 
@@ -1440,7 +1455,10 @@
 		var objects = [];
 		object.traverse(function(child)
 		{
-			objects.push(child);
+			if(child.visible)
+			{
+				objects.push(child);
+			}
 		});
 
 		// Sort objects by layer
@@ -1510,29 +1528,29 @@
 	}
 
 	/**
-	 * Update the viewport controls using the mouse object.
+	 * Update the viewport controls using the pointer object.
 	 */
-	Viewport.prototype.updateControls = function(mouse)
+	Viewport.prototype.updateControls = function(pointer)
 	{	
-		if(mouse.wheel !== 0)
+		if(pointer.wheel !== 0)
 		{
-			this.scale -= mouse.wheel * 1e-3 * this.scale;
+			this.scale -= pointer.wheel * 1e-3 * this.scale;
 
 			if(this.moveOnScale)
 			{	
-				var speed = mouse.wheel / this.scale;
-				var halfWidth = mouse.canvas.width / 2;
-				var halfWeight = mouse.canvas.height / 2;
+				var speed = pointer.wheel / this.scale;
+				var halfWidth = pointer.canvas.width / 2;
+				var halfWeight = pointer.canvas.height / 2;
 
-				this.position.x += ((mouse.position.x - halfWidth) / halfWidth) * speed;
-				this.position.y += ((mouse.position.y - halfWeight) / halfWeight) * speed;
+				this.position.x += ((pointer.position.x - halfWidth) / halfWidth) * speed;
+				this.position.y += ((pointer.position.y - halfWeight) / halfWeight) * speed;
 			}
 		}
 
-		if(mouse.buttonPressed(Mouse.RIGHT))
+		if(pointer.buttonPressed(Pointer.RIGHT))
 		{
-			this.position.x += mouse.delta.x;
-			this.position.y += mouse.delta.y;
+			this.position.x += pointer.delta.x;
+			this.position.y += pointer.delta.y;
 		}
 	};
 
@@ -1748,12 +1766,12 @@
 		return point.length() <= this.radius;
 	};
 
-	Circle.prototype.onPointerEnter = function(mouse, viewport)
+	Circle.prototype.onPointerEnter = function(pointer, viewport)
 	{
 		this.fillStyle = "#CCCCCC";
 	};
 
-	Circle.prototype.onPointerLeave = function(mouse, viewport)
+	Circle.prototype.onPointerLeave = function(pointer, viewport)
 	{
 		this.fillStyle = "#FFFFFF";
 	};
@@ -1818,7 +1836,7 @@
 
 		var topRight = new Circle();
 		topRight.radius = 4;
-		topRight.onPointerDrag = function()
+		topRight.onPointerDrag = function(pointer, viewport, delta)
 		{
 			self.box.min.copy(topRight.position);
 			updateHelpers();
@@ -1827,7 +1845,7 @@
 
 		var topLeft = new Circle();
 		topLeft.radius = 4;
-		topLeft.onPointerDrag = function()
+		topLeft.onPointerDrag = function(pointer, viewport, delta)
 		{
 			self.box.max.x = topLeft.position.x;
 			self.box.min.y = topLeft.position.y;
@@ -1837,7 +1855,7 @@
 
 		var bottomLeft = new Circle();
 		bottomLeft.radius = 4;
-		bottomLeft.onPointerDrag = function()
+		bottomLeft.onPointerDrag = function(pointer, viewport, delta)
 		{
 			self.box.max.copy(bottomLeft.position);
 			updateHelpers();
@@ -1846,7 +1864,7 @@
 
 		var bottomRight = new Circle();
 		bottomRight.radius = 4;
-		bottomRight.onPointerDrag = function()
+		bottomRight.onPointerDrag = function(pointer, viewport, delta)
 		{
 			self.box.min.x = bottomRight.position.x;
 			self.box.max.y = bottomRight.position.y;
@@ -1857,12 +1875,12 @@
 		updateHelpers();
 	};
 
-	Box.prototype.onPointerEnter = function(mouse, viewport)
+	Box.prototype.onPointerEnter = function(pointer, viewport)
 	{
 		this.fillStyle = "#CCCCCC";
 	};
 
-	Box.prototype.onPointerLeave = function(mouse, viewport)
+	Box.prototype.onPointerLeave = function(pointer, viewport)
 	{
 		this.fillStyle = "#FFFFFF";
 	};
@@ -1980,8 +1998,8 @@
 	exports.Key = Key;
 	exports.Line = Line;
 	exports.Matrix = Matrix;
-	exports.Mouse = Mouse;
 	exports.Object2D = Object2D;
+	exports.Pointer = Pointer;
 	exports.Renderer = Renderer;
 	exports.Text = Text;
 	exports.UUID = UUID;

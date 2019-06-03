@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Key is used by Keyboard, Mouse, etc, to represent a key state.
+ * Key is used by Keyboard, Pointer, etc, to represent a key state.
  *
  * @class
 */

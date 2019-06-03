@@ -33,12 +33,12 @@ Circle.prototype.isInside = function(point)
 	return point.length() <= this.radius;
 };
 
-Circle.prototype.onPointerEnter = function(mouse, viewport)
+Circle.prototype.onPointerEnter = function(pointer, viewport)
 {
 	this.fillStyle = "#CCCCCC";
 };
 
-Circle.prototype.onPointerLeave = function(mouse, viewport)
+Circle.prototype.onPointerLeave = function(pointer, viewport)
 {
 	this.fillStyle = "#FFFFFF";
 };

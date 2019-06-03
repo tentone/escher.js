@@ -6,7 +6,7 @@ export {Renderer} from "./Renderer.js";
 export {Viewport} from "./Viewport.js";
 
 export {Key} from "./input/Key.js";
-export {Mouse} from "./input/Mouse.js";
+export {Pointer} from "./input/Pointer.js";
 
 export {Box2} from "./math/Box2.js";
 export {Matrix} from "./math/Matrix.js";
