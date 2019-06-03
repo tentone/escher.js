@@ -1,11 +1,11 @@
 {
 	"name": "trenette.js",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "trenette.js is a web library for building interactive diagrams and graphs.",
 	"main": "build/trenette.min.js",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/tentone/trenette.git"
+		"url": "https://github.com/tentone/trenette.js.git"
 	},
 	"scripts": {
 		"build": "rollup -c && npm run uglify",
