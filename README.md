@@ -1,5 +1,5 @@
-# diagram.js
-Web based diagram canvas library.
+# trenette.js
 
-Entity based system.
+ - Web based diagram and graph building framework.
+ - Entity based diagram build system.
 
