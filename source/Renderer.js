@@ -33,14 +33,36 @@ function Renderer(canvas)
 /**
  * Update the renderer state, update the input handlers, calculate the object and viewport transformation matrices.
  *
+ * Render the object using the viewport into a canvas element.
+ *
+ * The canvas state is saved and restored for each individual object, ensuring that the code of one object does not affect another one.
+ *
+ * Should be called at a fixed rate preferably using the requestAnimationFrame() method.
+ *
  * @param object Object to be updated.
  * @param viewport Viewport to be updated (should be the one where the objects will be rendered after).
  */
 Renderer.prototype.update = function(object, viewport)
 {
-	this.pointer.update();
+	// Get objects to be rendered
+	var objects = []
+	object.traverse(function(child)
+	{
+		if(child.visible)
+		{
+			objects.push(child);
+		}
+	});
 
+	// Sort objects by layer
+	objects.sort(function(a, b)
+	{
+		return b.layer - a.layer;
+	});
+
+	// Pointer object update
 	var pointer = this.pointer;
+	pointer.update();
 
 	// Viewport transform matrix
 	viewport.updateControls(pointer);
@@ -51,8 +73,9 @@ Renderer.prototype.update = function(object, viewport)
 	var viewportPoint = viewport.inverseMatrix.transformPoint(point);
 
 	// Object transformation matrices
-	object.traverse(function(child)
-	{		
+	for(var i = 0; i < objects.length; i++)
+	{
+		var child = objects[i];
 		var childPoint = child.inverseGlobalMatrix.transformPoint(viewportPoint);
 
 		// Check if the pointer pointer is inside
@@ -81,6 +104,7 @@ Renderer.prototype.update = function(object, viewport)
 				if(child.draggable)
 				{
 					child.beingDragged = true;
+					break;
 				}
 			}
 
@@ -117,8 +141,13 @@ Renderer.prototype.update = function(object, viewport)
 				child.beingDragged = false;
 			}
 		}
+	}
 
-		// Pointer drag event
+	// Pointer drag event
+	for(var i = 0; i < objects.length; i++)
+	{
+		var child = objects[i];
+
 		if(child.beingDragged)
 		{
 			var matrix = viewport.inverseMatrix.clone();
@@ -141,19 +170,15 @@ Renderer.prototype.update = function(object, viewport)
 		}
 
 		child.updateMatrix();
-	});
-};
+	}
 
-/**
- * Render the object using the viewport into a canvas element.
- *
- * The canvas state is saved and restored for each individual object, ensuring that the code of one object does not affect another one.
- *
- * @param object Object to be rendered.
- * @param viewport Viewport to render the objects.
- */
-Renderer.prototype.render = function(object, viewport)
-{
+	// Sort objects by layer
+	objects.sort(function(a, b)
+	{
+		return a.layer - b.layer;
+	});
+
+	// Render the content
 	var context = this.context;
 
 	// Clear canvas
@@ -162,22 +187,6 @@ Renderer.prototype.render = function(object, viewport)
 
 	// Set viewport matrix transform
 	viewport.matrix.setContextTransform(context);
-
-	// Get objects to be rendered
-	var objects = []
-	object.traverse(function(child)
-	{
-		if(child.visible)
-		{
-			objects.push(child);
-		}
-	});
-
-	// Sort objects by layer
-	objects.sort(function(a, b)
-	{
-		return a.layer - b.layer;
-	});
 
 	// Render into the canvas
 	for(var i = 0; i < objects.length; i++)

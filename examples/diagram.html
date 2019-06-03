@@ -9,6 +9,15 @@
 
 	<script type="text/javascript">
 
+		var division = document.createElement("div");
+		division.style.position = "absolute";
+		division.style.width = "100%";
+		division.style.height = "100%";
+		division.style.top = "0px";
+		division.style.left = "0px";
+		division.style.overflow = "hidden";
+		document.body.appendChild(division);
+
 		// Setup the display canvas
 		var canvas = document.createElement("canvas");
 		canvas.style.position = "absolute";
@@ -18,13 +27,12 @@
 		canvas.style.left = "0px";
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
-
 		canvas.oncontextmenu = function(event)
 		{
 			event.preventDefault();
 			return false;
 		};
-		document.body.appendChild(canvas);
+		division.appendChild(canvas);
 
 		window.onresize = function()
 		{
@@ -50,7 +58,7 @@
 		div.style.width = "100px";
 		div.style.height = "100px";
 		div.style.backgroundColor = "#FF0000";
-		document.body.appendChild(div);
+		division.appendChild(div);
 
 		// Create the diagram
 		var group = new Diagram.Object2D();
@@ -112,7 +120,6 @@
 			image.rotation += 0.01;
 
 			renderer.update(group, viewport);
-			renderer.render(group, viewport);
 
 			var projection = viewport.matrix.clone();
 			projection.multiply(boxA.globalMatrix);
