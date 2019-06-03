@@ -32,6 +32,16 @@
 			canvas.height = window.innerHeight;
 		};
 
+		var div = document.createElement("div");
+		div.style.position = "absolute";
+		div.style.transformOrigin = "0px 0px 0px";
+		div.style.width = "100px";
+		div.style.height = "100px";
+		div.style.backgroundColor = "#FF0000";
+		div.style.WebkitTransformStyle = "preserve-3d";
+		div.style.transformStyle = "preserve-3d";
+		document.body.appendChild(div);
+
 		// Create the diagram
 		var group = new Diagram.Object2D();
 
@@ -93,6 +103,10 @@
 
 			renderer.update(group, viewport);
 			renderer.render(group, viewport);
+
+			var projection = group.globalMatrix.clone();
+			projection.multiply(viewport.matrix);
+			div.style.transform = projection.cssTransform();
 
 			requestAnimationFrame(loop);
 		}

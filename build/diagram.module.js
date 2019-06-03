@@ -547,6 +547,11 @@ Matrix.prototype.tranformContext = function(context)
 	context.transform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
 };
 
+Matrix.prototype.cssTransform = function()
+{
+	return "matrix3d(" + this.m[0] + "," + this.m[2] + "," + this.m[4] + ",0," + this.m[1] + "," + this.m[3] + "," + this.m[5] + ",0,0,0,1,0,0,0,0,1)";
+};
+
 /**
  * Implements all UUID related methods.
  *
