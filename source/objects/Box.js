@@ -36,7 +36,12 @@ function Box(resizable)
 
 Box.prototype = Object.create(Object2D.prototype);
 
-Box.prototype.createResizeHelpers = function(first_argument)
+/**
+ * Create some resize helper to change the size of the box.
+ *
+ * Each helper is positioned on one corner of the box.
+ */
+Box.prototype.createResizeHelpers = function()
 {
 	var self = this;
 

@@ -18,3 +18,4 @@ export {Circle} from "./objects/Circle.js";
 export {Line} from "./objects/Line.js";
 export {Text} from "./objects/Text.js";
 export {Image} from "./objects/Image.js";
+export {DOM} from "./objects/DOM.js";

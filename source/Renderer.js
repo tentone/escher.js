@@ -193,7 +193,7 @@ Renderer.prototype.update = function(object, viewport)
 	{
 		context.save();
 		objects[i].globalMatrix.tranformContext(context);
-		objects[i].draw(context);
+		objects[i].draw(context, viewport);
 		context.restore();
 	}
 };
