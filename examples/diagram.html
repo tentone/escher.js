@@ -32,14 +32,24 @@
 			canvas.height = window.innerHeight;
 		};
 
+		canvas.ondblclick = function(event)
+		{
+			var p = new Diagram.Vector2(event.clientX, event.clientY);
+			console.log(p);
+
+			p = viewport.inverseMatrix.transformPoint(p);
+
+			var box = new Diagram.Box(true);
+			box.position.copy(p);
+			group.add(box);
+
+		};
+
 		var div = document.createElement("div");
 		div.style.position = "absolute";
-		div.style.transformOrigin = "0px 0px 0px";
 		div.style.width = "100px";
 		div.style.height = "100px";
 		div.style.backgroundColor = "#FF0000";
-		div.style.WebkitTransformStyle = "preserve-3d";
-		div.style.transformStyle = "preserve-3d";
 		document.body.appendChild(div);
 
 		// Create the diagram
@@ -98,16 +108,18 @@
 		// Update and render the diagram
 		function loop()
 		{	
-			group.rotation += 0.001;
+			//group.rotation += 0.001;
 			image.rotation += 0.01;
 
 			renderer.update(group, viewport);
 			renderer.render(group, viewport);
 
-			var projection = group.globalMatrix.clone();
-			projection.multiply(viewport.matrix);
-			div.style.transform = projection.cssTransform();
+			var projection = viewport.matrix.clone();
+			projection.multiply(boxA.globalMatrix);
 
+			div.style.transform = projection.cssTransform();
+			div.style.transformStyle = "preserve-3d";
+			
 			requestAnimationFrame(loop);
 		}
 
