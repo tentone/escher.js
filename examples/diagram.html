@@ -5,7 +5,7 @@
 	<title>diagram.js</title>
 </head>
 <body>
-	<script type="text/javascript" src="../build/diagram.js"></script>
+	<script type="text/javascript" src="../build/trenette.js"></script>
 
 	<script type="text/javascript">
 
@@ -42,12 +42,12 @@
 
 		canvas.ondblclick = function(event)
 		{
-			var p = new Diagram.Vector2(event.clientX, event.clientY);
+			var p = new Trenette.Vector2(event.clientX, event.clientY);
 			console.log(p);
 
 			p = viewport.inverseMatrix.transformPoint(p);
 
-			var box = new Diagram.Box(true);
+			var box = new Trenette.Box(true);
 			box.position.copy(p);
 			group.add(box);
 
@@ -61,57 +61,57 @@
 		division.appendChild(div);
 
 		// Create the diagram
-		var group = new Diagram.Object2D();
+		var group = new Trenette.Object2D();
 
-		var image = new Diagram.Image("grid.png");
+		var image = new Trenette.Image("grid.png");
 		image.position.set(-300, -400);
 		image.scale.set(1, 1);
 		image.layer = 5;
 		group.add(image);
 
-		var background = new Diagram.Image("hexagon.jpg");
+		var background = new Trenette.Image("hexagon.jpg");
 		background.position.set(-300, -400);
 		background.scale.set(1, 1);
 		background.layer = -2;
 		group.add(background);
 
-		var boxA = new Diagram.Box(true);
+		var boxA = new Trenette.Box(true);
 		group.add(boxA);
 
-		var text = new Diagram.Text();
+		var text = new Trenette.Text();
 		text.text = "diagram.js";
 		boxA.add(text);
 
-		var boxB = new Diagram.Box();
+		var boxB = new Trenette.Box();
 		boxB.position.set(100, 100);
 		group.add(boxB);
 		
-		var circle = new Diagram.Circle();
+		var circle = new Trenette.Circle();
 		circle.radius = 40;
 		circle.position.set(300, 0);
 		group.add(circle);
 
-		var line = new Diagram.Line();
+		var line = new Trenette.Line();
 		line.from = boxA.position;
 		line.to = boxB.position;
 		line.layer = -1;
 		group.add(line);
 
-		var line = new Diagram.Line();
+		var line = new Trenette.Line();
 		line.from = boxA.position;
 		line.to = circle.position;
 		line.layer = -1;
 		group.add(line);
 
-		var line = new Diagram.Line();
+		var line = new Trenette.Line();
 		line.from = boxB.position;
 		line.to = circle.position;
 		line.layer = -1;
 		group.add(line);
 
-		var viewport = new Diagram.Viewport();
+		var viewport = new Trenette.Viewport();
 
-		var renderer = new Diagram.Renderer(canvas);
+		var renderer = new Trenette.Renderer(canvas);
 
 		// Update and render the diagram
 		function loop()

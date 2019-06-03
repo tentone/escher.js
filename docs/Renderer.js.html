@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Renderer.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Renderer.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+
+import {Pointer} from "./input/Pointer.js";
+
+/**
+ * The renderer is resposible for drawing the structure into the canvas element.
+ *
+ * Its also resposible for managing the canvas state.
+ *
+ * @class
+ */
+function Renderer(canvas)
+{
+	/**
+	 * Canvas DOM element, has to be managed by the user.
+	 */
+	this.canvas = canvas;
+
+	/**
+	 * Canvas 2D rendering context used to draw content.
+	 */
+	this.context = canvas.getContext("2d");
+	this.context.imageSmoothingEnabled = true;
+	this.context.globalCompositeOperation = "source-over";
+
+	/**
+	 * Pointer input handler object.
+	 */
+	this.pointer = new Pointer();
+	this.pointer.setCanvas(canvas);
+}
+
+/**
+ * Update the renderer state, update the input handlers, calculate the object and viewport transformation matrices.
+ *
+ * Render the object using the viewport into a canvas element.
+ *
+ * The canvas state is saved and restored for each individual object, ensuring that the code of one object does not affect another one.
+ *
+ * Should be called at a fixed rate preferably using the requestAnimationFrame() method.
+ *
+ * @param object Object to be updated.
+ * @param viewport Viewport to be updated (should be the one where the objects will be rendered after).
+ */
+Renderer.prototype.update = function(object, viewport)
+{
+	// Get objects to be rendered
+	var objects = []
+	object.traverse(function(child)
+	{
+		if(child.visible)
+		{
+			objects.push(child);
+		}
+	});
+
+	// Sort objects by layer
+	objects.sort(function(a, b)
+	{
+		return b.layer - a.layer;
+	});
+
+	// Pointer object update
+	var pointer = this.pointer;
+	pointer.update();
+
+	// Viewport transform matrix
+	viewport.updateControls(pointer);
+	viewport.updateMatrix();
+
+	// Project pointer coordinates
+	var point = pointer.position.clone();
+	var viewportPoint = viewport.inverseMatrix.transformPoint(point);
+
+	// Object transformation matrices
+	for(var i = 0; i &lt; objects.length; i++)
+	{
+		var child = objects[i];
+		var childPoint = child.inverseGlobalMatrix.transformPoint(viewportPoint);
+
+		// Check if the pointer pointer is inside
+		if(child.isInside(childPoint))
+		{
+			// Pointer enter
+			if(!child.pointerInside &amp;&amp; child.onPointerEnter !== null)
+			{			
+				child.onPointerEnter(pointer, viewport);
+			}
+
+			// Pointer over
+			if(child.onPointerOver !== null)
+			{
+				child.onPointerOver(pointer, viewport);
+			}
+
+			// Pointer just pressed
+			if(pointer.buttonJustPressed(Pointer.LEFT))
+			{
+				if(child.onButtonDown !== null)
+				{
+					child.onButtonDown(pointer, viewport);
+				}
+
+				if(child.draggable)
+				{
+					child.beingDragged = true;
+					break;
+				}
+			}
+
+			// Pointer pressed
+			if(pointer.buttonPressed(Pointer.LEFT) &amp;&amp; child.onButtonPressed !== null)
+			{	
+				child.onButtonPressed(pointer, viewport);
+			}
+
+			// Just released
+			if(pointer.buttonJustReleased(Pointer.LEFT) &amp;&amp; child.onButtonUp !== null)
+			{	
+				child.onButtonUp(pointer, viewport);
+			}
+
+			child.pointerInside = true;
+		}
+		else if(child.pointerInside)
+		{
+			// Pointer leave
+			if(child.onPointerLeave !== null)
+			{
+				child.onPointerLeave(pointer, viewport);
+			}
+
+			child.pointerInside = false;
+		}
+
+		// Stop object drag
+		if(pointer.buttonJustReleased(Pointer.LEFT))
+		{	
+			if(child.draggable)
+			{
+				child.beingDragged = false;
+			}
+		}
+	}
+
+	// Pointer drag event
+	for(var i = 0; i &lt; objects.length; i++)
+	{
+		var child = objects[i];
+
+		if(child.beingDragged)
+		{
+			var matrix = viewport.inverseMatrix.clone();
+			matrix.multiply(child.inverseGlobalMatrix);
+			matrix.setPosition(0, 0);
+
+			var delta = matrix.transformPoint(pointer.delta);
+			child.position.add(delta);
+
+			if(child.onPointerDrag !== null)
+			{
+				child.onPointerDrag(pointer, viewport, delta);
+			}
+		}
+
+		// On update
+		if(child.onUpdate !== null)
+		{
+			child.onUpdate();
+		}
+
+		child.updateMatrix();
+	}
+
+	// Sort objects by layer
+	objects.sort(function(a, b)
+	{
+		return a.layer - b.layer;
+	});
+
+	// Render the content
+	var context = this.context;
+
+	// Clear canvas
+	context.setTransform(1, 0, 0, 1, 0, 0);
+	context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+	// Set viewport matrix transform
+	viewport.matrix.setContextTransform(context);
+
+	// Render into the canvas
+	for(var i = 0; i &lt; objects.length; i++)
+	{
+		context.save();
+		objects[i].globalMatrix.tranformContext(context);
+		objects[i].draw(context);
+		context.restore();
+	}
+};
+
+export {Renderer};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="EventManager.html">EventManager</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="Viewport.html">Viewport</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Mon Jun 03 2019 12:07:04 GMT+0100 (Western European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

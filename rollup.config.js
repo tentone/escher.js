@@ -1,7 +1,7 @@
 import strip from "rollup-plugin-strip";
 
 export default {
-	input: "source/Diagram.js",
+	input: "source/Trenette.js",
 	plugins: [
 		strip(
 		{
@@ -13,13 +13,13 @@ export default {
 	output: [
 		{
 			format: "umd",
-			name: "Diagram",
-			file: "build/diagram.js",
+			name: "Trenette",
+			file: "build/trenette.js",
 			indent: "\t"
 		},
 		{
 			format: "es",
-			file: "build/diagram.module.js",
+			file: "build/trenette.module.js",
 			indent: "\t"
 		}
 	]
