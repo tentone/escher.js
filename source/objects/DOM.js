@@ -17,12 +17,18 @@ function DOM(parent, type)
 {
 	Object2D.call(this);
 
+	/**
+	 * DOM element contained by this object.
+	 */
 	this.element = document.createElement("div");
 	this.element.style.position = "absolute";
+	this.element.style.top = "0px";
+	this.element.style.bottom = "0px";
 	this.element.style.width = "100px";
+	this.element.style.transformStyle = "preserve-3d";
 	this.element.style.height = "100px";
 	this.element.style.backgroundColor = "#FF0000";
-	this.element.style.transformStyle = "preserve-3d";
+	this.element.style.transformOrigin = "0px 0px";
 	parent.appendChild(this.element);
 }
 

@@ -1439,7 +1439,7 @@ Renderer.prototype.update = function(object, viewport)
 		{
 			var matrix = viewport.inverseMatrix.clone();
 			matrix.multiply(child.inverseGlobalMatrix);
-			matrix.setPosition(0, 0);
+			//matrix.setPosition(0, 0);
 
 			var delta = matrix.transformPoint(pointer.delta);
 			child.position.add(delta);
@@ -1480,7 +1480,7 @@ Renderer.prototype.update = function(object, viewport)
 	{
 		context.save();
 		objects[i].globalMatrix.tranformContext(context);
-		objects[i].draw(context);
+		objects[i].draw(context, viewport);
 		context.restore();
 	}
 };
@@ -1830,7 +1830,12 @@ function Box(resizable)
 
 Box.prototype = Object.create(Object2D.prototype);
 
-Box.prototype.createResizeHelpers = function(first_argument)
+/**
+ * Create some resize helper to change the size of the box.
+ *
+ * Each helper is positioned on one corner of the box.
+ */
+Box.prototype.createResizeHelpers = function()
 {
 	var self = this;
 
@@ -1998,4 +2003,43 @@ Image.prototype.draw = function(context)
 	context.drawImage(this.image, 0, 0);
 };
 
-export { Box, Box2, Circle, EventManager, Image, Key, Line, Matrix, Object2D, Pointer, Renderer, Text, UUID, Vector2, Viewport };
+/**
+ * A DOM object transformed using CSS3D to ver included in the graph.
+ *
+ * DOM objects always stay on top of everything else, mouse events are not supported for these.
+ *
+ * Use the normal DOM events for interaction.
+ *
+ * @param parent Parent DOM element that contains the drawing canvas.
+ * @param type Type of the DOM element (e.g. "div", "p", ...)
+ */
+function DOM(parent, type)
+{
+	Object2D.call(this);
+
+	/**
+	 * DOM element contained by this object.
+	 */
+	this.element = document.createElement("div");
+	this.element.style.position = "absolute";
+	this.element.style.top = "0px";
+	this.element.style.bottom = "0px";
+	this.element.style.width = "100px";
+	this.element.style.transformStyle = "preserve-3d";
+	this.element.style.height = "100px";
+	this.element.style.backgroundColor = "#FF0000";
+	this.element.style.transformOrigin = "0px 0px";
+	parent.appendChild(this.element);
+}
+
+DOM.prototype = Object.create(Object2D.prototype);
+
+DOM.prototype.draw = function(context, viewport)
+{
+	var projection = viewport.matrix.clone();
+	projection.multiply(this.globalMatrix);
+
+	this.element.style.transform = projection.cssTransform();
+};
+
+export { Box, Box2, Circle, DOM, EventManager, Image, Key, Line, Matrix, Object2D, Pointer, Renderer, Text, UUID, Vector2, Viewport };

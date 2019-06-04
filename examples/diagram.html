@@ -55,9 +55,13 @@
 
 		var div = document.createElement("div");
 		div.style.position = "absolute";
+		div.style.top = "0px";
+		div.style.bottom = "0px";
 		div.style.width = "100px";
+		div.style.transformStyle = "preserve-3d";
 		div.style.height = "100px";
 		div.style.backgroundColor = "#FF0000";
+		div.style.transformOrigin = "0px 0px";
 		division.appendChild(div);
 
 		// Create the diagram
@@ -117,15 +121,15 @@
 		function loop()
 		{	
 			//group.rotation += 0.001;
+			boxA.rotation += 0.01;
 			image.rotation += 0.01;
 
 			renderer.update(group, viewport);
 
 			var projection = viewport.matrix.clone();
 			projection.multiply(boxA.globalMatrix);
-
 			div.style.transform = projection.cssTransform();
-			div.style.transformStyle = "preserve-3d";
+			//
 			
 			requestAnimationFrame(loop);
 		}
