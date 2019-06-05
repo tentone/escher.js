@@ -270,8 +270,11 @@
 		{
 			var angle = Math.atan2(this.y, this.x);
 
-			if(angle < 0) angle += 2 * Math.PI;
-
+			if(angle < 0)
+			{
+				angle += 2 * Math.PI;
+			}
+			
 			return angle;
 		},
 
@@ -421,17 +424,28 @@
 	};
 
 	/**
-	 * Compose this transformation matrix with position scale and rotation.
+	 * Compose this transformation matrix with position scale and rotation and origin point.
 	 */
-	Matrix.prototype.compose = function(px, py, sx, sy, a)
+	Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, a)
 	{
 		this.m = [1, 0, 0, 1, px, py];
 
-		var c = Math.cos(a);
-		var s = Math.sin(a);
-		this.multiply(new Matrix([c, s, -s, c, 0, 0]));
+		if(a !== 0)
+		{		
+			var c = Math.cos(a);
+			var s = Math.sin(a);
+			this.multiply(new Matrix([c, s, -s, c, 0, 0]));
+		}
 
-		this.scale(sx, sy);
+		if(ox !== 0 || oy !== 0)
+		{	
+			this.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));
+		}
+
+		if(sx !== 1 || sy !== 1)
+		{
+			this.scale(sx, sy);
+		}
 	};
 
 	/**
@@ -623,6 +637,11 @@
 		this.position = new Vector2(0, 0);
 
 		/**
+		 * Origin of the object used as point of rotation.
+		 */
+		this.origin = new Vector2(0, 0);
+
+		/**
 		 * Scale of the object.
 		 */
 		this.scale = new Vector2(1, 1);
@@ -673,7 +692,28 @@
 		 *
 		 * If true the onPointerDrag callback is used to update the state of the object.
 		 */
-		this.draggable = true;
+		this.draggable = false;
+
+		/**
+		 * Flag to indicate wheter this objet ignores the viewport transformation.
+		 */
+		this.ignoreViewport = false;
+
+		/**
+		 * Flag to indicate if the context of canvas should be saved before render.
+		 */
+		this.saveContextState = true;
+
+		/**
+		 * Flag to indicate if the context of canvas should be restored after render.
+		 */
+		this.restoreContextState = true;
+
+		/**
+		 * Flag to indicate if the context of canvas should be restored after render.
+		 */
+		this.restoreContextState = true;
+
 
 		/**
 		 * Flag indicating if the pointer is inside of the element.
@@ -746,7 +786,7 @@
 	{
 		if(this.matrixNeedsUpdate)
 		{
-			this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.rotation);
+			this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.origin.x, this.origin.y, this.rotation);
 			this.globalMatrix.copy(this.matrix);
 
 			if(this.parent !== null)
@@ -760,13 +800,23 @@
 	};
 
 	/**
+	 * Apply the transform to the rendering context.
+	 *
+	 * Can also be used for pre rendering logic.
+	 */
+	Object2D.prototype.transform = function(context, viewport)
+	{
+		this.globalMatrix.tranformContext(context);
+	};
+
+	/**
 	 * Draw the object into the canvas.
 	 *
 	 * Has to be implemented by underlying classes.
 	 *
 	 * @param context Canvas 2d drawing context.
 	 */
-	Object2D.prototype.draw = function(context){};
+	Object2D.prototype.draw = function(context, viewport){};
 
 	/**
 	 * Callback method called every time before the object is draw into the canvas.
@@ -801,7 +851,10 @@
 	 *
 	 * Receives (pointer, viewport, delta) as arguments. Delta is the movement of the pointer already translated into local object coordinates.
 	 */
-	Object2D.prototype.onPointerDrag = null;
+	Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
+	{
+		this.position.add(delta);
+	};
 
 	/**
 	 * Callback method called while the pointer button is pressed.
@@ -1369,7 +1422,7 @@
 		for(var i = 0; i < objects.length; i++)
 		{
 			var child = objects[i];
-			var childPoint = child.inverseGlobalMatrix.transformPoint(viewportPoint);
+			var childPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
 
 			// Check if the pointer pointer is inside
 			if(child.isInside(childPoint))
@@ -1442,7 +1495,7 @@
 			var child = objects[i];
 
 			if(child.beingDragged)
-			{
+			{	
 				var lastPosition = pointer.position.clone();
 				lastPosition.sub(pointer.delta);
 
@@ -1451,9 +1504,6 @@
 
 				// Mouse delta in world coordinates
 				positionWorld.sub(lastWorld);
-
-				// Update child position
-				child.position.add(positionWorld);
 
 				if(child.onPointerDrag !== null)
 				{
@@ -1488,11 +1538,24 @@
 
 		// Render into the canvas
 		for(var i = 0; i < objects.length; i++)
-		{
-			context.save();
-			objects[i].globalMatrix.tranformContext(context);
+		{	
+			if(objects[i].saveContextState)
+			{
+				context.save();
+			}
+
+			if(objects[i].ignoreViewport)
+			{
+				context.setTransform(1, 0, 0, 1, 0, 0);
+			}
+
+			objects[i].transform(context, viewport);
 			objects[i].draw(context, viewport);
-			context.restore();
+
+			if(objects[i].restoreContextState)
+			{
+				context.restore();
+			}
 		}
 	};
 
@@ -1580,7 +1643,7 @@
 	{
 		if(this.matrixNeedsUpdate)
 		{
-			this.matrix.compose(this.position.x, this.position.y, this.scale, this.scale, this.rotation);
+			this.matrix.compose(this.position.x, this.position.y, this.scale, this.scale, 0, 0, this.rotation);
 			this.inverseMatrix = this.matrix.getInverse();
 			//this.matrixNeedsUpdate = false;
 		}
@@ -1813,6 +1876,22 @@
 
 	function Helpers(){}
 
+
+	/**
+	 * Create a rotation tool
+	 */
+	Helpers.rotateTool = function(object)
+	{
+		var tool = new Circle();
+		tool.radius = 4;
+		tool.layer = object.layer + 1;
+		tool.onPointerDrag = function(pointer, viewport, delta)
+		{
+			object.rotation += delta.x * 1e-3;
+		};
+		object.add(tool);
+	};
+
 	/**
 	 * Create a box resize helper and attach it to an object to change the size of the object box.
 	 *
@@ -1820,11 +1899,11 @@
 	 *
 	 * This method required to object to have a box property.
 	 */
-	Helpers.createBoxResize = function(object)
+	Helpers.boxResizeTool = function(object)
 	{
 		if(object.box === undefined)
 		{
-			console.warn("trenette.js: Helpers.createBoxResize(), object box property missing.");
+			console.warn("trenette.js: Helpers.boxResizeTool(), object box property missing.");
 			return;
 		}
 
@@ -1838,8 +1917,12 @@
 
 		var topRight = new Circle();
 		topRight.radius = 4;
+		topRight.layer = object.layer + 1;
+		topRight.draggable = true;
 		topRight.onPointerDrag = function(pointer, viewport, delta)
 		{
+			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+
 			object.box.min.copy(topRight.position);
 			updateHelpers();
 		};
@@ -1847,8 +1930,12 @@
 
 		var topLeft = new Circle();
 		topLeft.radius = 4;
+		topLeft.layer = object.layer + 1;
+		topLeft.draggable = true;
 		topLeft.onPointerDrag = function(pointer, viewport, delta)
 		{
+			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+
 			object.box.max.x = topLeft.position.x;
 			object.box.min.y = topLeft.position.y;
 			updateHelpers();
@@ -1857,8 +1944,12 @@
 
 		var bottomLeft = new Circle();
 		bottomLeft.radius = 4;
+		bottomLeft.layer = object.layer + 1;
+		bottomLeft.draggable = true;
 		bottomLeft.onPointerDrag = function(pointer, viewport, delta)
 		{
+			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+
 			object.box.max.copy(bottomLeft.position);
 			updateHelpers();
 		};
@@ -1866,8 +1957,12 @@
 
 		var bottomRight = new Circle();
 		bottomRight.radius = 4;
+		bottomRight.layer = object.layer + 1;
+		bottomRight.draggable = true;
 		bottomRight.onPointerDrag = function(pointer, viewport, delta)
 		{
+			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+
 			object.box.min.x = bottomRight.position.x;
 			object.box.max.y = bottomRight.position.y;
 			updateHelpers();
@@ -1880,7 +1975,7 @@
 	/**
 	 * Box object draw a box.
 	 */
-	function Box(resizable)
+	function Box()
 	{
 		Object2D.call(this);
 
@@ -1898,11 +1993,6 @@
 		 * Background color of the box.
 		 */
 		this.fillStyle = "#FFFFFF";
-
-		if(resizable)
-		{
-			Helpers.createBoxResize(this);
-		}
 	}
 
 	Box.prototype = Object.create(Object2D.prototype);
@@ -2053,7 +2143,7 @@
 
 	Image.prototype.draw = function(context)
 	{
-		context.drawImage(this.image, 0, 0);
+		context.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
 	};
 
 	/**
@@ -2078,10 +2168,16 @@
 		this.element.style.position = "absolute";
 		this.element.style.top = "0px";
 		this.element.style.bottom = "0px";
-		this.element.style.width = "100px";
-		this.element.style.height = "100px";
-		this.element.style.backgroundColor = "rgba(0.0, 0.0, 0.0, 0.8)";
 		this.element.style.transformOrigin = "0px 0px";
+		this.element.style.overflow = "auto";
+		
+		/**
+		 * Size of the DOM element (in world coordinates).
+		 */
+		this.size = new Vector2(100, 100);
+
+		this.origin.set(50, 50);
+
 		parent.appendChild(this.element);
 	}
 
@@ -2089,10 +2185,14 @@
 
 	DOM.prototype.draw = function(context, viewport)
 	{
+		// CSS trasnformation matrix
 		var projection = viewport.matrix.clone();
 		projection.multiply(this.globalMatrix);
-
 		this.element.style.transform = projection.cssTransform();
+
+		// Size of the element
+		this.element.style.width = this.size.x + "px";
+		this.element.style.height = this.size.y + "100px";
 	};
 
 	exports.Box = Box;
@@ -2100,6 +2200,7 @@
 	exports.Circle = Circle;
 	exports.DOM = DOM;
 	exports.EventManager = EventManager;
+	exports.Helpers = Helpers;
 	exports.Image = Image;
 	exports.Key = Key;
 	exports.Line = Line;

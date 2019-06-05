@@ -2,12 +2,14 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>diagram.js</title>
+	<title>Example</title>
 </head>
 <body>
 	<script type="text/javascript" src="../build/trenette.js"></script>
 
 	<script type="text/javascript">
+
+		window.runLoop = true;
 
 		var division = document.createElement("div");
 		division.style.position = "absolute";
@@ -43,49 +45,91 @@
 		canvas.ondblclick = function(event)
 		{
 			var p = new Trenette.Vector2(event.clientX, event.clientY);
-			console.log(p);
-
 			p = viewport.inverseMatrix.transformPoint(p);
 
-			var box = new Trenette.Box(true);
-			box.position.copy(p);
-			group.add(box);
+			if(Math.random() > 0.5)
+			{
+				var box = new Trenette.Box();
+				box.position.copy(p);
+				box.draggable = true;
+				group.add(box);
+			}
+			else
+			{
+				var circle = new Trenette.Circle();
+				circle.position.copy(p);
+				circle.radius = Math.random() * 20 + 30;
+				circle.draggable = true;
+				group.add(circle);
+			}
 
+			if(group.children.length > 2)
+			{
+				var line = new Trenette.Line();
+				line.from = group.children[group.children.length - 1].position;
+				line.to = group.children[group.children.length - 2].position;
+				line.layer = -1;
+				group.add(line);
+
+				console.log(line);
+			}
 		};
 
 		// Create the diagram
 		var group = new Trenette.Object2D();
 		var image = new Trenette.Image("grid.png");
 		image.position.set(-300, -400);
-		image.scale.set(1, 1);
 		image.layer = 5;
+		image.draggable = true;
 		group.add(image);
+		Trenette.Helpers.boxResizeTool(image);
 
 		var background = new Trenette.Image("hexagon.jpg");
 		background.position.set(-300, -400);
-		background.scale.set(1, 1);
+		Trenette.Helpers.boxResizeTool(background);
 		background.layer = -2;
+		background.draggable = true;
 		group.add(background);
 
-		var boxA = new Trenette.Box(true);
+		var boxA = new Trenette.Box();
+		Trenette.Helpers.boxResizeTool(boxA);
+		boxA.draggable = true;
 		group.add(boxA);
 
 		var div = new Trenette.DOM(division);
+		div.size.set(100, 50);
+		div.origin.set(50, 25);
+		var text = document.createElement("div");
+		text.style.fontFamily = "Arial";
+		text.style.textAlign = "center";
+		text.innerHTML = "DOM text!";
+		div.element.appendChild(text);
 		boxA.add(div);
-
-		var text = new Trenette.Text();
-		text.text = "diagram.js";
-		boxA.add(text);
 
 		var boxB = new Trenette.Box();
 		boxB.position.set(100, 100);
+		boxB.draggable = true;
 		group.add(boxB);
 		
+		var div = new Trenette.DOM(division);
+		div.size.set(100, 50);
+		div.origin.set(50, 25);
+		var text = document.createElement("div");
+		text.style.fontFamily = "Arial";
+		text.style.textAlign = "center";
+		text.innerHTML = "Double click to add box!";
+		div.element.appendChild(text);
+		boxB.add(div);
+
 		var circle = new Trenette.Circle();
-		circle.radius = 40;
+		circle.radius = 60;
 		circle.position.set(300, 0);
-		circle.scale.set(2, 1);
+		circle.draggable = true;
 		group.add(circle);
+
+		var text = new Trenette.Text();
+		text.text = "Canvas Text";
+		circle.add(text);
 
 		var line = new Trenette.Line();
 		line.from = boxA.position;
@@ -111,13 +155,9 @@
 
 		// Update and render the diagram
 		function loop()
-		{	
-			//group.rotation += 0.001;
-			boxA.rotation += 0.01;
-			image.rotation += 0.01;
-
+		{			
 			renderer.update(group, viewport);
-			
+
 			requestAnimationFrame(loop);
 		}
 

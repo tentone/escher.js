@@ -89,7 +89,7 @@ Viewport.prototype.updateMatrix = function()
 {
 	if(this.matrixNeedsUpdate)
 	{
-		this.matrix.compose(this.position.x, this.position.y, this.scale, this.scale, this.rotation);
+		this.matrix.compose(this.position.x, this.position.y, this.scale, this.scale, 0, 0, this.rotation);
 		this.inverseMatrix = this.matrix.getInverse();
 		//this.matrixNeedsUpdate = false;
 	}

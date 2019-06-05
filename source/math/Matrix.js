@@ -78,17 +78,28 @@ Matrix.prototype.premultiply = function(mat)
 };
 
 /**
- * Compose this transformation matrix with position scale and rotation.
+ * Compose this transformation matrix with position scale and rotation and origin point.
  */
-Matrix.prototype.compose = function(px, py, sx, sy, a)
+Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, a)
 {
 	this.m = [1, 0, 0, 1, px, py];
 
-	var c = Math.cos(a);
-	var s = Math.sin(a);
-	this.multiply(new Matrix([c, s, -s, c, 0, 0]));
+	if(a !== 0)
+	{		
+		var c = Math.cos(a);
+		var s = Math.sin(a);
+		this.multiply(new Matrix([c, s, -s, c, 0, 0]));
+	}
 
-	this.scale(sx, sy);
+	if(ox !== 0 || oy !== 0)
+	{	
+		this.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));
+	}
+
+	if(sx !== 1 || sy !== 1)
+	{
+		this.scale(sx, sy);
+	}
 };
 
 /**

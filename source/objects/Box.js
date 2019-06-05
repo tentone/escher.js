@@ -9,7 +9,7 @@ import {Circle} from "./Circle.js";
 /**
  * Box object draw a box.
  */
-function Box(resizable)
+function Box()
 {
 	Object2D.call(this);
 
@@ -29,11 +29,6 @@ function Box(resizable)
 	 * Background color of the box.
 	 */
 	this.fillStyle = "#FFFFFF";
-
-	if(resizable)
-	{
-		Helpers.createBoxResize(this);
-	}
 }
 
 Box.prototype = Object.create(Object2D.prototype);

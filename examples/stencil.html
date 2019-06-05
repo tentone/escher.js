@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Example Stencil</title>
+</head>
+<body>
+	<script type="text/javascript" src="../build/trenette.js"></script>
+
+	<script type="text/javascript">
+
+		window.runLoop = true;
+
+		var division = document.createElement("div");
+		division.style.position = "absolute";
+		division.style.width = "100%";
+		division.style.height = "100%";
+		division.style.top = "0px";
+		division.style.left = "0px";
+		division.style.overflow = "hidden";
+		document.body.appendChild(division);
+
+		// Setup the display canvas
+		var canvas = document.createElement("canvas");
+		canvas.style.position = "absolute";
+		canvas.style.width = "100%";
+		canvas.style.height = "100%";
+		canvas.style.top = "0px";
+		canvas.style.left = "0px";
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		canvas.oncontextmenu = function(event)
+		{
+			event.preventDefault();
+			return false;
+		};
+		division.appendChild(canvas);
+
+		window.onresize = function()
+		{
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		};
+
+		var noBox = true;
+
+		canvas.ondblclick = function(event)
+		{
+			var box = new Trenette.Box();
+			box.draggable = true;
+			box.layer = 9;
+			box.draw = function(context)
+			{
+				var width = this.box.max.x - this.box.min.x;
+
+				context.beginPath();
+				context.rect(this.box.min.x - 1e4, -5e3, 1e4, 1e4);
+				context.rect(this.box.max.x, -5e3, 1e4, 1e4);
+				context.rect(this.box.min.x, this.box.min.y - 1e4, width, 1e4);
+				context.rect(this.box.min.x, this.box.max.y, width, 1e4);
+				context.clip();
+			};
+			box.saveContextState = noBox;
+			box.restoreContextState = false;
+			group.add(box);
+
+			if(!noBox)
+			{
+				box.transform = function(context, viewport)
+				{
+					viewport.matrix.setContextTransform(context);
+					this.globalMatrix.tranformContext(context);
+				};
+			}
+
+			if(event !== undefined)
+			{
+				var p = new Trenette.Vector2(event.clientX, event.clientY);
+				p = viewport.inverseMatrix.transformPoint(p);
+				box.position.copy(p);
+			}
+
+			Trenette.Helpers.boxResizeTool(box);
+
+			noBox = false;
+		};
+
+
+		// Create the diagram
+		var group = new Trenette.Object2D();
+
+		// Image
+		var background = new Trenette.Image("hexagon.jpg");
+		background.position.set(-300, -400);
+		background.layer = -20;
+		group.add(background);
+
+		// Black layer
+		var blackLayer = new Trenette.Object2D();
+		blackLayer.ignoreViewport = true;
+		blackLayer.layer = 10;
+		blackLayer.draw = function(context)
+		{
+			context.fillStyle = "rgba(0.0, 0.0, 0.0, 0.3)";
+			context.fillRect(0, 0, 1e5, 1e5);
+		};
+		blackLayer.isInside = function(point)
+		{
+			return false;
+		};
+		blackLayer.saveContextState = false;
+		blackLayer.restoreContextState = true;
+		group.add(blackLayer);
+
+		canvas.ondblclick();
+
+		var viewport = new Trenette.Viewport();
+
+		var renderer = new Trenette.Renderer(canvas);
+
+
+		// Update and render the diagram
+		function loop()
+		{			
+			renderer.update(group, viewport);
+
+			requestAnimationFrame(loop);
+		}
+
+		loop();
+	</script>
+</body>
+</html>

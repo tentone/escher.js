@@ -76,7 +76,7 @@ Renderer.prototype.update = function(object, viewport)
 	for(var i = 0; i < objects.length; i++)
 	{
 		var child = objects[i];
-		var childPoint = child.inverseGlobalMatrix.transformPoint(viewportPoint);
+		var childPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
 
 		// Check if the pointer pointer is inside
 		if(child.isInside(childPoint))
@@ -149,7 +149,7 @@ Renderer.prototype.update = function(object, viewport)
 		var child = objects[i];
 
 		if(child.beingDragged)
-		{
+		{	
 			var lastPosition = pointer.position.clone();
 			lastPosition.sub(pointer.delta);
 
@@ -158,9 +158,6 @@ Renderer.prototype.update = function(object, viewport)
 
 			// Mouse delta in world coordinates
 			positionWorld.sub(lastWorld);
-
-			// Update child position
-			child.position.add(positionWorld);
 
 			if(child.onPointerDrag !== null)
 			{
@@ -195,11 +192,24 @@ Renderer.prototype.update = function(object, viewport)
 
 	// Render into the canvas
 	for(var i = 0; i < objects.length; i++)
-	{
-		context.save();
-		objects[i].globalMatrix.tranformContext(context);
+	{	
+		if(objects[i].saveContextState)
+		{
+			context.save();
+		}
+
+		if(objects[i].ignoreViewport)
+		{
+			context.setTransform(1, 0, 0, 1, 0, 0);
+		}
+
+		objects[i].transform(context, viewport);
 		objects[i].draw(context, viewport);
-		context.restore();
+
+		if(objects[i].restoreContextState)
+		{
+			context.restore();
+		}
 	}
 };
 

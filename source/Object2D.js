@@ -32,6 +32,11 @@ function Object2D()
 	this.position = new Vector2(0, 0);
 
 	/**
+	 * Origin of the object used as point of rotation.
+	 */
+	this.origin = new Vector2(0, 0);
+
+	/**
 	 * Scale of the object.
 	 */
 	this.scale = new Vector2(1, 1);
@@ -82,7 +87,28 @@ function Object2D()
 	 *
 	 * If true the onPointerDrag callback is used to update the state of the object.
 	 */
-	this.draggable = true;
+	this.draggable = false;
+
+	/**
+	 * Flag to indicate wheter this objet ignores the viewport transformation.
+	 */
+	this.ignoreViewport = false;
+
+	/**
+	 * Flag to indicate if the context of canvas should be saved before render.
+	 */
+	this.saveContextState = true;
+
+	/**
+	 * Flag to indicate if the context of canvas should be restored after render.
+	 */
+	this.restoreContextState = true;
+
+	/**
+	 * Flag to indicate if the context of canvas should be restored after render.
+	 */
+	this.restoreContextState = true;
+
 
 	/**
 	 * Flag indicating if the pointer is inside of the element.
@@ -155,7 +181,7 @@ Object2D.prototype.updateMatrix = function(context)
 {
 	if(this.matrixNeedsUpdate)
 	{
-		this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.rotation);
+		this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.origin.x, this.origin.y, this.rotation);
 		this.globalMatrix.copy(this.matrix);
 
 		if(this.parent !== null)
@@ -169,13 +195,23 @@ Object2D.prototype.updateMatrix = function(context)
 };
 
 /**
+ * Apply the transform to the rendering context.
+ *
+ * Can also be used for pre rendering logic.
+ */
+Object2D.prototype.transform = function(context, viewport)
+{
+	this.globalMatrix.tranformContext(context);
+};
+
+/**
  * Draw the object into the canvas.
  *
  * Has to be implemented by underlying classes.
  *
  * @param context Canvas 2d drawing context.
  */
-Object2D.prototype.draw = function(context){};
+Object2D.prototype.draw = function(context, viewport){};
 
 /**
  * Callback method called every time before the object is draw into the canvas.
@@ -210,7 +246,10 @@ Object2D.prototype.onPointerOver = null;
  *
  * Receives (pointer, viewport, delta) as arguments. Delta is the movement of the pointer already translated into local object coordinates.
  */
-Object2D.prototype.onPointerDrag = null;
+Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
+{
+	this.position.add(delta);
+};
 
 /**
  * Callback method called while the pointer button is pressed.
