@@ -31,7 +31,7 @@ Object.assign(Vector2.prototype,
 		this.y = v.y;
 	},
 
-	add: function(v, w)
+	add: function(v)
 	{
 		this.x += v.x;
 		this.y += v.y;
@@ -55,7 +55,7 @@ Object.assign(Vector2.prototype,
 		this.y += v.y * s;
 	},
 
-	sub: function(v, w)
+	sub: function(v)
 	{
 		this.x -= v.x;
 		this.y -= v.y;

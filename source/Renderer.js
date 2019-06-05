@@ -150,16 +150,21 @@ Renderer.prototype.update = function(object, viewport)
 
 		if(child.beingDragged)
 		{
-			var matrix = viewport.inverseMatrix.clone();
-			matrix.multiply(child.inverseGlobalMatrix);
-			matrix.setPosition(0, 0);
+			var lastPosition = pointer.position.clone();
+			lastPosition.sub(pointer.delta);
 
-			var delta = matrix.transformPoint(pointer.delta);
-			child.position.add(delta);
+			var positionWorld =  viewport.inverseMatrix.transformPoint(pointer.position);
+			var lastWorld =  viewport.inverseMatrix.transformPoint(lastPosition);
+
+			// Mouse delta in world coordinates
+			positionWorld.sub(lastWorld);
+
+			// Update child position
+			child.position.add(positionWorld);
 
 			if(child.onPointerDrag !== null)
 			{
-				child.onPointerDrag(pointer, viewport, delta);
+				child.onPointerDrag(pointer, viewport, positionWorld);
 			}
 		}
 

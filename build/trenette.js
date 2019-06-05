@@ -101,7 +101,7 @@
 			this.y = v.y;
 		},
 
-		add: function(v, w)
+		add: function(v)
 		{
 			this.x += v.x;
 			this.y += v.y;
@@ -125,7 +125,7 @@
 			this.y += v.y * s;
 		},
 
-		sub: function(v, w)
+		sub: function(v)
 		{
 			this.x -= v.x;
 			this.y -= v.y;
@@ -1443,16 +1443,21 @@
 
 			if(child.beingDragged)
 			{
-				var matrix = viewport.inverseMatrix.clone();
-				matrix.multiply(child.inverseGlobalMatrix);
-				//matrix.setPosition(0, 0);
+				var lastPosition = pointer.position.clone();
+				lastPosition.sub(pointer.delta);
 
-				var delta = matrix.transformPoint(pointer.delta);
-				child.position.add(delta);
+				var positionWorld =  viewport.inverseMatrix.transformPoint(pointer.position);
+				var lastWorld =  viewport.inverseMatrix.transformPoint(lastPosition);
+
+				// Mouse delta in world coordinates
+				positionWorld.sub(lastWorld);
+
+				// Update child position
+				child.position.add(positionWorld);
 
 				if(child.onPointerDrag !== null)
 				{
-					child.onPointerDrag(pointer, viewport, delta);
+					child.onPointerDrag(pointer, viewport, positionWorld);
 				}
 			}
 
@@ -2034,7 +2039,7 @@
 		this.element.style.transformStyle = "preserve-3d";
 		this.element.style.height = "100px";
 		this.element.style.backgroundColor = "#FF0000";
-		this.element.style.transformOrigin = "0px 0px";
+		this.element.style.transformOrigin = "0px 0px"; //Maybe transform origin as well
 		parent.appendChild(this.element);
 	}
 

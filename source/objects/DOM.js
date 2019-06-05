@@ -28,7 +28,7 @@ function DOM(parent, type)
 	this.element.style.transformStyle = "preserve-3d";
 	this.element.style.height = "100px";
 	this.element.style.backgroundColor = "#FF0000";
-	this.element.style.transformOrigin = "0px 0px";
+	this.element.style.transformOrigin = "0px 0px"; //Maybe transform origin as well
 	parent.appendChild(this.element);
 }
 
