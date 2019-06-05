@@ -3,7 +3,9 @@
 import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 import {Box2} from "../math/Box2.js";
+import {Helpers} from "../utils/Helpers.js";
 import {Circle} from "./Circle.js";
+
 /**
  * Box object draw a box.
  */
@@ -30,69 +32,11 @@ function Box(resizable)
 
 	if(resizable)
 	{
-		this.createResizeHelpers();
+		Helpers.createBoxResize(this);
 	}
 }
 
 Box.prototype = Object.create(Object2D.prototype);
-
-/**
- * Create some resize helper to change the size of the box.
- *
- * Each helper is positioned on one corner of the box.
- */
-Box.prototype.createResizeHelpers = function()
-{
-	var self = this;
-
-	function updateHelpers()
-	{
-		topRight.position.copy(self.box.min);
-		bottomLeft.position.copy(self.box.max);
-		topLeft.position.set(self.box.max.x, self.box.min.y);
-		bottomRight.position.set(self.box.min.x, self.box.max.y);
-	}
-
-	var topRight = new Circle();
-	topRight.radius = 4;
-	topRight.onPointerDrag = function(pointer, viewport, delta)
-	{
-		self.box.min.copy(topRight.position);
-		updateHelpers();
-	};
-	this.add(topRight);
-
-	var topLeft = new Circle();
-	topLeft.radius = 4;
-	topLeft.onPointerDrag = function(pointer, viewport, delta)
-	{
-		self.box.max.x = topLeft.position.x;
-		self.box.min.y = topLeft.position.y;
-		updateHelpers();
-	};
-	this.add(topLeft);
-
-	var bottomLeft = new Circle();
-	bottomLeft.radius = 4;
-	bottomLeft.onPointerDrag = function(pointer, viewport, delta)
-	{
-		self.box.max.copy(bottomLeft.position);
-		updateHelpers();
-	};
-	this.add(bottomLeft);
-
-	var bottomRight = new Circle();
-	bottomRight.radius = 4;
-	bottomRight.onPointerDrag = function(pointer, viewport, delta)
-	{
-		self.box.min.x = bottomRight.position.x;
-		self.box.max.y = bottomRight.position.y;
-		updateHelpers();
-	};
-	this.add(bottomRight);
-
-	updateHelpers();
-};
 
 Box.prototype.onPointerEnter = function(pointer, viewport)
 {

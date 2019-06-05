@@ -1805,6 +1805,72 @@ Circle.prototype.draw = function(context)
 	context.stroke();
 };
 
+function Helpers(){}
+
+/**
+ * Create a box resize helper and attach it to an object to change the size of the object box.
+ *
+ * Each helper is positioned on one corner of the box, and the value of the corner is copied to the boxes as they are dragged.
+ *
+ * This method required to object to have a box property.
+ */
+Helpers.createBoxResize = function(object)
+{
+	if(object.box === undefined)
+	{
+		console.warn("trenette.js: Helpers.createBoxResize(), object box property missing.");
+		return;
+	}
+
+	function updateHelpers()
+	{
+		topRight.position.copy(object.box.min);
+		bottomLeft.position.copy(object.box.max);
+		topLeft.position.set(object.box.max.x, object.box.min.y);
+		bottomRight.position.set(object.box.min.x, object.box.max.y);
+	}
+
+	var topRight = new Circle();
+	topRight.radius = 4;
+	topRight.onPointerDrag = function(pointer, viewport, delta)
+	{
+		object.box.min.copy(topRight.position);
+		updateHelpers();
+	};
+	object.add(topRight);
+
+	var topLeft = new Circle();
+	topLeft.radius = 4;
+	topLeft.onPointerDrag = function(pointer, viewport, delta)
+	{
+		object.box.max.x = topLeft.position.x;
+		object.box.min.y = topLeft.position.y;
+		updateHelpers();
+	};
+	object.add(topLeft);
+
+	var bottomLeft = new Circle();
+	bottomLeft.radius = 4;
+	bottomLeft.onPointerDrag = function(pointer, viewport, delta)
+	{
+		object.box.max.copy(bottomLeft.position);
+		updateHelpers();
+	};
+	object.add(bottomLeft);
+
+	var bottomRight = new Circle();
+	bottomRight.radius = 4;
+	bottomRight.onPointerDrag = function(pointer, viewport, delta)
+	{
+		object.box.min.x = bottomRight.position.x;
+		object.box.max.y = bottomRight.position.y;
+		updateHelpers();
+	};
+	object.add(bottomRight);
+
+	updateHelpers();
+};
+
 /**
  * Box object draw a box.
  */
@@ -1829,69 +1895,11 @@ function Box(resizable)
 
 	if(resizable)
 	{
-		this.createResizeHelpers();
+		Helpers.createBoxResize(this);
 	}
 }
 
 Box.prototype = Object.create(Object2D.prototype);
-
-/**
- * Create some resize helper to change the size of the box.
- *
- * Each helper is positioned on one corner of the box.
- */
-Box.prototype.createResizeHelpers = function()
-{
-	var self = this;
-
-	function updateHelpers()
-	{
-		topRight.position.copy(self.box.min);
-		bottomLeft.position.copy(self.box.max);
-		topLeft.position.set(self.box.max.x, self.box.min.y);
-		bottomRight.position.set(self.box.min.x, self.box.max.y);
-	}
-
-	var topRight = new Circle();
-	topRight.radius = 4;
-	topRight.onPointerDrag = function(pointer, viewport, delta)
-	{
-		self.box.min.copy(topRight.position);
-		updateHelpers();
-	};
-	this.add(topRight);
-
-	var topLeft = new Circle();
-	topLeft.radius = 4;
-	topLeft.onPointerDrag = function(pointer, viewport, delta)
-	{
-		self.box.max.x = topLeft.position.x;
-		self.box.min.y = topLeft.position.y;
-		updateHelpers();
-	};
-	this.add(topLeft);
-
-	var bottomLeft = new Circle();
-	bottomLeft.radius = 4;
-	bottomLeft.onPointerDrag = function(pointer, viewport, delta)
-	{
-		self.box.max.copy(bottomLeft.position);
-		updateHelpers();
-	};
-	this.add(bottomLeft);
-
-	var bottomRight = new Circle();
-	bottomRight.radius = 4;
-	bottomRight.onPointerDrag = function(pointer, viewport, delta)
-	{
-		self.box.min.x = bottomRight.position.x;
-		self.box.max.y = bottomRight.position.y;
-		updateHelpers();
-	};
-	this.add(bottomRight);
-
-	updateHelpers();
-};
 
 Box.prototype.onPointerEnter = function(pointer, viewport)
 {
@@ -1993,15 +2001,49 @@ Text.prototype.draw = function(context)
 	context.fillText(this.text, 0, 0);
 };
 
+/**
+ * Image object is used to draw an image from URL.
+ */
 function Image(src)
 {
 	Object2D.call(this);
+	
+	/**
+	 * Box object containing the size of the object.
+	 */
+	this.box = new Box2(new Vector2(0, 0), new Vector2(0, 0));
 
+	/**
+	 * Image source DOM element.
+	 */
 	this.image = document.createElement("img");
-	this.image.src = src;
+
+	this.setImage(src);
 }
 
 Image.prototype = Object.create(Object2D.prototype);
+
+/**
+ * Set the image of the object.
+ *
+ * Automatically sets the box size to match the image.
+ */
+Image.prototype.setImage = function(src)
+{
+	var self = this;
+
+	this.image.onload = function()
+	{
+		self.box.min.set(0, 0);
+		self.box.max.set(this.naturalWidth, this.naturalHeight);
+	};
+	this.image.src = src;
+};
+
+Image.prototype.isInside = function(point)
+{
+	return this.box.containsPoint(point);
+};
 
 Image.prototype.draw = function(context)
 {
@@ -2026,14 +2068,14 @@ function DOM(parent, type)
 	 * DOM element contained by this object.
 	 */
 	this.element = document.createElement("div");
+	this.element.style.transformStyle = "preserve-3d";
 	this.element.style.position = "absolute";
 	this.element.style.top = "0px";
 	this.element.style.bottom = "0px";
 	this.element.style.width = "100px";
-	this.element.style.transformStyle = "preserve-3d";
 	this.element.style.height = "100px";
-	this.element.style.backgroundColor = "#FF0000";
-	this.element.style.transformOrigin = "0px 0px"; //Maybe transform origin as well
+	this.element.style.backgroundColor = "rgba(0.0, 0.0, 0.0, 0.8)";
+	this.element.style.transformOrigin = "0px 0px";
 	parent.appendChild(this.element);
 }
 

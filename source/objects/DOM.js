@@ -21,14 +21,14 @@ function DOM(parent, type)
 	 * DOM element contained by this object.
 	 */
 	this.element = document.createElement("div");
+	this.element.style.transformStyle = "preserve-3d";
 	this.element.style.position = "absolute";
 	this.element.style.top = "0px";
 	this.element.style.bottom = "0px";
 	this.element.style.width = "100px";
-	this.element.style.transformStyle = "preserve-3d";
 	this.element.style.height = "100px";
-	this.element.style.backgroundColor = "#FF0000";
-	this.element.style.transformOrigin = "0px 0px"; //Maybe transform origin as well
+	this.element.style.backgroundColor = "rgba(0.0, 0.0, 0.0, 0.8)";
+	this.element.style.transformOrigin = "0px 0px";
 	parent.appendChild(this.element);
 }
 

@@ -5,7 +5,7 @@ export default {
 	plugins: [
 		strip(
 		{
-			functions: ["console.*", "assert.*", "debug", "alert"],
+			functions: ["assert.*", "debug", "alert"],
 			debugger: false,
 			sourceMap: false
 		})
