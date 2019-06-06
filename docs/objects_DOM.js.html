@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: EventManager.js</title>
+    <title>JSDoc: Source: objects/DOM.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: EventManager.js</h1>
+    <h1 class="page-title">Source: objects/DOM.js</h1>
 
     
 
@@ -28,74 +28,57 @@
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
 
+import {Object2D} from "../Object2D.js";
+import {Vector2} from "../math/Vector2.js";
+
 /**
- * EventManager is used to manager DOM events creationg and destruction in a single function call.
+ * A DOM object transformed using CSS3D to ver included in the graph.
  *
- * It is used by objects to make it easier to add and remove events from global DOM objects.
+ * DOM objects always stay on top of everything else, mouse events are not supported for these.
+ *
+ * Use the normal DOM events for interaction.
  *
  * @class
+ * @param parent Parent DOM element that contains the drawing canvas.
+ * @param type Type of the DOM element (e.g. "div", "p", ...)
  */
-function EventManager()
+function DOM(parent, type)
 {
+	Object2D.call(this);
+
 	/**
-	 * Stores all events in the manager, their target and callback.
-	 * 
-	 * Format [target, event, callback, active]
-	 * 
-	 * @type {Array}
+	 * DOM element contained by this object.
 	 */
-	this.events = [];
+	this.element = document.createElement("div");
+	this.element.style.transformStyle = "preserve-3d";
+	this.element.style.position = "absolute";
+	this.element.style.top = "0px";
+	this.element.style.bottom = "0px";
+	this.element.style.transformOrigin = "0px 0px";
+	this.element.style.overflow = "auto";
+	parent.appendChild(this.element);
+	
+	/**
+	 * Size of the DOM element (in world coordinates).
+	 */
+	this.size = new Vector2(100, 100);
 }
 
-/**
- * Add new event to the manager.
- *
- * @param {DOM} target Event target element.
- * @param {String} event Event name.
- * @param {Function} callback Callback function.
- */
-EventManager.prototype.add = function(target, event, callback)
+DOM.prototype = Object.create(Object2D.prototype);
+
+DOM.prototype.draw = function(context, viewport)
 {
-	this.events.push([target, event, callback, false]);
+	// CSS trasnformation matrix
+	var projection = viewport.matrix.clone();
+	projection.multiply(this.globalMatrix);
+	this.element.style.transform = projection.cssTransform();
+
+	// Size of the element
+	this.element.style.width = this.size.x + "px";
+	this.element.style.height = this.size.y + "px";
 };
 
-/**
- * Destroys this manager and remove all events.
- */
-EventManager.prototype.clear = function()
-{
-	this.destroy();
-	this.events = [];
-};
-
-/**
- * Creates all events in this manager.
- */
-EventManager.prototype.create = function()
-{
-	for(var i = 0; i &lt; this.events.length; i++)
-	{
-		var event = this.events[i];
-		event[0].addEventListener(event[1], event[2]);
-		event[3] = true;
-	}
-};
-
-/**
- * Removes all events in this manager.
- */
-EventManager.prototype.destroy = function()
-{
-	for(var i = 0; i &lt; this.events.length; i++)
-	{
-		var event = this.events[i];
-		event[0].removeEventListener(event[1], event[2]);
-		event[3] = false;
-	}
-};
-
-export {EventManager};
-</code></pre>
+export {DOM};</code></pre>
         </article>
     </section>
 

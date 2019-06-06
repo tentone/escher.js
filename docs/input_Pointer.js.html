@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: input/Pointer.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: input/Pointer.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+
+import {EventManager} from "../EventManager.js";
+import {Vector2} from "../math/Vector2.js";
+import {Key} from "./Key.js";
+
+/**
+ * Pointer instance for input in sync with the running 3D application.
+ *
+ * The pointer object provided by scripts is automatically updated by the runtime handler.
+ * 
+ * @class
+ * @param {DOM} domElement DOM element to craete the pointer events.
+ * @param {Boolean} dontInitialize If true the pointer events are not created.
+ */
+function Pointer(domElement)
+{
+	//Raw data
+	this._keys = new Array(5);
+	this._position = new Vector2(0, 0);
+	this._positionUpdated = false;
+	this._delta = new Vector2(0, 0);
+	this._wheel = 0;
+	this._wheelUpdated = false;
+	this._doubleClicked = new Array(5);
+
+	/**
+	 * Array with pointer buttons status.
+	 */
+	this.keys = new Array(5);
+
+	/**
+	 * Pointer position inside of the window (coordinates in window space).
+	 */
+	this.position = new Vector2(0, 0);
+
+	/**
+	 * Pointer movement (coordinates in window space).
+	 */
+	this.delta = new Vector2(0, 0);
+
+	/**
+	 * Pointer scroll wheel movement.
+	 */
+	this.wheel = 0;
+	
+	/**
+	 * Indicates a button of the pointer was double clicked.
+	 */
+	this.doubleClicked = new Array(5);
+
+	/**
+	 * DOM element where to attach the pointer events.
+	 */
+	this.domElement = (domElement !== undefined) ? domElement : window;
+
+	/**
+	 * Canvas attached to this pointer instance used to calculate position and delta in element space coordinates.
+	 */
+	this.canvas = null;
+	
+	/**
+	 * Event manager responsible for updating the raw data variables.
+	 *
+	 * Diferent events are used depending on the host platform.
+	 *
+	 * When the update method is called the raw data is reset.
+	 */
+	this.events = new EventManager();
+
+	//Initialize key instances
+	for(var i = 0; i &lt; 5; i++)
+	{
+		this._doubleClicked[i] = false;
+		this.doubleClicked[i] = false;
+		this._keys[i] = new Key();
+		this.keys[i] = new Key();
+	}
+
+	//Self pointer
+	var self = this;
+
+	//Scroll wheel
+	if(window.onmousewheel !== undefined)
+	{
+		//Chrome, edge
+		this.events.add(this.domElement, "mousewheel", function(event)
+		{
+			self._wheel = event.deltaY;
+			self._wheelUpdated = true;
+		});
+	}
+	else if(window.addEventListener !== undefined)
+	{
+		//Firefox
+		this.events.add(this.domElement, "DOMMouseScroll", function(event)
+		{
+			self._wheel = event.detail * 30;
+			self._wheelUpdated = true;
+		});
+	}
+	else
+	{
+		this.events.add(this.domElement, "wheel", function(event)
+		{
+			self._wheel = event.deltaY;
+			self._wheelUpdated = true;
+		});
+	}
+
+	//Touchscreen input events
+	if(window.ontouchstart !== undefined || navigator.msMaxTouchPoints > 0)
+	{
+		//Auxiliar variables to calculate touch delta
+		var lastTouch = new Vector2(0, 0);
+
+		//Touch start event
+		this.events.add(this.domElement, "touchstart", function(event)
+		{
+			var touch = event.touches[0];
+
+			self.updatePosition(touch.clientX, touch.clientY, 0, 0);
+			self.updateKey(Pointer.LEFT, Key.DOWN);
+
+			lastTouch.set(touch.clientX, touch.clientY);
+		});
+
+		//Touch end event
+		this.events.add(this.domElement, "touchend", function(event)
+		{
+			self.updateKey(Pointer.LEFT, Key.UP);
+		});
+
+		//Touch cancel event
+		this.events.add(this.domElement, "touchcancel", function(event)
+		{
+			self.updateKey(Pointer.LEFT, Key.UP);
+		});
+
+		//Touch move event
+		this.events.add(document.body, "touchmove", function(event)
+		{
+			var touch = event.touches[0];
+			self.updatePosition(touch.clientX, touch.clientY, touch.clientX - lastTouch.x, touch.clientY - lastTouch.y);
+			lastTouch.set(touch.clientX, touch.clientY);
+		});
+	}
+
+	//Move
+	this.events.add(this.domElement, "mousemove", function(event)
+	{
+		self.updatePosition(event.clientX, event.clientY, event.movementX, event.movementY);
+	});
+
+	//Button pressed
+	this.events.add(this.domElement, "mousedown", function(event)
+	{
+		self.updateKey(event.which - 1, Key.DOWN);
+	});
+
+	//Button released
+	this.events.add(this.domElement, "mouseup", function(event)
+	{
+		self.updateKey(event.which - 1, Key.UP);
+	});
+
+	//Drag start
+	this.events.add(this.domElement, "dragstart", function(event)
+	{
+		self.updateKey(event.which - 1, Key.UP);
+	});
+
+	//Pointer double click
+	this.events.add(this.domElement, "dblclick", function(event)
+	{	
+		self._doubleClicked[event.which - 1] = true;
+	});
+
+	this.create();
+}
+
+Pointer.prototype = Pointer;
+Pointer.prototype.constructor = Pointer;
+
+/**
+ * Left pointer button.
+ */
+Pointer.LEFT = 0;
+
+/**
+ * Middle pointer button.
+ */
+Pointer.MIDDLE = 1;
+
+/**
+ * Right pointer button.
+ */
+Pointer.RIGHT = 2;
+
+/**
+ * Back pointer navigation button.
+ */
+Pointer.BACK = 3;
+
+/**
+ * Forward pointer navigation button.
+ */
+Pointer.FORWARD = 4;
+
+/**
+ * Element to be used for coordinates calculation relative to that canvas.
+ * 
+ * @param {DOM} canvas Canvas to be attached to the Pointer instance
+ */
+Pointer.setCanvas = function(element)
+{
+	this.canvas = element;
+
+	element.pointerInside = false;
+
+	element.addEventListener("mouseenter", function()
+	{
+		this.pointerInside = true;
+	});
+
+	element.addEventListener("mouseleave", function()
+	{
+		this.pointerInside = false;
+	});
+};
+
+/**
+ * Check if pointer is inside attached canvas (updated async).
+ * 
+ * @return {boolean} True if pointer is currently inside the canvas
+ */
+Pointer.insideCanvas = function()
+{
+	return this.canvas !== null &amp;&amp; this.canvas.pointerInside;
+};
+
+/**
+ * Check if pointer button is currently pressed.
+ * 
+ * @param {Number} button Button to check status of
+ * @return {boolean} True if button is currently pressed
+ */
+Pointer.buttonPressed = function(button)
+{
+	return this.keys[button].pressed;
+};
+
+/**
+ * Check if pointer button was double clicked.
+ * 
+ * @param {Number} button Button to check status of
+ * @return {boolean} True if some pointer button was just double clicked
+ */
+Pointer.buttonDoubleClicked = function(button)
+{
+	return this.doubleClicked[button];
+};
+
+/**
+ * Check if a pointer button was just pressed.
+ * 
+ * @param {Number} button Button to check status of
+ * @return {boolean} True if button was just pressed
+ */
+Pointer.buttonJustPressed = function(button)
+{
+	return this.keys[button].justPressed;
+};
+
+/**
+ * Check if a pointer button was just released.
+ * 
+ * @param {Number} button Button to check status of
+ * @return {boolean} True if button was just released
+ */
+Pointer.buttonJustReleased = function(button)
+{
+	return this.keys[button].justReleased;
+};
+
+/**
+ * Update pointer position.
+ *
+ * Automatically called by the runtime.
+ * 
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} xDiff
+ * @param {Number} yDiff
+ */
+Pointer.updatePosition = function(x, y, xDiff, yDiff)
+{
+	if(this.canvas !== null)
+	{
+		var rect = this.canvas.getBoundingClientRect();
+		x -= rect.left;
+		y -= rect.top;
+	}
+
+	this._position.set(x, y);
+	this._delta.x += xDiff;
+	this._delta.y += yDiff;
+	this._positionUpdated = true;
+};
+
+/**
+ * Update a pointer button.
+ * 
+ * Automatically called by the runtime.
+ *
+ * @param {Number} button
+ * @param {Number} action
+ */
+Pointer.updateKey = function(button, action)
+{
+	if(button > -1)
+	{
+		this._keys[button].update(action);
+	}
+};
+
+/**
+ * Update pointer buttons state, position, wheel and delta synchronously.
+ */
+Pointer.update = function()
+{
+	//Update pointer keys state
+	for(var i = 0; i &lt; 5; i++)
+	{
+		if(this._keys[i].justPressed &amp;&amp; this.keys[i].justPressed)
+		{
+			this._keys[i].justPressed = false;
+		}
+		if(this._keys[i].justReleased &amp;&amp; this.keys[i].justReleased)
+		{
+			this._keys[i].justReleased = false;
+		}
+
+		this.keys[i].set(this._keys[i].justPressed, this._keys[i].pressed, this._keys[i].justReleased);
+
+		//Update pointer double click
+		if(this._doubleClicked[i] === true)
+		{
+			this.doubleClicked[i] = true;
+			this._doubleClicked[i] = false;
+		}
+		else
+		{
+			this.doubleClicked[i] = false;
+		}
+	}
+
+	//Update pointer wheel
+	if(this._wheelUpdated)
+	{
+		this.wheel = this._wheel;
+		this._wheelUpdated = false;
+	}
+	else
+	{
+		this.wheel = 0;
+	}
+
+	//Update pointer Position if needed
+	if(this._positionUpdated)
+	{
+		this.delta.copy(this._delta);
+		this.position.copy(this._position);
+
+		this._delta.set(0,0);
+		this._positionUpdated = false;
+	}
+	else
+	{
+		this.delta.x = 0;
+		this.delta.y = 0;
+	}
+};
+
+/**
+ * Create pointer events.
+ */
+Pointer.create = function()
+{
+	this.events.create();
+};
+
+/**
+ * Dispose pointer events.
+ */
+Pointer.dispose = function()
+{
+	this.events.destroy();
+};
+
+
+export {Pointer};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="Stencil.html">Stencil</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Thu Jun 06 2019 12:05:48 GMT+0100 (Western European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

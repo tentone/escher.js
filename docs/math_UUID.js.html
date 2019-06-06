@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: math/UUID.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,57 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: math/UUID.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
 
+/**
+ * Implements all UUID related methods.
+ *
+ * @class
+ */
+function UUID(){}
 
-    <h3> </h3>
+/**
+ * Generate new random UUID v4 as string.
+ *
+ * http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
+ */
+UUID.generate = (function ()
+{
+	var lut = [];
 
+	for(var i = 0; i &lt; 256; i++)
+	{
+		lut[i] = (i &lt; 16 ? "0" : "") + (i).toString(16);
+	}
 
+	return function generateUUID()
+	{
+		var d0 = Math.random() * 0XFFFFFFFF | 0;
+		var d1 = Math.random() * 0XFFFFFFFF | 0;
+		var d2 = Math.random() * 0XFFFFFFFF | 0;
+		var d3 = Math.random() * 0XFFFFFFFF | 0;
 
+		var uuid = lut[d0 &amp; 0xff] + lut[d0 >> 8 &amp; 0xff] + lut[d0 >> 16 &amp; 0xff] + lut[d0 >> 24 &amp; 0xff] + "-" +
+			lut[d1 &amp; 0xff] + lut[d1 >> 8 &amp; 0xff] + "-" + lut[d1 >> 16 &amp; 0x0f | 0x40] + lut[d1 >> 24 &amp; 0xff] + "-" +
+			lut[d2 &amp; 0x3f | 0x80] + lut[d2 >> 8 &amp; 0xff] + "-" + lut[d2 >> 16 &amp; 0xff] + lut[d2 >> 24 &amp; 0xff] +
+			lut[d3 &amp; 0xff] + lut[d3 >> 8 &amp; 0xff] + lut[d3 >> 16 &amp; 0xff] + lut[d3 >> 24 &amp; 0xff];
 
+		return uuid.toUpperCase();
+	};
+})();
 
-
-
-
-
-
-    
-
-
-
-
-
+export {UUID};</code></pre>
+        </article>
+    </section>
 
 
 

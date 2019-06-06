@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: objects/Text.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,64 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: objects/Text.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
 
+import {Object2D} from "../Object2D.js";
 
-    <h3> </h3>
+/**
+ * Text element, used to draw text into the canvas.
+ *
+ * @class
+ */
+function Text()
+{
+	Object2D.call(this);
 
+	/**
+	 * Text value.
+	 */
+	this.text = "";
 
+	/**
+	 * Font of the text.
+	 */
+	this.font = "16px Arial";
 
+	/**
+	 * Color (style) of the text.
+	 */
+	this.color = "#000000";
 
+	/**
+	 * Text align property.
+	 */
+	this.textAlign = "center";
+}
 
+Text.prototype = Object.create(Object2D.prototype);
 
+Text.prototype.draw = function(context)
+{
+	context.font = this.font;
+	context.textAlign = this.textAlign;
+	context.fillStyle = this.color;
 
+	context.fillText(this.text, 0, 0);
+};
 
-
-
-    
-
-
-
-
-
+export {Text};
+</code></pre>
+        </article>
+    </section>
 
 
 

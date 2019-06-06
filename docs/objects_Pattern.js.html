@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: EventManager.js</title>
+    <title>JSDoc: Source: objects/Pattern.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: EventManager.js</h1>
+    <h1 class="page-title">Source: objects/Pattern.js</h1>
 
     
 
@@ -28,73 +28,81 @@
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
 
+import {Object2D} from "../Object2D.js";
+import {Vector2} from "../math/Vector2.js";
+import {Box2} from "../math/Box2.js";
+import {Helpers} from "../utils/Helpers.js";
+import {Circle} from "./Circle.js";
+
 /**
- * EventManager is used to manager DOM events creationg and destruction in a single function call.
+ * Pattern object draw a image repeated as a pattern.
  *
- * It is used by objects to make it easier to add and remove events from global DOM objects.
+ * Its similar to the Image class but the image can be repeat infinitly.
  *
  * @class
  */
-function EventManager()
+function Pattern(src)
 {
+	Object2D.call(this);
+
 	/**
-	 * Stores all events in the manager, their target and callback.
-	 * 
-	 * Format [target, event, callback, active]
-	 * 
-	 * @type {Array}
+	 * Box object containing the size of the object.
 	 */
-	this.events = [];
+	this.box = new Box2();
+
+	/**
+	 * Image source DOM element.
+	 */
+	this.image = document.createElement("img");
+
+	/**
+	 * A DOMString indicating how to repeat the pattern image.
+	 */
+	this.repetition = "repeat"
+
+	if(src !== undefined)
+	{
+		this.setImage(src);
+	}
 }
 
+Pattern.prototype = Object.create(Object2D.prototype);
+
 /**
- * Add new event to the manager.
+ * Set the image of the object.
  *
- * @param {DOM} target Event target element.
- * @param {String} event Event name.
- * @param {Function} callback Callback function.
+ * Automatically sets the box size to match the image.
  */
-EventManager.prototype.add = function(target, event, callback)
+Pattern.prototype.setImage = function(src)
 {
-	this.events.push([target, event, callback, false]);
-};
+	var self = this;
 
-/**
- * Destroys this manager and remove all events.
- */
-EventManager.prototype.clear = function()
-{
-	this.destroy();
-	this.events = [];
-};
-
-/**
- * Creates all events in this manager.
- */
-EventManager.prototype.create = function()
-{
-	for(var i = 0; i &lt; this.events.length; i++)
+	this.image.onload = function()
 	{
-		var event = this.events[i];
-		event[0].addEventListener(event[1], event[2]);
-		event[3] = true;
-	}
+		self.box.min.set(0, 0);
+		self.box.max.set(this.naturalWidth, this.naturalHeight);
+	};
+	this.image.src = src;
 };
 
-/**
- * Removes all events in this manager.
- */
-EventManager.prototype.destroy = function()
+Pattern.prototype.isInside = function(point)
 {
-	for(var i = 0; i &lt; this.events.length; i++)
-	{
-		var event = this.events[i];
-		event[0].removeEventListener(event[1], event[2]);
-		event[3] = false;
-	}
+	return this.box.containsPoint(point);
 };
 
-export {EventManager};
+Pattern.prototype.draw = function(context, viewport)
+{
+	var width = this.box.max.x - this.box.min.x;
+	var height = this.box.max.y - this.box.min.y;
+
+	var pattern = context.createPattern(this.image, this.repetition);
+	//pattern.setTransform();
+
+	context.fillStyle = pattern;
+	context.fillRect(this.box.min.x, this.box.min.y, width, height);
+};
+
+export {Pattern};
 </code></pre>
         </article>
     </section>

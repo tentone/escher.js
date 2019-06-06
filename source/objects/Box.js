@@ -8,6 +8,8 @@ import {Circle} from "./Circle.js";
 
 /**
  * Box object draw a box.
+ *
+ * @class
  */
 function Box()
 {

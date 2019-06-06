@@ -9,7 +9,7 @@
 	},
 	"scripts": {
 		"build": "rollup -c && npm run uglify",
-		"docs": "jsdoc -d docs source",
+		"docs": "jsdoc -d docs -r source",
 		"uglify": "uglifyjs --compress --mangle --output build/trenette.min.js -- build/trenette.js",
 		"pub": "npm run build && npm run docs && npm publish --access public ."
 	},

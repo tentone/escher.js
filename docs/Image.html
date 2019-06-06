@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Renderer</title>
+    <title>JSDoc: Class: Image</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Renderer</h1>
+    <h1 class="page-title">Class: Image</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Renderer<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Image<span class="signature">(src<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="Renderer"><span class="type-signature"></span>new Renderer<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Image"><span class="type-signature"></span>new Image<span class="signature">(src<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -49,7 +49,7 @@
 
 
 <div class="description">
-    The renderer is resposible for drawing the structure into the canvas element.Its also resposible for managing the canvas state.
+    Image object is used to draw an image from URL.
 </div>
 
 
@@ -58,6 +58,67 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>src</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Source URL of the image.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -93,7 +154,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line12">line 12</a>
+        <a href="objects_Image.js.html">objects/Image.js</a>, <a href="objects_Image.js.html#line13">line 13</a>
     </li></ul></dd>
     
 
@@ -143,13 +204,13 @@
 
         
             
-<h4 class="name" id="autoClear"><span class="type-signature"></span>autoClear<span class="type-signature"></span></h4>
+<h4 class="name" id="box"><span class="type-signature"></span>box<span class="type-signature"></span></h4>
 
 
 
 
 <div class="description">
-    Indicates if the canvas should be automatically cleared on each new frame.
+    Box object containing the size of the object.
 </div>
 
 
@@ -187,7 +248,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line35">line 35</a>
+        <a href="objects_Image.js.html">objects/Image.js</a>, <a href="objects_Image.js.html#line20">line 20</a>
     </li></ul></dd>
     
 
@@ -205,13 +266,13 @@
 
         
             
-<h4 class="name" id="canvas"><span class="type-signature"></span>canvas<span class="type-signature"></span></h4>
+<h4 class="name" id="image"><span class="type-signature"></span>image<span class="type-signature"></span></h4>
 
 
 
 
 <div class="description">
-    Canvas DOM element, has to be managed by the user.
+    Image source DOM element.
 </div>
 
 
@@ -249,131 +310,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line17">line 17</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="context"><span class="type-signature"></span>context<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    Canvas 2D rendering context used to draw content.
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line22">line 22</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="pointer"><span class="type-signature"></span>pointer<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    Pointer input handler object.
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line29">line 29</a>
+        <a href="objects_Image.js.html">objects/Image.js</a>, <a href="objects_Image.js.html#line25">line 25</a>
     </li></ul></dd>
     
 
@@ -401,7 +338,7 @@
     
 
     
-    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(object, viewport)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="setImage"><span class="type-signature"></span>setImage<span class="signature">(src)</span><span class="type-signature"></span></h4>
     
 
     
@@ -409,7 +346,7 @@
 
 
 <div class="description">
-    Update the renderer state, update the input handlers, calculate the object and viewport transformation matrices.Render the object using the viewport into a canvas element.The canvas state is saved and restored for each individual object, ensuring that the code of one object does not affect another one.Should be called at a fixed rate preferably using the requestAnimationFrame() method.
+    Set the image of the object.Automatically sets the box size to match the image.
 </div>
 
 
@@ -445,10 +382,15 @@
 
         <tr>
             
-                <td class="name"><code>object</code></td>
+                <td class="name"><code>src</code></td>
             
 
             <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
             
             </td>
 
@@ -456,25 +398,7 @@
 
             
 
-            <td class="description last">Object to be updated.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>viewport</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Viewport to be updated (should be the one where the objects will be rendered after).</td>
+            <td class="description last">Source URL of the image.</td>
         </tr>
 
     
@@ -515,7 +439,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line50">line 50</a>
+        <a href="objects_Image.js.html">objects/Image.js</a>, <a href="objects_Image.js.html#line42">line 42</a>
     </li></ul></dd>
     
 

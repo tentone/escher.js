@@ -64,283 +64,283 @@ EventManager.prototype.destroy = function()
 	}
 };
 
+/** 
+ * Class representing a 2D vector. A 2D vector is an ordered pair of numbers (labeled x and y), which can be used to represent points in space, directions, etc.
+ *
+ * @class
+ */
 function Vector2(x, y)
 {
 	this.x = x || 0;
 	this.y = y || 0;
 }
 
-Object.assign(Vector2.prototype,
+Vector2.prototype.set = function(x, y)
 {
-	set: function(x, y)
+	this.x = x;
+	this.y = y;
+};
+
+Vector2.prototype.setScalar = function(scalar)
+{
+	this.x = scalar;
+	this.y = scalar;
+};
+
+Vector2.prototype.clone = function()
+{
+	return new Vector2(this.x, this.y);
+};
+
+Vector2.prototype.copy = function(v)
+{
+	this.x = v.x;
+	this.y = v.y;
+};
+
+Vector2.prototype.add = function(v)
+{
+	this.x += v.x;
+	this.y += v.y;
+};
+
+Vector2.prototype.addScalar = function(s)
+{
+	this.x += s;
+	this.y += s;
+};
+
+Vector2.prototype.addVectors = function(a, b)
+{
+	this.x = a.x + b.x;
+	this.y = a.y + b.y;
+};
+
+Vector2.prototype.addScaledVector = function(v, s)
+{
+	this.x += v.x * s;
+	this.y += v.y * s;
+};
+
+Vector2.prototype.sub = function(v)
+{
+	this.x -= v.x;
+	this.y -= v.y;
+};
+
+Vector2.prototype.subScalar = function(s)
+{
+	this.x -= s;
+	this.y -= s;
+};
+
+Vector2.prototype.subVectors = function(a, b)
+{
+	this.x = a.x - b.x;
+	this.y = a.y - b.y;
+};
+
+Vector2.prototype.multiply = function(v)
+{
+	this.x *= v.x;
+	this.y *= v.y;
+};
+
+Vector2.prototype.multiplyScalar = function(scalar)
+{
+	this.x *= scalar;
+	this.y *= scalar;
+};
+
+Vector2.prototype.divide = function(v)
+{
+	this.x /= v.x;
+	this.y /= v.y;
+};
+
+Vector2.prototype.divideScalar = function(scalar)
+{
+	return this.multiplyScalar(1 / scalar);
+};
+
+Vector2.prototype.min = function(v)
+{
+	this.x = Math.min(this.x, v.x);
+	this.y = Math.min(this.y, v.y);
+};
+
+Vector2.prototype.max = function(v)
+{
+	this.x = Math.max(this.x, v.x);
+	this.y = Math.max(this.y, v.y);
+};
+
+Vector2.prototype.clamp = function(min, max)
+{
+	// assumes min < max, componentwise
+	this.x = Math.max(min.x, Math.min(max.x, this.x));
+	this.y = Math.max(min.y, Math.min(max.y, this.y));
+};
+
+Vector2.prototype.clampScalar = function(minVal, maxVal)
+{
+	this.x = Math.max(minVal, Math.min(maxVal, this.x));
+	this.y = Math.max(minVal, Math.min(maxVal, this.y));
+};
+
+Vector2.prototype.clampLength = function(min, max)
+{
+	var length = this.length();
+
+	return this.divideScalar(length || 1).multiplyScalar(Math.max(min, Math.min(max, length)));
+};
+
+Vector2.prototype.floor = function()
+{
+	this.x = Math.floor(this.x);
+	this.y = Math.floor(this.y);
+};
+
+Vector2.prototype.ceil = function()
+{
+	this.x = Math.ceil(this.x);
+	this.y = Math.ceil(this.y);
+};
+
+Vector2.prototype.round = function()
+{
+	this.x = Math.round(this.x);
+	this.y = Math.round(this.y);
+};
+
+Vector2.prototype.roundToZero = function()
+{
+	this.x = (this.x < 0) ? Math.ceil(this.x) : Math.floor(this.x);
+	this.y = (this.y < 0) ? Math.ceil(this.y) : Math.floor(this.y);
+};
+
+Vector2.prototype.negate = function()
+{
+	this.x = -this.x;
+	this.y = -this.y;
+
+	return this;
+};
+
+Vector2.prototype.dot = function(v)
+{
+	return this.x * v.x + this.y * v.y;
+};
+
+Vector2.prototype.cross = function(v)
+{
+	return this.x * v.y - this.y * v.x;
+};
+
+Vector2.prototype.lengthSq = function()
+{
+	return this.x * this.x + this.y * this.y;
+};
+
+Vector2.prototype.length = function()
+{
+	return Math.sqrt(this.x * this.x + this.y * this.y);
+};
+
+Vector2.prototype.manhattanLength = function()
+{
+	return Math.abs(this.x) + Math.abs(this.y);
+};
+
+Vector2.prototype.normalize = function()
+{
+	return this.divideScalar(this.length() || 1);
+};
+
+/**
+ * Computes the angle in radians with respect to the positive x-axis
+ */
+Vector2.prototype.angle = function()
+{
+	var angle = Math.atan2(this.y, this.x);
+
+	if(angle < 0)
 	{
-		this.x = x;
-		this.y = y;
-	},
-
-	setScalar: function(scalar)
-	{
-		this.x = scalar;
-		this.y = scalar;
-	},
-
-	clone: function()
-	{
-		return new Vector2(this.x, this.y);
-	},
-
-	copy: function(v)
-	{
-		this.x = v.x;
-		this.y = v.y;
-	},
-
-	add: function(v)
-	{
-		this.x += v.x;
-		this.y += v.y;
-	},
-
-	addScalar: function(s)
-	{
-		this.x += s;
-		this.y += s;
-	},
-
-	addVectors: function(a, b)
-	{
-		this.x = a.x + b.x;
-		this.y = a.y + b.y;
-	},
-
-	addScaledVector: function(v, s)
-	{
-		this.x += v.x * s;
-		this.y += v.y * s;
-	},
-
-	sub: function(v)
-	{
-		this.x -= v.x;
-		this.y -= v.y;
-	},
-
-	subScalar: function(s)
-	{
-		this.x -= s;
-		this.y -= s;
-	},
-
-	subVectors: function(a, b)
-	{
-		this.x = a.x - b.x;
-		this.y = a.y - b.y;
-	},
-
-	multiply: function(v)
-	{
-		this.x *= v.x;
-		this.y *= v.y;
-	},
-
-	multiplyScalar: function(scalar)
-	{
-		this.x *= scalar;
-		this.y *= scalar;
-	},
-
-	divide: function(v)
-	{
-		this.x /= v.x;
-		this.y /= v.y;
-	},
-
-	divideScalar: function(scalar)
-	{
-		return this.multiplyScalar(1 / scalar);
-	},
-
-	min: function(v)
-	{
-		this.x = Math.min(this.x, v.x);
-		this.y = Math.min(this.y, v.y);
-	},
-
-	max: function(v)
-	{
-		this.x = Math.max(this.x, v.x);
-		this.y = Math.max(this.y, v.y);
-	},
-
-	clamp: function(min, max)
-	{
-		// assumes min < max, componentwise
-		this.x = Math.max(min.x, Math.min(max.x, this.x));
-		this.y = Math.max(min.y, Math.min(max.y, this.y));
-	},
-
-	clampScalar: function(minVal, maxVal)
-	{
-
-		this.x = Math.max(minVal, Math.min(maxVal, this.x));
-		this.y = Math.max(minVal, Math.min(maxVal, this.y));
-	},
-
-	clampLength: function(min, max)
-	{
-		var length = this.length();
-		return this.divideScalar(length || 1).multiplyScalar(Math.max(min, Math.min(max, length)));
-	},
-
-	floor: function()
-	{
-
-		this.x = Math.floor(this.x);
-		this.y = Math.floor(this.y);
-	},
-
-	ceil: function()
-	{
-
-		this.x = Math.ceil(this.x);
-		this.y = Math.ceil(this.y);
-	},
-
-	round: function()
-	{
-
-		this.x = Math.round(this.x);
-		this.y = Math.round(this.y);
-	},
-
-	roundToZero: function()
-	{
-		this.x = (this.x < 0) ? Math.ceil(this.x) : Math.floor(this.x);
-		this.y = (this.y < 0) ? Math.ceil(this.y) : Math.floor(this.y);
-	},
-
-	negate: function()
-	{
-		this.x = -this.x;
-		this.y = -this.y;
-
-		return this;
-	},
-
-	dot: function(v)
-	{
-		return this.x * v.x + this.y * v.y;
-	},
-
-	cross: function(v)
-	{
-		return this.x * v.y - this.y * v.x;
-	},
-
-	lengthSq: function()
-	{
-		return this.x * this.x + this.y * this.y;
-	},
-
-	length: function()
-	{
-		return Math.sqrt(this.x * this.x + this.y * this.y);
-	},
-
-	manhattanLength: function()
-	{
-		return Math.abs(this.x) + Math.abs(this.y);
-	},
-
-	normalize: function()
-	{
-		return this.divideScalar(this.length() || 1);
-	},
-
-	/**
-	 * Computes the angle in radians with respect to the positive x-axis
-	 */
-	angle: function()
-	{
-		var angle = Math.atan2(this.y, this.x);
-
-		if(angle < 0)
-		{
-			angle += 2 * Math.PI;
-		}
-		
-		return angle;
-	},
-
-	distanceTo: function(v)
-	{
-		return Math.sqrt(this.distanceToSquared(v));
-	},
-
-	distanceToSquared: function(v)
-	{
-		var dx = this.x - v.x,
-			dy = this.y - v.y;
-		return dx * dx + dy * dy;
-	},
-
-	manhattanDistanceTo: function(v)
-	{
-		return Math.abs(this.x - v.x) + Math.abs(this.y - v.y);
-	},
-
-	setLength: function(length)
-	{
-		return this.normalize().multiplyScalar(length);
-	},
-
-	lerp: function(v, alpha)
-	{
-		this.x += (v.x - this.x) * alpha;
-		this.y += (v.y - this.y) * alpha;
-	},
-
-	lerpVectors: function(v1, v2, alpha)
-	{
-		return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
-	},
-
-	equals: function(v)
-	{
-		return ((v.x === this.x) && (v.y === this.y));
-	},
-
-	fromArray: function(array, offset)
-	{
-		if(offset === undefined) offset = 0;
-
-		this.x = array[offset];
-		this.y = array[offset + 1];
-	},
-
-	toArray: function(array, offset)
-	{
-		if(array === undefined) array = [];
-		if(offset === undefined) offset = 0;
-
-		array[offset] = this.x;
-		array[offset + 1] = this.y;
-
-		return array;
-	},
-
-	rotateAround: function(center, angle)
-	{
-		var c = Math.cos(angle),
-			s = Math.sin(angle);
-
-		var x = this.x - center.x;
-		var y = this.y - center.y;
-
-		this.x = x * c - y * s + center.x;
-		this.y = x * s + y * c + center.y;
+		angle += 2 * Math.PI;
 	}
-});
+	
+	return angle;
+};
+
+Vector2.prototype.distanceTo = function(v)
+{
+	return Math.sqrt(this.distanceToSquared(v));
+};
+
+Vector2.prototype.distanceToSquared = function(v)
+{
+	var dx = this.x - v.x;
+	var dy = this.y - v.y;
+
+	return dx * dx + dy * dy;
+};
+
+Vector2.prototype.manhattanDistanceTo = function(v)
+{
+	return Math.abs(this.x - v.x) + Math.abs(this.y - v.y);
+};
+
+Vector2.prototype.setLength = function(length)
+{
+	return this.normalize().multiplyScalar(length);
+};
+
+Vector2.prototype.lerp = function(v, alpha)
+{
+	this.x += (v.x - this.x) * alpha;
+	this.y += (v.y - this.y) * alpha;
+};
+
+Vector2.prototype.lerpVectors = function(v1, v2, alpha)
+{
+	return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
+};
+
+Vector2.prototype.equals = function(v)
+{
+	return ((v.x === this.x) && (v.y === this.y));
+};
+
+Vector2.prototype.fromArray = function(array, offset)
+{
+	if(offset === undefined) offset = 0;
+
+	this.x = array[offset];
+	this.y = array[offset + 1];
+};
+
+Vector2.prototype.toArray = function(array, offset)
+{
+	if(array === undefined) array = [];
+	if(offset === undefined) offset = 0;
+
+	array[offset] = this.x;
+	array[offset + 1] = this.y;
+
+	return array;
+};
+
+Vector2.prototype.rotateAround = function(center, angle)
+{
+	var c = Math.cos(angle);
+	var s = Math.sin(angle);
+
+	var x = this.x - center.x;
+	var y = this.y - center.y;
+
+	this.x = x * c - y * s + center.x;
+	this.y = x * s + y * c + center.y;
+};
 
 /**
  * 2D 3x2 transformation matrix, applied to the canvas elements.
@@ -707,7 +707,6 @@ function Object2D()
 	 * Flag to indicate if the context of canvas should be restored after render.
 	 */
 	this.restoreContextState = true;
-
 
 	/**
 	 * Flag indicating if the pointer is inside of the element.
@@ -1368,6 +1367,11 @@ function Renderer(canvas)
 	 */
 	this.pointer = new Pointer();
 	this.pointer.setCanvas(canvas);
+
+	/**
+	 * Indicates if the canvas should be automatically cleared on each new frame.
+	 */
+	this.autoClear = true;
 }
 
 /**
@@ -1433,6 +1437,18 @@ Renderer.prototype.update = function(object, viewport)
 				child.onPointerOver(pointer, viewport);
 			}
 
+			// Pointer pressed
+			if(pointer.buttonPressed(Pointer.LEFT) && child.onButtonPressed !== null)
+			{	
+				child.onButtonPressed(pointer, viewport);
+			}
+
+			// Just released
+			if(pointer.buttonJustReleased(Pointer.LEFT) && child.onButtonUp !== null)
+			{	
+				child.onButtonUp(pointer, viewport);
+			}
+
 			// Pointer just pressed
 			if(pointer.buttonJustPressed(Pointer.LEFT))
 			{
@@ -1444,20 +1460,10 @@ Renderer.prototype.update = function(object, viewport)
 				if(child.draggable)
 				{
 					child.beingDragged = true;
+
+					// Only start a drag operation on the top element.
 					break;
 				}
-			}
-
-			// Pointer pressed
-			if(pointer.buttonPressed(Pointer.LEFT) && child.onButtonPressed !== null)
-			{	
-				child.onButtonPressed(pointer, viewport);
-			}
-
-			// Just released
-			if(pointer.buttonJustReleased(Pointer.LEFT) && child.onButtonUp !== null)
-			{	
-				child.onButtonUp(pointer, viewport);
 			}
 
 			child.pointerInside = true;
@@ -1520,35 +1526,35 @@ Renderer.prototype.update = function(object, viewport)
 		return a.layer - b.layer;
 	});
 
-	// Render the content
-	var context = this.context;
-
 	// Clear canvas
-	context.setTransform(1, 0, 0, 1, 0, 0);
-	context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	if(this.autoClear)
+	{
+		this.context.setTransform(1, 0, 0, 1, 0, 0);
+		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	}
 
 	// Set viewport matrix transform
-	viewport.matrix.setContextTransform(context);
+	viewport.matrix.setContextTransform(this.context);
 
 	// Render into the canvas
 	for(var i = 0; i < objects.length; i++)
 	{	
 		if(objects[i].saveContextState)
 		{
-			context.save();
+			this.context.save();
 		}
 
 		if(objects[i].ignoreViewport)
 		{
-			context.setTransform(1, 0, 0, 1, 0, 0);
+			this.context.setTransform(1, 0, 0, 1, 0, 0);
 		}
 
-		objects[i].transform(context, viewport);
-		objects[i].draw(context, viewport);
+		objects[i].transform(this.context, viewport);
+		objects[i].draw(this.context, viewport);
 
 		if(objects[i].restoreContextState)
 		{
-			context.restore();
+			this.context.restore();
 		}
 	}
 };
@@ -1644,9 +1650,33 @@ Viewport.prototype.updateMatrix = function()
 };
 
 /**
+ * A stencil can be used to set the drawing region.
+ *
+ * Stencils are treated as objects their shaphe is used to filter other objects shape.
+ *
+ * Multiple stencil objects can be active simulatenously.
+ *
+ * @class
+ */
+function Stencil()
+{
+	//TODO <ADD CODE HERE>
+}
+
+/**
+ * Activate the stencil.
+ */
+Stencil.prototype.draw = function()
+{
+	// body...
+};
+
+/**
  * Box is described by a minimum and maximum points.
  *
  * Can be used for collision detection with points and other boxes.
+ *
+ * @class
  */
 function Box2(min, max)
 {
@@ -1654,166 +1684,190 @@ function Box2(min, max)
 	this.max = (max !== undefined) ? max : new Vector2();
 }
 
-Object.assign(Box2.prototype,
+/**
+ * Set the box values.
+ */
+Box2.prototype.set = function(min, max)
 {
-	set: function(min, max)
-	{
-		this.min.copy(min);
-		this.max.copy(max);
+	this.min.copy(min);
+	this.max.copy(max);
 
-		return this;
-	},
-
-	setFromPoints: function(points)
-	{
-		this.min = new Vector2(+Infinity, +Infinity);
-		this.max = new Vector2(-Infinity, -Infinity);
-
-		for(var i = 0, il = points.length; i < il; i++)
-		{
-			this.expandByPoint(points[i]);
-		}
-
-		return this;
-	},
-
-	setFromCenterAndSize: function(center, size)
-	{
-		var v1 = new Vector2();
-		var halfSize = v1.copy(size).multiplyScalar(0.5);
-		this.min.copy(center).sub(halfSize);
-		this.max.copy(center).add(halfSize);
-
-		return this;
-	},
-
-	clone: function()
-	{
-		var box = new Box2();
-		box.copy(this);
-		return box;
-	},
-
-	copy: function(box)
-	{
-		this.min.copy(box.min);
-		this.max.copy(box.max);
-
-		return this;
-	},
-
-
-	isEmpty: function()
-	{
-		// this is a more robust check for empty than ( volume <= 0 ) because volume can get positive with two negative axes
-		return (this.max.x < this.min.x) || (this.max.y < this.min.y);
-	},
-
-	getCenter: function(target)
-	{
-		return this.isEmpty() ? target.set(0, 0) : target.addVectors(this.min, this.max).multiplyScalar(0.5);
-	},
-
-	getSize: function(target)
-	{
-		return this.isEmpty() ? target.set(0, 0) : target.subVectors(this.max, this.min);
-	},
-
-	expandByPoint: function(point)
-	{
-		this.min.min(point);
-		this.max.max(point);
-
-		return this;
-	},
-
-	expandByVector: function(vector)
-	{
-		this.min.sub(vector);
-		this.max.add(vector);
-
-		return this;
-	},
-
-	expandByScalar: function(scalar)
-	{
-		this.min.addScalar(-scalar);
-		this.max.addScalar(scalar);
-
-		return this;
-	},
-
-	containsPoint: function(point)
-	{
-		return point.x < this.min.x || point.x > this.max.x || point.y < this.min.y || point.y > this.max.y ? false : true;
-	},
-
-	containsBox: function(box)
-	{
-		return this.min.x <= box.min.x && box.max.x <= this.max.x && this.min.y <= box.min.y && box.max.y <= this.max.y;
-	},
-
-	getParameter: function(point, target)
-	{
-		// This can potentially have a divide by zero if the box
-		// has a size dimension of 0.
-
-		return target.set(
-			(point.x - this.min.x) / (this.max.x - this.min.x),
-			(point.y - this.min.y) / (this.max.y - this.min.y)
-		);
-	},
-
-	intersectsBox: function(box)
-	{
-		// using 4 splitting planes to rule out intersections
-		return box.max.x < this.min.x || box.min.x > this.max.x || box.max.y < this.min.y || box.min.y > this.max.y ? false : true;
-	},
-
-	clampPoint: function(point, target)
-	{
-		return target.copy(point).clamp(this.min, this.max);
-	},
-
-	distanceToPoint: function(point)
-	{
-		var v = new Vector2();
-		var clampedPoint = v.copy(point).clamp(this.min, this.max);
-		return clampedPoint.sub(point).length();
-	},
-
-	intersect: function(box)
-	{
-		this.min.max(box.min);
-		this.max.min(box.max);
-
-		return this;
-	},
-
-	union: function(box)
-	{
-		this.min.min(box.min);
-		this.max.max(box.max);
-
-		return this;
-	},
-
-	translate: function(offset)
-	{
-		this.min.add(offset);
-		this.max.add(offset);
-
-		return this;
-	},
-
-	equals: function(box)
-	{
-		return box.min.equals(this.min) && box.max.equals(this.max);
-	}
-});
+	return this;
+};
 
 /**
- * Circle object draw a circular object.
+ * Set the box from a list of Vector2 points.
+ */
+Box2.prototype.setFromPoints = function(points)
+{
+	this.min = new Vector2(+Infinity, +Infinity);
+	this.max = new Vector2(-Infinity, -Infinity);
+
+	for(var i = 0, il = points.length; i < il; i++)
+	{
+		this.expandByPoint(points[i]);
+	}
+
+	return this;
+};
+
+/** 
+ * Set the box minimum and maximum from center point and size.
+ */
+Box2.prototype.setFromCenterAndSize = function(center, size)
+{
+	var v1 = new Vector2();
+	var halfSize = v1.copy(size).multiplyScalar(0.5);
+	this.min.copy(center).sub(halfSize);
+	this.max.copy(center).add(halfSize);
+
+	return this;
+};
+
+/**
+ * Clone the box into a new object.
+ */
+Box2.prototype.clone = function()
+{
+	var box = new Box2();
+	box.copy(this);
+	return box;
+};
+
+/**
+ * Copy the box value from another box.
+ */
+Box2.prototype.copy = function(box)
+{
+	this.min.copy(box.min);
+	this.max.copy(box.max);
+};
+
+Box2.prototype.isEmpty = function()
+{
+	// this is a more robust check for empty than ( volume <= 0 ) because volume can get positive with two negative axes
+	return (this.max.x < this.min.x) || (this.max.y < this.min.y);
+};
+
+Box2.prototype.getCenter = function(target)
+{
+	return this.isEmpty() ? target.set(0, 0) : target.addVectors(this.min, this.max).multiplyScalar(0.5);
+};
+
+Box2.prototype.getSize = function(target)
+{
+	return this.isEmpty() ? target.set(0, 0) : target.subVectors(this.max, this.min);
+};
+
+Box2.prototype.expandByPoint = function(point)
+{
+	this.min.min(point);
+	this.max.max(point);
+
+	return this;
+};
+
+Box2.prototype.expandByVector = function(vector)
+{
+	this.min.sub(vector);
+	this.max.add(vector);
+};
+
+Box2.prototype.expandByScalar = function(scalar)
+{
+	this.min.addScalar(-scalar);
+	this.max.addScalar(scalar);
+};
+
+Box2.prototype.containsPoint = function(point)
+{
+	return point.x < this.min.x || point.x > this.max.x || point.y < this.min.y || point.y > this.max.y ? false : true;
+};
+
+Box2.prototype.containsBox = function(box)
+{
+	return this.min.x <= box.min.x && box.max.x <= this.max.x && this.min.y <= box.min.y && box.max.y <= this.max.y;
+};
+
+/**
+ * Check if two boxes intersect each other, using 4 splitting planes to rule out intersections.
+ * 
+ * @param {Box2} box
+ */
+Box2.prototype.intersectsBox = function(box)
+{
+	return box.max.x < this.min.x || box.min.x > this.max.x || box.max.y < this.min.y || box.min.y > this.max.y ? false : true;
+};
+
+Box2.prototype.clampPoint = function(point, target)
+{
+	return target.copy(point).clamp(this.min, this.max);
+};
+
+/**
+ * Calculate the distance to a point.
+ *
+ * @param {Vector2} point
+ */
+Box2.prototype.distanceToPoint = function(point)
+{
+	var v = new Vector2();
+	var clampedPoint = v.copy(point).clamp(this.min, this.max);
+	return clampedPoint.sub(point).length();
+};
+
+/**
+ * Make a intersection between this box and another box.
+ *
+ * Store the result in this object.
+ *
+ * @param {Box2} box
+ */
+Box2.prototype.intersect = function(box)
+{
+	this.min.max(box.min);
+	this.max.min(box.max);
+};
+
+/**
+ * Make a union between this box and another box.
+ *
+ * Store the result in this object.
+ *
+ * @param {Box2} box
+ */
+Box2.prototype.union = function(box)
+{
+	this.min.min(box.min);
+	this.max.max(box.max);
+};
+
+/**
+ * Translate the box by a offset value, adds the offset to booth min and max.
+ *
+ * @param {Vector2} offset
+ */
+Box2.prototype.translate = function(offset)
+{
+	this.min.add(offset);
+	this.max.add(offset);
+};
+
+/**
+ * Checks if two boxes are equal.
+ *
+ * @param {Box2} box
+ * @return {boolean} True if the two boxes are equal.
+ */
+Box2.prototype.equals = function(box)
+{
+	return box.min.equals(this.min) && box.max.equals(this.max);
+};
+
+/**
+ * Circle object draw a circular object, into the canvas.
+ *
+ * @class
  */
 function Circle()
 {
@@ -1968,6 +2022,8 @@ Helpers.boxResizeTool = function(object)
 
 /**
  * Box object draw a box.
+ *
+ * @class
  */
 function Box()
 {
@@ -2021,6 +2077,8 @@ Box.prototype.draw = function(context)
 
 /**
  * Line object draw a line from one point to another.
+ *
+ * @class
  */
 function Line()
 {
@@ -2044,15 +2102,25 @@ function Line()
 	 * Color of the line.
 	 */
 	this.strokeStyle = "#000000";
+
+	/**
+	 * Dash line pattern to be used, is empty draws a solid line.
+	 */
+	this.dashPattern = [5, 5];
+
+	/**
+	 * Line width.
+	 */
+	this.lineWidth = 1;
 }
 
 Line.prototype = Object.create(Object2D.prototype);
 
 Line.prototype.draw = function(context)
 {
-	context.lineWidth = 1;
+	context.lineWidth = this.lineWidth;
 	context.strokeStyle = this.strokeStyle;
-	context.setLineDash([5, 5]);
+	context.setLineDash(this.dashPattern);
 	
 	context.beginPath();
 	context.moveTo(this.from.x, this.from.y);
@@ -2060,6 +2128,11 @@ Line.prototype.draw = function(context)
 	context.stroke();
 };
 
+/**
+ * Text element, used to draw text into the canvas.
+ *
+ * @class
+ */
 function Text()
 {
 	Object2D.call(this);
@@ -2078,6 +2151,11 @@ function Text()
 	 * Color (style) of the text.
 	 */
 	this.color = "#000000";
+
+	/**
+	 * Text align property.
+	 */
+	this.textAlign = "center";
 }
 
 Text.prototype = Object.create(Object2D.prototype);
@@ -2085,7 +2163,7 @@ Text.prototype = Object.create(Object2D.prototype);
 Text.prototype.draw = function(context)
 {
 	context.font = this.font;
-	context.textAlign = "center";
+	context.textAlign = this.textAlign;
 	context.fillStyle = this.color;
 
 	context.fillText(this.text, 0, 0);
@@ -2093,6 +2171,9 @@ Text.prototype.draw = function(context)
 
 /**
  * Image object is used to draw an image from URL.
+ *
+ * @class
+ * @param {string} [src] Source URL of the image.
  */
 function Image(src)
 {
@@ -2101,14 +2182,17 @@ function Image(src)
 	/**
 	 * Box object containing the size of the object.
 	 */
-	this.box = new Box2(new Vector2(0, 0), new Vector2(0, 0));
+	this.box = new Box2();
 
 	/**
 	 * Image source DOM element.
 	 */
 	this.image = document.createElement("img");
 
-	this.setImage(src);
+	if(src !== undefined)
+	{
+		this.setImage(src);
+	}
 }
 
 Image.prototype = Object.create(Object2D.prototype);
@@ -2117,6 +2201,8 @@ Image.prototype = Object.create(Object2D.prototype);
  * Set the image of the object.
  *
  * Automatically sets the box size to match the image.
+ *
+ * @param {string} src Source URL of the image.
  */
 Image.prototype.setImage = function(src)
 {
@@ -2147,6 +2233,7 @@ Image.prototype.draw = function(context)
  *
  * Use the normal DOM events for interaction.
  *
+ * @class
  * @param parent Parent DOM element that contains the drawing canvas.
  * @param type Type of the DOM element (e.g. "div", "p", ...)
  */
@@ -2164,15 +2251,12 @@ function DOM(parent, type)
 	this.element.style.bottom = "0px";
 	this.element.style.transformOrigin = "0px 0px";
 	this.element.style.overflow = "auto";
+	parent.appendChild(this.element);
 	
 	/**
 	 * Size of the DOM element (in world coordinates).
 	 */
 	this.size = new Vector2(100, 100);
-
-	this.origin.set(50, 50);
-
-	parent.appendChild(this.element);
 }
 
 DOM.prototype = Object.create(Object2D.prototype);
@@ -2186,7 +2270,75 @@ DOM.prototype.draw = function(context, viewport)
 
 	// Size of the element
 	this.element.style.width = this.size.x + "px";
-	this.element.style.height = this.size.y + "100px";
+	this.element.style.height = this.size.y + "px";
 };
 
-export { Box, Box2, Circle, DOM, EventManager, Helpers, Image, Key, Line, Matrix, Object2D, Pointer, Renderer, Text, UUID, Vector2, Viewport };
+/**
+ * Pattern object draw a image repeated as a pattern.
+ *
+ * Its similar to the Image class but the image can be repeat infinitly.
+ *
+ * @class
+ */
+function Pattern(src)
+{
+	Object2D.call(this);
+
+	/**
+	 * Box object containing the size of the object.
+	 */
+	this.box = new Box2();
+
+	/**
+	 * Image source DOM element.
+	 */
+	this.image = document.createElement("img");
+
+	/**
+	 * A DOMString indicating how to repeat the pattern image.
+	 */
+	this.repetition = "repeat";
+
+	if(src !== undefined)
+	{
+		this.setImage(src);
+	}
+}
+
+Pattern.prototype = Object.create(Object2D.prototype);
+
+/**
+ * Set the image of the object.
+ *
+ * Automatically sets the box size to match the image.
+ */
+Pattern.prototype.setImage = function(src)
+{
+	var self = this;
+
+	this.image.onload = function()
+	{
+		self.box.min.set(0, 0);
+		self.box.max.set(this.naturalWidth, this.naturalHeight);
+	};
+	this.image.src = src;
+};
+
+Pattern.prototype.isInside = function(point)
+{
+	return this.box.containsPoint(point);
+};
+
+Pattern.prototype.draw = function(context, viewport)
+{
+	var width = this.box.max.x - this.box.min.x;
+	var height = this.box.max.y - this.box.min.y;
+
+	var pattern = context.createPattern(this.image, this.repetition);
+	//pattern.setTransform();
+
+	context.fillStyle = pattern;
+	context.fillRect(this.box.min.x, this.box.min.y, width, height);
+};
+
+export { Box, Box2, Circle, DOM, EventManager, Helpers, Image, Key, Line, Matrix, Object2D, Pattern, Pointer, Renderer, Stencil, Text, UUID, Vector2, Viewport };

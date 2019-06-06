@@ -109,7 +109,6 @@ function Object2D()
 	 */
 	this.restoreContextState = true;
 
-
 	/**
 	 * Flag indicating if the pointer is inside of the element.
 	 *

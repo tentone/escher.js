@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: objects/Circle.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,81 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: objects/Circle.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
 
+import {Object2D} from "../Object2D.js";
+import {Vector2} from "../math/Vector2.js";
 
-    <h3> </h3>
+/**
+ * Circle object draw a circular object, into the canvas.
+ *
+ * @class
+ */
+function Circle()
+{
+	Object2D.call(this);
 
+	/**
+	 * Radius of the circle.
+	 */
+	this.radius = 10.0;
 
+	/**
+	 * Color of the circle border line.
+	 */
+	this.strokeStyle = "#000000";
 
+	/**
+	 * Background color of the circle.
+	 */
+	this.fillStyle = "#FFFFFF";
+}
 
+Circle.prototype = Object.create(Object2D.prototype);
 
+Circle.prototype.isInside = function(point)
+{
+	return point.length() &lt;= this.radius;
+};
 
+Circle.prototype.onPointerEnter = function(pointer, viewport)
+{
+	this.fillStyle = "#CCCCCC";
+};
 
+Circle.prototype.onPointerLeave = function(pointer, viewport)
+{
+	this.fillStyle = "#FFFFFF";
+};
 
+Circle.prototype.draw = function(context)
+{
+	context.fillStyle = this.fillStyle;
 
+	context.beginPath();
+	context.arc(0, 0, this.radius, 0, 2 * Math.PI);
+	context.fill();
 
-    
+	context.lineWidth = 1;
+	context.strokeStyle = this.strokeStyle;
 
+	context.beginPath();
+	context.arc(0, 0, this.radius, 0, 2 * Math.PI);
+	context.stroke();
+};
 
-
-
-
+export {Circle};</code></pre>
+        </article>
+    </section>
 
 
 

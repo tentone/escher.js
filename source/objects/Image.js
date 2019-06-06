@@ -8,7 +8,7 @@ import {Vector2} from "../math/Vector2.js";
  * Image object is used to draw an image from URL.
  *
  * @class
- * @param src Source URL of the image (optional) 
+ * @param {string} [src] Source URL of the image.
  */
 function Image(src)
 {
@@ -17,7 +17,7 @@ function Image(src)
 	/**
 	 * Box object containing the size of the object.
 	 */
-	this.box = new Box2(new Vector2(0, 0), new Vector2(0, 0));
+	this.box = new Box2();
 
 	/**
 	 * Image source DOM element.
@@ -36,6 +36,8 @@ Image.prototype = Object.create(Object2D.prototype);
  * Set the image of the object.
  *
  * Automatically sets the box size to match the image.
+ *
+ * @param {string} src Source URL of the image.
  */
 Image.prototype.setImage = function(src)
 {
