@@ -78,6 +78,13 @@ function Object2D()
 	this.inverseGlobalMatrix = new Matrix();
 
 	/**
+	 * Masks being applied to this object.
+	 *
+	 * Multiple masks can be used simultaneously.
+	 */
+	this.masks = [];
+
+	/**
 	 * If true the matrix is updated before rendering the object.
 	 */
 	this.matrixNeedsUpdate = true;

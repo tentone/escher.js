@@ -567,7 +567,7 @@ Matrix.prototype.cssTransform = function()
 };
 
 /**
- * Implements all UUID related methods.
+ * Class to implement UUID generation methods.
  *
  * @class
  */
@@ -577,6 +577,8 @@ function UUID(){}
  * Generate new random UUID v4 as string.
  *
  * http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
+ *
+ * @static
  */
 UUID.generate = (function ()
 {
@@ -677,6 +679,13 @@ function Object2D()
 	this.inverseGlobalMatrix = new Matrix();
 
 	/**
+	 * Masks being applied to this object.
+	 *
+	 * Multiple masks can be used simultaneously.
+	 */
+	this.masks = [];
+
+	/**
 	 * If true the matrix is updated before rendering the object.
 	 */
 	this.matrixNeedsUpdate = true;
@@ -689,6 +698,13 @@ function Object2D()
 	this.draggable = false;
 
 	/**
+	 * Indicates if this object uses pointer events.
+	 *
+	 * Can be set false to skip the pointer interaction events.
+	 */
+	this.pointerEvents = true;
+
+	/**
 	 * Flag to indicate wheter this objet ignores the viewport transformation.
 	 */
 	this.ignoreViewport = false;
@@ -697,11 +713,6 @@ function Object2D()
 	 * Flag to indicate if the context of canvas should be saved before render.
 	 */
 	this.saveContextState = true;
-
-	/**
-	 * Flag to indicate if the context of canvas should be restored after render.
-	 */
-	this.restoreContextState = true;
 
 	/**
 	 * Flag to indicate if the context of canvas should be restored after render.
@@ -793,9 +804,14 @@ Object2D.prototype.updateMatrix = function(context)
 };
 
 /**
- * Apply the transform to the rendering context, it is assumed that the viewport transform is pre-applied to the context.
+ * Apply the transform to the rendering context.
+ *
+ * It is assumed that the viewport transform is pre-applied to the context.
  *
  * Can also be used for pre rendering logic.
+ *
+ * @param {CanvasContext} context Canvas 2d drawing context.
+ * @param {Viewport} viewport Viewport applied to the canvas.
  */
 Object2D.prototype.transform = function(context, viewport)
 {
@@ -807,7 +823,9 @@ Object2D.prototype.transform = function(context, viewport)
  *
  * Has to be implemented by underlying classes.
  *
- * @param context Canvas 2d drawing context.
+ * @param {CanvasContext} context Canvas 2d drawing context.
+ * @param {Viewport} viewport Viewport applied to the canvas.
+ * @param {DOM} canvas DOM canvas element where the content is being drawn.
  */
 Object2D.prototype.draw = function(context, viewport, canvas){};
 
@@ -1385,7 +1403,18 @@ function Renderer(canvas)
  */
 Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 {
+	function loop()
+	{
+		if(onUpdate !== undefined)
+		{
+			onUpdate();
+		}
 
+		this.update(group, viewport);
+		requestAnimationFrame(loop);
+	}
+
+	loop();
 };
 
 /**
@@ -1430,84 +1459,89 @@ Renderer.prototype.update = function(object, viewport)
 	var point = pointer.position.clone();
 	var viewportPoint = viewport.inverseMatrix.transformPoint(point);
 
-	// Object transformation matrices
+	// Object pointer events
 	for(var i = 0; i < objects.length; i++)
 	{
 		var child = objects[i];
-		var childPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
-
-		// Check if the pointer pointer is inside
-		if(child.isInside(childPoint))
+		
+		//Process the
+		if(child.pointerEvents)
 		{
-			// Pointer enter
-			if(!child.pointerInside && child.onPointerEnter !== null)
-			{			
-				child.onPointerEnter(pointer, viewport);
-			}
+			var childPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
 
-			// Pointer over
-			if(child.onPointerOver !== null)
+			// Check if the pointer pointer is inside
+			if(child.isInside(childPoint))
 			{
-				child.onPointerOver(pointer, viewport);
-			}
-
-			// Pointer pressed
-			if(pointer.buttonPressed(Pointer.LEFT) && child.onButtonPressed !== null)
-			{	
-				child.onButtonPressed(pointer, viewport);
-			}
-
-			// Just released
-			if(pointer.buttonJustReleased(Pointer.LEFT) && child.onButtonUp !== null)
-			{	
-				child.onButtonUp(pointer, viewport);
-			}
-
-			// Pointer just pressed
-			if(pointer.buttonJustPressed(Pointer.LEFT))
-			{
-				if(child.onButtonDown !== null)
-				{
-					child.onButtonDown(pointer, viewport);
+				// Pointer enter
+				if(!child.pointerInside && child.onPointerEnter !== null)
+				{			
+					child.onPointerEnter(pointer, viewport);
 				}
 
+				// Pointer over
+				if(child.onPointerOver !== null)
+				{
+					child.onPointerOver(pointer, viewport);
+				}
+
+				// Pointer pressed
+				if(pointer.buttonPressed(Pointer.LEFT) && child.onButtonPressed !== null)
+				{	
+					child.onButtonPressed(pointer, viewport);
+				}
+
+				// Just released
+				if(pointer.buttonJustReleased(Pointer.LEFT) && child.onButtonUp !== null)
+				{	
+					child.onButtonUp(pointer, viewport);
+				}
+
+				// Pointer just pressed
+				if(pointer.buttonJustPressed(Pointer.LEFT))
+				{
+					if(child.onButtonDown !== null)
+					{
+						child.onButtonDown(pointer, viewport);
+					}
+
+					// Drag object and break to only start a drag operation on the top element.
+					if(child.draggable)
+					{
+						child.beingDragged = true;
+						break;
+					}
+				}
+
+				child.pointerInside = true;
+			}
+			else if(child.pointerInside)
+			{
+				// Pointer leave
+				if(child.onPointerLeave !== null)
+				{
+					child.onPointerLeave(pointer, viewport);
+				}
+
+				child.pointerInside = false;
+			}
+
+			// Stop object drag
+			if(pointer.buttonJustReleased(Pointer.LEFT))
+			{	
 				if(child.draggable)
 				{
-					child.beingDragged = true;
-
-					// Only start a drag operation on the top element.
-					break;
+					child.beingDragged = false;
 				}
-			}
-
-			child.pointerInside = true;
-		}
-		else if(child.pointerInside)
-		{
-			// Pointer leave
-			if(child.onPointerLeave !== null)
-			{
-				child.onPointerLeave(pointer, viewport);
-			}
-
-			child.pointerInside = false;
-		}
-
-		// Stop object drag
-		if(pointer.buttonJustReleased(Pointer.LEFT))
-		{	
-			if(child.draggable)
-			{
-				child.beingDragged = false;
 			}
 		}
 	}
 
-	// Pointer drag event
+	// Object drag events and update logic
 	for(var i = 0; i < objects.length; i++)
 	{
 		var child = objects[i];
 
+		// Pointer drag event
 		if(child.beingDragged)
 		{	
 			var lastPosition = pointer.position.clone();
@@ -1530,39 +1564,60 @@ Renderer.prototype.update = function(object, viewport)
 		{
 			child.onUpdate();
 		}
-
-		child.updateMatrix();
 	}
 
+	// Update transformation matrices
+	object.traverse(function(child)
+	{
+		child.updateMatrix();
+	});
+	
 	// Sort objects by layer
 	objects.sort(function(a, b)
 	{
 		return a.layer - b.layer;
 	});
-
-	// Clear canvas
+	
+	this.context.setTransform(1, 0, 0, 1, 0, 0);
+	
+	// Clear canvas content
 	if(this.autoClear)
 	{
-		this.context.setTransform(1, 0, 0, 1, 0, 0);
 		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
-
-	// Set viewport matrix transform
-	viewport.matrix.setContextTransform(this.context);
 
 	// Render into the canvas
 	for(var i = 0; i < objects.length; i++)
 	{	
+		if(objects[i].isMask)
+		{
+			continue;
+		}
+
 		if(objects[i].saveContextState)
 		{
 			this.context.save();
 		}
 
-		if(objects[i].ignoreViewport)
+		// Apply all masks
+		var masks = objects[i].masks;
+		for(var j = 0; j < masks.length; j++)
 		{
-			this.context.setTransform(1, 0, 0, 1, 0, 0);
+			if(!masks[j].ignoreViewport)
+			{
+				viewport.matrix.setContextTransform(this.context);
+			}
+
+			masks[j].clip(this.context, viewport, this.canvas);
 		}
 
+		// Set the viewport transform
+		if(!objects[i].ignoreViewport)
+		{
+			viewport.matrix.setContextTransform(this.context);
+		}
+
+		// Apply the object transform to the canvas context
 		objects[i].transform(this.context, viewport, this.canvas);
 		objects[i].draw(this.context, viewport, this.canvas);
 
@@ -1735,22 +1790,36 @@ Box2.prototype.copy = function(box)
 	this.max.copy(box.max);
 };
 
+/**
+ * Check if the box is empty (size equals zero or is negative).
+ *
+ * The box size is condireded valid on two negative axis.
+ */
 Box2.prototype.isEmpty = function()
 {
-	// this is a more robust check for empty than ( volume <= 0 ) because volume can get positive with two negative axes
+
 	return (this.max.x < this.min.x) || (this.max.y < this.min.y);
 };
 
+/**
+ * Calculate the center point of the box.
+ */
 Box2.prototype.getCenter = function(target)
 {
 	return this.isEmpty() ? target.set(0, 0) : target.addVectors(this.min, this.max).multiplyScalar(0.5);
 };
 
+/**
+ * Get the size of the box.
+ */
 Box2.prototype.getSize = function(target)
 {
 	return this.isEmpty() ? target.set(0, 0) : target.subVectors(this.max, this.min);
 };
 
+/**
+ * Expand the box to contain a new point.
+ */
 Box2.prototype.expandByPoint = function(point)
 {
 	this.min.min(point);
@@ -1759,23 +1828,45 @@ Box2.prototype.expandByPoint = function(point)
 	return this;
 };
 
+/**
+ * Expand the box by adding a border with the vector size.
+ *
+ * Vector is subtracted from min and added to the max points.
+ */
 Box2.prototype.expandByVector = function(vector)
 {
 	this.min.sub(vector);
 	this.max.add(vector);
 };
 
+/**
+ * Expand the box by adding a border with the scalar value.
+ */
 Box2.prototype.expandByScalar = function(scalar)
 {
 	this.min.addScalar(-scalar);
 	this.max.addScalar(scalar);
 };
 
+/**
+ * Check if the box contains a point inside.
+ *
+ * @param {Vector2} point
+ * @return {boolean} True if the box contains point.
+ */
 Box2.prototype.containsPoint = function(point)
 {
 	return point.x < this.min.x || point.x > this.max.x || point.y < this.min.y || point.y > this.max.y ? false : true;
 };
 
+/**
+ * Check if the box fully contains another box inside (different from intersects box).
+ *
+ * Only returns true if the box is fully contained.
+ *
+ * @param {Box2} box
+ * @return {boolean} True if the box contains box.
+ */
 Box2.prototype.containsBox = function(box)
 {
 	return this.min.x <= box.min.x && box.max.x <= this.max.x && this.min.y <= box.min.y && box.max.y <= this.max.y;
@@ -1785,6 +1876,7 @@ Box2.prototype.containsBox = function(box)
  * Check if two boxes intersect each other, using 4 splitting planes to rule out intersections.
  * 
  * @param {Box2} box
+ * @return {boolean} True if the boxes intersect each other.
  */
 Box2.prototype.intersectsBox = function(box)
 {
@@ -1857,20 +1949,78 @@ Box2.prototype.equals = function(box)
 };
 
 /**
- * A stencil can be used to set the drawing region.
+ * A mask can be used to set the drawing region.
  *
- * Stencils are treated as objects their shaphe is used to filter other objects shape.
+ * Masks are treated as objects their shape is used to filter other objects shape.
  *
- * Multiple stencil objects can be active simulatenously.
+ * Multiple mask objects can be active simulatenously, they have to be attached to the object mask list to filter the render region.
  *
  * @class
  */
-function Stencil()
+function Mask()
 {
 	Object2D.call(this);
 }
 
-Stencil.prototype = Object.create(Object2D.prototype);
+Mask.prototype = Object.create(Object2D.prototype);
+
+Mask.prototype.isMask = true;
+
+/**
+ * Clip the canvas context, to ensure that next objects being drawn are cliped to the path stored here.
+ *
+ * @param {CanvasContext} context Canvas 2d drawing context.
+ * @param {Viewport} viewport Viewport applied to the canvas.
+ * @param {DOM} canvas DOM canvas element where the content is being drawn.
+ */
+Mask.prototype.clip = function(context, viewport, canvas){};
+
+/**
+ * Box mask can be used to clear a box mask region.
+ *
+ * It will limit the drwaing region to this box.
+ *
+ * @class
+ * @extends {Mask}
+ */
+function BoxMask()
+{
+	Mask.call(this);
+
+	/**
+	 * Box object containing the size of the object.
+	 */
+	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
+
+	/**
+	 * If inverted the mask considers the outside of the box instead of the inside.
+	 */
+	this.invert = false;
+}
+
+BoxMask.prototype = Object.create(Mask.prototype);
+
+BoxMask.prototype.clip = function(context, viewport, canvas)
+{
+	context.beginPath();
+	
+	var width = this.box.max.x - this.box.min.x;
+	
+	if(this.invert)
+	{	
+		context.rect(this.box.min.x - 1e4, -5e3, 1e4, 1e4);
+		context.rect(this.box.max.x, -5e3, 1e4, 1e4);
+		context.rect(this.box.min.x, this.box.min.y - 1e4, width, 1e4);
+		context.rect(this.box.min.x, this.box.max.y, width, 1e4);
+	}
+	else
+	{
+		var height = this.box.max.y - this.box.min.y;
+		context.fillRect(this.box.min.x, this.box.min.y, width, height);
+	}
+
+	context.clip();
+};
 
 /**
  * Circle object draw a circular object, into the canvas.
@@ -2359,4 +2509,4 @@ Pattern.prototype.draw = function(context, viewport, canvas)
 	context.fillRect(this.box.min.x, this.box.min.y, width, height);
 };
 
-export { Box, Box2, Circle, DOM, EventManager, Helpers, Image, Key, Line, Matrix, Object2D, Pattern, Pointer, Renderer, Stencil, Text, UUID, Vector2, Viewport };
+export { Box, Box2, BoxMask, Circle, DOM, EventManager, Helpers, Image, Key, Line, Mask, Matrix, Object2D, Pattern, Pointer, Renderer, Text, UUID, Vector2, Viewport };

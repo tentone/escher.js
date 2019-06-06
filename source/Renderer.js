@@ -220,47 +220,53 @@ Renderer.prototype.update = function(object, viewport)
 	{
 		return a.layer - b.layer;
 	});
-
+	
+	this.context.setTransform(1, 0, 0, 1, 0, 0);
+	
 	// Clear canvas content
 	if(this.autoClear)
 	{
-		this.context.setTransform(1, 0, 0, 1, 0, 0);
 		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
-
-	// Set viewport matrix transform
-	viewport.matrix.setContextTransform(this.context);
 
 	// Render into the canvas
 	for(var i = 0; i < objects.length; i++)
 	{	
-
-		// Stencil objects
-		if(objects[i].isStencil)
+		if(objects[i].isMask)
 		{
-			objects[i].clip(this.context, viewport, this.canvas);
+			continue;
 		}
-		// Drawable objects
-		else
+
+		if(objects[i].saveContextState)
 		{
-			if(objects[i].saveContextState)
+			this.context.save();
+		}
+
+		// Apply all masks
+		var masks = objects[i].masks;
+		for(var j = 0; j < masks.length; j++)
+		{
+			if(!masks[j].ignoreViewport)
 			{
-				this.context.save();
+				viewport.matrix.setContextTransform(this.context);
 			}
 
-			// Set identity if the viewport transform is to be ignored
-			if(objects[i].ignoreViewport)
-			{
-				this.context.setTransform(1, 0, 0, 1, 0, 0);
-			}
+			masks[j].clip(this.context, viewport, this.canvas);
+		}
 
-			objects[i].transform(this.context, viewport, this.canvas);
-			objects[i].draw(this.context, viewport, this.canvas);
+		// Set the viewport transform
+		if(!objects[i].ignoreViewport)
+		{
+			viewport.matrix.setContextTransform(this.context);
+		}
 
-			if(objects[i].restoreContextState)
-			{
-				this.context.restore();
-			}
+		// Apply the object transform to the canvas context
+		objects[i].transform(this.context, viewport, this.canvas);
+		objects[i].draw(this.context, viewport, this.canvas);
+
+		if(objects[i].restoreContextState)
+		{
+			this.context.restore();
 		}
 	}
 };

@@ -5,7 +5,8 @@ export {Object2D} from "./Object2D.js";
 export {Renderer} from "./Renderer.js";
 export {Viewport} from "./Viewport.js";
 
-export {Stencil} from "./stencil/Stencil.js";
+export {Mask} from "./mask/Mask.js";
+export {BoxMask} from "./mask/BoxMask.js";
 
 export {Key} from "./input/Key.js";
 export {Pointer} from "./input/Pointer.js";

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Image.js</title>
+    <title>JSDoc: Source: stencil/BoxStencil.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Image.js</h1>
+    <h1 class="page-title">Source: stencil/BoxStencil.js</h1>
 
     
 
@@ -28,68 +28,56 @@
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
 
-import {Object2D} from "../Object2D.js";
-import {Box2} from "../math/Box2.js";
+import {Stencil} from "./Stencil.js";
 import {Vector2} from "../math/Vector2.js";
+import {Box2} from "../math/Box2.js";
 
 /**
- * Image object is used to draw an image from URL.
+ * Box stencil can be used to clear a box mask region.
+ *
+ * It will limit the drwaing region to this box.
  *
  * @class
- * @param {string} [src] Source URL of the image.
+ * @extends {Stencil}
  */
-function Image(src)
+function BoxStencil()
 {
-	Object2D.call(this);
-	
+	Stencil.call(this);
+
 	/**
 	 * Box object containing the size of the object.
 	 */
-	this.box = new Box2();
+	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 	/**
-	 * Image source DOM element.
+	 * If inverted the stencil considers the outside of the box instead of the inside.
 	 */
-	this.image = document.createElement("img");
-
-	if(src !== undefined)
-	{
-		this.setImage(src);
-	}
+	this.invert = false;
 }
 
-Image.prototype = Object.create(Object2D.prototype);
+BoxStencil.prototype = Object.create(Stencil.prototype);
 
-/**
- * Set the image of the object.
- *
- * Automatically sets the box size to match the image.
- *
- * @param {string} src Source URL of the image.
- */
-Image.prototype.setImage = function(src)
+BoxStencil.prototype.clip = function(context, viewport, canvas)
 {
-	var self = this;
-
-	this.image.onload = function()
+	context.beginPath();
+	
+	var width = this.box.max.x - this.box.min.x;
+	
+	if(this.invert)
+	{	
+		context.rect(this.box.min.x - 1e4, -5e3, 1e4, 1e4);
+		context.rect(this.box.max.x, -5e3, 1e4, 1e4);
+		context.rect(this.box.min.x, this.box.min.y - 1e4, width, 1e4);
+		context.rect(this.box.min.x, this.box.max.y, width, 1e4);
+	}
+	else
 	{
-		self.box.min.set(0, 0);
-		self.box.max.set(this.naturalWidth, this.naturalHeight);
-	};
-	this.image.src = src;
-};
+		var height = this.box.max.y - this.box.min.y;
+		context.fillRect(this.box.min.x, this.box.min.y, width, height);
+	}
 
-Image.prototype.isInside = function(point)
-{
-	return this.box.containsPoint(point);
+	context.clip();
 };
-
-Image.prototype.draw = function(context, viewport, canvas)
-{
-	context.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
-};
-
-export {Image};
 </code></pre>
         </article>
     </section>

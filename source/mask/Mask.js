@@ -5,22 +5,22 @@ import {Vector2} from "../math/Vector2.js";
 import {Box2} from "../math/Box2.js";
 
 /**
- * A stencil can be used to set the drawing region.
+ * A mask can be used to set the drawing region.
  *
- * Stencils are treated as objects their shaphe is used to filter other objects shape.
+ * Masks are treated as objects their shape is used to filter other objects shape.
  *
- * Multiple stencil objects can be active simulatenously.
+ * Multiple mask objects can be active simulatenously, they have to be attached to the object mask list to filter the render region.
  *
  * @class
  */
-function Stencil()
+function Mask()
 {
 	Object2D.call(this);
 }
 
-Stencil.prototype = Object.create(Object2D.prototype);
+Mask.prototype = Object.create(Object2D.prototype);
 
-Stencil.prototype.isStencil = true;
+Mask.prototype.isMask = true;
 
 /**
  * Clip the canvas context, to ensure that next objects being drawn are cliped to the path stored here.
@@ -29,6 +29,6 @@ Stencil.prototype.isStencil = true;
  * @param {Viewport} viewport Viewport applied to the canvas.
  * @param {DOM} canvas DOM canvas element where the content is being drawn.
  */
-Stencil.prototype.clip = function(context, viewport, canvas){};
+Mask.prototype.clip = function(context, viewport, canvas){};
 
-export {Stencil};
+export {Mask};

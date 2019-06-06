@@ -74,7 +74,18 @@ function Renderer(canvas)
  */
 Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 {
+	function loop()
+	{
+		if(onUpdate !== undefined)
+		{
+			onUpdate();
+		}
 
+		this.update(group, viewport);
+		requestAnimationFrame(loop);
+	}
+
+	loop();
 };
 
 /**
@@ -119,84 +130,89 @@ Renderer.prototype.update = function(object, viewport)
 	var point = pointer.position.clone();
 	var viewportPoint = viewport.inverseMatrix.transformPoint(point);
 
-	// Object transformation matrices
+	// Object pointer events
 	for(var i = 0; i &lt; objects.length; i++)
 	{
 		var child = objects[i];
-		var childPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
-
-		// Check if the pointer pointer is inside
-		if(child.isInside(childPoint))
+		
+		//Process the
+		if(child.pointerEvents)
 		{
-			// Pointer enter
-			if(!child.pointerInside &amp;&amp; child.onPointerEnter !== null)
-			{			
-				child.onPointerEnter(pointer, viewport);
-			}
+			var childPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
 
-			// Pointer over
-			if(child.onPointerOver !== null)
+			// Check if the pointer pointer is inside
+			if(child.isInside(childPoint))
 			{
-				child.onPointerOver(pointer, viewport);
-			}
-
-			// Pointer pressed
-			if(pointer.buttonPressed(Pointer.LEFT) &amp;&amp; child.onButtonPressed !== null)
-			{	
-				child.onButtonPressed(pointer, viewport);
-			}
-
-			// Just released
-			if(pointer.buttonJustReleased(Pointer.LEFT) &amp;&amp; child.onButtonUp !== null)
-			{	
-				child.onButtonUp(pointer, viewport);
-			}
-
-			// Pointer just pressed
-			if(pointer.buttonJustPressed(Pointer.LEFT))
-			{
-				if(child.onButtonDown !== null)
-				{
-					child.onButtonDown(pointer, viewport);
+				// Pointer enter
+				if(!child.pointerInside &amp;&amp; child.onPointerEnter !== null)
+				{			
+					child.onPointerEnter(pointer, viewport);
 				}
 
+				// Pointer over
+				if(child.onPointerOver !== null)
+				{
+					child.onPointerOver(pointer, viewport);
+				}
+
+				// Pointer pressed
+				if(pointer.buttonPressed(Pointer.LEFT) &amp;&amp; child.onButtonPressed !== null)
+				{	
+					child.onButtonPressed(pointer, viewport);
+				}
+
+				// Just released
+				if(pointer.buttonJustReleased(Pointer.LEFT) &amp;&amp; child.onButtonUp !== null)
+				{	
+					child.onButtonUp(pointer, viewport);
+				}
+
+				// Pointer just pressed
+				if(pointer.buttonJustPressed(Pointer.LEFT))
+				{
+					if(child.onButtonDown !== null)
+					{
+						child.onButtonDown(pointer, viewport);
+					}
+
+					// Drag object and break to only start a drag operation on the top element.
+					if(child.draggable)
+					{
+						child.beingDragged = true;
+						break;
+					}
+				}
+
+				child.pointerInside = true;
+			}
+			else if(child.pointerInside)
+			{
+				// Pointer leave
+				if(child.onPointerLeave !== null)
+				{
+					child.onPointerLeave(pointer, viewport);
+				}
+
+				child.pointerInside = false;
+			}
+
+			// Stop object drag
+			if(pointer.buttonJustReleased(Pointer.LEFT))
+			{	
 				if(child.draggable)
 				{
-					child.beingDragged = true;
-
-					// Only start a drag operation on the top element.
-					break;
+					child.beingDragged = false;
 				}
-			}
-
-			child.pointerInside = true;
-		}
-		else if(child.pointerInside)
-		{
-			// Pointer leave
-			if(child.onPointerLeave !== null)
-			{
-				child.onPointerLeave(pointer, viewport);
-			}
-
-			child.pointerInside = false;
-		}
-
-		// Stop object drag
-		if(pointer.buttonJustReleased(Pointer.LEFT))
-		{	
-			if(child.draggable)
-			{
-				child.beingDragged = false;
 			}
 		}
 	}
 
-	// Pointer drag event
+	// Object drag events and update logic
 	for(var i = 0; i &lt; objects.length; i++)
 	{
 		var child = objects[i];
 
+		// Pointer drag event
 		if(child.beingDragged)
 		{	
 			var lastPosition = pointer.position.clone();
@@ -219,17 +235,21 @@ Renderer.prototype.update = function(object, viewport)
 		{
 			child.onUpdate();
 		}
-
-		child.updateMatrix();
 	}
 
+	// Update transformation matrices
+	object.traverse(function(child)
+	{
+		child.updateMatrix();
+	});
+	
 	// Sort objects by layer
 	objects.sort(function(a, b)
 	{
 		return a.layer - b.layer;
 	});
 
-	// Clear canvas
+	// Clear canvas content
 	if(this.autoClear)
 	{
 		this.context.setTransform(1, 0, 0, 1, 0, 0);
@@ -247,13 +267,25 @@ Renderer.prototype.update = function(object, viewport)
 			this.context.save();
 		}
 
+		// Set identity if the viewport transform is to be ignored
 		if(objects[i].ignoreViewport)
 		{
 			this.context.setTransform(1, 0, 0, 1, 0, 0);
 		}
 
-		objects[i].transform(this.context, viewport);
-		objects[i].draw(this.context, viewport);
+		// Apply the object trasnform to the canvas context
+		objects[i].transform(this.context, viewport, this.canvas);
+
+		// Stencil objects
+		if(objects[i].isStencil)
+		{
+			objects[i].clip(this.context, viewport, this.canvas);
+		}
+		// Drawable objects
+		else
+		{
+			objects[i].draw(this.context, viewport, this.canvas);
+		}
 
 		if(objects[i].restoreContextState)
 		{
@@ -273,13 +305,13 @@ export {Renderer};
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="Stencil.html">Stencil</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxStencil.html">BoxStencil</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="Stencil.html">Stencil</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Thu Jun 06 2019 13:51:53 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Thu Jun 06 2019 15:37:27 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
