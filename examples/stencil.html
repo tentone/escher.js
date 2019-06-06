@@ -42,36 +42,12 @@
 			canvas.height = window.innerHeight;
 		};
 
-		var noBox = true;
-
 		canvas.ondblclick = function(event)
 		{
-			var box = new Trenette.Box();
-			box.draggable = true;
-			box.layer = 9;
-			box.draw = function(context, viewport, canvas)
-			{
-				var width = this.box.max.x - this.box.min.x;
-				
-				context.beginPath();
-				context.rect(this.box.min.x - 1e4, -5e3, 1e4, 1e4);
-				context.rect(this.box.max.x, -5e3, 1e4, 1e4);
-				context.rect(this.box.min.x, this.box.min.y - 1e4, width, 1e4);
-				context.rect(this.box.min.x, this.box.max.y, width, 1e4);
-				context.clip();
-			};
-			box.saveContextState = noBox;
-			box.restoreContextState = false;
+			var box = new Trenette.BoxMask();
+			box.invert = true;
+			blackLayer.masks.push(box);
 			group.add(box);
-
-			if(!noBox)
-			{
-				box.transform = function(context, viewport)
-				{
-					viewport.matrix.setContextTransform(context);
-					this.globalMatrix.tranformContext(context);
-				};
-			}
 
 			if(event !== undefined)
 			{
@@ -81,10 +57,7 @@
 			}
 
 			Trenette.Helpers.boxResizeTool(box);
-
-			noBox = false;
 		};
-
 
 		// Create the diagram
 		var group = new Trenette.Object2D();
@@ -108,8 +81,6 @@
 		{
 			return false;
 		};
-		blackLayer.saveContextState = false;
-		blackLayer.restoreContextState = true;
 		group.add(blackLayer);
 
 		canvas.ondblclick();
@@ -117,16 +88,7 @@
 		var viewport = new Trenette.Viewport();
 
 		var renderer = new Trenette.Renderer(canvas);
-
-		// Update and render the diagram
-		function loop()
-		{			
-			renderer.update(group, viewport);
-
-			requestAnimationFrame(loop);
-		}
-
-		loop();
+		renderer.createRenderLoop(group, viewport);
 	</script>
 </body>
 </html>

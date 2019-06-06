@@ -1409,6 +1409,8 @@
 	 */
 	Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 	{
+		var self = this;
+		
 		function loop()
 		{
 			if(onUpdate !== undefined)
@@ -1416,7 +1418,7 @@
 				onUpdate();
 			}
 
-			this.update(group, viewport);
+			self.update(group, viewport);
 			requestAnimationFrame(loop);
 		}
 

@@ -46,6 +46,8 @@ function Renderer(canvas)
  */
 Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 {
+	var self = this;
+	
 	function loop()
 	{
 		if(onUpdate !== undefined)
@@ -53,7 +55,7 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 			onUpdate();
 		}
 
-		this.update(group, viewport);
+		self.update(group, viewport);
 		requestAnimationFrame(loop);
 	}
 
