@@ -4,6 +4,7 @@ export {EventManager} from "./EventManager.js";
 export {Object2D} from "./Object2D.js";
 export {Renderer} from "./Renderer.js";
 export {Viewport} from "./Viewport.js";
+export {Stencil}
 
 export {Key} from "./input/Key.js";
 export {Pointer} from "./input/Pointer.js";
@@ -19,5 +20,6 @@ export {Line} from "./objects/Line.js";
 export {Text} from "./objects/Text.js";
 export {Image} from "./objects/Image.js";
 export {DOM} from "./objects/DOM.js";
+export {Pattern} from "./objects/Pattern.js";
 
 export {Helpers} from "./utils/Helpers.js";

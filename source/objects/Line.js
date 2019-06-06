@@ -5,6 +5,8 @@ import {Vector2} from "../math/Vector2.js";
 
 /**
  * Line object draw a line from one point to another.
+ *
+ * @class
  */
 function Line()
 {
@@ -28,15 +30,25 @@ function Line()
 	 * Color of the line.
 	 */
 	this.strokeStyle = "#000000";
+
+	/**
+	 * Dash line pattern to be used, is empty draws a solid line.
+	 */
+	this.dashPattern = [5, 5];
+
+	/**
+	 * Line width.
+	 */
+	this.lineWidth = 1;
 }
 
 Line.prototype = Object.create(Object2D.prototype);
 
 Line.prototype.draw = function(context)
 {
-	context.lineWidth = 1;
+	context.lineWidth = this.lineWidth;
 	context.strokeStyle = this.strokeStyle;
-	context.setLineDash([5, 5]);
+	context.setLineDash(this.dashPattern);
 	
 	context.beginPath();
 	context.moveTo(this.from.x, this.from.y);

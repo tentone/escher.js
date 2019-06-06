@@ -28,6 +28,11 @@ function Renderer(canvas)
 	 */
 	this.pointer = new Pointer();
 	this.pointer.setCanvas(canvas);
+
+	/**
+	 * Indicates if the canvas should be automatically cleared on each new frame.
+	 */
+	this.autoClear = true;
 }
 
 /**
@@ -93,6 +98,18 @@ Renderer.prototype.update = function(object, viewport)
 				child.onPointerOver(pointer, viewport);
 			}
 
+			// Pointer pressed
+			if(pointer.buttonPressed(Pointer.LEFT) && child.onButtonPressed !== null)
+			{	
+				child.onButtonPressed(pointer, viewport);
+			}
+
+			// Just released
+			if(pointer.buttonJustReleased(Pointer.LEFT) && child.onButtonUp !== null)
+			{	
+				child.onButtonUp(pointer, viewport);
+			}
+
 			// Pointer just pressed
 			if(pointer.buttonJustPressed(Pointer.LEFT))
 			{
@@ -104,20 +121,10 @@ Renderer.prototype.update = function(object, viewport)
 				if(child.draggable)
 				{
 					child.beingDragged = true;
+
+					// Only start a drag operation on the top element.
 					break;
 				}
-			}
-
-			// Pointer pressed
-			if(pointer.buttonPressed(Pointer.LEFT) && child.onButtonPressed !== null)
-			{	
-				child.onButtonPressed(pointer, viewport);
-			}
-
-			// Just released
-			if(pointer.buttonJustReleased(Pointer.LEFT) && child.onButtonUp !== null)
-			{	
-				child.onButtonUp(pointer, viewport);
 			}
 
 			child.pointerInside = true;
@@ -180,35 +187,35 @@ Renderer.prototype.update = function(object, viewport)
 		return a.layer - b.layer;
 	});
 
-	// Render the content
-	var context = this.context;
-
 	// Clear canvas
-	context.setTransform(1, 0, 0, 1, 0, 0);
-	context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	if(this.autoClear)
+	{
+		this.context.setTransform(1, 0, 0, 1, 0, 0);
+		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	}
 
 	// Set viewport matrix transform
-	viewport.matrix.setContextTransform(context);
+	viewport.matrix.setContextTransform(this.context);
 
 	// Render into the canvas
 	for(var i = 0; i < objects.length; i++)
 	{	
 		if(objects[i].saveContextState)
 		{
-			context.save();
+			this.context.save();
 		}
 
 		if(objects[i].ignoreViewport)
 		{
-			context.setTransform(1, 0, 0, 1, 0, 0);
+			this.context.setTransform(1, 0, 0, 1, 0, 0);
 		}
 
-		objects[i].transform(context, viewport);
-		objects[i].draw(context, viewport);
+		objects[i].transform(this.context, viewport);
+		objects[i].draw(this.context, viewport);
 
 		if(objects[i].restoreContextState)
 		{
-			context.restore();
+			this.context.restore();
 		}
 	}
 };

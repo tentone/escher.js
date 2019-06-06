@@ -6,6 +6,9 @@ import {Vector2} from "../math/Vector2.js";
 
 /**
  * Image object is used to draw an image from URL.
+ *
+ * @class
+ * @param src Source URL of the image (optional) 
  */
 function Image(src)
 {
@@ -21,7 +24,10 @@ function Image(src)
 	 */
 	this.image = document.createElement("img");
 
-	this.setImage(src);
+	if(src !== undefined)
+	{
+		this.setImage(src);
+	}
 }
 
 Image.prototype = Object.create(Object2D.prototype);
