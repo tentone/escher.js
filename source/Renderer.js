@@ -253,6 +253,7 @@ Renderer.prototype.update = function(object, viewport)
 				viewport.matrix.setContextTransform(this.context);
 			}
 
+			masks[j].transform(this.context, viewport, this.canvas);
 			masks[j].clip(this.context, viewport, this.canvas);
 		}
 
@@ -260,6 +261,10 @@ Renderer.prototype.update = function(object, viewport)
 		if(!objects[i].ignoreViewport)
 		{
 			viewport.matrix.setContextTransform(this.context);
+		}
+		else if(masks.length > 0)
+		{
+			this.context.setTransform(1, 0, 0, 1, 0, 0);
 		}
 
 		// Apply the object transform to the canvas context

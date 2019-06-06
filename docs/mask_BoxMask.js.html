@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Pattern.js</title>
+    <title>JSDoc: Source: mask/BoxMask.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Pattern.js</h1>
+    <h1 class="page-title">Source: mask/BoxMask.js</h1>
 
     
 
@@ -28,82 +28,63 @@
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
 
-import {Object2D} from "../Object2D.js";
+import {Mask} from "./Mask.js";
 import {Vector2} from "../math/Vector2.js";
 import {Box2} from "../math/Box2.js";
-import {Helpers} from "../utils/Helpers.js";
-import {Circle} from "./Circle.js";
 
 /**
- * Pattern object draw a image repeated as a pattern.
+ * Box mask can be used to clear a box mask region.
  *
- * Its similar to the Image class but the image can be repeat infinitly.
+ * It will limit the drwaing region to this box.
  *
  * @class
+ * @extends {Mask}
  */
-function Pattern(src)
+function BoxMask()
 {
-	Object2D.call(this);
+	Mask.call(this);
 
 	/**
 	 * Box object containing the size of the object.
 	 */
-	this.box = new Box2();
+	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 	/**
-	 * Image source DOM element.
+	 * If inverted the mask considers the outside of the box instead of the inside.
 	 */
-	this.image = document.createElement("img");
-
-	/**
-	 * A DOMString indicating how to repeat the pattern image.
-	 */
-	this.repetition = "repeat"
-
-	if(src !== undefined)
-	{
-		this.setImage(src);
-	}
+	this.invert = false;
 }
 
-Pattern.prototype = Object.create(Object2D.prototype);
+BoxMask.prototype = Object.create(Mask.prototype);
 
-/**
- * Set the image of the object.
- *
- * Automatically sets the box size to match the image.
- */
-Pattern.prototype.setImage = function(src)
-{
-	var self = this;
-
-	this.image.onload = function()
-	{
-		self.box.min.set(0, 0);
-		self.box.max.set(this.naturalWidth, this.naturalHeight);
-	};
-	this.image.src = src;
-};
-
-Pattern.prototype.isInside = function(point)
+BoxMask.prototype.isInside = function(point)
 {
 	return this.box.containsPoint(point);
 };
 
-Pattern.prototype.draw = function(context, viewport, canvas)
+BoxMask.prototype.clip = function(context, viewport, canvas)
 {
+	context.beginPath();
+	
 	var width = this.box.max.x - this.box.min.x;
-	var height = this.box.max.y - this.box.min.y;
+	
+	if(this.invert)
+	{	
+		context.rect(this.box.min.x - 1e4, -5e3, 1e4, 1e4);
+		context.rect(this.box.max.x, -5e3, 1e4, 1e4);
+		context.rect(this.box.min.x, this.box.min.y - 1e4, width, 1e4);
+		context.rect(this.box.min.x, this.box.max.y, width, 1e4);
+	}
+	else
+	{
+		var height = this.box.max.y - this.box.min.y;
+		context.fillRect(this.box.min.x, this.box.min.y, width, height);
+	}
 
-	var pattern = context.createPattern(this.image, this.repetition);
-	//pattern.setTransform();
-
-	context.fillStyle = pattern;
-	context.fillRect(this.box.min.x, this.box.min.y, width, height);
+	context.clip();
 };
 
-export {Pattern};
-</code></pre>
+export {BoxMask};</code></pre>
         </article>
     </section>
 

@@ -29,6 +29,11 @@ function BoxMask()
 
 BoxMask.prototype = Object.create(Mask.prototype);
 
+BoxMask.prototype.isInside = function(point)
+{
+	return this.box.containsPoint(point);
+};
+
 BoxMask.prototype.clip = function(context, viewport, canvas)
 {
 	context.beginPath();

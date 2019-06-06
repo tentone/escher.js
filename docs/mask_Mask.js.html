@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Pattern.js</title>
+    <title>JSDoc: Source: mask/Mask.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Pattern.js</h1>
+    <h1 class="page-title">Source: mask/Mask.js</h1>
 
     
 
@@ -31,79 +31,35 @@
 import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 import {Box2} from "../math/Box2.js";
-import {Helpers} from "../utils/Helpers.js";
-import {Circle} from "./Circle.js";
 
 /**
- * Pattern object draw a image repeated as a pattern.
+ * A mask can be used to set the drawing region.
  *
- * Its similar to the Image class but the image can be repeat infinitly.
+ * Masks are treated as objects their shape is used to filter other objects shape.
+ *
+ * Multiple mask objects can be active simulatenously, they have to be attached to the object mask list to filter the render region.
  *
  * @class
  */
-function Pattern(src)
+function Mask()
 {
 	Object2D.call(this);
-
-	/**
-	 * Box object containing the size of the object.
-	 */
-	this.box = new Box2();
-
-	/**
-	 * Image source DOM element.
-	 */
-	this.image = document.createElement("img");
-
-	/**
-	 * A DOMString indicating how to repeat the pattern image.
-	 */
-	this.repetition = "repeat"
-
-	if(src !== undefined)
-	{
-		this.setImage(src);
-	}
 }
 
-Pattern.prototype = Object.create(Object2D.prototype);
+Mask.prototype = Object.create(Object2D.prototype);
+
+Mask.prototype.isMask = true;
 
 /**
- * Set the image of the object.
+ * Clip the canvas context, to ensure that next objects being drawn are cliped to the path stored here.
  *
- * Automatically sets the box size to match the image.
+ * @param {CanvasContext} context Canvas 2d drawing context.
+ * @param {Viewport} viewport Viewport applied to the canvas.
+ * @param {DOM} canvas DOM canvas element where the content is being drawn.
  */
-Pattern.prototype.setImage = function(src)
-{
-	var self = this;
+Mask.prototype.clip = function(context, viewport, canvas){};
 
-	this.image.onload = function()
-	{
-		self.box.min.set(0, 0);
-		self.box.max.set(this.naturalWidth, this.naturalHeight);
-	};
-	this.image.src = src;
-};
-
-Pattern.prototype.isInside = function(point)
-{
-	return this.box.containsPoint(point);
-};
-
-Pattern.prototype.draw = function(context, viewport, canvas)
-{
-	var width = this.box.max.x - this.box.min.x;
-	var height = this.box.max.y - this.box.min.y;
-
-	var pattern = context.createPattern(this.image, this.repetition);
-	//pattern.setTransform();
-
-	context.fillStyle = pattern;
-	context.fillRect(this.box.min.x, this.box.min.y, width, height);
-};
-
-export {Pattern};
-</code></pre>
+export {Mask};</code></pre>
         </article>
     </section>
 

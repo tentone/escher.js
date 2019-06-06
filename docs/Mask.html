@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Vector2</title>
+    <title>JSDoc: Class: Mask</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Vector2</h1>
+    <h1 class="page-title">Class: Mask</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Vector2<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Mask<span class="signature">()</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="Vector2"><span class="type-signature"></span>new Vector2<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Mask"><span class="type-signature"></span>new Mask<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -49,7 +49,11 @@
 
 
 <div class="description">
-    Class representing a 2D vector. A 2D vector is an ordered pair of numbers (labeled x and y), which can be used to represent points in space, directions, etc.
+    A mask can be used to set the drawing region.
+
+Masks are treated as objects their shape is used to filter other objects shape.
+
+Multiple mask objects can be active simulatenously, they have to be attached to the object mask list to filter the render region.
 </div>
 
 
@@ -93,7 +97,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line9">line 9</a>
+        <a href="mask_Mask.js.html">mask/Mask.js</a>, <a href="mask_Mask.js.html#line16">line 16</a>
     </li></ul></dd>
     
 
@@ -149,7 +153,7 @@
     
 
     
-    <h4 class="name" id="angle"><span class="type-signature"></span>angle<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="clip"><span class="type-signature"></span>clip<span class="signature">(context, viewport, canvas)</span><span class="type-signature"></span></h4>
     
 
     
@@ -157,7 +161,7 @@
 
 
 <div class="description">
-    Computes the angle in radians with respect to the positive x-axis
+    Clip the canvas context, to ensure that next objects being drawn are cliped to the path stored here.
 </div>
 
 
@@ -166,6 +170,101 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">CanvasContext</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Canvas 2d drawing context.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>viewport</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Viewport.html">Viewport</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Viewport applied to the canvas.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>canvas</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="DOM.html">DOM</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">DOM canvas element where the content is being drawn.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -201,7 +300,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line200">line 200</a>
+        <a href="mask_Mask.js.html">mask/Mask.js</a>, <a href="mask_Mask.js.html#line32">line 32</a>
     </li></ul></dd>
     
 
