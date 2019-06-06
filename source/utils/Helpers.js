@@ -3,11 +3,19 @@
 import {Circle} from "../objects/Circle.js";
 import {Object2D} from "../Object2D.js";
 
+/**
+ * Class contains helper functions to create editing object tools.
+ *
+ * @class
+ */
 function Helpers(){}
 
-
 /**
- * Create a rotation tool
+ * Create a rotation tool helper.
+ *
+ * When the object is dragged is changes the parent object rotation.
+ *
+ * @static
  */
 Helpers.rotateTool = function(object)
 {
@@ -27,6 +35,8 @@ Helpers.rotateTool = function(object)
  * Each helper is positioned on one corner of the box, and the value of the corner is copied to the boxes as they are dragged.
  *
  * This method required to object to have a box property.
+ *
+ * @static
  */
 Helpers.boxResizeTool = function(object)
 {

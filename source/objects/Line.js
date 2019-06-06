@@ -44,7 +44,7 @@ function Line()
 
 Line.prototype = Object.create(Object2D.prototype);
 
-Line.prototype.draw = function(context)
+Line.prototype.draw = function(context, viewport, canvas)
 {
 	context.lineWidth = this.lineWidth;
 	context.strokeStyle = this.strokeStyle;

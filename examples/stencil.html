@@ -49,10 +49,10 @@
 			var box = new Trenette.Box();
 			box.draggable = true;
 			box.layer = 9;
-			box.draw = function(context)
+			box.draw = function(context, viewport, canvas)
 			{
 				var width = this.box.max.x - this.box.min.x;
-
+				
 				context.beginPath();
 				context.rect(this.box.min.x - 1e4, -5e3, 1e4, 1e4);
 				context.rect(this.box.max.x, -5e3, 1e4, 1e4);
@@ -99,10 +99,10 @@
 		var blackLayer = new Trenette.Object2D();
 		blackLayer.ignoreViewport = true;
 		blackLayer.layer = 10;
-		blackLayer.draw = function(context)
+		blackLayer.draw = function(context, viewport, canvas)
 		{
 			context.fillStyle = "rgba(0.0, 0.0, 0.0, 0.3)";
-			context.fillRect(0, 0, 1e5, 1e5);
+			context.fillRect(0, 0, canvas.width, canvas.height);
 		};
 		blackLayer.isInside = function(point)
 		{
@@ -117,7 +117,6 @@
 		var viewport = new Trenette.Viewport();
 
 		var renderer = new Trenette.Renderer(canvas);
-
 
 		// Update and render the diagram
 		function loop()

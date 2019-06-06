@@ -799,7 +799,7 @@
 	};
 
 	/**
-	 * Apply the transform to the rendering context.
+	 * Apply the transform to the rendering context, it is assumed that the viewport transform is pre-applied to the context.
 	 *
 	 * Can also be used for pre rendering logic.
 	 */
@@ -815,7 +815,7 @@
 	 *
 	 * @param context Canvas 2d drawing context.
 	 */
-	Object2D.prototype.draw = function(context, viewport){};
+	Object2D.prototype.draw = function(context, viewport, canvas){};
 
 	/**
 	 * Callback method called every time before the object is draw into the canvas.
@@ -1381,13 +1381,27 @@
 	}
 
 	/**
+	 * Creates a infinite render loop to render the group into a viewport each frame.
+	 *
+	 * The render loop cannot be destroyed.
+	 *
+	 * @param {Object2D} group Group to be rendererd.
+	 * @param {Viewport} viewport Viewport into the objects.
+	 * @param {Function} onUpdate Function called before rendering the frame.
+	 */
+	Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
+	{
+
+	};
+
+	/**
 	 * Update the renderer state, update the input handlers, calculate the object and viewport transformation matrices.
 	 *
 	 * Render the object using the viewport into a canvas element.
 	 *
 	 * The canvas state is saved and restored for each individual object, ensuring that the code of one object does not affect another one.
 	 *
-	 * Should be called at a fixed rate preferably using the requestAnimationFrame() method.
+	 * Should be called at a fixed rate preferably using the requestAnimationFrame() method, its also possible to use the createRenderLoop() method, that automatically creates a infinite render loop.
 	 *
 	 * @param object Object to be updated.
 	 * @param viewport Viewport to be updated (should be the one where the objects will be rendered after).
@@ -1555,8 +1569,8 @@
 				this.context.setTransform(1, 0, 0, 1, 0, 0);
 			}
 
-			objects[i].transform(this.context, viewport);
-			objects[i].draw(this.context, viewport);
+			objects[i].transform(this.context, viewport, this.canvas);
+			objects[i].draw(this.context, viewport, this.canvas);
 
 			if(objects[i].restoreContextState)
 			{
@@ -1653,28 +1667,6 @@
 			this.inverseMatrix = this.matrix.getInverse();
 			//this.matrixNeedsUpdate = false;
 		}
-	};
-
-	/**
-	 * A stencil can be used to set the drawing region.
-	 *
-	 * Stencils are treated as objects their shaphe is used to filter other objects shape.
-	 *
-	 * Multiple stencil objects can be active simulatenously.
-	 *
-	 * @class
-	 */
-	function Stencil()
-	{
-		//TODO <ADD CODE HERE>
-	}
-
-	/**
-	 * Activate the stencil.
-	 */
-	Stencil.prototype.draw = function()
-	{
-		// body...
 	};
 
 	/**
@@ -1871,6 +1863,22 @@
 	};
 
 	/**
+	 * A stencil can be used to set the drawing region.
+	 *
+	 * Stencils are treated as objects their shaphe is used to filter other objects shape.
+	 *
+	 * Multiple stencil objects can be active simulatenously.
+	 *
+	 * @class
+	 */
+	function Stencil()
+	{
+		Object2D.call(this);
+	}
+
+	Stencil.prototype = Object.create(Object2D.prototype);
+
+	/**
 	 * Circle object draw a circular object, into the canvas.
 	 *
 	 * @class
@@ -1912,7 +1920,7 @@
 		this.fillStyle = "#FFFFFF";
 	};
 
-	Circle.prototype.draw = function(context)
+	Circle.prototype.draw = function(context, viewport, canvas)
 	{
 		context.fillStyle = this.fillStyle;
 
@@ -1928,11 +1936,19 @@
 		context.stroke();
 	};
 
+	/**
+	 * Class contains helper functions to create editing object tools.
+	 *
+	 * @class
+	 */
 	function Helpers(){}
 
-
 	/**
-	 * Create a rotation tool
+	 * Create a rotation tool helper.
+	 *
+	 * When the object is dragged is changes the parent object rotation.
+	 *
+	 * @static
 	 */
 	Helpers.rotateTool = function(object)
 	{
@@ -1952,6 +1968,8 @@
 	 * Each helper is positioned on one corner of the box, and the value of the corner is copied to the boxes as they are dragged.
 	 *
 	 * This method required to object to have a box property.
+	 *
+	 * @static
 	 */
 	Helpers.boxResizeTool = function(object)
 	{
@@ -2068,7 +2086,7 @@
 		return this.box.containsPoint(point);
 	};
 
-	Box.prototype.draw = function(context)
+	Box.prototype.draw = function(context, viewport, canvas)
 	{
 		var width = this.box.max.x - this.box.min.x;
 		var height = this.box.max.y - this.box.min.y;
@@ -2122,7 +2140,7 @@
 
 	Line.prototype = Object.create(Object2D.prototype);
 
-	Line.prototype.draw = function(context)
+	Line.prototype.draw = function(context, viewport, canvas)
 	{
 		context.lineWidth = this.lineWidth;
 		context.strokeStyle = this.strokeStyle;
@@ -2166,7 +2184,7 @@
 
 	Text.prototype = Object.create(Object2D.prototype);
 
-	Text.prototype.draw = function(context)
+	Text.prototype.draw = function(context, viewport, canvas)
 	{
 		context.font = this.font;
 		context.textAlign = this.textAlign;
@@ -2227,7 +2245,7 @@
 		return this.box.containsPoint(point);
 	};
 
-	Image.prototype.draw = function(context)
+	Image.prototype.draw = function(context, viewport, canvas)
 	{
 		context.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
 	};
@@ -2267,7 +2285,7 @@
 
 	DOM.prototype = Object.create(Object2D.prototype);
 
-	DOM.prototype.draw = function(context, viewport)
+	DOM.prototype.draw = function(context, viewport, canvas)
 	{
 		// CSS trasnformation matrix
 		var projection = viewport.matrix.clone();
@@ -2335,7 +2353,7 @@
 		return this.box.containsPoint(point);
 	};
 
-	Pattern.prototype.draw = function(context, viewport)
+	Pattern.prototype.draw = function(context, viewport, canvas)
 	{
 		var width = this.box.max.x - this.box.min.x;
 		var height = this.box.max.y - this.box.min.y;

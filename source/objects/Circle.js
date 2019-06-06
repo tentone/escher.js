@@ -45,7 +45,7 @@ Circle.prototype.onPointerLeave = function(pointer, viewport)
 	this.fillStyle = "#FFFFFF";
 };
 
-Circle.prototype.draw = function(context)
+Circle.prototype.draw = function(context, viewport, canvas)
 {
 	context.fillStyle = this.fillStyle;
 

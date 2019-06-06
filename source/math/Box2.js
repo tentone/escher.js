@@ -74,22 +74,36 @@ Box2.prototype.copy = function(box)
 	this.max.copy(box.max);
 };
 
+/**
+ * Check if the box is empty (size equals zero or is negative).
+ *
+ * The box size is condireded valid on two negative axis.
+ */
 Box2.prototype.isEmpty = function()
 {
-	// this is a more robust check for empty than ( volume <= 0 ) because volume can get positive with two negative axes
+
 	return (this.max.x < this.min.x) || (this.max.y < this.min.y);
 };
 
+/**
+ * Calculate the center point of the box.
+ */
 Box2.prototype.getCenter = function(target)
 {
 	return this.isEmpty() ? target.set(0, 0) : target.addVectors(this.min, this.max).multiplyScalar(0.5);
 };
 
+/**
+ * Get the size of the box.
+ */
 Box2.prototype.getSize = function(target)
 {
 	return this.isEmpty() ? target.set(0, 0) : target.subVectors(this.max, this.min);
 };
 
+/**
+ * Expand the box to contain a new point.
+ */
 Box2.prototype.expandByPoint = function(point)
 {
 	this.min.min(point);
@@ -98,23 +112,45 @@ Box2.prototype.expandByPoint = function(point)
 	return this;
 };
 
+/**
+ * Expand the box by adding a border with the vector size.
+ *
+ * Vector is subtracted from min and added to the max points.
+ */
 Box2.prototype.expandByVector = function(vector)
 {
 	this.min.sub(vector);
 	this.max.add(vector);
 };
 
+/**
+ * Expand the box by adding a border with the scalar value.
+ */
 Box2.prototype.expandByScalar = function(scalar)
 {
 	this.min.addScalar(-scalar);
 	this.max.addScalar(scalar);
 };
 
+/**
+ * Check if the box contains a point inside.
+ *
+ * @param {Vector2} point
+ * @return {boolean} True if the box contains point.
+ */
 Box2.prototype.containsPoint = function(point)
 {
 	return point.x < this.min.x || point.x > this.max.x || point.y < this.min.y || point.y > this.max.y ? false : true;
 };
 
+/**
+ * Check if the box fully contains another box inside (different from intersects box).
+ *
+ * Only returns true if the box is fully contained.
+ *
+ * @param {Box2} box
+ * @return {boolean} True if the box contains box.
+ */
 Box2.prototype.containsBox = function(box)
 {
 	return this.min.x <= box.min.x && box.max.x <= this.max.x && this.min.y <= box.min.y && box.max.y <= this.max.y;
@@ -124,6 +160,7 @@ Box2.prototype.containsBox = function(box)
  * Check if two boxes intersect each other, using 4 splitting planes to rule out intersections.
  * 
  * @param {Box2} box
+ * @return {boolean} True if the boxes intersect each other.
  */
 Box2.prototype.intersectsBox = function(box)
 {

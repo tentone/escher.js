@@ -36,13 +36,38 @@ function Renderer(canvas)
 }
 
 /**
+ * Creates a infinite render loop to render the group into a viewport each frame.
+ *
+ * The render loop cannot be destroyed.
+ *
+ * @param {Object2D} group Group to be rendererd.
+ * @param {Viewport} viewport Viewport into the objects.
+ * @param {Function} onUpdate Function called before rendering the frame.
+ */
+Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
+{
+	function loop()
+	{
+		if(onUpdate !== undefined)
+		{
+			onUpdate();
+		}
+
+		this.update(group, viewport);
+		requestAnimationFrame(loop);
+	}
+
+	loop();
+};
+
+/**
  * Update the renderer state, update the input handlers, calculate the object and viewport transformation matrices.
  *
  * Render the object using the viewport into a canvas element.
  *
  * The canvas state is saved and restored for each individual object, ensuring that the code of one object does not affect another one.
  *
- * Should be called at a fixed rate preferably using the requestAnimationFrame() method.
+ * Should be called at a fixed rate preferably using the requestAnimationFrame() method, its also possible to use the createRenderLoop() method, that automatically creates a infinite render loop.
  *
  * @param object Object to be updated.
  * @param viewport Viewport to be updated (should be the one where the objects will be rendered after).
@@ -77,84 +102,89 @@ Renderer.prototype.update = function(object, viewport)
 	var point = pointer.position.clone();
 	var viewportPoint = viewport.inverseMatrix.transformPoint(point);
 
-	// Object transformation matrices
+	// Object pointer events
 	for(var i = 0; i < objects.length; i++)
 	{
 		var child = objects[i];
-		var childPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
-
-		// Check if the pointer pointer is inside
-		if(child.isInside(childPoint))
+		
+		//Process the
+		if(child.pointerEvents)
 		{
-			// Pointer enter
-			if(!child.pointerInside && child.onPointerEnter !== null)
-			{			
-				child.onPointerEnter(pointer, viewport);
-			}
+			var childPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
 
-			// Pointer over
-			if(child.onPointerOver !== null)
+			// Check if the pointer pointer is inside
+			if(child.isInside(childPoint))
 			{
-				child.onPointerOver(pointer, viewport);
-			}
-
-			// Pointer pressed
-			if(pointer.buttonPressed(Pointer.LEFT) && child.onButtonPressed !== null)
-			{	
-				child.onButtonPressed(pointer, viewport);
-			}
-
-			// Just released
-			if(pointer.buttonJustReleased(Pointer.LEFT) && child.onButtonUp !== null)
-			{	
-				child.onButtonUp(pointer, viewport);
-			}
-
-			// Pointer just pressed
-			if(pointer.buttonJustPressed(Pointer.LEFT))
-			{
-				if(child.onButtonDown !== null)
-				{
-					child.onButtonDown(pointer, viewport);
+				// Pointer enter
+				if(!child.pointerInside && child.onPointerEnter !== null)
+				{			
+					child.onPointerEnter(pointer, viewport);
 				}
 
+				// Pointer over
+				if(child.onPointerOver !== null)
+				{
+					child.onPointerOver(pointer, viewport);
+				}
+
+				// Pointer pressed
+				if(pointer.buttonPressed(Pointer.LEFT) && child.onButtonPressed !== null)
+				{	
+					child.onButtonPressed(pointer, viewport);
+				}
+
+				// Just released
+				if(pointer.buttonJustReleased(Pointer.LEFT) && child.onButtonUp !== null)
+				{	
+					child.onButtonUp(pointer, viewport);
+				}
+
+				// Pointer just pressed
+				if(pointer.buttonJustPressed(Pointer.LEFT))
+				{
+					if(child.onButtonDown !== null)
+					{
+						child.onButtonDown(pointer, viewport);
+					}
+
+					// Drag object and break to only start a drag operation on the top element.
+					if(child.draggable)
+					{
+						child.beingDragged = true;
+						break;
+					}
+				}
+
+				child.pointerInside = true;
+			}
+			else if(child.pointerInside)
+			{
+				// Pointer leave
+				if(child.onPointerLeave !== null)
+				{
+					child.onPointerLeave(pointer, viewport);
+				}
+
+				child.pointerInside = false;
+			}
+
+			// Stop object drag
+			if(pointer.buttonJustReleased(Pointer.LEFT))
+			{	
 				if(child.draggable)
 				{
-					child.beingDragged = true;
-
-					// Only start a drag operation on the top element.
-					break;
+					child.beingDragged = false;
 				}
-			}
-
-			child.pointerInside = true;
-		}
-		else if(child.pointerInside)
-		{
-			// Pointer leave
-			if(child.onPointerLeave !== null)
-			{
-				child.onPointerLeave(pointer, viewport);
-			}
-
-			child.pointerInside = false;
-		}
-
-		// Stop object drag
-		if(pointer.buttonJustReleased(Pointer.LEFT))
-		{	
-			if(child.draggable)
-			{
-				child.beingDragged = false;
 			}
 		}
 	}
 
-	// Pointer drag event
+	// Object drag events and update logic
 	for(var i = 0; i < objects.length; i++)
 	{
 		var child = objects[i];
 
+		// Pointer drag event
 		if(child.beingDragged)
 		{	
 			var lastPosition = pointer.position.clone();
@@ -177,17 +207,21 @@ Renderer.prototype.update = function(object, viewport)
 		{
 			child.onUpdate();
 		}
-
-		child.updateMatrix();
 	}
 
+	// Update transformation matrices
+	object.traverse(function(child)
+	{
+		child.updateMatrix();
+	});
+	
 	// Sort objects by layer
 	objects.sort(function(a, b)
 	{
 		return a.layer - b.layer;
 	});
 
-	// Clear canvas
+	// Clear canvas content
 	if(this.autoClear)
 	{
 		this.context.setTransform(1, 0, 0, 1, 0, 0);
@@ -200,22 +234,33 @@ Renderer.prototype.update = function(object, viewport)
 	// Render into the canvas
 	for(var i = 0; i < objects.length; i++)
 	{	
-		if(objects[i].saveContextState)
+
+		// Stencil objects
+		if(objects[i].isStencil)
 		{
-			this.context.save();
+			objects[i].clip(this.context, viewport, this.canvas);
 		}
-
-		if(objects[i].ignoreViewport)
+		// Drawable objects
+		else
 		{
-			this.context.setTransform(1, 0, 0, 1, 0, 0);
-		}
+			if(objects[i].saveContextState)
+			{
+				this.context.save();
+			}
 
-		objects[i].transform(this.context, viewport);
-		objects[i].draw(this.context, viewport);
+			// Set identity if the viewport transform is to be ignored
+			if(objects[i].ignoreViewport)
+			{
+				this.context.setTransform(1, 0, 0, 1, 0, 0);
+			}
 
-		if(objects[i].restoreContextState)
-		{
-			this.context.restore();
+			objects[i].transform(this.context, viewport, this.canvas);
+			objects[i].draw(this.context, viewport, this.canvas);
+
+			if(objects[i].restoreContextState)
+			{
+				this.context.restore();
+			}
 		}
 	}
 };

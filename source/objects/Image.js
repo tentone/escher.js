@@ -56,7 +56,7 @@ Image.prototype.isInside = function(point)
 	return this.box.containsPoint(point);
 };
 
-Image.prototype.draw = function(context)
+Image.prototype.draw = function(context, viewport, canvas)
 {
 	context.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
 };

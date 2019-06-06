@@ -38,7 +38,7 @@ function DOM(parent, type)
 
 DOM.prototype = Object.create(Object2D.prototype);
 
-DOM.prototype.draw = function(context, viewport)
+DOM.prototype.draw = function(context, viewport, canvas)
 {
 	// CSS trasnformation matrix
 	var projection = viewport.matrix.clone();

@@ -90,6 +90,13 @@ function Object2D()
 	this.draggable = false;
 
 	/**
+	 * Indicates if this object uses pointer events.
+	 *
+	 * Can be set false to skip the pointer interaction events.
+	 */
+	this.pointerEvents = true;
+
+	/**
 	 * Flag to indicate wheter this objet ignores the viewport transformation.
 	 */
 	this.ignoreViewport = false;
@@ -98,11 +105,6 @@ function Object2D()
 	 * Flag to indicate if the context of canvas should be saved before render.
 	 */
 	this.saveContextState = true;
-
-	/**
-	 * Flag to indicate if the context of canvas should be restored after render.
-	 */
-	this.restoreContextState = true;
 
 	/**
 	 * Flag to indicate if the context of canvas should be restored after render.
@@ -196,7 +198,12 @@ Object2D.prototype.updateMatrix = function(context)
 /**
  * Apply the transform to the rendering context.
  *
+ * It is assumed that the viewport transform is pre-applied to the context.
+ *
  * Can also be used for pre rendering logic.
+ *
+ * @param {CanvasContext} context Canvas 2d drawing context.
+ * @param {Viewport} viewport Viewport applied to the canvas.
  */
 Object2D.prototype.transform = function(context, viewport)
 {
@@ -208,9 +215,11 @@ Object2D.prototype.transform = function(context, viewport)
  *
  * Has to be implemented by underlying classes.
  *
- * @param context Canvas 2d drawing context.
+ * @param {CanvasContext} context Canvas 2d drawing context.
+ * @param {Viewport} viewport Viewport applied to the canvas.
+ * @param {DOM} canvas DOM canvas element where the content is being drawn.
  */
-Object2D.prototype.draw = function(context, viewport){};
+Object2D.prototype.draw = function(context, viewport, canvas){};
 
 /**
  * Callback method called every time before the object is draw into the canvas.

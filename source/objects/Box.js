@@ -50,7 +50,7 @@ Box.prototype.isInside = function(point)
 	return this.box.containsPoint(point);
 };
 
-Box.prototype.draw = function(context)
+Box.prototype.draw = function(context, viewport, canvas)
 {
 	var width = this.box.max.x - this.box.min.x;
 	var height = this.box.max.y - this.box.min.y;

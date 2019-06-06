@@ -34,7 +34,7 @@ function Text()
 
 Text.prototype = Object.create(Object2D.prototype);
 
-Text.prototype.draw = function(context)
+Text.prototype.draw = function(context, viewport, canvas)
 {
 	context.font = this.font;
 	context.textAlign = this.textAlign;
