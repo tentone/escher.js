@@ -11,12 +11,17 @@ import {Vector2} from "../math/Vector2.js";
  * Use the normal DOM events for interaction.
  *
  * @class
- * @param parent Parent DOM element that contains the drawing canvas.
+ * @param parentDOM Parent DOM element that contains the drawing canvas.
  * @param type Type of the DOM element (e.g. "div", "p", ...)
  */
-function DOM(parent, type)
+function DOM(parentDOM, type)
 {
 	Object2D.call(this);
+
+	/**
+	 * Parent element that contains this DOM div.
+	 */
+	this.parentDOM = parentDOM;
 
 	/**
 	 * DOM element contained by this object.
@@ -31,7 +36,6 @@ function DOM(parent, type)
 	this.element.style.transformOrigin = "0px 0px";
 	this.element.style.overflow = "auto";
 	this.element.style.pointerEvents = "none";
-	parent.appendChild(this.element);
 	
 	/**
 	 * Size of the DOM element (in world coordinates).
@@ -40,6 +44,16 @@ function DOM(parent, type)
 }
 
 DOM.prototype = Object.create(Object2D.prototype);
+
+DOM.prototype.onAdd = function()
+{
+	this.parentDOM.appendChild(this.element);
+};
+
+DOM.prototype.onRemove = function()
+{
+	this.parentDOM.removeChild(this.element);
+};
 
 DOM.prototype.transform = function(context, viewport, canvas)
 {

@@ -47,17 +47,14 @@ Circle.prototype.onPointerLeave = function(pointer, viewport)
 
 Circle.prototype.draw = function(context, viewport, canvas)
 {
-	context.fillStyle = this.fillStyle;
-
 	context.beginPath();
 	context.arc(0, 0, this.radius, 0, 2 * Math.PI);
+	
+	context.fillStyle = this.fillStyle;
 	context.fill();
 
 	context.lineWidth = 1;
 	context.strokeStyle = this.strokeStyle;
-
-	context.beginPath();
-	context.arc(0, 0, this.radius, 0, 2 * Math.PI);
 	context.stroke();
 };
 

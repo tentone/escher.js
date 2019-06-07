@@ -82,12 +82,13 @@
 			var div = new Trenette.DOM(division);
 			div.size.set(100, 50);
 			div.origin.set(50, 25);
+			box.add(div);
+
 			var text = document.createElement("div");
 			text.style.fontFamily = "Arial";
 			text.style.textAlign = "center";
 			text.innerHTML = "DOM text!";
 			div.element.appendChild(text);
-			box.add(div);
 		}
 
 		var viewport = new Trenette.Viewport();
@@ -102,7 +103,7 @@
 			time = newTime;
 
 			perfDelta.innerHTML = delta + "ms";
-			
+
 			console.log(delta);
 		});
 	</script>

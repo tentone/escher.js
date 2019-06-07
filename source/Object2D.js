@@ -27,6 +27,13 @@ function Object2D()
 	this.parent = null;
 
 	/**
+	 * Depth level in the object tree, objects with higher depth are drawn on top.
+	 *
+	 * The layer value is considered first. 
+	 */
+	this.level = 0;
+
+	/**
 	 * Position of the object.
 	 */
 	this.position = new Vector2(0, 0);
@@ -156,6 +163,13 @@ Object2D.prototype.traverse = function(callback)
 Object2D.prototype.add = function(object)
 {
 	object.parent = this;
+	object.level = this.level + 1;
+
+	if(object.õnAdd !== null)
+	{
+		object.õnAdd(object, this);
+	}
+
 	this.children.push(object);
 };
 
@@ -167,9 +181,18 @@ Object2D.prototype.add = function(object)
 Object2D.prototype.remove = function(object)
 {
 	var index = this.children.indexOf(object);
+	
 	if(index !== -1)
 	{
-		this.children[index].parent = null;
+		var object = this.children[index];
+		object.parent = null;
+		object.level = 0;
+
+		if(object.onRemove !== null)
+		{
+			object.onRemove(object, this);
+		}
+
 		this.children.splice(index, 1)
 	}
 };
@@ -229,37 +252,53 @@ Object2D.prototype.transform = function(context, viewport)
 Object2D.prototype.draw = function(context, viewport, canvas){};
 
 /**
+ * Method called when the object its added to a parent.
+ *
+ * Receives (object, parent) as arguments.
+ */
+Object2D.prototype.onAdd = null;
+
+/**
+ * Method called when the object gets removed from its parent
+ *
+ * Receives (object, parent) as arguments.
+ */
+Object2D.prototype.onRemove = null;
+
+/**
  * Callback method called every time before the object is draw into the canvas.
  *
  * Can be used to run preparation code, move the object, etc.
+ *
+ * Receives (object) as argument.
  */
 Object2D.prototype.onUpdate = null;
 
 /**
  * Callback method called when the pointer enters the object.
  *
- * Receives (pointer, viewport) as arguments.
+ * Receives (object, pointer, viewport) as arguments.
  */
 Object2D.prototype.onPointerEnter = null;
 
 /**
  * Callback method called when the was inside of the object and leaves the object.
  *
- * Receives (pointer, viewport) as arguments.
+ * Receives (object, pointer, viewport) as arguments.
  */
 Object2D.prototype.onPointerLeave = null;
 
 /**
  * Callback method while the pointer is over (inside) of the object.
  *
- * Receives (pointer, viewport) as arguments.
+ * Receives (object, pointer, viewport) as arguments.
  */
 Object2D.prototype.onPointerOver = null;
 
 /**
  * Callback method while the object is being dragged across the screen.
  *
- * Receives (pointer, viewport, delta) as arguments. Delta is the movement of the pointer already translated into local object coordinates.
+ * Receives (object, pointer, viewport, delta) as arguments. Delta is the movement of the pointer already translated into local object coordinates.
  */
 Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
 {
@@ -269,17 +308,21 @@ Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
 /**
  * Callback method called while the pointer button is pressed.
  *
- * Receives (pointer, viewport) as arguments.
+ * Receives (object, pointer, viewport) as arguments.
  */
 Object2D.prototype.onButtonPressed = null;
 
 /**
  * Callback method called when the pointer button is pressed down (single time).
+ *
+ * Receives (object, pointer, viewport) as arguments.
  */
 Object2D.prototype.onButtonDown = null;
 
 /**
  * Callback method called when the pointer button is released (single time).
+ *
+ * Receives (object, pointer, viewport) as arguments.
  */
 Object2D.prototype.onButtonUp = null;
 

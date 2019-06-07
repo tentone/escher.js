@@ -53,6 +53,13 @@ function Viewport()
 	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
 	 */
 	this.moveOnScale = true;
+
+	/**
+	 * Value of the initial point of rotation if the viewport is being rotated.
+	 *
+	 * Is set to null when the viewport is not being rotated.
+	 */
+	this.rotationPoint = null;
 }
 
 /**
@@ -75,11 +82,17 @@ Viewport.prototype.updateControls = function(pointer)
 		}
 	}
 
-	if(pointer.buttonPressed(Pointer.RIGHT))
+	if(pointer.buttonPressed(Pointer.RIGHT) && pointer.buttonPressed(Pointer.LEFT))
+	{
+		this.rotation += pointer.delta.angle() * 1e-2;
+	}
+	else if(pointer.buttonPressed(Pointer.RIGHT))
 	{
 		this.position.x += pointer.delta.x;
 		this.position.y += pointer.delta.y;
 	}
+
+
 };
 
 /**

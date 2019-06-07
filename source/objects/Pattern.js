@@ -70,8 +70,6 @@ Pattern.prototype.draw = function(context, viewport, canvas)
 	if(this.image.src.length > 0)
 	{
 		var pattern = context.createPattern(this.image, this.repetition);
-		
-		//pattern.setTransform();
 
 		context.fillStyle = pattern;
 		context.fillRect(this.box.min.x, this.box.min.y, width, height);

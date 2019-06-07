@@ -9,8 +9,16 @@ import {Pointer} from "./input/Pointer.js";
  *
  * @class
  */
-function Renderer(canvas)
+function Renderer(canvas, options)
 {
+	if(options === undefined)
+	{
+		options = 
+		{
+			alpha: true
+		};
+	}
+
 	/**
 	 * Canvas DOM element, has to be managed by the user.
 	 */
@@ -19,7 +27,7 @@ function Renderer(canvas)
 	/**
 	 * Canvas 2D rendering context used to draw content.
 	 */
-	this.context = canvas.getContext("2d");
+	this.context = canvas.getContext("2d", {alpha: options.alpha});
 	this.context.imageSmoothingEnabled = true;
 	this.context.globalCompositeOperation = "source-over";
 
@@ -89,6 +97,11 @@ Renderer.prototype.update = function(object, viewport)
 	// Sort objects by layer
 	objects.sort(function(a, b)
 	{
+		if(b.layer === a.layer)
+		{
+			return b.level - a.level;
+		}
+		
 		return b.layer - a.layer;
 	});
 
@@ -216,7 +229,6 @@ Renderer.prototype.update = function(object, viewport)
 	{
 		child.updateMatrix();
 	});
-	
 
 	this.context.setTransform(1, 0, 0, 1, 0, 0);
 	

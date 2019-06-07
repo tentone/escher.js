@@ -9,8 +9,7 @@
 
 	<script type="text/javascript">
 
-		window.runLoop = true;
-
+		// Division
 		var division = document.createElement("div");
 		division.style.position = "absolute";
 		division.style.width = "100%";
@@ -20,7 +19,7 @@
 		division.style.overflow = "hidden";
 		document.body.appendChild(division);
 
-		// Setup the display canvas
+		// Canvas
 		var canvas = document.createElement("canvas");
 		canvas.style.position = "absolute";
 		canvas.style.width = "100%";
@@ -29,98 +28,116 @@
 		canvas.style.left = "0px";
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
-		canvas.oncontextmenu = function(event)
+		division.appendChild(canvas);
+
+		// Prevent context menu events
+		document.body.oncontextmenu = function(event)
 		{
 			event.preventDefault();
 			return false;
 		};
-		division.appendChild(canvas);
 
+		// Resize canvas on window resize
 		window.onresize = function()
 		{
 			canvas.width = window.innerWidth;
 			canvas.height = window.innerHeight;
 		};
 
+		// Create boxes on double click
 		canvas.ondblclick = function(event)
 		{
 			var p = new Trenette.Vector2(event.clientX, event.clientY);
 			p = viewport.inverseMatrix.transformPoint(p);
 
-			if(Math.random() > 0.5)
-			{
-				var box = new Trenette.Box();
-				box.position.copy(p);
-				box.draggable = true;
-				group.add(box);
-			}
-			else
-			{
-				var circle = new Trenette.Circle();
-				circle.position.copy(p);
-				circle.radius = Math.random() * 20 + 30;
-				circle.draggable = true;
-				group.add(circle);
-			}
+			var box = new Trenette.Box();
+			box.position.copy(p);
+			box.draggable = true;
+			boxes.add(box);
 
-			if(group.children.length > 2)
+			var text = new Trenette.Text();
+			text.text = "Box";
+			box.add(text);
+
+			if(boxes.children.length > 1)
 			{
 				var line = new Trenette.Line();
-				line.from = group.children[group.children.length - 1].position;
-				line.to = group.children[group.children.length - 2].position;
 				line.layer = -1;
+				line.from = boxes.children[boxes.children.length - 1].position;
+				line.to = boxes.children[boxes.children.length - 2].position;
 				group.add(line);
-
-				console.log(line);
 			}
 		};
 
-		// Create the diagram
+		window.onkeydown = function(event)
+		{
+			if(selected !== null && event.keyCode === 46)
+			{
+				group.remove(selected);
+			}
+		};
+
+		var selected = null;
+
+		// Group to store other objects
 		var group = new Trenette.Object2D();
+		
+		// Pattern image object
 		var image = new Trenette.Pattern("grid.png");
 		image.position.set(-300, -400);
 		image.layer = 5;
 		image.draggable = true;
 		group.add(image);
-		Trenette.Helpers.boxResizeTool(image);
 
+		// Image object
 		var background = new Trenette.Image("hexagon.jpg");
 		background.position.set(-300, -400);
-		Trenette.Helpers.boxResizeTool(background);
 		background.layer = -2;
 		background.draggable = true;
 		group.add(background);
 
+		// Box
 		var boxA = new Trenette.Box();
-		Trenette.Helpers.boxResizeTool(boxA);
 		boxA.draggable = true;
+		boxA.onButtonDown = function(object)
+		{
+			boxA.strokeStyle = "#0000FF";
+			selected = boxA;
+		};
 		group.add(boxA);
+		Trenette.Helpers.boxResizeTool(boxA);
 
+		// DOM
 		var div = new Trenette.DOM(division);
 		div.size.set(100, 50);
 		div.origin.set(50, 25);
+		boxA.add(div);
+
 		var text = document.createElement("div");
 		text.style.fontFamily = "Arial";
 		text.style.textAlign = "center";
 		text.innerHTML = "DOM text!";
 		div.element.appendChild(text);
-		boxA.add(div);
 
+		// Box
 		var boxB = new Trenette.Box();
 		boxB.position.set(100, 100);
 		boxB.draggable = true;
 		group.add(boxB);
 		
+		// DOM
 		var div = new Trenette.DOM(division);
 		div.size.set(100, 50);
 		div.origin.set(50, 25);
+		boxB.add(div);
+
 		var text = document.createElement("div");
 		text.style.fontFamily = "Arial";
 		text.style.textAlign = "center";
 		text.innerHTML = "Double click to add box!";
 		div.element.appendChild(text);
-		boxB.add(div);
 
+		// Circle
 		var circle = new Trenette.Circle();
 		circle.radius = 60;
 		circle.position.set(300, 0);
@@ -131,26 +148,38 @@
 		text.text = "Canvas Text";
 		circle.add(text);
 
+		// Line (connection)
 		var line = new Trenette.Line();
 		line.from = boxA.position;
 		line.to = boxB.position;
 		line.layer = -1;
+		line.dashPattern = [];
 		group.add(line);
 
+		// Line (connection)
 		var line = new Trenette.Line();
 		line.from = boxA.position;
 		line.to = circle.position;
 		line.layer = -1;
+		line.dashPattern = [];
+		line.lineWidth = 2;
 		group.add(line);
 
+		// Line (connection)
 		var line = new Trenette.Line();
 		line.from = boxB.position;
 		line.to = circle.position;
 		line.layer = -1;
 		group.add(line);
 
+		// Boxes group
+		var boxes = new Trenette.Object2D();
+		group.add(boxes);
+
+		// Viewport
 		var viewport = new Trenette.Viewport();
 
+		// Renderer
 		var renderer = new Trenette.Renderer(canvas);
 		renderer.createRenderLoop(group, viewport);
 	</script>

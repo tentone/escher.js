@@ -702,6 +702,13 @@
 		this.parent = null;
 
 		/**
+		 * Depth level in the object tree, objects with higher depth are drawn on top.
+		 *
+		 * The layer value is considered first. 
+		 */
+		this.level = 0;
+
+		/**
 		 * Position of the object.
 		 */
 		this.position = new Vector2(0, 0);
@@ -831,6 +838,8 @@
 	Object2D.prototype.add = function(object)
 	{
 		object.parent = this;
+		object.level = this.level + 1;
+
 		this.children.push(object);
 	};
 
@@ -842,9 +851,18 @@
 	Object2D.prototype.remove = function(object)
 	{
 		var index = this.children.indexOf(object);
+		
 		if(index !== -1)
 		{
-			this.children[index].parent = null;
+			var object = this.children[index];
+			object.parent = null;
+			object.level = 0;
+			
+			if(object.onDestroy !== null)
+			{
+				object.onDestroy();
+			}
+
 			this.children.splice(index, 1);
 		}
 	};
@@ -892,6 +910,8 @@
 		this.globalMatrix.tranformContext(context);
 	};
 
+
+
 	/**
 	 * Draw the object into the canvas.
 	 *
@@ -902,6 +922,11 @@
 	 * @param {DOM} canvas DOM canvas element where the content is being drawn.
 	 */
 	Object2D.prototype.draw = function(context, viewport, canvas){};
+
+	/**
+	 * Method called when the object gets removed from its parent
+	 */
+	Object2D.prototype.onDestroy = null;
 
 	/**
 	 * Callback method called every time before the object is draw into the canvas.
@@ -1440,8 +1465,16 @@
 	 *
 	 * @class
 	 */
-	function Renderer(canvas)
+	function Renderer(canvas, options)
 	{
+		if(options === undefined)
+		{
+			options = 
+			{
+				alpha: true
+			};
+		}
+
 		/**
 		 * Canvas DOM element, has to be managed by the user.
 		 */
@@ -1450,7 +1483,7 @@
 		/**
 		 * Canvas 2D rendering context used to draw content.
 		 */
-		this.context = canvas.getContext("2d");
+		this.context = canvas.getContext("2d", {alpha: options.alpha});
 		this.context.imageSmoothingEnabled = true;
 		this.context.globalCompositeOperation = "source-over";
 
@@ -1520,6 +1553,11 @@
 		// Sort objects by layer
 		objects.sort(function(a, b)
 		{
+			if(b.layer === a.layer)
+			{
+				return b.level - a.level;
+			}
+			
 			return b.layer - a.layer;
 		});
 
@@ -1647,7 +1685,6 @@
 		{
 			child.updateMatrix();
 		});
-		
 
 		this.context.setTransform(1, 0, 0, 1, 0, 0);
 		
@@ -1752,6 +1789,13 @@
 		 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
 		 */
 		this.moveOnScale = true;
+
+		/**
+		 * Value of the initial point of rotation if the viewport is being rotated.
+		 *
+		 * Is set to null when the viewport is not being rotated.
+		 */
+		this.rotationPoint = null;
 	}
 
 	/**
@@ -1774,11 +1818,17 @@
 			}
 		}
 
-		if(pointer.buttonPressed(Pointer.RIGHT))
+		if(pointer.buttonPressed(Pointer.RIGHT) && pointer.buttonPressed(Pointer.LEFT))
+		{
+			this.rotation += pointer.delta.angle() * 1e-2;
+		}
+		else if(pointer.buttonPressed(Pointer.RIGHT))
 		{
 			this.position.x += pointer.delta.x;
 			this.position.y += pointer.delta.y;
 		}
+
+
 	};
 
 	/**
@@ -2147,17 +2197,14 @@
 
 	Circle.prototype.draw = function(context, viewport, canvas)
 	{
-		context.fillStyle = this.fillStyle;
-
 		context.beginPath();
 		context.arc(0, 0, this.radius, 0, 2 * Math.PI);
+		
+		context.fillStyle = this.fillStyle;
 		context.fill();
 
 		context.lineWidth = 1;
 		context.strokeStyle = this.strokeStyle;
-
-		context.beginPath();
-		context.arc(0, 0, this.radius, 0, 2 * Math.PI);
 		context.stroke();
 	};
 
@@ -2495,6 +2542,11 @@
 		Object2D.call(this);
 
 		/**
+		 * Parent element that contains this DOM div.
+		 */
+		this.parent = parent;
+
+		/**
 		 * DOM element contained by this object.
 		 *
 		 * Bye default it has the pointerEvents style set to none.
@@ -2507,7 +2559,7 @@
 		this.element.style.transformOrigin = "0px 0px";
 		this.element.style.overflow = "auto";
 		this.element.style.pointerEvents = "none";
-		parent.appendChild(this.element);
+		this.parent.appendChild(this.element);
 		
 		/**
 		 * Size of the DOM element (in world coordinates).
@@ -2516,6 +2568,11 @@
 	}
 
 	DOM.prototype = Object.create(Object2D.prototype);
+
+	DOM.prototype.onDestroy = function()
+	{
+		this.parent.removeChild(this.element);
+	};
 
 	DOM.prototype.transform = function(context, viewport, canvas)
 	{
@@ -2596,8 +2653,6 @@
 		if(this.image.src.length > 0)
 		{
 			var pattern = context.createPattern(this.image, this.repetition);
-			
-			//pattern.setTransform();
 
 			context.fillStyle = pattern;
 			context.fillRect(this.box.min.x, this.box.min.y, width, height);
