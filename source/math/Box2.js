@@ -81,7 +81,6 @@ Box2.prototype.copy = function(box)
  */
 Box2.prototype.isEmpty = function()
 {
-
 	return (this.max.x < this.min.x) || (this.max.y < this.min.y);
 };
 
@@ -90,7 +89,14 @@ Box2.prototype.isEmpty = function()
  */
 Box2.prototype.getCenter = function(target)
 {
-	return this.isEmpty() ? target.set(0, 0) : target.addVectors(this.min, this.max).multiplyScalar(0.5);
+	if(target === undefined)
+	{
+		target = new Vector2();
+	}
+
+	this.isEmpty() ? target.set(0, 0) : target.addVectors(this.min, this.max).multiplyScalar(0.5);
+
+	return target;
 };
 
 /**
@@ -98,7 +104,14 @@ Box2.prototype.getCenter = function(target)
  */
 Box2.prototype.getSize = function(target)
 {
-	return this.isEmpty() ? target.set(0, 0) : target.subVectors(this.max, this.min);
+	if(target === undefined)
+	{
+		target = new Vector2();
+	}
+
+	this.isEmpty() ? target.set(0, 0) : target.subVectors(this.max, this.min);
+
+	return target;
 };
 
 /**
@@ -169,7 +182,14 @@ Box2.prototype.intersectsBox = function(box)
 
 Box2.prototype.clampPoint = function(point, target)
 {
-	return target.copy(point).clamp(this.min, this.max);
+	if(target === undefined)
+	{
+		target = new Vector2();
+	}
+
+	target.copy(point).clamp(this.min, this.max);
+
+	return target;
 };
 
 /**

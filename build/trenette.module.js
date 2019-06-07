@@ -834,6 +834,14 @@ Object2D.prototype.add = function(object)
 	object.parent = this;
 	object.level = this.level + 1;
 
+	object.traverse(function(child)
+	{
+		if(child.onAdd !== null)
+		{
+			child.onAdd(this);
+		}
+	});
+
 	this.children.push(object);
 };
 
@@ -851,11 +859,14 @@ Object2D.prototype.remove = function(object)
 		var object = this.children[index];
 		object.parent = null;
 		object.level = 0;
-		
-		if(object.onDestroy !== null)
+
+		object.traverse(function(child)
 		{
-			object.onDestroy();
-		}
+			if(child.onRemove !== null)
+			{
+				child.onRemove(this);
+			}
+		});
 
 		this.children.splice(index, 1);
 	}
@@ -904,8 +915,6 @@ Object2D.prototype.transform = function(context, viewport)
 	this.globalMatrix.tranformContext(context);
 };
 
-
-
 /**
  * Draw the object into the canvas.
  *
@@ -918,9 +927,18 @@ Object2D.prototype.transform = function(context, viewport)
 Object2D.prototype.draw = function(context, viewport, canvas){};
 
 /**
- * Method called when the object gets removed from its parent
+ * Method called when the object its added to a parent.
+ *
+ * Receives (parent) as arguments.
  */
-Object2D.prototype.onDestroy = null;
+Object2D.prototype.onAdd = null;
+
+/**
+ * Method called when the object gets removed from its parent
+ *
+ * Receives (parent) as arguments.
+ */
+Object2D.prototype.onRemove = null;
 
 /**
  * Callback method called every time before the object is draw into the canvas.
@@ -969,11 +987,15 @@ Object2D.prototype.onButtonPressed = null;
 
 /**
  * Callback method called when the pointer button is pressed down (single time).
+ *
+ * Receives (pointer, viewport) as arguments.
  */
 Object2D.prototype.onButtonDown = null;
 
 /**
  * Callback method called when the pointer button is released (single time).
+ *
+ * Receives (pointer, viewport) as arguments.
  */
 Object2D.prototype.onButtonUp = null;
 
@@ -1917,7 +1939,6 @@ Box2.prototype.copy = function(box)
  */
 Box2.prototype.isEmpty = function()
 {
-
 	return (this.max.x < this.min.x) || (this.max.y < this.min.y);
 };
 
@@ -1926,7 +1947,14 @@ Box2.prototype.isEmpty = function()
  */
 Box2.prototype.getCenter = function(target)
 {
-	return this.isEmpty() ? target.set(0, 0) : target.addVectors(this.min, this.max).multiplyScalar(0.5);
+	if(target === undefined)
+	{
+		target = new Vector2();
+	}
+
+	this.isEmpty() ? target.set(0, 0) : target.addVectors(this.min, this.max).multiplyScalar(0.5);
+
+	return target;
 };
 
 /**
@@ -1934,7 +1962,14 @@ Box2.prototype.getCenter = function(target)
  */
 Box2.prototype.getSize = function(target)
 {
-	return this.isEmpty() ? target.set(0, 0) : target.subVectors(this.max, this.min);
+	if(target === undefined)
+	{
+		target = new Vector2();
+	}
+
+	this.isEmpty() ? target.set(0, 0) : target.subVectors(this.max, this.min);
+
+	return target;
 };
 
 /**
@@ -2005,7 +2040,14 @@ Box2.prototype.intersectsBox = function(box)
 
 Box2.prototype.clampPoint = function(point, target)
 {
-	return target.copy(point).clamp(this.min, this.max);
+	if(target === undefined)
+	{
+		target = new Vector2();
+	}
+
+	target.copy(point).clamp(this.min, this.max);
+
+	return target;
 };
 
 /**
@@ -2528,17 +2570,17 @@ Image.prototype.draw = function(context, viewport, canvas)
  * Use the normal DOM events for interaction.
  *
  * @class
- * @param parent Parent DOM element that contains the drawing canvas.
+ * @param parentDOM Parent DOM element that contains the drawing canvas.
  * @param type Type of the DOM element (e.g. "div", "p", ...)
  */
-function DOM(parent, type)
+function DOM(parentDOM, type)
 {
 	Object2D.call(this);
 
 	/**
 	 * Parent element that contains this DOM div.
 	 */
-	this.parent = parent;
+	this.parentDOM = parentDOM;
 
 	/**
 	 * DOM element contained by this object.
@@ -2553,7 +2595,6 @@ function DOM(parent, type)
 	this.element.style.transformOrigin = "0px 0px";
 	this.element.style.overflow = "auto";
 	this.element.style.pointerEvents = "none";
-	this.parent.appendChild(this.element);
 	
 	/**
 	 * Size of the DOM element (in world coordinates).
@@ -2563,9 +2604,14 @@ function DOM(parent, type)
 
 DOM.prototype = Object.create(Object2D.prototype);
 
-DOM.prototype.onDestroy = function()
+DOM.prototype.onAdd = function()
 {
-	this.parent.removeChild(this.element);
+	this.parentDOM.appendChild(this.element);
+};
+
+DOM.prototype.onRemove = function()
+{
+	this.parentDOM.removeChild(this.element);
 };
 
 DOM.prototype.transform = function(context, viewport, canvas)

@@ -73,11 +73,16 @@
 		{
 			if(selected !== null && event.keyCode === 46)
 			{
-				group.remove(selected);
+				selected.parent.remove(selected);
 			}
 		};
 
 		var selected = null;
+		var selectObject = function(object)
+		{
+			this.strokeStyle = "#0000FF";
+			selected = this;
+		};
 
 		// Group to store other objects
 		var group = new Trenette.Object2D();
@@ -99,11 +104,6 @@
 		// Box
 		var boxA = new Trenette.Box();
 		boxA.draggable = true;
-		boxA.onButtonDown = function(object)
-		{
-			boxA.strokeStyle = "#0000FF";
-			selected = boxA;
-		};
 		group.add(boxA);
 		Trenette.Helpers.boxResizeTool(boxA);
 
