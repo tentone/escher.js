@@ -69,6 +69,7 @@
 			}
 		};
 
+		/*
 		window.onkeydown = function(event)
 		{
 			if(selected !== null && event.keyCode === 46)
@@ -83,10 +84,26 @@
 			this.strokeStyle = "#0000FF";
 			selected = this;
 		};
+		*/
+
 
 		// Group to store other objects
 		var group = new Trenette.Object2D();
 		
+		var object = new Trenette.Object2D();
+		object.draw = function(context, viewport, canvas)
+		{
+			// Create gradient
+			var grd = context.createLinearGradient(0, 0, 70, 0);
+			grd.addColorStop(0, "#FF0000");
+			grd.addColorStop(1, "#FFFFFF");
+
+			// Fill with gradient
+			context.fillStyle = grd;
+			context.fillRect(-70, 70, 140, 140);
+		};
+		group.add(object);
+
 		// Pattern image object
 		var image = new Trenette.Pattern("grid.png");
 		image.position.set(-300, -400);

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Box.js</title>
+    <title>JSDoc: Source: objects/mask/BoxMask.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Box.js</h1>
+    <h1 class="page-title">Source: objects/mask/BoxMask.js</h1>
 
     
 
@@ -28,22 +28,21 @@
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
 
-import {Object2D} from "../Object2D.js";
-import {Vector2} from "../math/Vector2.js";
-import {Box2} from "../math/Box2.js";
-import {Helpers} from "../utils/Helpers.js";
-import {Circle} from "./Circle.js";
+import {Mask} from "./Mask.js";
+import {Vector2} from "../../math/Vector2.js";
+import {Box2} from "../../math/Box2.js";
 
 /**
- * Box object draw a box.
+ * Box mask can be used to clear a box mask region.
+ *
+ * It will limit the drwaing region to this box.
  *
  * @class
+ * @extends {Mask}
  */
-function Box()
+function BoxMask()
 {
-	Object2D.call(this);
-
-	var self = this;
+	Mask.call(this);
 
 	/**
 	 * Box object containing the size of the object.
@@ -51,48 +50,41 @@ function Box()
 	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 	/**
-	 * Color of the box border line.
+	 * If inverted the mask considers the outside of the box instead of the inside.
 	 */
-	this.strokeStyle = "#000000";
-
-	/**
-	 * Background color of the box.
-	 */
-	this.fillStyle = "#FFFFFF";
+	this.invert = false;
 }
 
-Box.prototype = Object.create(Object2D.prototype);
+BoxMask.prototype = Object.create(Mask.prototype);
 
-Box.prototype.onPointerEnter = function(pointer, viewport)
-{
-	this.fillStyle = "#CCCCCC";
-};
-
-Box.prototype.onPointerLeave = function(pointer, viewport)
-{
-	this.fillStyle = "#FFFFFF";
-};
-
-Box.prototype.isInside = function(point)
+BoxMask.prototype.isInside = function(point)
 {
 	return this.box.containsPoint(point);
 };
 
-Box.prototype.draw = function(context, viewport, canvas)
+BoxMask.prototype.clip = function(context, viewport, canvas)
 {
+	context.beginPath();
+	
 	var width = this.box.max.x - this.box.min.x;
-	var height = this.box.max.y - this.box.min.y;
+	
+	if(this.invert)
+	{	
+		context.rect(this.box.min.x - 1e4, -5e3, 1e4, 1e4);
+		context.rect(this.box.max.x, -5e3, 1e4, 1e4);
+		context.rect(this.box.min.x, this.box.min.y - 1e4, width, 1e4);
+		context.rect(this.box.min.x, this.box.max.y, width, 1e4);
+	}
+	else
+	{
+		var height = this.box.max.y - this.box.min.y;
+		context.fillRect(this.box.min.x, this.box.min.y, width, height);
+	}
 
-	context.fillStyle = this.fillStyle;
-	context.fillRect(this.box.min.x, this.box.min.y, width, height);
-
-	context.lineWidth = 1;
-	context.strokeStyle = this.strokeStyle;
-	context.strokeRect(this.box.min.x, this.box.min.y, width, height);
+	context.clip();
 };
 
-export {Box};
-</code></pre>
+export {BoxMask};</code></pre>
         </article>
     </section>
 
