@@ -68,6 +68,8 @@ EventManager.prototype.destroy = function()
  * Class representing a 2D vector. A 2D vector is an ordered pair of numbers (labeled x and y), which can be used to represent points in space, directions, etc.
  *
  * @class
+ * @param {number} x
+ * @param {number} y
  */
 function Vector2(x, y)
 {
@@ -75,29 +77,51 @@ function Vector2(x, y)
 	this.y = y || 0;
 }
 
+/**
+ * Set vector x and y values.
+ *
+ * @param {number} x
+ * @param {number} y
+ */
 Vector2.prototype.set = function(x, y)
 {
 	this.x = x;
 	this.y = y;
 };
 
+/**
+ * Set a scalar value into the x and y values.
+ */
 Vector2.prototype.setScalar = function(scalar)
 {
 	this.x = scalar;
 	this.y = scalar;
 };
 
+/**
+ * Create a clone of this vector object.
+ */
 Vector2.prototype.clone = function()
 {
 	return new Vector2(this.x, this.y);
 };
 
+/**
+ * Copy the content of another vector into this one.
+ *
+ * @param {Vector2} v
+ */
 Vector2.prototype.copy = function(v)
 {
 	this.x = v.x;
 	this.y = v.y;
 };
 
+/**
+ * Add the content of another vector to this one.
+ *
+ * @param {Vector2} v
+ */
 Vector2.prototype.add = function(v)
 {
 	this.x += v.x;
@@ -122,6 +146,13 @@ Vector2.prototype.addScaledVector = function(v, s)
 	this.y += v.y * s;
 };
 
+
+/**
+ * Subtract the content of another vector to this one.
+ *
+ * @param {Vector2} v
+ */
+
 Vector2.prototype.sub = function(v)
 {
 	this.x -= v.x;
@@ -140,6 +171,12 @@ Vector2.prototype.subVectors = function(a, b)
 	this.y = a.y - b.y;
 };
 
+
+/**
+ * Multiply the content of another vector to this one.
+ *
+ * @param {Vector2} v
+ */
 Vector2.prototype.multiply = function(v)
 {
 	this.x *= v.x;
@@ -152,6 +189,12 @@ Vector2.prototype.multiplyScalar = function(scalar)
 	this.y *= scalar;
 };
 
+
+/**
+ * Divide the content of another vector from this one.
+ *
+ * @param {Vector2} v
+ */
 Vector2.prototype.divide = function(v)
 {
 	this.x /= v.x;
@@ -163,12 +206,26 @@ Vector2.prototype.divideScalar = function(scalar)
 	return this.multiplyScalar(1 / scalar);
 };
 
+/**
+ * Set the minimum of x and y coordinates between two vectors.
+ *
+ * X is set as the min between this vector and the other vector. 
+ *
+ * @param {Vector2} v
+ */
 Vector2.prototype.min = function(v)
 {
 	this.x = Math.min(this.x, v.x);
 	this.y = Math.min(this.y, v.y);
 };
 
+/**
+ * Set the maximum of x and y coordinates between two vectors.
+ *
+ * X is set as the max between this vector and the other vector. 
+ *
+ * @param {Vector2} v
+ */
 Vector2.prototype.max = function(v)
 {
 	this.x = Math.max(this.x, v.x);
@@ -306,6 +363,11 @@ Vector2.prototype.lerpVectors = function(v1, v2, alpha)
 	return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
 };
 
+/**
+ * Check if two vectors are equal.
+ *
+ * @param {Vector2} v
+ */
 Vector2.prototype.equals = function(v)
 {
 	return ((v.x === this.x) && (v.y === this.y));
@@ -330,6 +392,12 @@ Vector2.prototype.toArray = function(array, offset)
 	return array;
 };
 
+/**
+ * Rotate the vector around a central point.
+ *
+ * @param {Vector2} center
+ * @param {number} angle
+ */
 Vector2.prototype.rotateAround = function(center, angle)
 {
 	var c = Math.cos(angle);
@@ -1574,12 +1642,7 @@ Renderer.prototype.update = function(object, viewport)
 		child.updateMatrix();
 	});
 	
-	// Sort objects by layer
-	objects.sort(function(a, b)
-	{
-		return a.layer - b.layer;
-	});
-	
+
 	this.context.setTransform(1, 0, 0, 1, 0, 0);
 	
 	// Clear canvas content
@@ -1589,7 +1652,7 @@ Renderer.prototype.update = function(object, viewport)
 	}
 
 	// Render into the canvas
-	for(var i = 0; i < objects.length; i++)
+	for(var i = objects.length - 1; i >= 0; i--)
 	{	
 		if(objects[i].isMask)
 		{
@@ -2345,7 +2408,8 @@ Text.prototype.draw = function(context, viewport, canvas)
 	context.font = this.font;
 	context.textAlign = this.textAlign;
 	context.fillStyle = this.color;
-
+	context.textBaseline = "middle";
+	
 	context.fillText(this.text, 0, 0);
 };
 
@@ -2403,7 +2467,10 @@ Image.prototype.isInside = function(point)
 
 Image.prototype.draw = function(context, viewport, canvas)
 {
-	context.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
+	if(this.image.src.length > 0)
+	{
+		context.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
+	}
 };
 
 /**
@@ -2423,6 +2490,8 @@ function DOM(parent, type)
 
 	/**
 	 * DOM element contained by this object.
+	 *
+	 * Bye default it has the pointerEvents style set to none.
 	 */
 	this.element = document.createElement("div");
 	this.element.style.transformStyle = "preserve-3d";
@@ -2431,6 +2500,7 @@ function DOM(parent, type)
 	this.element.style.bottom = "0px";
 	this.element.style.transformOrigin = "0px 0px";
 	this.element.style.overflow = "auto";
+	this.element.style.pointerEvents = "none";
 	parent.appendChild(this.element);
 	
 	/**
@@ -2441,7 +2511,7 @@ function DOM(parent, type)
 
 DOM.prototype = Object.create(Object2D.prototype);
 
-DOM.prototype.draw = function(context, viewport, canvas)
+DOM.prototype.transform = function(context, viewport, canvas)
 {
 	// CSS trasnformation matrix
 	var projection = viewport.matrix.clone();
@@ -2451,6 +2521,9 @@ DOM.prototype.draw = function(context, viewport, canvas)
 	// Size of the element
 	this.element.style.width = this.size.x + "px";
 	this.element.style.height = this.size.y + "px";
+
+	// Visibility
+	this.element.style.display = this.visible ? "block" : "none"; 
 };
 
 /**
@@ -2514,11 +2587,15 @@ Pattern.prototype.draw = function(context, viewport, canvas)
 	var width = this.box.max.x - this.box.min.x;
 	var height = this.box.max.y - this.box.min.y;
 
-	var pattern = context.createPattern(this.image, this.repetition);
-	//pattern.setTransform();
+	if(this.image.src.length > 0)
+	{
+		var pattern = context.createPattern(this.image, this.repetition);
+		
+		//pattern.setTransform();
 
-	context.fillStyle = pattern;
-	context.fillRect(this.box.min.x, this.box.min.y, width, height);
+		context.fillStyle = pattern;
+		context.fillRect(this.box.min.x, this.box.min.y, width, height);
+	}
 };
 
 export { Box, Box2, BoxMask, Circle, DOM, EventManager, Helpers, Image, Key, Line, Mask, Matrix, Object2D, Pattern, Pointer, Renderer, Text, UUID, Vector2, Viewport };

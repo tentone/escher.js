@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Example</title>
+</head>
+<body>
+	<script type="text/javascript" src="../build/trenette.js"></script>
+
+	<script type="text/javascript">
+
+		window.runLoop = true;
+
+		var division = document.createElement("div");
+		division.style.position = "absolute";
+		division.style.width = "100%";
+		division.style.height = "100%";
+		division.style.top = "0px";
+		division.style.left = "0px";
+		division.style.overflow = "hidden";
+		document.body.appendChild(division);
+
+		var perfDelta = document.createElement("div");
+		perfDelta.style.position = "absolute";
+		perfDelta.style.width = "50px";
+		perfDelta.style.height = "200px";
+		perfDelta.style.top = "0px";
+		perfDelta.style.left = "0px";
+		perfDelta.style.overflow = "visible";
+		perfDelta.style.fontFamily = "Arial";
+		perfDelta.style.fontSize = "20px";
+		document.body.appendChild(perfDelta);
+
+
+		// Setup the display canvas
+		var canvas = document.createElement("canvas");
+		canvas.style.position = "absolute";
+		canvas.style.width = "100%";
+		canvas.style.height = "100%";
+		canvas.style.top = "0px";
+		canvas.style.left = "0px";
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		canvas.oncontextmenu = function(event)
+		{
+			event.preventDefault();
+			return false;
+		};
+		division.appendChild(canvas);
+
+		window.onresize = function()
+		{
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		};
+
+
+		var group = new Trenette.Object2D();
+
+		var image = new Trenette.Pattern("grid.png");
+		image.position.set(-300, -400);
+		image.layer = 5;
+		image.draggable = true;
+		group.add(image);
+		Trenette.Helpers.boxResizeTool(image);
+
+		var background = new Trenette.Image("hexagon.jpg");
+		background.position.set(-300, -400);
+		Trenette.Helpers.boxResizeTool(background);
+		background.layer = -2;
+		background.draggable = true;
+		group.add(background);
+
+		for(var i = 0; i < 1e3; i++)
+		{		
+			var box = new Trenette.Box();
+			Trenette.Helpers.boxResizeTool(box);
+			box.draggable = true;
+			box.position.set(Math.random() * 1e3, Math.random() * 1e3)
+			group.add(box);
+	
+			var div = new Trenette.DOM(division);
+			div.size.set(100, 50);
+			div.origin.set(50, 25);
+			var text = document.createElement("div");
+			text.style.fontFamily = "Arial";
+			text.style.textAlign = "center";
+			text.innerHTML = "DOM text!";
+			div.element.appendChild(text);
+			box.add(div);
+		}
+
+		var viewport = new Trenette.Viewport();
+
+		var time = performance.now();
+
+		var renderer = new Trenette.Renderer(canvas);
+		renderer.createRenderLoop(group, viewport, function()
+		{
+			var newTime = performance.now();
+			var delta = newTime - time;
+			time = newTime;
+
+			perfDelta.innerHTML = delta + "ms";
+			
+			console.log(delta);
+		});
+	</script>
+</body>
+</html>

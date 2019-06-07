@@ -152,16 +152,7 @@
 		var viewport = new Trenette.Viewport();
 
 		var renderer = new Trenette.Renderer(canvas);
-
-		// Update and render the diagram
-		function loop()
-		{			
-			renderer.update(group, viewport);
-
-			requestAnimationFrame(loop);
-		}
-
-		loop();
+		renderer.createRenderLoop(group, viewport);
 	</script>
 </body>
 </html>

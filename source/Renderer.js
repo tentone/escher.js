@@ -217,12 +217,7 @@ Renderer.prototype.update = function(object, viewport)
 		child.updateMatrix();
 	});
 	
-	// Sort objects by layer
-	objects.sort(function(a, b)
-	{
-		return a.layer - b.layer;
-	});
-	
+
 	this.context.setTransform(1, 0, 0, 1, 0, 0);
 	
 	// Clear canvas content
@@ -232,7 +227,7 @@ Renderer.prototype.update = function(object, viewport)
 	}
 
 	// Render into the canvas
-	for(var i = 0; i < objects.length; i++)
+	for(var i = objects.length - 1; i >= 0; i--)
 	{	
 		if(objects[i].isMask)
 		{

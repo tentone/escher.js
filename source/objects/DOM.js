@@ -20,6 +20,8 @@ function DOM(parent, type)
 
 	/**
 	 * DOM element contained by this object.
+	 *
+	 * Bye default it has the pointerEvents style set to none.
 	 */
 	this.element = document.createElement("div");
 	this.element.style.transformStyle = "preserve-3d";
@@ -28,6 +30,7 @@ function DOM(parent, type)
 	this.element.style.bottom = "0px";
 	this.element.style.transformOrigin = "0px 0px";
 	this.element.style.overflow = "auto";
+	this.element.style.pointerEvents = "none";
 	parent.appendChild(this.element);
 	
 	/**
@@ -38,7 +41,7 @@ function DOM(parent, type)
 
 DOM.prototype = Object.create(Object2D.prototype);
 
-DOM.prototype.draw = function(context, viewport, canvas)
+DOM.prototype.transform = function(context, viewport, canvas)
 {
 	// CSS trasnformation matrix
 	var projection = viewport.matrix.clone();
@@ -48,6 +51,9 @@ DOM.prototype.draw = function(context, viewport, canvas)
 	// Size of the element
 	this.element.style.width = this.size.x + "px";
 	this.element.style.height = this.size.y + "px";
+
+	// Visibility
+	this.element.style.display = this.visible ? "block" : "none"; 
 };
 
 export {DOM};

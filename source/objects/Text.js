@@ -39,7 +39,8 @@ Text.prototype.draw = function(context, viewport, canvas)
 	context.font = this.font;
 	context.textAlign = this.textAlign;
 	context.fillStyle = this.color;
-
+	context.textBaseline = "middle";
+	
 	context.fillText(this.text, 0, 0);
 };
 

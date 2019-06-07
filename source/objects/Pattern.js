@@ -67,11 +67,15 @@ Pattern.prototype.draw = function(context, viewport, canvas)
 	var width = this.box.max.x - this.box.min.x;
 	var height = this.box.max.y - this.box.min.y;
 
-	var pattern = context.createPattern(this.image, this.repetition);
-	//pattern.setTransform();
+	if(this.image.src.length > 0)
+	{
+		var pattern = context.createPattern(this.image, this.repetition);
+		
+		//pattern.setTransform();
 
-	context.fillStyle = pattern;
-	context.fillRect(this.box.min.x, this.box.min.y, width, height);
+		context.fillStyle = pattern;
+		context.fillRect(this.box.min.x, this.box.min.y, width, height);
+	}
 };
 
 export {Pattern};
