@@ -65,49 +65,74 @@ Vector2.prototype.add = function(v)
 	this.y += v.y;
 };
 
+/**
+ * Add a scalar value to booth vector components.
+ *
+ * @param {number} s
+ */
 Vector2.prototype.addScalar = function(s)
 {
 	this.x += s;
 	this.y += s;
 };
 
+/** 
+ * Add two vectors and store the result in this vector.
+ *
+ * @param {Vector2} a
+ * @param {Vector2} b
+ */
 Vector2.prototype.addVectors = function(a, b)
 {
 	this.x = a.x + b.x;
 	this.y = a.y + b.y;
 };
 
+/**
+ * Scale a vector components and add the result to this vector.
+ *
+ * @param {Vector2} v
+ * @param {number} s
+ */
 Vector2.prototype.addScaledVector = function(v, s)
 {
 	this.x += v.x * s;
 	this.y += v.y * s;
 };
 
-
 /**
  * Subtract the content of another vector to this one.
  *
  * @param {Vector2} v
  */
-
 Vector2.prototype.sub = function(v)
 {
 	this.x -= v.x;
 	this.y -= v.y;
 };
 
+/**
+ * Subtract a scalar value to booth vector components.
+ *
+ * @param {number} s
+ */
 Vector2.prototype.subScalar = function(s)
 {
 	this.x -= s;
 	this.y -= s;
 };
 
+/** 
+ * Subtract two vectors and store the result in this vector.
+ *
+ * @param {Vector2} a
+ * @param {Vector2} b
+ */
 Vector2.prototype.subVectors = function(a, b)
 {
 	this.x = a.x - b.x;
 	this.y = a.y - b.y;
 };
-
 
 /**
  * Multiply the content of another vector to this one.
@@ -120,6 +145,11 @@ Vector2.prototype.multiply = function(v)
 	this.y *= v.y;
 };
 
+/**
+ * Multiply a scalar value by booth vector components.
+ *
+ * @param {number} s
+ */
 Vector2.prototype.multiplyScalar = function(scalar)
 {
 	this.x *= scalar;
@@ -138,6 +168,11 @@ Vector2.prototype.divide = function(v)
 	this.y /= v.y;
 };
 
+/**
+ * Divide a scalar value by booth vector components.
+ *
+ * @param {number} s
+ */
 Vector2.prototype.divideScalar = function(scalar)
 {
 	return this.multiplyScalar(1 / scalar);
@@ -310,6 +345,12 @@ Vector2.prototype.equals = function(v)
 	return ((v.x === this.x) && (v.y === this.y));
 };
 
+/**
+ * Set vector value from array with a offset.
+ *
+ * @param {array} array
+ * @param {number} [offset]
+ */
 Vector2.prototype.fromArray = function(array, offset)
 {
 	if(offset === undefined) offset = 0;
@@ -318,6 +359,12 @@ Vector2.prototype.fromArray = function(array, offset)
 	this.y = array[offset + 1];
 };
 
+/**
+ * Convert this vector to an array.
+ *
+ * @param {array} array
+ * @param {number} [offset]
+ */
 Vector2.prototype.toArray = function(array, offset)
 {
 	if(array === undefined) array = [];
