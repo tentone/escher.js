@@ -57,20 +57,6 @@
 
 		var group = new Trenette.Object2D();
 
-		var image = new Trenette.Pattern("grid.png");
-		image.position.set(-300, -400);
-		image.layer = 5;
-		image.draggable = true;
-		group.add(image);
-		Trenette.Helpers.boxResizeTool(image);
-
-		var background = new Trenette.Image("hexagon.jpg");
-		background.position.set(-300, -400);
-		Trenette.Helpers.boxResizeTool(background);
-		background.layer = -2;
-		background.draggable = true;
-		group.add(background);
-
 		for(var i = 0; i < 1e3; i++)
 		{		
 			var box = new Trenette.Box();

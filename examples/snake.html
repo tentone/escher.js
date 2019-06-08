@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Snake</title>
+	<meta charset="utf-8">
+</head>
+<body>
+
+	<script type="text/javascript">
+		var canvas = document.createElement("canvas");
+		canvas.style.width = "100%";
+		canvas.style.height = "100%";
+		canvas.style.top = "0px";
+		canvas.style.left = "0px";
+		canvas.style.position = "absolute";
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		document.body.appendChild(canvas);
+
+		document.body.onresize = function()
+		{
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		};
+
+		document.body.onkeydown = function(event)
+		{
+			console.log(event);
+			arena.snake.keyInput(event.keyCode);
+		};
+
+		function Block(x, y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+
+		Block.prototype.set = function(x, y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+
+		Block.prototype.copy = function(a)
+		{
+			this.x = a.x;
+			this.y = a.y;
+		}
+
+		Block.prototype.add = function(a)
+		{
+			this.x += a.x;
+			this.y += a.y;
+		}
+
+		Block.prototype.equals = function(a)
+		{
+			return this.x === a.x && this.y === a.y;
+		}
+
+		function Snake(x, y)
+		{
+			this.body = [];
+
+			for(var i = 0; i < 3; i++)
+			{
+				this.body.push(new Block(x - i, y));
+			}
+
+			this.speed = new Block(1, 0);
+		}
+
+		Snake.prototype.eat = function(arena)
+		{
+			var first = new Block();
+			first.copy(this.body[0]);
+			first.add(this.speed);
+
+			for(var i = 0; i < arena.fruits.length; i++)
+			{
+				if(arena.fruits[i].equals(first))
+				{
+					this.body.unshift(first);
+					arena.fruits = [];
+					arena.addFruit()
+					return true;
+				}
+			}
+
+			return false;
+		};
+
+		Snake.prototype.move = function()
+		{
+			var first = new Block();
+			first.copy(this.body[0]);
+			first.add(this.speed);
+
+			for(var i = this.body.length - 1; i > 0; i--)
+			{
+				this.body[i].copy(this.body[i - 1]);
+			}
+
+			
+			if(first.x < 0)
+			{
+				first.x = arena.width - 1;
+			}
+			if(first.x > arena.width - 1)
+			{
+				first.x = 0;
+			}
+			if(first.y < 0)
+			{
+				first.y = arena.height - 1;
+			}
+			if(first.y > arena.height - 1)
+			{
+				first.y= 0;
+			}
+
+			this.body[0].copy(first);
+		};
+
+		Snake.prototype.dead = function()
+		{
+
+			var first = this.body[0];
+
+			for(var i = 1; i < this.body.length; i++)
+			{
+				if(this.body[i].equals(first))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		};
+
+		Snake.prototype.update = function()
+		{
+
+			if(!this.eat(arena))
+			{
+				this.move();
+			}
+
+			if(this.dead())
+			{
+				alert("Game over");
+				arena.restart();
+			}
+		};
+
+		Snake.prototype.keyInput = function(keyCode)
+		{
+			//Up
+			if(keyCode === 38)
+			{
+				this.speed.set(0, -1);
+			}
+			//Down
+			if(keyCode === 40)
+			{
+				this.speed.set(0, 1);
+			}
+			//Left
+			if(keyCode === 37)
+			{
+				this.speed.set(-1, 0);
+			}
+			//Right
+			if(keyCode === 39)
+			{
+				this.speed.set(1, 0);
+			}
+		};
+
+		function Arena(w, h)
+		{
+			this.width = w;
+			this.height = h;
+			this.restart();
+		}
+
+		Arena.prototype.restart = function()
+		{
+			this.snake = new Snake(Math.floor(this.width / 2), Math.floor(this.height / 2));
+			this.fruits = [];
+			this.addFruit();
+		};
+
+		Arena.prototype.addFruit = function()
+		{
+			var collides = true;
+
+			while(collides === true)
+			{
+				collides = false;
+				var fruit = new Block(Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height));
+
+				for(var i = 0; i < this.snake.body.length; i++)
+				{
+					if(this.snake.body[i].x === fruit.x && this.snake.body[i].y === fruit.y)
+					{
+						collides = true;
+						break;
+					}
+				}
+			}
+
+			this.fruits.push(fruit);
+		};
+
+		Arena.prototype.draw = function(canvas)
+		{
+			var ctx = canvas.getContext("2d");
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+			ctx.strokeStyle = "#000000";
+			ctx.lineHeight = 2;
+
+			var w = canvas.width / this.width;
+			var h = canvas.height / this.height;
+
+			for(var x = 0; x < canvas.width; x += w)
+			{
+				for(var y = 0; y < canvas.height; y += h)
+				{
+					ctx.strokeRect(x, y, w, h);
+				}
+			}
+
+			ctx.fillStyle = "#FF0000";
+
+			for(var i = 0; i < this.snake.body.length; i++)
+			{
+				ctx.fillRect(this.snake.body[i].x * w, this.snake.body[i].y * h, w, h);
+			}
+
+
+			ctx.fillStyle = "#00FF00";
+
+			for(var i = 0; i < this.fruits.length; i++)
+			{
+				ctx.fillRect(this.fruits[i].x * w, this.fruits[i].y * h, w, h);
+			}
+
+		};
+
+		var arena = new Arena(30, 20);
+
+		function render()
+		{
+			arena.snake.update();
+			arena.draw(canvas);
+
+			setTimeout(render, 120);
+		}
+
+		render();
+	</script>
+</body>
+</html>
