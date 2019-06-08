@@ -1,19 +1,24 @@
 # trenette.js
 
- - Web based diagram and graph building framework.
+ - Web based 2D graph building framework.
  - Entity based diagram build system, entities are stores as a tree. Parent elements transformations affect the children transforms.
  - Boxes, circle, custom shapes, lines, customizable elements.
  - Support for DOM elements using CSS transforms (useful for text input, or more complex user interaction).
  - Built in viewport controls with drag, zoom and move functions.
  - Supports mobile web browsers.
 
+![graph](<https://tentone.github.io/trenette.js/examples/graph.png>)
 
 
-![graph](C:\Users\joseferrao\Documents\Git\trenette.js\examples\graph.png)
 
 ### Getting started
 
 - There are a couple of example in the example folder, they can be used as base for your project.
+  - [Diagram](https://tentone.github.io/trenette.js/examples/diagram)
+  - [Stress test](https://tentone.github.io/trenette.js/examples/stress)
+  - [Masks](https://tentone.github.io/trenette.js/examples/mask)
+- There is also available API documentation containing implementation details about all the internal components of the framework and detailed functionality descriptions.
+  - [API Documentation](https://tentone.github.io/trenette.js/docs/)
 
 
 
@@ -27,8 +32,9 @@
 
 ### Custom Objects
 
-- Its possible to create custom graph elements by expanding the Object2D class, and overriding its draw(), transform() methods.
-- The draw(context, viewport, canvas) function is where the object gets draw into the screen, here you can implement your custom object as if it was drawn alone in a canvas.
+- Its possible to create custom graph elements by expanding the Object2D class, and overriding its `draw(context, viewport, canvas)` and its `transform(context, viewport, canvas)` methods.
+- The `draw(context, viewport, canvas)` function is where the object gets draw into the screen, here you can implement your custom object as if it was drawn alone in a canvas.
+- The `transform(context, viewport, canvas)` is where the object matrix gets applied to the canvas drawing context, it is assumed that the viewport transformation was pre-applied.
 - Consider the point zero the origin of the object, every object has a position, rotation, scale and origin points used to control the object transform, these points don't need to be considered in the draw method.
 - Example of a custom element, drawing a custom box with a red gradient.
 
@@ -49,17 +55,59 @@ object.draw = function(context, viewport, canvas)
 
 
 
-
-
 ### Pointer events
 
 - The system supports multiple pointer events that can be used to control the objects and interact with the users.
+
+```javascript
+// Called when the pointer enters the object.
+onPointerEnter(pointer, viewport);
+
+// Called when the was inside of the object and leaves the object.
+
+onPointerLeave(pointer, viewport);
+
+// Called while the pointer is over (inside) of the object.
+onPointerOver(pointer, viewport);
+
+// Called when the object is dragged across the screen, only works if the object has the property draggable set true.
+// Delta is the movement of the pointer already translated into local object coordinates.
+onPointerDrag(pointer, viewport, delta);
+
+// Called while the pointer button is pressed.
+onButtonPressed(pointer, viewport);
+
+// Called when the pointer button is pressed down.
+onButtonDown(pointer, viewport);
+
+// Called after the pointer button gets released.
+onButtonUp(pointer, viewport);
+```
 
 
 
 ### DOM Objects
 
 - Its possible to use DOM elements in the graph, by applying CSS transform to absolute positioned elements the system already provides a DOM base object that creates a basic division.
+- DOM objects are always drawn on top of everything else, its not possible to partially occlude a DOM object with a canvas object.
+- DOM objects contain a div `element` inside that can be used to attach custom code, by default that element `pointerEvents` CSS style is set to none, disabling all the pointer events, it can be set to auto to re-enable them.
+
+```javascript
+var dom = new Trenette.DOM(division);
+dom.size.set(100, 50);
+dom.origin.set(50, 25);
+group.add(dom);
+
+// Re-enable DOM pointer events
+dom.element.style.pointerEvents = "auto";
+
+// Attach a new DOM element to the DOM object
+var text = document.createElement("div");
+text.style.fontFamily = "Arial";
+text.style.textAlign = "center";
+text.innerHTML = "DOM text!";
+dom.element.appendChild(text);
+```
 
 
 

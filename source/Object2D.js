@@ -302,7 +302,11 @@ Object2D.prototype.onPointerOver = null;
 /**
  * Callback method while the object is being dragged across the screen.
  *
- * Receives (pointer, viewport, delta) as arguments. Delta is the movement of the pointer already translated into local object coordinates.
+ * By default is adds the delta value to the object position (making it follow the mouse movement).
+ *
+ * Delta is the movement of the pointer already translated into local object coordinates.
+ *
+ * Receives (pointer, viewport, delta) as arguments.
  */
 Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
 {

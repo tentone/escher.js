@@ -89,20 +89,29 @@
 
 		// Group to store other objects
 		var group = new Trenette.Object2D();
-		
-		var object = new Trenette.Object2D();
+			
+		// Customized box object
+		var object = new Trenette.Box();
+		object.draggable = true;
+		object.layer = 2;
 		object.draw = function(context, viewport, canvas)
 		{
 			// Create gradient
-			var grd = context.createLinearGradient(0, 0, 70, 0);
-			grd.addColorStop(0, "#FF0000");
-			grd.addColorStop(1, "#FFFFFF");
+			var gradient = context.createLinearGradient(this.box.min.x, 0, this.box.max.x, 0);
+			gradient.addColorStop(0, "#FF0000");
+			gradient.addColorStop(0.5, "#00FF00");
+			gradient.addColorStop(1, "#0000FF");
+
+			// Box property has the min and max points of the object.
+			var size = this.box.getSize();
 
 			// Fill with gradient
-			context.fillStyle = grd;
-			context.fillRect(-70, 70, 140, 140);
+			context.fillStyle = gradient;
+			context.fillRect(this.box.min.x, this.box.min.y, size.x , size.y);
 		};
 		group.add(object);
+
+		Trenette.Helpers.boxResizeTool(object);
 
 		// Pattern image object
 		var image = new Trenette.Pattern("grid.png");
