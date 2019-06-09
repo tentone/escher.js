@@ -5,8 +5,10 @@
 	<meta charset="utf-8">
 </head>
 <body>
+	<script type="text/javascript" src="../build/trenette.js"></script>
 
 	<script type="text/javascript">
+
 		var canvas = document.createElement("canvas");
 		canvas.style.width = "100%";
 		canvas.style.height = "100%";
@@ -17,6 +19,12 @@
 		canvas.height = window.innerHeight;
 		document.body.appendChild(canvas);
 
+		canvas.oncontextmenu = function(event)
+		{
+			event.preventDefault();
+			return false;
+		};
+
 		document.body.onresize = function()
 		{
 			canvas.width = window.innerWidth;
@@ -25,54 +33,28 @@
 
 		document.body.onkeydown = function(event)
 		{
-			console.log(event);
 			arena.snake.keyInput(event.keyCode);
 		};
 
-		function Block(x, y)
-		{
-			this.x = x;
-			this.y = y;
-		}
-
-		Block.prototype.set = function(x, y)
-		{
-			this.x = x;
-			this.y = y;
-		}
-
-		Block.prototype.copy = function(a)
-		{
-			this.x = a.x;
-			this.y = a.y;
-		}
-
-		Block.prototype.add = function(a)
-		{
-			this.x += a.x;
-			this.y += a.y;
-		}
-
-		Block.prototype.equals = function(a)
-		{
-			return this.x === a.x && this.y === a.y;
-		}
-
 		function Snake(x, y)
 		{
+			Trenette.Object2D.call(this);
+
 			this.body = [];
 
 			for(var i = 0; i < 3; i++)
 			{
-				this.body.push(new Block(x - i, y));
+				this.body.push(new Trenette.Vector2(x - i, y));
 			}
 
-			this.speed = new Block(1, 0);
+			this.speed = new Trenette.Vector2(1, 0);
 		}
+
+		Snake.prototype = Object.create(Trenette.Object2D.prototype);
 
 		Snake.prototype.eat = function(arena)
 		{
-			var first = new Block();
+			var first = new Trenette.Vector2();
 			first.copy(this.body[0]);
 			first.add(this.speed);
 
@@ -92,7 +74,7 @@
 
 		Snake.prototype.move = function()
 		{
-			var first = new Block();
+			var first = new Trenette.Vector2();
 			first.copy(this.body[0]);
 			first.add(this.speed);
 
@@ -124,7 +106,6 @@
 
 		Snake.prototype.dead = function()
 		{
-
 			var first = this.body[0];
 
 			for(var i = 1; i < this.body.length; i++)
@@ -179,10 +160,14 @@
 
 		function Arena(w, h)
 		{
+			Trenette.Object2D.call(this);
+
 			this.width = w;
 			this.height = h;
 			this.restart();
 		}
+
+		Arena.prototype = Object.create(Trenette.Object2D.prototype);
 
 		Arena.prototype.restart = function()
 		{
@@ -198,7 +183,7 @@
 			while(collides === true)
 			{
 				collides = false;
-				var fruit = new Block(Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height));
+				var fruit = new Trenette.Vector2(Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height));
 
 				for(var i = 0; i < this.snake.body.length; i++)
 				{
@@ -213,53 +198,55 @@
 			this.fruits.push(fruit);
 		};
 
-		Arena.prototype.draw = function(canvas)
+		Arena.prototype.draw = function(context, viewport, canvas)
 		{
-			var ctx = canvas.getContext("2d");
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			context.strokeStyle = "#000000";
+			context.lineHeight = 2;
 
-			ctx.strokeStyle = "#000000";
-			ctx.lineHeight = 2;
+			var s = 30;
 
-			var w = canvas.width / this.width;
-			var h = canvas.height / this.height;
+			var w = s * this.width;
+			var h = s * this.height;
 
-			for(var x = 0; x < canvas.width; x += w)
+			for(var x = 0; x < w; x += s)
 			{
-				for(var y = 0; y < canvas.height; y += h)
+				for(var y = 0; y < h; y += s)
 				{
-					ctx.strokeRect(x, y, w, h);
+					context.strokeRect(x, y, s, s);
 				}
 			}
 
-			ctx.fillStyle = "#FF0000";
+			context.fillStyle = "#FF0000";
 
 			for(var i = 0; i < this.snake.body.length; i++)
 			{
-				ctx.fillRect(this.snake.body[i].x * w, this.snake.body[i].y * h, w, h);
+				context.fillRect(this.snake.body[i].x * s, this.snake.body[i].y * s, s, s);
 			}
 
 
-			ctx.fillStyle = "#00FF00";
+			context.fillStyle = "#00FF00";
 
 			for(var i = 0; i < this.fruits.length; i++)
 			{
-				ctx.fillRect(this.fruits[i].x * w, this.fruits[i].y * h, w, h);
+				context.fillRect(this.fruits[i].x * s, this.fruits[i].y * s, s, s);
 			}
 
 		};
 
 		var arena = new Arena(30, 20);
 
-		function render()
+		function updateSnake()
 		{
 			arena.snake.update();
-			arena.draw(canvas);
-
-			setTimeout(render, 120);
+			setTimeout(updateSnake, 120);
 		}
+	
+		var viewport = new Trenette.Viewport();
 
-		render();
+		var renderer = new Trenette.Renderer(canvas);
+		renderer.createRenderLoop(arena, viewport);
+		updateSnake();
+
 	</script>
 </body>
 </html>

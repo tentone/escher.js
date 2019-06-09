@@ -15,8 +15,9 @@
 
 - There are a couple of example in the example folder, they can be used as base for your project.
   - [Diagram](https://tentone.github.io/trenette.js/examples/diagram)
-  - [Stress test](https://tentone.github.io/trenette.js/examples/stress)
   - [Masks](https://tentone.github.io/trenette.js/examples/mask)
+  - [Snake Game](https://tentone.github.io/trenette.js/examples/snake)
+  - [Stress test](https://tentone.github.io/trenette.js/examples/stress)
 - There is also available API documentation containing implementation details about all the internal components of the framework and detailed functionality descriptions.
   - [API Documentation](https://tentone.github.io/trenette.js/docs/)
 
@@ -27,6 +28,25 @@
 - Trenette is based on web canvas, it requires a DOM canvas element to draw its content.
 - It is necessary for the canvas element width and height parameters to be properly configured since their values are used to process user input.
 - When using other DOM elements with the framework is also necessary to setup a DOM div to store these elements. (Booth the canvas and division should have the same position and size and should be aligned).
+- The code bellow shows how a canvas could be configured for a full screen setup.
+
+```javascript
+var canvas = document.createElement("canvas");
+canvas.style.width = "100%";
+canvas.style.height = "100%";
+canvas.style.top = "0px";
+canvas.style.left = "0px";
+canvas.style.position = "absolute";
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+document.body.appendChild(canvas);
+
+document.body.onresize = function()
+{
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+};
+```
 
 
 
@@ -36,7 +56,7 @@
 - The `draw(context, viewport, canvas)` function is where the object gets draw into the screen, here you can implement your custom object as if it was drawn alone in a canvas.
 - The `transform(context, viewport, canvas)` is where the object matrix gets applied to the canvas drawing context, it is assumed that the viewport transformation was pre-applied.
 - Consider the point zero the origin of the object, every object has a position, rotation, scale and origin points used to control the object transform, these points don't need to be considered in the draw method.
-- Example of a custom element, drawing a custom box with a red gradient.
+- Example of a custom element, drawing a custom box with a red gradient box. Its also possible to extend other base objects like `Box` that already includes the necessary code for mouse events.
 
 ```javascript
 var object = new Trenette.Object2D();
@@ -64,7 +84,6 @@ object.draw = function(context, viewport, canvas)
 onPointerEnter(pointer, viewport);
 
 // Called when the was inside of the object and leaves the object.
-
 onPointerLeave(pointer, viewport);
 
 // Called while the pointer is over (inside) of the object.
