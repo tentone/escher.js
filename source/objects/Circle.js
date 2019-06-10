@@ -23,6 +23,11 @@ function Circle()
 	this.strokeStyle = "#000000";
 
 	/**
+	 * Line width.
+	 */
+	this.lineWidth = 1;
+
+	/**
 	 * Background color of the circle.
 	 */
 	this.fillStyle = "#FFFFFF";
@@ -53,7 +58,7 @@ Circle.prototype.draw = function(context, viewport, canvas)
 	context.fillStyle = this.fillStyle;
 	context.fill();
 
-	context.lineWidth = 1;
+	context.lineWidth = this.lineWidth;
 	context.strokeStyle = this.strokeStyle;
 	context.stroke();
 };

@@ -15,8 +15,6 @@ function Box()
 {
 	Object2D.call(this);
 
-	var self = this;
-
 	/**
 	 * Box object containing the size of the object.
 	 */
@@ -26,6 +24,11 @@ function Box()
 	 * Color of the box border line.
 	 */
 	this.strokeStyle = "#000000";
+
+	/**
+	 * Line width.
+	 */
+	this.lineWidth = 1;
 
 	/**
 	 * Background color of the box.
@@ -58,7 +61,7 @@ Box.prototype.draw = function(context, viewport, canvas)
 	context.fillStyle = this.fillStyle;
 	context.fillRect(this.box.min.x, this.box.min.y, width, height);
 
-	context.lineWidth = 1;
+	context.lineWidth = this.lineWidth;
 	context.strokeStyle = this.strokeStyle;
 	context.strokeRect(this.box.min.x, this.box.min.y, width, height);
 };

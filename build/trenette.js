@@ -134,49 +134,74 @@
 		this.y += v.y;
 	};
 
+	/**
+	 * Add a scalar value to booth vector components.
+	 *
+	 * @param {number} s
+	 */
 	Vector2.prototype.addScalar = function(s)
 	{
 		this.x += s;
 		this.y += s;
 	};
 
+	/** 
+	 * Add two vectors and store the result in this vector.
+	 *
+	 * @param {Vector2} a
+	 * @param {Vector2} b
+	 */
 	Vector2.prototype.addVectors = function(a, b)
 	{
 		this.x = a.x + b.x;
 		this.y = a.y + b.y;
 	};
 
+	/**
+	 * Scale a vector components and add the result to this vector.
+	 *
+	 * @param {Vector2} v
+	 * @param {number} s
+	 */
 	Vector2.prototype.addScaledVector = function(v, s)
 	{
 		this.x += v.x * s;
 		this.y += v.y * s;
 	};
 
-
 	/**
 	 * Subtract the content of another vector to this one.
 	 *
 	 * @param {Vector2} v
 	 */
-
 	Vector2.prototype.sub = function(v)
 	{
 		this.x -= v.x;
 		this.y -= v.y;
 	};
 
+	/**
+	 * Subtract a scalar value to booth vector components.
+	 *
+	 * @param {number} s
+	 */
 	Vector2.prototype.subScalar = function(s)
 	{
 		this.x -= s;
 		this.y -= s;
 	};
 
+	/** 
+	 * Subtract two vectors and store the result in this vector.
+	 *
+	 * @param {Vector2} a
+	 * @param {Vector2} b
+	 */
 	Vector2.prototype.subVectors = function(a, b)
 	{
 		this.x = a.x - b.x;
 		this.y = a.y - b.y;
 	};
-
 
 	/**
 	 * Multiply the content of another vector to this one.
@@ -189,6 +214,11 @@
 		this.y *= v.y;
 	};
 
+	/**
+	 * Multiply a scalar value by booth vector components.
+	 *
+	 * @param {number} s
+	 */
 	Vector2.prototype.multiplyScalar = function(scalar)
 	{
 		this.x *= scalar;
@@ -207,6 +237,11 @@
 		this.y /= v.y;
 	};
 
+	/**
+	 * Divide a scalar value by booth vector components.
+	 *
+	 * @param {number} s
+	 */
 	Vector2.prototype.divideScalar = function(scalar)
 	{
 		return this.multiplyScalar(1 / scalar);
@@ -379,6 +414,12 @@
 		return ((v.x === this.x) && (v.y === this.y));
 	};
 
+	/**
+	 * Set vector value from array with a offset.
+	 *
+	 * @param {array} array
+	 * @param {number} [offset]
+	 */
 	Vector2.prototype.fromArray = function(array, offset)
 	{
 		if(offset === undefined) offset = 0;
@@ -387,6 +428,12 @@
 		this.y = array[offset + 1];
 	};
 
+	/**
+	 * Convert this vector to an array.
+	 *
+	 * @param {array} array
+	 * @param {number} [offset]
+	 */
 	Vector2.prototype.toArray = function(array, offset)
 	{
 		if(array === undefined) array = [];
@@ -977,7 +1024,11 @@
 	/**
 	 * Callback method while the object is being dragged across the screen.
 	 *
-	 * Receives (pointer, viewport, delta) as arguments. Delta is the movement of the pointer already translated into local object coordinates.
+	 * By default is adds the delta value to the object position (making it follow the mouse movement).
+	 *
+	 * Delta is the movement of the pointer already translated into local object coordinates.
+	 *
+	 * Receives (pointer, viewport, delta) as arguments.
 	 */
 	Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
 	{
@@ -2215,6 +2266,11 @@
 		this.strokeStyle = "#000000";
 
 		/**
+		 * Line width.
+		 */
+		this.lineWidth = 1;
+
+		/**
 		 * Background color of the circle.
 		 */
 		this.fillStyle = "#FFFFFF";
@@ -2245,7 +2301,7 @@
 		context.fillStyle = this.fillStyle;
 		context.fill();
 
-		context.lineWidth = 1;
+		context.lineWidth = this.lineWidth;
 		context.strokeStyle = this.strokeStyle;
 		context.stroke();
 	};
@@ -2378,6 +2434,11 @@
 		this.strokeStyle = "#000000";
 
 		/**
+		 * Line width.
+		 */
+		this.lineWidth = 1;
+
+		/**
 		 * Background color of the box.
 		 */
 		this.fillStyle = "#FFFFFF";
@@ -2408,7 +2469,7 @@
 		context.fillStyle = this.fillStyle;
 		context.fillRect(this.box.min.x, this.box.min.y, width, height);
 
-		context.lineWidth = 1;
+		context.lineWidth = this.lineWidth;
 		context.strokeStyle = this.strokeStyle;
 		context.strokeRect(this.box.min.x, this.box.min.y, width, height);
 	};
@@ -2705,12 +2766,105 @@
 		}
 	};
 
+	/**
+	 * Graph object is used to draw simple graph data into the canvas.
+	 *
+	 * Graph data is composed of X, Y values.
+	 *
+	 * @class
+	 */
+	function Graph()
+	{
+		Object2D.call(this);
+
+		/**
+		 * Graph object containing the size of the object.
+		 */
+		this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
+
+		/**
+		 * Color of the box border line.
+		 */
+		this.strokeStyle = "rgb(0, 153, 255)";
+
+		/**
+		 * Line width.
+		 */
+		this.lineWidth = 1;
+
+		/**
+		 * Background color of the box.
+		 */
+		this.fillStyle = "rgba(0, 153, 255, 0.3)";
+
+		/**
+		 * Minimum value of the graph.
+		 */
+		this.min = 0;
+
+		/**
+		 * Maximum value of the graph.
+		 */
+		this.max = 10;
+
+		/**
+		 * Data to be presented in the graph.
+		 *
+		 * The array should store numeric values.
+		 */
+		this.data = [];
+	}
+
+	Graph.prototype = Object.create(Object2D.prototype);
+
+	Graph.prototype.isInside = function(point)
+	{
+		return this.box.containsPoint(point);
+	};
+
+	Graph.prototype.draw = function(context, viewport, canvas)
+	{
+		if(this.data.length === 0)
+		{
+			return;
+		}
+		
+		var width = this.box.max.x - this.box.min.x;
+		var height = this.box.max.y - this.box.min.y;
+
+		context.lineWidth = this.lineWidth;
+		context.strokeStyle = this.strokeStyle;
+		context.beginPath();
+			
+		var step = width / (this.data.length - 1);
+		var gamma = this.max - this.min;
+
+		context.moveTo(this.box.min.x, this.box.max.y - ((this.data[0] - this.min) / gamma) * height);
+		
+		for(var i = 1, s = step; i < this.data.length; s += step, i++)
+		{
+			context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
+		}
+
+		context.stroke();
+
+		if(this.fillStyle !== null)
+		{
+			context.fillStyle = this.fillStyle;
+
+			context.lineTo(this.box.max.x, this.box.max.y);
+			context.lineTo(this.box.min.x, this.box.max.y);
+			context.fill();
+		}
+	};
+
 	exports.Box = Box;
 	exports.Box2 = Box2;
 	exports.BoxMask = BoxMask;
 	exports.Circle = Circle;
 	exports.DOM = DOM;
 	exports.EventManager = EventManager;
+	exports.Graph = Graph;
 	exports.Helpers = Helpers;
 	exports.Image = Image;
 	exports.Key = Key;

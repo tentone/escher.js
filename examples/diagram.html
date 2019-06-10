@@ -120,6 +120,29 @@
 		image.draggable = true;
 		group.add(image);
 
+		var graph = new Trenette.Graph();
+		graph.box.min.set(-500, -50);
+		graph.box.max.set(500, 50);
+		graph.position.set(-300, -400);
+		graph.layer = 5;
+		graph.draggable = true;
+		group.add(graph);
+
+		Trenette.Helpers.boxResizeTool(graph);
+		for(var i = 0; i < 300; i++)
+		{
+			graph.data.push(Math.random() * 9 + 1);
+		}
+
+		function cycleGraph()
+		{
+			graph.data.push(graph.data.shift());
+			
+			requestAnimationFrame(cycleGraph);
+		}
+		cycleGraph();
+
+
 		// Image object
 		var background = new Trenette.Image("images/hexagon.jpg");
 		background.position.set(-300, -400);
@@ -130,6 +153,7 @@
 		// Box
 		var boxA = new Trenette.Box();
 		boxA.draggable = true;
+		boxA.position.set(-50, -100);
 		group.add(boxA);
 		Trenette.Helpers.boxResizeTool(boxA);
 

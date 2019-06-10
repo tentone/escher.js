@@ -22,5 +22,6 @@ export {Text} from "./objects/Text.js";
 export {Image} from "./objects/Image.js";
 export {DOM} from "./objects/DOM.js";
 export {Pattern} from "./objects/Pattern.js";
+export {Graph} from "./objects/Graph.js";
 
 export {Helpers} from "./utils/Helpers.js";

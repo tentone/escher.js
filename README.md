@@ -7,7 +7,7 @@
  - Built in viewport controls with drag, zoom and move functions.
  - Supports mobile web browsers.
 
-![graph](<https://tentone.github.io/trenette.js/examples/graph.png>)
+![graph](<https://tentone.github.io/trenette.js/readme/example.png>)
 
 
 
@@ -47,6 +47,18 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 };
 ```
+
+- The coordinate system used, is the same as if using the canvas API directly -Y is down relative to the origin and +X is left relative to the origin. All objects are positioned using this coordinate system.
+
+![graph](<https://tentone.github.io/trenette.js/readme/grid.png>)
+
+
+
+### Viewport
+
+- The viewport is the object that indicates how the user will view the objects, the viewport can be used to change the position of the elements, zoom in and out, or even rotate the entire canvas.
+- Some object might ignore the viewport transformations by setting the `ignoreViewport` flag to false, this will indicate that renderer to reset the viewport transform just for that object.
+- Its possible to use viewport controller objects that define a default control behavior for the viewport object (mouse interaction).
 
 
 
