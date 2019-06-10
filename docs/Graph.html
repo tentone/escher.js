@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Pattern</title>
+    <title>JSDoc: Class: Graph</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Pattern</h1>
+    <h1 class="page-title">Class: Graph</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Pattern<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Graph<span class="signature">()</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="Pattern"><span class="type-signature"></span>new Pattern<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Graph"><span class="type-signature"></span>new Graph<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -49,9 +49,9 @@
 
 
 <div class="description">
-    Pattern object draw a image repeated as a pattern.
+    Graph object is used to draw simple graph data into the canvas.
 
-Its similar to the Image class but the image can be repeat infinitly.
+Graph data is composed of X, Y values.
 </div>
 
 
@@ -95,7 +95,7 @@ Its similar to the Image class but the image can be repeat infinitly.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Pattern.js.html">objects/Pattern.js</a>, <a href="objects_Pattern.js.html#line16">line 16</a>
+        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line16">line 16</a>
     </li></ul></dd>
     
 
@@ -151,7 +151,7 @@ Its similar to the Image class but the image can be repeat infinitly.
 
 
 <div class="description">
-    Box object containing the size of the object.
+    Graph object containing the size of the object.
 </div>
 
 
@@ -189,7 +189,7 @@ Its similar to the Image class but the image can be repeat infinitly.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Pattern.js.html">objects/Pattern.js</a>, <a href="objects_Pattern.js.html#line23">line 23</a>
+        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line23">line 23</a>
     </li></ul></dd>
     
 
@@ -207,13 +207,15 @@ Its similar to the Image class but the image can be repeat infinitly.
 
         
             
-<h4 class="name" id="image"><span class="type-signature"></span>image<span class="type-signature"></span></h4>
+<h4 class="name" id="data"><span class="type-signature"></span>data<span class="type-signature"></span></h4>
 
 
 
 
 <div class="description">
-    Image source DOM element.
+    Data to be presented in the graph.
+
+The array should store numeric values.
 </div>
 
 
@@ -251,7 +253,7 @@ Its similar to the Image class but the image can be repeat infinitly.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Pattern.js.html">objects/Pattern.js</a>, <a href="objects_Pattern.js.html#line28">line 28</a>
+        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line55">line 55</a>
     </li></ul></dd>
     
 
@@ -269,13 +271,13 @@ Its similar to the Image class but the image can be repeat infinitly.
 
         
             
-<h4 class="name" id="repetition"><span class="type-signature"></span>repetition<span class="type-signature"></span></h4>
+<h4 class="name" id="fillStyle"><span class="type-signature"></span>fillStyle<span class="type-signature"></span></h4>
 
 
 
 
 <div class="description">
-    A DOMString indicating how to repeat the pattern image.
+    Background color of the box.
 </div>
 
 
@@ -313,7 +315,7 @@ Its similar to the Image class but the image can be repeat infinitly.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Pattern.js.html">objects/Pattern.js</a>, <a href="objects_Pattern.js.html#line33">line 33</a>
+        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line38">line 38</a>
     </li></ul></dd>
     
 
@@ -328,37 +330,17 @@ Its similar to the Image class but the image can be repeat infinitly.
 
 
 
-
-        
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
 
         
             
+<h4 class="name" id="lineWidth"><span class="type-signature"></span>lineWidth<span class="type-signature"></span></h4>
 
-    
-
-    
-    <h4 class="name" id="setImage"><span class="type-signature"></span>setImage<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
 
 
 
 <div class="description">
-    Set the image of the object.
-
-Automatically sets the box size to match the image.
+    Line width.
 </div>
-
-
-
-
-
-
 
 
 
@@ -395,7 +377,7 @@ Automatically sets the box size to match the image.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Pattern.js.html">objects/Pattern.js</a>, <a href="objects_Pattern.js.html#line48">line 48</a>
+        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line33">line 33</a>
     </li></ul></dd>
     
 
@@ -411,6 +393,16 @@ Automatically sets the box size to match the image.
 
 
 
+        
+            
+<h4 class="name" id="max"><span class="type-signature"></span>max<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Maximum value of the graph.
+</div>
 
 
 
@@ -418,7 +410,45 @@ Automatically sets the box size to match the image.
 
 
 
+<dl class="details">
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line48">line 48</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
 
 
 
@@ -426,6 +456,132 @@ Automatically sets the box size to match the image.
 
 
         
+            
+<h4 class="name" id="min"><span class="type-signature"></span>min<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Minimum value of the graph.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line43">line 43</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="strokeStyle"><span class="type-signature"></span>strokeStyle<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Color of the box border line.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line28">line 28</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
     
 
     

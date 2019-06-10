@@ -2903,6 +2903,11 @@ function BezierCurve()
 
 BezierCurve.prototype = Object.create(Object2D.prototype);
 
+/**
+ * Create a bezier curve helper, to edit the bezier curve anchor points.
+ *
+ * @static
+ */
 BezierCurve.curveHelper = function(object)
 {
 	var fromCp = new Circle();

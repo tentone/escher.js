@@ -273,7 +273,9 @@
 
 
 <div class="description">
-    Indicates if its possible to drag the object around.If true the onPointerDrag callback is used to update the state of the object.
+    Indicates if its possible to drag the object around.
+
+If true the onPointerDrag callback is used to update the state of the object.
 </div>
 
 
@@ -335,7 +337,9 @@
 
 
 <div class="description">
-    Global transformation matrix multiplied by the parent matrix.Used to transform the object before projecting into screen coordinates.
+    Global transformation matrix multiplied by the parent matrix.
+
+Used to transform the object before projecting into screen coordinates.
 </div>
 
 
@@ -459,7 +463,9 @@
 
 
 <div class="description">
-    Inverse of the global matrix.Used to convert pointer input points into object coordinates.
+    Inverse of the global matrix.
+
+Used to convert pointer input points into object coordinates.
 </div>
 
 
@@ -521,7 +527,9 @@
 
 
 <div class="description">
-    Layer of this object, objects are sorted by layer value.Lower layer value is draw first.
+    Layer of this object, objects are sorted by layer value.
+
+Lower layer value is draw first.
 </div>
 
 
@@ -583,7 +591,9 @@
 
 
 <div class="description">
-    Depth level in the object tree, objects with higher depth are drawn on top.The layer value is considered first.
+    Depth level in the object tree, objects with higher depth are drawn on top.
+
+The layer value is considered first.
 </div>
 
 
@@ -645,7 +655,9 @@
 
 
 <div class="description">
-    Masks being applied to this object.Multiple masks can be used simultaneously.
+    Masks being applied to this object.
+
+Multiple masks can be used simultaneously.
 </div>
 
 
@@ -831,7 +843,9 @@
 
 
 <div class="description">
-    Method called when the object its added to a parent.Receives (parent) as arguments.
+    Method called when the object its added to a parent.
+
+Receives (parent) as arguments.
 </div>
 
 
@@ -893,7 +907,9 @@
 
 
 <div class="description">
-    Callback method called when the pointer button is pressed down (single time).Receives (pointer, viewport) as arguments.
+    Callback method called when the pointer button is pressed down (single time).
+
+Receives (pointer, viewport) as arguments.
 </div>
 
 
@@ -931,7 +947,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line324">line 324</a>
+        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line328">line 328</a>
     </li></ul></dd>
     
 
@@ -955,7 +971,9 @@
 
 
 <div class="description">
-    Callback method called while the pointer button is pressed.Receives (pointer, viewport) as arguments.
+    Callback method called while the pointer button is pressed.
+
+Receives (pointer, viewport) as arguments.
 </div>
 
 
@@ -993,7 +1011,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line317">line 317</a>
+        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line321">line 321</a>
     </li></ul></dd>
     
 
@@ -1017,7 +1035,9 @@
 
 
 <div class="description">
-    Callback method called when the pointer button is released (single time).Receives (pointer, viewport) as arguments.
+    Callback method called when the pointer button is released (single time).
+
+Receives (pointer, viewport) as arguments.
 </div>
 
 
@@ -1055,7 +1075,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line331">line 331</a>
+        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line335">line 335</a>
     </li></ul></dd>
     
 
@@ -1079,7 +1099,9 @@
 
 
 <div class="description">
-    Callback method called when the pointer enters the object.Receives (pointer, viewport) as arguments.
+    Callback method called when the pointer enters the object.
+
+Receives (pointer, viewport) as arguments.
 </div>
 
 
@@ -1141,7 +1163,9 @@
 
 
 <div class="description">
-    Callback method called when the was inside of the object and leaves the object.Receives (pointer, viewport) as arguments.
+    Callback method called when the was inside of the object and leaves the object.
+
+Receives (pointer, viewport) as arguments.
 </div>
 
 
@@ -1203,7 +1227,9 @@
 
 
 <div class="description">
-    Callback method while the pointer is over (inside) of the object.Receives (pointer, viewport) as arguments.
+    Callback method while the pointer is over (inside) of the object.
+
+Receives (pointer, viewport) as arguments.
 </div>
 
 
@@ -1265,7 +1291,9 @@
 
 
 <div class="description">
-    Method called when the object gets removed from its parentReceives (parent) as arguments.
+    Method called when the object gets removed from its parent
+
+Receives (parent) as arguments.
 </div>
 
 
@@ -1327,7 +1355,9 @@
 
 
 <div class="description">
-    Callback method called every time before the object is draw into the canvas.Can be used to run preparation code, move the object, etc.
+    Callback method called every time before the object is draw into the canvas.
+
+Can be used to run preparation code, move the object, etc.
 </div>
 
 
@@ -1513,7 +1543,9 @@
 
 
 <div class="description">
-    Indicates if this object uses pointer events.Can be set false to skip the pointer interaction events.
+    Indicates if this object uses pointer events.
+
+Can be set false to skip the pointer interaction events.
 </div>
 
 
@@ -1575,7 +1607,9 @@
 
 
 <div class="description">
-    Flag indicating if the pointer is inside of the element.Used to control object event.
+    Flag indicating if the pointer is inside of the element.
+
+Used to control object event.
 </div>
 
 
@@ -2215,7 +2249,9 @@
 
 
 <div class="description">
-    Draw the object into the canvas.Has to be implemented by underlying classes.
+    Draw the object into the canvas.
+
+Has to be implemented by underlying classes.
 </div>
 
 
@@ -2486,7 +2522,13 @@
 
 
 <div class="description">
-    Callback method while the object is being dragged across the screen.Receives (pointer, viewport, delta) as arguments. Delta is the movement of the pointer already translated into local object coordinates.
+    Callback method while the object is being dragged across the screen.
+
+By default is adds the delta value to the object position (making it follow the mouse movement).
+
+Delta is the movement of the pointer already translated into local object coordinates.
+
+Receives (pointer, viewport, delta) as arguments.
 </div>
 
 
@@ -2530,7 +2572,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line307">line 307</a>
+        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line311">line 311</a>
     </li></ul></dd>
     
 
@@ -2706,7 +2748,11 @@
 
 
 <div class="description">
-    Apply the transform to the rendering context.It is assumed that the viewport transform is pre-applied to the context.Can also be used for pre rendering logic.
+    Apply the transform to the rendering context.
+
+It is assumed that the viewport transform is pre-applied to the context.
+
+Can also be used for pre rendering logic.
 </div>
 
 
@@ -3088,13 +3134,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Fri Jun 07 2019 15:31:57 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Mon Jun 10 2019 15:53:44 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
