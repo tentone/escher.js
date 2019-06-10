@@ -23,5 +23,6 @@ export {Image} from "./objects/Image.js";
 export {DOM} from "./objects/DOM.js";
 export {Pattern} from "./objects/Pattern.js";
 export {Graph} from "./objects/Graph.js";
+export {BezierCurve} from "./objects/BezierCurve.js";
 
 export {Helpers} from "./utils/Helpers.js";

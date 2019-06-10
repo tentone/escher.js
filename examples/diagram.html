@@ -216,11 +216,12 @@
 		group.add(line);
 
 		// Line (connection)
-		var line = new Trenette.Line();
+		var line = new Trenette.BezierCurve();
 		line.from = boxB.position;
 		line.to = circle.position;
 		line.layer = -1;
 		group.add(line);
+		Trenette.BezierCurve.curveHelper(line);
 
 		// Boxes group
 		var boxes = new Trenette.Object2D();
