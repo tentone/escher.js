@@ -73,7 +73,7 @@ Viewport.prototype.updateControls = function(pointer)
 
 		if(this.moveOnScale)
 		{	
-			var speed = pointer.wheel / this.scale;
+			var speed = pointer.wheel;
 			var halfWidth = pointer.canvas.width / 2;
 			var halfWeight = pointer.canvas.height / 2;
 
@@ -84,7 +84,7 @@ Viewport.prototype.updateControls = function(pointer)
 
 	if(pointer.buttonPressed(Pointer.RIGHT) && pointer.buttonPressed(Pointer.LEFT))
 	{
-		this.rotation += pointer.delta.angle() * 1e-2;
+		this.rotation += pointer.delta.angle() * 1e-3;
 	}
 	else if(pointer.buttonPressed(Pointer.RIGHT))
 	{
@@ -106,6 +106,23 @@ Viewport.prototype.updateMatrix = function()
 		this.inverseMatrix = this.matrix.getInverse();
 		//this.matrixNeedsUpdate = false;
 	}
+};
+
+/**
+ * Center the viewport relative to a object.
+ *
+ * @param {Object2D} object Object to be centered on the viewport.
+ * @param {DOM} canvas Canvas element where the image is drawn.
+ */
+Viewport.prototype.centerObject = function(object, canvas)
+{
+	var position = object.globalMatrix.transformPoint(new Vector2());
+	position.multiplyScalar(-this.scale);
+
+	position.x += canvas.width / 2;
+	position.y += canvas.height / 2;
+
+	this.position.copy(position);
 };
 
 export {Viewport};

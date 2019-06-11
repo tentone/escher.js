@@ -980,6 +980,20 @@
 	Object2D.prototype.draw = function(context, viewport, canvas){};
 
 	/**
+	 * Callback method while the object is being dragged across the screen.
+	 *
+	 * By default is adds the delta value to the object position (making it follow the mouse movement).
+	 *
+	 * Delta is the movement of the pointer already translated into local object coordinates.
+	 *
+	 * Receives (pointer, viewport, delta) as arguments.
+	 */
+	Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
+	{
+		this.position.add(delta);
+	};
+
+	/**
 	 * Method called when the object its added to a parent.
 	 *
 	 * Receives (parent) as arguments.
@@ -1020,20 +1034,6 @@
 	 * Receives (pointer, viewport) as arguments.
 	 */
 	Object2D.prototype.onPointerOver = null;
-
-	/**
-	 * Callback method while the object is being dragged across the screen.
-	 *
-	 * By default is adds the delta value to the object position (making it follow the mouse movement).
-	 *
-	 * Delta is the movement of the pointer already translated into local object coordinates.
-	 *
-	 * Receives (pointer, viewport, delta) as arguments.
-	 */
-	Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
-	{
-		this.position.add(delta);
-	};
 
 	/**
 	 * Callback method called while the pointer button is pressed.
@@ -1882,7 +1882,7 @@
 
 			if(this.moveOnScale)
 			{	
-				var speed = pointer.wheel / this.scale;
+				var speed = pointer.wheel;
 				var halfWidth = pointer.canvas.width / 2;
 				var halfWeight = pointer.canvas.height / 2;
 
@@ -1893,7 +1893,7 @@
 
 		if(pointer.buttonPressed(Pointer.RIGHT) && pointer.buttonPressed(Pointer.LEFT))
 		{
-			this.rotation += pointer.delta.angle() * 1e-2;
+			this.rotation += pointer.delta.angle() * 1e-3;
 		}
 		else if(pointer.buttonPressed(Pointer.RIGHT))
 		{
@@ -1915,6 +1915,23 @@
 			this.inverseMatrix = this.matrix.getInverse();
 			//this.matrixNeedsUpdate = false;
 		}
+	};
+
+	/**
+	 * Center the viewport relative to a object.
+	 *
+	 * @param {Object2D} object Object to be centered on the viewport.
+	 * @param {DOM} canvas Canvas element where the image is drawn.
+	 */
+	Viewport.prototype.centerObject = function(object, canvas)
+	{
+		var position = object.globalMatrix.transformPoint(new Vector2());
+		position.multiplyScalar(-this.scale);
+
+		position.x += canvas.width / 2;
+		position.y += canvas.height / 2;
+
+		this.position.copy(position);
 	};
 
 	/**
@@ -2173,6 +2190,8 @@
 	 * Masks are treated as objects their shape is used to filter other objects shape.
 	 *
 	 * Multiple mask objects can be active simulatenously, they have to be attached to the object mask list to filter the render region.
+	 *
+	 * A mask objects is draw using the context.clip() method.
 	 *
 	 * @class
 	 */

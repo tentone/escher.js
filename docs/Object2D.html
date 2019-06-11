@@ -273,9 +273,7 @@
 
 
 <div class="description">
-    Indicates if its possible to drag the object around.
-
-If true the onPointerDrag callback is used to update the state of the object.
+    Indicates if its possible to drag the object around.If true the onPointerDrag callback is used to update the state of the object.
 </div>
 
 
@@ -337,9 +335,7 @@ If true the onPointerDrag callback is used to update the state of the object.
 
 
 <div class="description">
-    Global transformation matrix multiplied by the parent matrix.
-
-Used to transform the object before projecting into screen coordinates.
+    Global transformation matrix multiplied by the parent matrix.Used to transform the object before projecting into screen coordinates.
 </div>
 
 
@@ -463,9 +459,7 @@ Used to transform the object before projecting into screen coordinates.
 
 
 <div class="description">
-    Inverse of the global matrix.
-
-Used to convert pointer input points into object coordinates.
+    Inverse of the global matrix.Used to convert pointer input points into object coordinates.
 </div>
 
 
@@ -527,9 +521,7 @@ Used to convert pointer input points into object coordinates.
 
 
 <div class="description">
-    Layer of this object, objects are sorted by layer value.
-
-Lower layer value is draw first.
+    Layer of this object, objects are sorted by layer value.Lower layer value is draw first.
 </div>
 
 
@@ -591,9 +583,7 @@ Lower layer value is draw first.
 
 
 <div class="description">
-    Depth level in the object tree, objects with higher depth are drawn on top.
-
-The layer value is considered first.
+    Depth level in the object tree, objects with higher depth are drawn on top.The layer value is considered first.
 </div>
 
 
@@ -655,9 +645,7 @@ The layer value is considered first.
 
 
 <div class="description">
-    Masks being applied to this object.
-
-Multiple masks can be used simultaneously.
+    Masks being applied to this object.Multiple masks can be used simultaneously.
 </div>
 
 
@@ -843,9 +831,7 @@ Multiple masks can be used simultaneously.
 
 
 <div class="description">
-    Method called when the object its added to a parent.
-
-Receives (parent) as arguments.
+    Method called when the object its added to a parent.Receives (parent) as arguments.
 </div>
 
 
@@ -883,7 +869,7 @@ Receives (parent) as arguments.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line265">line 265</a>
+        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line279">line 279</a>
     </li></ul></dd>
     
 
@@ -907,9 +893,7 @@ Receives (parent) as arguments.
 
 
 <div class="description">
-    Callback method called when the pointer button is pressed down (single time).
-
-Receives (pointer, viewport) as arguments.
+    Callback method called when the pointer button is pressed down (single time).Receives (pointer, viewport) as arguments.
 </div>
 
 
@@ -971,9 +955,7 @@ Receives (pointer, viewport) as arguments.
 
 
 <div class="description">
-    Callback method called while the pointer button is pressed.
-
-Receives (pointer, viewport) as arguments.
+    Callback method called while the pointer button is pressed.Receives (pointer, viewport) as arguments.
 </div>
 
 
@@ -1035,9 +1017,7 @@ Receives (pointer, viewport) as arguments.
 
 
 <div class="description">
-    Callback method called when the pointer button is released (single time).
-
-Receives (pointer, viewport) as arguments.
+    Callback method called when the pointer button is released (single time).Receives (pointer, viewport) as arguments.
 </div>
 
 
@@ -1099,137 +1079,7 @@ Receives (pointer, viewport) as arguments.
 
 
 <div class="description">
-    Callback method called when the pointer enters the object.
-
-Receives (pointer, viewport) as arguments.
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line286">line 286</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="onPointerLeave"><span class="type-signature"></span>onPointerLeave<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    Callback method called when the was inside of the object and leaves the object.
-
-Receives (pointer, viewport) as arguments.
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line293">line 293</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="onPointerOver"><span class="type-signature"></span>onPointerOver<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    Callback method while the pointer is over (inside) of the object.
-
-Receives (pointer, viewport) as arguments.
+    Callback method called when the pointer enters the object.Receives (pointer, viewport) as arguments.
 </div>
 
 
@@ -1285,15 +1135,13 @@ Receives (pointer, viewport) as arguments.
 
         
             
-<h4 class="name" id="onRemove"><span class="type-signature"></span>onRemove<span class="type-signature"></span></h4>
+<h4 class="name" id="onPointerLeave"><span class="type-signature"></span>onPointerLeave<span class="type-signature"></span></h4>
 
 
 
 
 <div class="description">
-    Method called when the object gets removed from its parent
-
-Receives (parent) as arguments.
+    Callback method called when the was inside of the object and leaves the object.Receives (pointer, viewport) as arguments.
 </div>
 
 
@@ -1331,7 +1179,131 @@ Receives (parent) as arguments.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line272">line 272</a>
+        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line307">line 307</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="onPointerOver"><span class="type-signature"></span>onPointerOver<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Callback method while the pointer is over (inside) of the object.Receives (pointer, viewport) as arguments.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line314">line 314</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="onRemove"><span class="type-signature"></span>onRemove<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Method called when the object gets removed from its parentReceives (parent) as arguments.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line286">line 286</a>
     </li></ul></dd>
     
 
@@ -1355,9 +1327,7 @@ Receives (parent) as arguments.
 
 
 <div class="description">
-    Callback method called every time before the object is draw into the canvas.
-
-Can be used to run preparation code, move the object, etc.
+    Callback method called every time before the object is draw into the canvas.Can be used to run preparation code, move the object, etc.
 </div>
 
 
@@ -1395,7 +1365,7 @@ Can be used to run preparation code, move the object, etc.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line279">line 279</a>
+        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line293">line 293</a>
     </li></ul></dd>
     
 
@@ -1543,9 +1513,7 @@ Can be used to run preparation code, move the object, etc.
 
 
 <div class="description">
-    Indicates if this object uses pointer events.
-
-Can be set false to skip the pointer interaction events.
+    Indicates if this object uses pointer events.Can be set false to skip the pointer interaction events.
 </div>
 
 
@@ -1607,9 +1575,7 @@ Can be set false to skip the pointer interaction events.
 
 
 <div class="description">
-    Flag indicating if the pointer is inside of the element.
-
-Used to control object event.
+    Flag indicating if the pointer is inside of the element.Used to control object event.
 </div>
 
 
@@ -2249,9 +2215,7 @@ Used to control object event.
 
 
 <div class="description">
-    Draw the object into the canvas.
-
-Has to be implemented by underlying classes.
+    Draw the object into the canvas.Has to be implemented by underlying classes.
 </div>
 
 
@@ -2522,13 +2486,7 @@ Has to be implemented by underlying classes.
 
 
 <div class="description">
-    Callback method while the object is being dragged across the screen.
-
-By default is adds the delta value to the object position (making it follow the mouse movement).
-
-Delta is the movement of the pointer already translated into local object coordinates.
-
-Receives (pointer, viewport, delta) as arguments.
+    Callback method while the object is being dragged across the screen.By default is adds the delta value to the object position (making it follow the mouse movement).Delta is the movement of the pointer already translated into local object coordinates.Receives (pointer, viewport, delta) as arguments.
 </div>
 
 
@@ -2572,7 +2530,7 @@ Receives (pointer, viewport, delta) as arguments.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line311">line 311</a>
+        <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line269">line 269</a>
     </li></ul></dd>
     
 
@@ -2748,11 +2706,7 @@ Receives (pointer, viewport, delta) as arguments.
 
 
 <div class="description">
-    Apply the transform to the rendering context.
-
-It is assumed that the viewport transform is pre-applied to the context.
-
-Can also be used for pre rendering logic.
+    Apply the transform to the rendering context.It is assumed that the viewport transform is pre-applied to the context.Can also be used for pre rendering logic.
 </div>
 
 
@@ -3140,7 +3094,7 @@ Can also be used for pre rendering logic.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Mon Jun 10 2019 15:53:44 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue Jun 11 2019 14:45:44 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -192,6 +192,10 @@
 		circle.radius = 60;
 		circle.position.set(300, 0);
 		circle.draggable = true;
+		circle.onButtonDown = function()
+		{
+			viewport.centerObject(circle, canvas);
+		}
 		group.add(circle);
 
 		var text = new Trenette.Text();

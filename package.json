@@ -1,6 +1,6 @@
 {
 	"name": "trenette.js",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"description": "trenette.js is a web library for building interactive diagrams and graphs.",
 	"main": "build/trenette.min.js",
 	"repository": {
