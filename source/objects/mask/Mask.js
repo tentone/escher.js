@@ -11,6 +11,8 @@ import {Box2} from "../../math/Box2.js";
  *
  * Multiple mask objects can be active simulatenously, they have to be attached to the object mask list to filter the render region.
  *
+ * A mask objects is draw using the context.clip() method.
+ *
  * @class
  */
 function Mask()
