@@ -91,8 +91,6 @@ Viewport.prototype.updateControls = function(pointer)
 		this.position.x += pointer.delta.x;
 		this.position.y += pointer.delta.y;
 	}
-
-
 };
 
 /**
