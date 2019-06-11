@@ -1,6 +1,7 @@
 "use strict";
 
 import {Pointer} from "./input/Pointer.js";
+import {ViewportControls} from "./controls/ViewportControls.js";
 
 /**
  * The renderer is resposible for drawing the structure into the canvas element.
@@ -46,7 +47,7 @@ function Renderer(canvas, options)
 /**
  * Creates a infinite render loop to render the group into a viewport each frame.
  *
- * The render loop cannot be destroyed.
+ * The render loop cannot be destroyed, and it automatically creates a viewport controls object.
  *
  * @param {Object2D} group Group to be rendererd.
  * @param {Viewport} viewport Viewport into the objects.
@@ -56,6 +57,8 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 {
 	var self = this;
 	
+	var controls = new ViewportControls(viewport);
+
 	function loop()
 	{
 		if(onUpdate !== undefined)
@@ -63,6 +66,7 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 			onUpdate();
 		}
 
+		controls.update(self.pointer);
 		self.update(group, viewport);
 		requestAnimationFrame(loop);
 	}
@@ -110,7 +114,6 @@ Renderer.prototype.update = function(object, viewport)
 	pointer.update();
 
 	// Viewport transform matrix
-	viewport.updateControls(pointer);
 	viewport.updateMatrix();
 
 	// Project pointer coordinates

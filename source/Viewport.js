@@ -62,36 +62,6 @@ function Viewport()
 	this.rotationPoint = null;
 }
 
-/**
- * Update the viewport controls using the pointer object.
- */
-Viewport.prototype.updateControls = function(pointer)
-{	
-	if(pointer.wheel !== 0)
-	{
-		this.scale -= pointer.wheel * 1e-3 * this.scale;
-
-		if(this.moveOnScale)
-		{	
-			var speed = pointer.wheel;
-			var halfWidth = pointer.canvas.width / 2;
-			var halfWeight = pointer.canvas.height / 2;
-
-			this.position.x += ((pointer.position.x - halfWidth) / halfWidth) * speed;
-			this.position.y += ((pointer.position.y - halfWeight) / halfWeight) * speed;
-		}
-	}
-
-	if(pointer.buttonPressed(Pointer.RIGHT) && pointer.buttonPressed(Pointer.LEFT))
-	{
-		this.rotation += pointer.delta.angle() * 1e-3;
-	}
-	else if(pointer.buttonPressed(Pointer.RIGHT))
-	{
-		this.position.x += pointer.delta.x;
-		this.position.y += pointer.delta.y;
-	}
-};
 
 /**
  * Calculate and update the viewport transformation matrix.
