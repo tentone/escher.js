@@ -224,30 +224,36 @@ Vector2.prototype.clampLength = function(min, max)
 	return this.divideScalar(length || 1).multiplyScalar(Math.max(min, Math.min(max, length)));
 };
 
+/**
+ * Round the vector coordinates to integer by flooring to the smaller integer.
+ */ 
 Vector2.prototype.floor = function()
 {
 	this.x = Math.floor(this.x);
 	this.y = Math.floor(this.y);
 };
 
+/**
+ * Round the vector coordinates to integer by ceiling to the bigger integer.
+ */ 
 Vector2.prototype.ceil = function()
 {
 	this.x = Math.ceil(this.x);
 	this.y = Math.ceil(this.y);
 };
 
+/**
+ * Round the vector coordinates to their closest integer.
+ */
 Vector2.prototype.round = function()
 {
 	this.x = Math.round(this.x);
 	this.y = Math.round(this.y);
 };
 
-Vector2.prototype.roundToZero = function()
-{
-	this.x = (this.x < 0) ? Math.ceil(this.x) : Math.floor(this.x);
-	this.y = (this.y < 0) ? Math.ceil(this.y) : Math.floor(this.y);
-};
-
+/**
+ * Negate the coordinates of this vector.
+ */
 Vector2.prototype.negate = function()
 {
 	this.x = -this.x;
@@ -256,31 +262,57 @@ Vector2.prototype.negate = function()
 	return this;
 };
 
+/**
+ * Dot multiplication between this vector and another vector.
+ *
+ * @param {Vector2} vector
+ * @return {number} Result of the dot multiplication.
+ */
 Vector2.prototype.dot = function(v)
 {
 	return this.x * v.x + this.y * v.y;
 };
 
+/**
+ * Cross multiplication between this vector and another vector.
+ *
+ * @param {Vector2} vector
+ * @return {number} Result of the cross multiplication.
+ */
 Vector2.prototype.cross = function(v)
 {
 	return this.x * v.y - this.y * v.x;
 };
 
+/**
+ * Squared length of the vector.
+ *
+ * Faster for comparions.
+ */
 Vector2.prototype.lengthSq = function()
 {
 	return this.x * this.x + this.y * this.y;
 };
 
+/**
+ * Length of the vector.
+ */
 Vector2.prototype.length = function()
 {
 	return Math.sqrt(this.x * this.x + this.y * this.y);
 };
 
+/**
+ * Manhattan length of the vector.
+ */
 Vector2.prototype.manhattanLength = function()
 {
 	return Math.abs(this.x) + Math.abs(this.y);
 };
 
+/**
+ * Normalize the vector (make it length one).
+ */
 Vector2.prototype.normalize = function()
 {
 	return this.divideScalar(this.length() || 1);
@@ -301,11 +333,19 @@ Vector2.prototype.angle = function()
 	return angle;
 };
 
+/**
+ * Distance between two vector positions.
+ */
 Vector2.prototype.distanceTo = function(v)
 {
 	return Math.sqrt(this.distanceToSquared(v));
 };
 
+/**
+ * Distance between two vector positions squared.
+ *
+ * Faster for comparisons.
+ */
 Vector2.prototype.distanceToSquared = function(v)
 {
 	var dx = this.x - v.x;
@@ -314,11 +354,17 @@ Vector2.prototype.distanceToSquared = function(v)
 	return dx * dx + dy * dy;
 };
 
+/**
+ * Manhattan distance between two vector positions.
+ */
 Vector2.prototype.manhattanDistanceTo = function(v)
 {
 	return Math.abs(this.x - v.x) + Math.abs(this.y - v.y);
 };
 
+/**
+ * Scale the vector to have a defined length value.
+ */
 Vector2.prototype.setLength = function(length)
 {
 	return this.normalize().multiplyScalar(length);

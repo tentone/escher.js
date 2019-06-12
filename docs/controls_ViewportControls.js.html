@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: Viewport.js</title>
+    <title>JSDoc: Source: controls/ViewportControls.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: Viewport.js</h1>
+    <h1 class="page-title">Source: controls/ViewportControls.js</h1>
 
     
 
@@ -28,52 +28,31 @@
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
 
-import {Vector2} from "./math/Vector2.js";
-import {Matrix} from "./math/Matrix.js";
-import {UUID} from "./math/UUID.js";
-import {Pointer} from "./input/Pointer.js";
+import {Viewport} from "../Viewport.js";
+import {Pointer} from "../input/Pointer.js";
 
 /**
- * Used to indicate how the user views the content inside of the canvas.
+ * Viewport controls are used to allow the user to control the viewport.
  *
  * @class
+ * @param {Viewport} viewport
  */
-function Viewport()
+function ViewportControls(viewport)
 {
 	/**
-	 * UUID of the object.
+	 * Viewport being controlled by this object.
 	 */
-	this.uuid = UUID.generate(); 
+	this.viewport = viewport;
 
 	/**
-	 * Position of the object.
+	 * Button used to drag and viewport around.
 	 */
-	this.position = new Vector2(0, 0);
+	this.dragButton = Pointer.RIGHT;
 
 	/**
-	 * Scale of the object.
+	 * Is set to true allow the viewport to be scalled.
 	 */
-	this.scale = 1.0
-
-	/**
-	 * Rotation of the object relative to its center.
-	 */
-	this.rotation = 0.0;
-
-	/**
-	 * Local transformation matrix applied to the object. 
-	 */
-	this.matrix = new Matrix();
-
-	/**
-	 * Inverse of the local transformation matrix.
-	 */
-	this.inverseMatrix = new Matrix();
-
-	/**
-	 * If true the matrix is updated before rendering the object.
-	 */
-	this.matrixNeedsUpdate = true;
+	this.allowScale = true;
 
 	/**
 	 * Flag to indicate if the viewport should move when scalling.
@@ -83,46 +62,72 @@ function Viewport()
 	this.moveOnScale = true;
 
 	/**
+	 * If true allows the viewport to be rotated.
+	 */
+	this.allowRotation = false;
+
+	/**
 	 * Value of the initial point of rotation if the viewport is being rotated.
 	 *
 	 * Is set to null when the viewport is not being rotated.
 	 */
 	this.rotationPoint = null;
+
+	/**
+	 * Initial rotation of the viewport.
+	 */
+	this.rotationInitial = 0;
 }
 
-
 /**
- * Calculate and update the viewport transformation matrix.
+ * Update the viewport controls using the pointer object.
+ *
+ * @param {Pointer} pointer
  */
-Viewport.prototype.updateMatrix = function()
-{
-	if(this.matrixNeedsUpdate)
+ViewportControls.prototype.update = function(pointer)
+{	
+	if(this.allowScale &amp;&amp; pointer.wheel !== 0)
 	{
-		this.matrix.compose(this.position.x, this.position.y, this.scale, this.scale, 0, 0, this.rotation);
-		this.inverseMatrix = this.matrix.getInverse();
-		//this.matrixNeedsUpdate = false;
+		this.viewport.scale -= pointer.wheel * 1e-3 * this.viewport.scale;
+
+		if(this.moveOnScale)
+		{	
+			var speed = pointer.wheel;
+			var halfWidth = pointer.canvas.width / 2;
+			var halfWeight = pointer.canvas.height / 2;
+
+			this.viewport.position.x += ((pointer.position.x - halfWidth) / halfWidth) * speed;
+			this.viewport.position.y += ((pointer.position.y - halfWeight) / halfWeight) * speed;
+		}
+	}
+
+	if(this.allowRotation &amp;&amp; pointer.buttonPressed(Pointer.RIGHT) &amp;&amp; pointer.buttonPressed(Pointer.LEFT))
+	{
+		if(this.rotationPoint === null)
+		{
+			this.rotationPoint = pointer.position.clone();
+			this.rotationInitial = this.viewport.rotation;
+		}
+		else
+		{
+			var pointer = pointer.position.clone();
+			pointer.sub(this.rotationPoint);
+			this.viewport.rotation = this.rotationInitial + pointer.angle();
+		}
+	}
+	else
+	{
+		this.rotationPoint = null;
+
+		if(pointer.buttonPressed(this.dragButton))
+		{
+			this.viewport.position.x += pointer.delta.x;
+			this.viewport.position.y += pointer.delta.y;
+		}
 	}
 };
 
-/**
- * Center the viewport relative to a object.
- *
- * @param {Object2D} object Object to be centered on the viewport.
- * @param {DOM} canvas Canvas element where the image is drawn.
- */
-Viewport.prototype.centerObject = function(object, canvas)
-{
-	var position = object.globalMatrix.transformPoint(new Vector2());
-	position.multiplyScalar(-this.scale);
-
-	position.x += canvas.width / 2;
-	position.y += canvas.height / 2;
-
-	this.position.copy(position);
-};
-
-export {Viewport};
-</code></pre>
+export {ViewportControls};</code></pre>
         </article>
     </section>
 

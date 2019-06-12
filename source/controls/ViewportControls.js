@@ -19,12 +19,12 @@ function ViewportControls(viewport)
 	/**
 	 * Button used to drag and viewport around.
 	 */
-	this.dragButton = Pointer.LEFT;
+	this.dragButton = Pointer.RIGHT;
 
 	/**
-	 * If true allows the viewport to be rotated.
+	 * Is set to true allow the viewport to be scalled.
 	 */
-	this.allowRotation = false;
+	this.allowScale = true;
 
 	/**
 	 * Flag to indicate if the viewport should move when scalling.
@@ -34,19 +34,31 @@ function ViewportControls(viewport)
 	this.moveOnScale = true;
 
 	/**
+	 * If true allows the viewport to be rotated.
+	 */
+	this.allowRotation = false;
+
+	/**
 	 * Value of the initial point of rotation if the viewport is being rotated.
 	 *
 	 * Is set to null when the viewport is not being rotated.
 	 */
 	this.rotationPoint = null;
+
+	/**
+	 * Initial rotation of the viewport.
+	 */
+	this.rotationInitial = 0;
 }
 
 /**
  * Update the viewport controls using the pointer object.
+ *
+ * @param {Pointer} pointer
  */
 ViewportControls.prototype.update = function(pointer)
 {	
-	if(pointer.wheel !== 0)
+	if(this.allowScale && pointer.wheel !== 0)
 	{
 		this.viewport.scale -= pointer.wheel * 1e-3 * this.viewport.scale;
 
@@ -66,11 +78,13 @@ ViewportControls.prototype.update = function(pointer)
 		if(this.rotationPoint === null)
 		{
 			this.rotationPoint = pointer.position.clone();
+			this.rotationInitial = this.viewport.rotation;
 		}
 		else
 		{
-			//TODO <USE ROTATION POINT>
-			this.viewport.rotation += pointer.delta.angle() * 1e-3;
+			var pointer = pointer.position.clone();
+			pointer.sub(this.rotationPoint);
+			this.viewport.rotation = this.rotationInitial + pointer.angle();
 		}
 	}
 	else
@@ -84,3 +98,5 @@ ViewportControls.prototype.update = function(pointer)
 		}
 	}
 };
+
+export {ViewportControls};

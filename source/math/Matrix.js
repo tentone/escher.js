@@ -5,7 +5,10 @@ import {Vector2} from "./Vector2.js";
 /**
  * 2D 3x2 transformation matrix, applied to the canvas elements.
  *
+ * The values of the matrix are stored in a numeric array.
+ *
  * @class
+ * @param {array} [values]
  */
 function Matrix(values)
 {

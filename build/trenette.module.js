@@ -287,30 +287,36 @@ Vector2.prototype.clampLength = function(min, max)
 	return this.divideScalar(length || 1).multiplyScalar(Math.max(min, Math.min(max, length)));
 };
 
+/**
+ * Round the vector coordinates to integer by flooring to the smaller integer.
+ */ 
 Vector2.prototype.floor = function()
 {
 	this.x = Math.floor(this.x);
 	this.y = Math.floor(this.y);
 };
 
+/**
+ * Round the vector coordinates to integer by ceiling to the bigger integer.
+ */ 
 Vector2.prototype.ceil = function()
 {
 	this.x = Math.ceil(this.x);
 	this.y = Math.ceil(this.y);
 };
 
+/**
+ * Round the vector coordinates to their closest integer.
+ */
 Vector2.prototype.round = function()
 {
 	this.x = Math.round(this.x);
 	this.y = Math.round(this.y);
 };
 
-Vector2.prototype.roundToZero = function()
-{
-	this.x = (this.x < 0) ? Math.ceil(this.x) : Math.floor(this.x);
-	this.y = (this.y < 0) ? Math.ceil(this.y) : Math.floor(this.y);
-};
-
+/**
+ * Negate the coordinates of this vector.
+ */
 Vector2.prototype.negate = function()
 {
 	this.x = -this.x;
@@ -319,31 +325,57 @@ Vector2.prototype.negate = function()
 	return this;
 };
 
+/**
+ * Dot multiplication between this vector and another vector.
+ *
+ * @param {Vector2} vector
+ * @return {number} Result of the dot multiplication.
+ */
 Vector2.prototype.dot = function(v)
 {
 	return this.x * v.x + this.y * v.y;
 };
 
+/**
+ * Cross multiplication between this vector and another vector.
+ *
+ * @param {Vector2} vector
+ * @return {number} Result of the cross multiplication.
+ */
 Vector2.prototype.cross = function(v)
 {
 	return this.x * v.y - this.y * v.x;
 };
 
+/**
+ * Squared length of the vector.
+ *
+ * Faster for comparions.
+ */
 Vector2.prototype.lengthSq = function()
 {
 	return this.x * this.x + this.y * this.y;
 };
 
+/**
+ * Length of the vector.
+ */
 Vector2.prototype.length = function()
 {
 	return Math.sqrt(this.x * this.x + this.y * this.y);
 };
 
+/**
+ * Manhattan length of the vector.
+ */
 Vector2.prototype.manhattanLength = function()
 {
 	return Math.abs(this.x) + Math.abs(this.y);
 };
 
+/**
+ * Normalize the vector (make it length one).
+ */
 Vector2.prototype.normalize = function()
 {
 	return this.divideScalar(this.length() || 1);
@@ -364,11 +396,19 @@ Vector2.prototype.angle = function()
 	return angle;
 };
 
+/**
+ * Distance between two vector positions.
+ */
 Vector2.prototype.distanceTo = function(v)
 {
 	return Math.sqrt(this.distanceToSquared(v));
 };
 
+/**
+ * Distance between two vector positions squared.
+ *
+ * Faster for comparisons.
+ */
 Vector2.prototype.distanceToSquared = function(v)
 {
 	var dx = this.x - v.x;
@@ -377,11 +417,17 @@ Vector2.prototype.distanceToSquared = function(v)
 	return dx * dx + dy * dy;
 };
 
+/**
+ * Manhattan distance between two vector positions.
+ */
 Vector2.prototype.manhattanDistanceTo = function(v)
 {
 	return Math.abs(this.x - v.x) + Math.abs(this.y - v.y);
 };
 
+/**
+ * Scale the vector to have a defined length value.
+ */
 Vector2.prototype.setLength = function(length)
 {
 	return this.normalize().multiplyScalar(length);
@@ -460,7 +506,10 @@ Vector2.prototype.rotateAround = function(center, angle)
 /**
  * 2D 3x2 transformation matrix, applied to the canvas elements.
  *
+ * The values of the matrix are stored in a numeric array.
+ *
  * @class
+ * @param {array} [values]
  */
 function Matrix(values)
 {
@@ -1526,6 +1575,190 @@ Pointer.dispose = function()
 };
 
 /**
+ * Used to indicate how the user views the content inside of the canvas.
+ *
+ * @class
+ */
+function Viewport()
+{
+	/**
+	 * UUID of the object.
+	 */
+	this.uuid = UUID.generate(); 
+
+	/**
+	 * Position of the object.
+	 */
+	this.position = new Vector2(0, 0);
+
+	/**
+	 * Scale of the object.
+	 */
+	this.scale = 1.0;
+
+	/**
+	 * Rotation of the object relative to its center.
+	 */
+	this.rotation = 0.0;
+
+	/**
+	 * Local transformation matrix applied to the object. 
+	 */
+	this.matrix = new Matrix();
+
+	/**
+	 * Inverse of the local transformation matrix.
+	 */
+	this.inverseMatrix = new Matrix();
+
+	/**
+	 * If true the matrix is updated before rendering the object.
+	 */
+	this.matrixNeedsUpdate = true;
+
+	/**
+	 * Flag to indicate if the viewport should move when scalling.
+	 *
+	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
+	 */
+	this.moveOnScale = true;
+
+	/**
+	 * Value of the initial point of rotation if the viewport is being rotated.
+	 *
+	 * Is set to null when the viewport is not being rotated.
+	 */
+	this.rotationPoint = null;
+}
+
+
+/**
+ * Calculate and update the viewport transformation matrix.
+ */
+Viewport.prototype.updateMatrix = function()
+{
+	if(this.matrixNeedsUpdate)
+	{
+		this.matrix.compose(this.position.x, this.position.y, this.scale, this.scale, 0, 0, this.rotation);
+		this.inverseMatrix = this.matrix.getInverse();
+		//this.matrixNeedsUpdate = false;
+	}
+};
+
+/**
+ * Center the viewport relative to a object.
+ *
+ * @param {Object2D} object Object to be centered on the viewport.
+ * @param {DOM} canvas Canvas element where the image is drawn.
+ */
+Viewport.prototype.centerObject = function(object, canvas)
+{
+	var position = object.globalMatrix.transformPoint(new Vector2());
+	position.multiplyScalar(-this.scale);
+
+	position.x += canvas.width / 2;
+	position.y += canvas.height / 2;
+
+	this.position.copy(position);
+};
+
+/**
+ * Viewport controls are used to allow the user to control the viewport.
+ *
+ * @class
+ * @param {Viewport} viewport
+ */
+function ViewportControls(viewport)
+{
+	/**
+	 * Viewport being controlled by this object.
+	 */
+	this.viewport = viewport;
+
+	/**
+	 * Button used to drag and viewport around.
+	 */
+	this.dragButton = Pointer.RIGHT;
+
+	/**
+	 * Is set to true allow the viewport to be scalled.
+	 */
+	this.allowScale = true;
+
+	/**
+	 * Flag to indicate if the viewport should move when scalling.
+	 *
+	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
+	 */
+	this.moveOnScale = true;
+
+	/**
+	 * If true allows the viewport to be rotated.
+	 */
+	this.allowRotation = false;
+
+	/**
+	 * Value of the initial point of rotation if the viewport is being rotated.
+	 *
+	 * Is set to null when the viewport is not being rotated.
+	 */
+	this.rotationPoint = null;
+
+	/**
+	 * Initial rotation of the viewport.
+	 */
+	this.rotationInitial = 0;
+}
+
+/**
+ * Update the viewport controls using the pointer object.
+ *
+ * @param {Pointer} pointer
+ */
+ViewportControls.prototype.update = function(pointer)
+{	
+	if(this.allowScale && pointer.wheel !== 0)
+	{
+		this.viewport.scale -= pointer.wheel * 1e-3 * this.viewport.scale;
+
+		if(this.moveOnScale)
+		{	
+			var speed = pointer.wheel;
+			var halfWidth = pointer.canvas.width / 2;
+			var halfWeight = pointer.canvas.height / 2;
+
+			this.viewport.position.x += ((pointer.position.x - halfWidth) / halfWidth) * speed;
+			this.viewport.position.y += ((pointer.position.y - halfWeight) / halfWeight) * speed;
+		}
+	}
+
+	if(this.allowRotation && pointer.buttonPressed(Pointer.RIGHT) && pointer.buttonPressed(Pointer.LEFT))
+	{
+		if(this.rotationPoint === null)
+		{
+			this.rotationPoint = pointer.position.clone();
+			this.rotationInitial = this.viewport.rotation;
+		}
+		else
+		{
+			var pointer = pointer.position.clone();
+			pointer.sub(this.rotationPoint);
+			this.viewport.rotation = this.rotationInitial + pointer.angle();
+		}
+	}
+	else
+	{
+		this.rotationPoint = null;
+
+		if(pointer.buttonPressed(this.dragButton))
+		{
+			this.viewport.position.x += pointer.delta.x;
+			this.viewport.position.y += pointer.delta.y;
+		}
+	}
+};
+
+/**
  * The renderer is resposible for drawing the structure into the canvas element.
  *
  * Its also resposible for managing the canvas state.
@@ -1569,7 +1802,7 @@ function Renderer(canvas, options)
 /**
  * Creates a infinite render loop to render the group into a viewport each frame.
  *
- * The render loop cannot be destroyed.
+ * The render loop cannot be destroyed, and it automatically creates a viewport controls object.
  *
  * @param {Object2D} group Group to be rendererd.
  * @param {Viewport} viewport Viewport into the objects.
@@ -1579,6 +1812,8 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 {
 	var self = this;
 	
+	var controls = new ViewportControls(viewport);
+
 	function loop()
 	{
 		if(onUpdate !== undefined)
@@ -1586,6 +1821,7 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 			onUpdate();
 		}
 
+		controls.update(self.pointer);
 		self.update(group, viewport);
 		requestAnimationFrame(loop);
 	}
@@ -1633,7 +1869,6 @@ Renderer.prototype.update = function(object, viewport)
 	pointer.update();
 
 	// Viewport transform matrix
-	viewport.updateControls(pointer);
 	viewport.updateMatrix();
 
 	// Project pointer coordinates
@@ -1809,131 +2044,13 @@ Renderer.prototype.update = function(object, viewport)
 };
 
 /**
- * Used to indicate how the user views the content inside of the canvas.
- *
- * @class
- */
-function Viewport()
-{
-	/**
-	 * UUID of the object.
-	 */
-	this.uuid = UUID.generate(); 
-
-	/**
-	 * Position of the object.
-	 */
-	this.position = new Vector2(0, 0);
-
-	/**
-	 * Scale of the object.
-	 */
-	this.scale = 1.0;
-
-	/**
-	 * Rotation of the object relative to its center.
-	 */
-	this.rotation = 0.0;
-
-	/**
-	 * Local transformation matrix applied to the object. 
-	 */
-	this.matrix = new Matrix();
-
-	/**
-	 * Inverse of the local transformation matrix.
-	 */
-	this.inverseMatrix = new Matrix();
-
-	/**
-	 * If true the matrix is updated before rendering the object.
-	 */
-	this.matrixNeedsUpdate = true;
-
-	/**
-	 * Flag to indicate if the viewport should move when scalling.
-	 *
-	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
-	 */
-	this.moveOnScale = true;
-
-	/**
-	 * Value of the initial point of rotation if the viewport is being rotated.
-	 *
-	 * Is set to null when the viewport is not being rotated.
-	 */
-	this.rotationPoint = null;
-}
-
-/**
- * Update the viewport controls using the pointer object.
- */
-Viewport.prototype.updateControls = function(pointer)
-{	
-	if(pointer.wheel !== 0)
-	{
-		this.scale -= pointer.wheel * 1e-3 * this.scale;
-
-		if(this.moveOnScale)
-		{	
-			var speed = pointer.wheel;
-			var halfWidth = pointer.canvas.width / 2;
-			var halfWeight = pointer.canvas.height / 2;
-
-			this.position.x += ((pointer.position.x - halfWidth) / halfWidth) * speed;
-			this.position.y += ((pointer.position.y - halfWeight) / halfWeight) * speed;
-		}
-	}
-
-	if(pointer.buttonPressed(Pointer.RIGHT) && pointer.buttonPressed(Pointer.LEFT))
-	{
-		this.rotation += pointer.delta.angle() * 1e-3;
-	}
-	else if(pointer.buttonPressed(Pointer.RIGHT))
-	{
-		this.position.x += pointer.delta.x;
-		this.position.y += pointer.delta.y;
-	}
-
-
-};
-
-/**
- * Calculate and update the viewport transformation matrix.
- */
-Viewport.prototype.updateMatrix = function()
-{
-	if(this.matrixNeedsUpdate)
-	{
-		this.matrix.compose(this.position.x, this.position.y, this.scale, this.scale, 0, 0, this.rotation);
-		this.inverseMatrix = this.matrix.getInverse();
-		//this.matrixNeedsUpdate = false;
-	}
-};
-
-/**
- * Center the viewport relative to a object.
- *
- * @param {Object2D} object Object to be centered on the viewport.
- * @param {DOM} canvas Canvas element where the image is drawn.
- */
-Viewport.prototype.centerObject = function(object, canvas)
-{
-	var position = object.globalMatrix.transformPoint(new Vector2());
-	position.multiplyScalar(-this.scale);
-
-	position.x += canvas.width / 2;
-	position.y += canvas.height / 2;
-
-	this.position.copy(position);
-};
-
-/**
  * Box is described by a minimum and maximum points.
  *
  * Can be used for collision detection with points and other boxes.
  *
  * @class
+ * @param {Vector2} min
+ * @param {Vector2} max
  */
 function Box2(min, max)
 {
@@ -1943,6 +2060,9 @@ function Box2(min, max)
 
 /**
  * Set the box values.
+ *
+ * @param {Vector2} min
+ * @param {Vector2} max
  */
 Box2.prototype.set = function(min, max)
 {
@@ -1954,6 +2074,8 @@ Box2.prototype.set = function(min, max)
 
 /**
  * Set the box from a list of Vector2 points.
+ *
+ * @param {Array} points
  */
 Box2.prototype.setFromPoints = function(points)
 {
@@ -1970,6 +2092,9 @@ Box2.prototype.setFromPoints = function(points)
 
 /** 
  * Set the box minimum and maximum from center point and size.
+ *
+ * @param {Vector2} center
+ * @param {Vector2} size
  */
 Box2.prototype.setFromCenterAndSize = function(center, size)
 {
@@ -1983,6 +2108,10 @@ Box2.prototype.setFromCenterAndSize = function(center, size)
 
 /**
  * Clone the box into a new object.
+ *
+ * Should be used when it it necessary to make operations to this box.
+ *
+ * @return {Box2} New box object with the copy of this object.
  */
 Box2.prototype.clone = function()
 {
@@ -1993,6 +2122,8 @@ Box2.prototype.clone = function()
 
 /**
  * Copy the box value from another box.
+ *
+ * @param {Box2} point
  */
 Box2.prototype.copy = function(box)
 {
@@ -2004,6 +2135,8 @@ Box2.prototype.copy = function(box)
  * Check if the box is empty (size equals zero or is negative).
  *
  * The box size is condireded valid on two negative axis.
+ *
+ * @return {boolean} True if the box is empty.
  */
 Box2.prototype.isEmpty = function()
 {
@@ -2012,6 +2145,9 @@ Box2.prototype.isEmpty = function()
 
 /**
  * Calculate the center point of the box.
+ *
+ * @param {Vector2} [target] Vector to store the result.
+ * @return {Vector2} Central point of the box.
  */
 Box2.prototype.getCenter = function(target)
 {
@@ -2026,7 +2162,10 @@ Box2.prototype.getCenter = function(target)
 };
 
 /**
- * Get the size of the box.
+ * Get the size of the box from its min and max points.
+ *
+ * @param {Vector2} [target] Vector to store the result.
+ * @return {Vector2} Vector with the calculated size.
  */
 Box2.prototype.getSize = function(target)
 {
@@ -2042,6 +2181,8 @@ Box2.prototype.getSize = function(target)
 
 /**
  * Expand the box to contain a new point.
+ *
+ * @param {Vector2} point
  */
 Box2.prototype.expandByPoint = function(point)
 {
@@ -2055,6 +2196,8 @@ Box2.prototype.expandByPoint = function(point)
  * Expand the box by adding a border with the vector size.
  *
  * Vector is subtracted from min and added to the max points.
+ *
+ * @param {Vector2} vector
  */
 Box2.prototype.expandByVector = function(vector)
 {
@@ -2064,6 +2207,8 @@ Box2.prototype.expandByVector = function(vector)
 
 /**
  * Expand the box by adding a border with the scalar value.
+ *
+ * @param {number} scalar
  */
 Box2.prototype.expandByScalar = function(scalar)
 {
@@ -2106,22 +2251,11 @@ Box2.prototype.intersectsBox = function(box)
 	return box.max.x < this.min.x || box.min.x > this.max.x || box.max.y < this.min.y || box.min.y > this.max.y ? false : true;
 };
 
-Box2.prototype.clampPoint = function(point, target)
-{
-	if(target === undefined)
-	{
-		target = new Vector2();
-	}
-
-	target.copy(point).clamp(this.min, this.max);
-
-	return target;
-};
-
 /**
  * Calculate the distance to a point.
  *
  * @param {Vector2} point
+ * @return {number} Distance to point calculated.
  */
 Box2.prototype.distanceToPoint = function(point)
 {
