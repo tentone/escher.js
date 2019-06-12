@@ -142,6 +142,41 @@ dom.element.appendChild(text);
 
 
 
+### Integrating external libraries
+
+- Its possible to integrate external canvas based libraries with this framework, just be sure that the library provides methods to directly draw to the canvas context without resetting its state.
+- Other easier but slower way to integrate libraries that works for libraries that do not support canvas as argument in their draw functions is to copy the content from their own self managed canvas into the object draw method.
+- Here is an example using the [tiff.js](https://github.com/seikichi/tiff.js) library to draw tiff images, it creates an internal canvas ands does not provide a draw into this context method.
+
+```javascript
+// Read the tiff data as arraybuffer from file
+var xhr = new XMLHttpRequest();
+xhr.responseType = "arraybuffer";
+xhr.open("GET", "images/kofax.tif");
+xhr.onload = function (e)
+{
+    // Decode the image using tiffjs
+	var tiff = new Tiff({buffer: xhr.response});
+	var tiffCanvas = tiff.toCanvas();
+	if(tiffCanvas)
+	{
+        // Create the object to draw
+		var tiffImage = new Trenette.Object2D();
+		tiffImage.draw = function(context, viewport, canvas)
+		{	
+            // Copy the content of the tiff canvas
+			context.drawImage(tiffCanvas, 0, 0);
+		};
+        
+        // Add object to the group
+		group.add(tiffImage);
+	}
+};
+xhr.send();
+```
+
+
+
 ### License
 
  - This project is distributed under MIT license available on the repository page.
