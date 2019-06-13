@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>PDF & TIFF</title>
+</head>
+<body>
+	<script type="text/javascript" src="../build/trenette.js"></script>
+	<script type="text/javascript" src="./lib/pdf.js"></script>
+	<script type="text/javascript" src="./lib/tiff.min.js"></script>
+	<script type="text/javascript">
+
+		// Division
+		var division = document.createElement("div");
+		division.style.position = "absolute";
+		division.style.width = "100%";
+		division.style.height = "100%";
+		division.style.top = "0px";
+		division.style.left = "0px";
+		division.style.overflow = "hidden";
+		document.body.appendChild(division);
+
+		// Canvas
+		var canvas = document.createElement("canvas");
+		canvas.style.position = "absolute";
+		canvas.style.width = "100%";
+		canvas.style.height = "100%";
+		canvas.style.top = "0px";
+		canvas.style.left = "0px";
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		division.appendChild(canvas);
+
+		// Prevent context menu events
+		document.body.oncontextmenu = function(event)
+		{
+			event.preventDefault();
+			return false;
+		};
+
+		// Resize canvas on window resize
+		window.onresize = function()
+		{
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		};
+
+		var group = new Trenette.Object2D();
+
+		//Draw TIFF image example
+		var xhr = new XMLHttpRequest();
+		xhr.responseType = "arraybuffer";
+		xhr.open("GET", "images/kofax.tif");
+		xhr.onload = function (e)
+		{
+			var tiff = new Tiff({buffer: xhr.response});
+			var width = tiff.width();
+			var height = tiff.height();
+
+			var tiffCanvas = tiff.toCanvas();
+
+			if(tiffCanvas)
+			{
+				var tiffObject = new Trenette.Object2D();
+				tiffObject.layer = -1;
+				tiffObject.draw = function(context, viewport, canvas)
+				{
+					context.drawImage(tiffCanvas, 0, 0);
+				};
+				group.add(tiffObject);
+			}
+		};
+		xhr.send();
+
+		//Draw PDF example
+		var task = pdfjsLib.getDocument("./images/vrml.pdf");
+		task.promise.then(function(pdf)
+		{
+			var numPages = pdf._pdfInfo.numPages;
+
+			if(numPages > 0)
+			{
+				var positionY = 0;
+
+				for(var p = 0; p < numPages; p++)
+				{
+					pdf.getPage(p).then(function(page)
+					{
+						var viewport = page.getViewport({scale: 1.0});
+
+						var width = viewport.viewBox[2] - viewport.viewBox[0];
+						var height = viewport.viewBox[3] - viewport.viewBox[1];
+
+						var offCanvas = document.createElement("canvas");
+						offCanvas.width = width;
+						offCanvas.height = height;
+						var offContext = offCanvas.getContext("2d");
+
+						page.render(
+						{
+							canvasContext: offContext,
+							viewport: viewport
+						}).promise.then(function()
+						{				
+							var pdfObject = new Trenette.Box();
+							pdfObject.box.min.set(viewport.viewBox[0], viewport.viewBox[1]);
+							pdfObject.box.max.set(viewport.viewBox[2], viewport.viewBox[3]);
+							pdfObject.scale.y = -1;
+							pdfObject.draggable = true;
+							pdfObject.position.y = positionY;
+							pdfObject.draw = function(context, viewport, canvas)
+							{
+								context.drawImage(offCanvas, 0, 0, width, height, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
+							};
+							group.add(pdfObject);
+
+							Trenette.Helpers.boxResizeTool(pdfObject);
+
+							positionY += offCanvas.height;
+						});
+					});
+				}
+			}
+		});
+
+		// Viewport
+		var viewport = new Trenette.Viewport();
+
+		// Renderer
+		var renderer = new Trenette.Renderer(canvas);
+		renderer.createRenderLoop(group, viewport);
+	</script>
+</body>
+</html>

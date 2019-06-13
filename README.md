@@ -15,6 +15,7 @@
 
 - There are a couple of example in the example folder, they can be used as base for your project.
   - [Diagram](https://tentone.github.io/trenette.js/examples/diagram)
+  - [PDF & TIFF (External libraries)](https://tentone.github.io/trenette.js/examples/pdftiff)
   - [Masks](https://tentone.github.io/trenette.js/examples/mask)
   - [Snake Game](https://tentone.github.io/trenette.js/examples/snake)
   - [Stress test](https://tentone.github.io/trenette.js/examples/stress)
@@ -174,6 +175,7 @@ xhr.onload = function (e)
 };
 xhr.send();
 ```
+ - Some libraries provide `ImageData`, the `context.putImageData()` method does not consider the canvas transforms. To draw `ImageData` into the canvas its possible instead to create a offscreen canvas draw into that canvas and the use the `context.drawImage()` method.
 
 
 

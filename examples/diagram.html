@@ -6,6 +6,7 @@
 </head>
 <body>
 	<script type="text/javascript" src="../build/trenette.js"></script>
+	<script type="text/javascript" src="./lib/pdf.js"></script>
 	<script type="text/javascript">
 
 		// Division
@@ -109,30 +110,6 @@
 			context.fillRect(this.box.min.x, this.box.min.y, size.x , size.y);
 		};
 		group.add(object);
-
-		//Draw TIFF image example
-		/*var xhr = new XMLHttpRequest();
-		xhr.responseType = "arraybuffer";
-		xhr.open("GET", "images/kofax.tif");
-		xhr.onload = function (e)
-		{
-			var tiff = new Tiff({buffer: xhr.response});
-			var width = tiff.width();
-			var height = tiff.height();
-
-			var data = tiff.toCanvas();
-
-			if(data)
-			{
-				var tiffImage = new Trenette.Object2D();
-				tiffImage.draw = function(context, viewport, canvas)
-				{
-					context.drawImage(data, 0, 0);
-				};
-				group.add(tiffImage);
-			}
-		};
-		xhr.send();*/
 
 		Trenette.Helpers.boxResizeTool(object);
 
