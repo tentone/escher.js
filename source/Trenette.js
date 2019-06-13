@@ -25,4 +25,6 @@ export {Pattern} from "./objects/Pattern.js";
 export {Graph} from "./objects/Graph.js";
 export {BezierCurve} from "./objects/BezierCurve.js";
 
+export {ViewportControls} from "./controls/ViewportControls.js";
+
 export {Helpers} from "./utils/Helpers.js";

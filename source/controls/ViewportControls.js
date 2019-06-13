@@ -18,11 +18,15 @@ function ViewportControls(viewport)
 
 	/**
 	 * Button used to drag and viewport around.
+	 *
+	 * On touch enabled devices the touch event is represented as a LEFT button.
 	 */
 	this.dragButton = Pointer.RIGHT;
 
 	/**
 	 * Is set to true allow the viewport to be scalled.
+	 *
+	 * Scaling is performed using the pointer scroll.
 	 */
 	this.allowScale = true;
 
@@ -35,6 +39,8 @@ function ViewportControls(viewport)
 
 	/**
 	 * If true allows the viewport to be rotated.
+	 *
+	 * Rotation is performed by holding the RIGHT and LEFT pointer buttons and rotating around the initial point.
 	 */
 	this.allowRotation = false;
 
@@ -53,6 +59,8 @@ function ViewportControls(viewport)
 
 /**
  * Update the viewport controls using the pointer object.
+ *
+ * Should be called every frame before rendering.
  *
  * @param {Pointer} pointer
  */

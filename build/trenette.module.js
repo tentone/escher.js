@@ -1631,9 +1631,10 @@ function Viewport()
 	this.rotationPoint = null;
 }
 
-
 /**
  * Calculate and update the viewport transformation matrix.
+ *
+ * Also updates the inverse matrix of the viewport.
  */
 Viewport.prototype.updateMatrix = function()
 {
@@ -1647,6 +1648,8 @@ Viewport.prototype.updateMatrix = function()
 
 /**
  * Center the viewport relative to a object.
+ *
+ * The position of the object is used a central point, this method does not consider "box" attributes or other strucures in the object.
  *
  * @param {Object2D} object Object to be centered on the viewport.
  * @param {DOM} canvas Canvas element where the image is drawn.
@@ -1677,11 +1680,15 @@ function ViewportControls(viewport)
 
 	/**
 	 * Button used to drag and viewport around.
+	 *
+	 * On touch enabled devices the touch event is represented as a LEFT button.
 	 */
 	this.dragButton = Pointer.RIGHT;
 
 	/**
 	 * Is set to true allow the viewport to be scalled.
+	 *
+	 * Scaling is performed using the pointer scroll.
 	 */
 	this.allowScale = true;
 
@@ -1694,6 +1701,8 @@ function ViewportControls(viewport)
 
 	/**
 	 * If true allows the viewport to be rotated.
+	 *
+	 * Rotation is performed by holding the RIGHT and LEFT pointer buttons and rotating around the initial point.
 	 */
 	this.allowRotation = false;
 
@@ -1712,6 +1721,8 @@ function ViewportControls(viewport)
 
 /**
  * Update the viewport controls using the pointer object.
+ *
+ * Should be called every frame before rendering.
  *
  * @param {Pointer} pointer
  */
@@ -3109,4 +3120,4 @@ BezierCurve.prototype.draw = function(context, viewport, canvas)
 	context.stroke();
 };
 
-export { BezierCurve, Box, Box2, BoxMask, Circle, DOM, EventManager, Graph, Helpers, Image, Key, Line, Mask, Matrix, Object2D, Pattern, Pointer, Renderer, Text, UUID, Vector2, Viewport };
+export { BezierCurve, Box, Box2, BoxMask, Circle, DOM, EventManager, Graph, Helpers, Image, Key, Line, Mask, Matrix, Object2D, Pattern, Pointer, Renderer, Text, UUID, Vector2, Viewport, ViewportControls };

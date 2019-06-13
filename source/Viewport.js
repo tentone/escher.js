@@ -62,9 +62,10 @@ function Viewport()
 	this.rotationPoint = null;
 }
 
-
 /**
  * Calculate and update the viewport transformation matrix.
+ *
+ * Also updates the inverse matrix of the viewport.
  */
 Viewport.prototype.updateMatrix = function()
 {
@@ -78,6 +79,8 @@ Viewport.prototype.updateMatrix = function()
 
 /**
  * Center the viewport relative to a object.
+ *
+ * The position of the object is used a central point, this method does not consider "box" attributes or other strucures in the object.
  *
  * @param {Object2D} object Object to be centered on the viewport.
  * @param {DOM} canvas Canvas element where the image is drawn.
