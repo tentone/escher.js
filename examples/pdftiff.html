@@ -74,28 +74,31 @@
 
 		//Draw PDF example
 		var task = pdfjsLib.getDocument("./images/vrml.pdf");
+		console.log(task);
+
 		task.promise.then(function(pdf)
 		{
 			var numPages = pdf._pdfInfo.numPages;
 			var ppi = 72;
 
+			console.log(pdf);
+
 			if(numPages > 0)
 			{
 				var positionY = 0;
 
-				for(var p = 0; p < numPages; p++)
-				{
+				for(var p = 0; p < numPages && p < 2; p++)
+				{	
 					pdf.getPage(p).then(function(page)
-					{
-						var viewport = page.getViewport({scale: 1.0});
-
-						var width = viewport.viewBox[2] - viewport.viewBox[0];
-						var height = viewport.viewBox[3] - viewport.viewBox[1];
+					{	
+						var scale = 3.0;
+						var viewport = page.getViewport(scale);
+						var width = (viewport.viewBox[2] - viewport.viewBox[0]) * scale;
+						var height = (viewport.viewBox[3] - viewport.viewBox[1]) * scale;
 
 						var offCanvas = document.createElement("canvas");
 						offCanvas.width = width;
 						offCanvas.height = height;
-
 						var offContext = offCanvas.getContext("2d");
 
 						page.render(
@@ -112,7 +115,6 @@
 							var pdfObject = new Escher.Box();
 							pdfObject.box.min.set(viewport.viewBox[0], viewport.viewBox[1]);
 							pdfObject.box.max.set(viewport.viewBox[2], viewport.viewBox[3]);
-							pdfObject.scale.y = -1;
 							pdfObject.draggable = true;
 							pdfObject.position.y = positionY;
 							pdfObject.draw = function(context, viewport, canvas)
@@ -123,7 +125,7 @@
 
 							Escher.Helpers.boxResizeTool(pdfObject);
 
-							positionY += offCanvas.height;
+							positionY += (viewport.viewBox[3] - viewport.viewBox[1]);
 						});
 					});
 				}
