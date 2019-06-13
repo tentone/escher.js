@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 </head>
 <body>
-	<script type="text/javascript" src="../build/trenette.js"></script>
+	<script type="text/javascript" src="../build/escher.js"></script>
 
 	<script type="text/javascript">
 
@@ -42,7 +42,7 @@
 
 		canvas.ondblclick = function(event)
 		{
-			var box = new Trenette.BoxMask();
+			var box = new Escher.BoxMask();
 			box.invert = true;
 			box.draggable = true;
 			blackLayer.masks.push(box);
@@ -50,25 +50,25 @@
 
 			if(event !== undefined)
 			{
-				var p = new Trenette.Vector2(event.clientX, event.clientY);
+				var p = new Escher.Vector2(event.clientX, event.clientY);
 				p = viewport.inverseMatrix.transformPoint(p);
 				box.position.copy(p);
 			}
 
-			Trenette.Helpers.boxResizeTool(box);
+			Escher.Helpers.boxResizeTool(box);
 		};
 
 		// Create the diagram
-		var group = new Trenette.Object2D();
+		var group = new Escher.Object2D();
 
 		// Image
-		var background = new Trenette.Image("images/hexagon.jpg");
+		var background = new Escher.Image("images/hexagon.jpg");
 		background.position.set(-300, -400);
 		background.layer = -20;
 		group.add(background);
 
 		// Black layer
-		var blackLayer = new Trenette.Object2D();
+		var blackLayer = new Escher.Object2D();
 		blackLayer.ignoreViewport = true;
 		blackLayer.layer = 10;
 		blackLayer.draw = function(context, viewport, canvas)
@@ -84,9 +84,9 @@
 
 		canvas.ondblclick();
 
-		var viewport = new Trenette.Viewport();
+		var viewport = new Escher.Viewport();
 
-		var renderer = new Trenette.Renderer(canvas);
+		var renderer = new Escher.Renderer(canvas);
 		renderer.createRenderLoop(group, viewport);
 	</script>
 </body>

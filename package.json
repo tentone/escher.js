@@ -1,16 +1,16 @@
 {
-	"name": "trenette.js",
-	"version": "0.1.10",
-	"description": "trenette.js is a web library for building interactive diagrams and graphs.",
-	"main": "build/trenette.min.js",
+	"name": "escher.js",
+	"version": "0.1.0",
+	"description": "escher.js is a web library for building interactive diagrams and graphs.",
+	"main": "build/escher.min.js",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/tentone/trenette.js.git"
+		"url": "https://github.com/tentone/escher.js.git"
 	},
 	"scripts": {
 		"build": "rollup -c && npm run uglify",
 		"docs": "jsdoc -d docs -r source",
-		"uglify": "uglifyjs --compress --mangle --output build/trenette.min.js -- build/trenette.js",
+		"uglify": "uglifyjs --compress --mangle --output build/escher.min.js -- build/escher.js",
 		"pub": "npm run build && npm run docs && npm publish --access public ."
 	},
 	"keywords": [

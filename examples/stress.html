@@ -5,7 +5,7 @@
 	<title>Stress</title>
 </head>
 <body>
-	<script type="text/javascript" src="../build/trenette.js"></script>
+	<script type="text/javascript" src="../build/escher.js"></script>
 
 	<script type="text/javascript">
 		var division = document.createElement("div");
@@ -52,17 +52,17 @@
 		};
 
 
-		var group = new Trenette.Object2D();
+		var group = new Escher.Object2D();
 
 		for(var i = 0; i < 1e3; i++)
 		{		
-			var box = new Trenette.Box();
-			Trenette.Helpers.boxResizeTool(box);
+			var box = new Escher.Box();
+			Escher.Helpers.boxResizeTool(box);
 			box.draggable = true;
 			box.position.set(Math.random() * 1e3, Math.random() * 1e3)
 			group.add(box);
 	
-			var div = new Trenette.DOM(division);
+			var div = new Escher.DOM(division);
 			div.size.set(100, 50);
 			div.origin.set(50, 25);
 			box.add(div);
@@ -74,11 +74,11 @@
 			div.element.appendChild(text);
 		}
 
-		var viewport = new Trenette.Viewport();
+		var viewport = new Escher.Viewport();
 
 		var time = performance.now();
 
-		var renderer = new Trenette.Renderer(canvas);
+		var renderer = new Escher.Renderer(canvas);
 		renderer.createRenderLoop(group, viewport, function()
 		{
 			var newTime = performance.now();

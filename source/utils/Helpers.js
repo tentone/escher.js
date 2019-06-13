@@ -42,7 +42,7 @@ Helpers.boxResizeTool = function(object)
 {
 	if(object.box === undefined)
 	{
-		console.warn("trenette.js: Helpers.boxResizeTool(), object box property missing.");
+		console.warn("escher.js: Helpers.boxResizeTool(), object box property missing.");
 		return;
 	}
 

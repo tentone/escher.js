@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 </head>
 <body>
-	<script type="text/javascript" src="../build/trenette.js"></script>
+	<script type="text/javascript" src="../build/escher.js"></script>
 
 	<script type="text/javascript">
 
@@ -38,23 +38,23 @@
 
 		function Snake(x, y)
 		{
-			Trenette.Object2D.call(this);
+			Escher.Object2D.call(this);
 
 			this.body = [];
 
 			for(var i = 0; i < 3; i++)
 			{
-				this.body.push(new Trenette.Vector2(x - i, y));
+				this.body.push(new Escher.Vector2(x - i, y));
 			}
 
-			this.speed = new Trenette.Vector2(1, 0);
+			this.speed = new Escher.Vector2(1, 0);
 		}
 
-		Snake.prototype = Object.create(Trenette.Object2D.prototype);
+		Snake.prototype = Object.create(Escher.Object2D.prototype);
 
 		Snake.prototype.eat = function(arena)
 		{
-			var first = new Trenette.Vector2();
+			var first = new Escher.Vector2();
 			first.copy(this.body[0]);
 			first.add(this.speed);
 
@@ -74,7 +74,7 @@
 
 		Snake.prototype.move = function()
 		{
-			var first = new Trenette.Vector2();
+			var first = new Escher.Vector2();
 			first.copy(this.body[0]);
 			first.add(this.speed);
 
@@ -160,14 +160,14 @@
 
 		function Arena(w, h)
 		{
-			Trenette.Object2D.call(this);
+			Escher.Object2D.call(this);
 
 			this.width = w;
 			this.height = h;
 			this.restart();
 		}
 
-		Arena.prototype = Object.create(Trenette.Object2D.prototype);
+		Arena.prototype = Object.create(Escher.Object2D.prototype);
 
 		Arena.prototype.restart = function()
 		{
@@ -183,7 +183,7 @@
 			while(collides === true)
 			{
 				collides = false;
-				var fruit = new Trenette.Vector2(Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height));
+				var fruit = new Escher.Vector2(Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height));
 
 				for(var i = 0; i < this.snake.body.length; i++)
 				{
@@ -241,9 +241,9 @@
 			setTimeout(updateSnake, 120);
 		}
 	
-		var viewport = new Trenette.Viewport();
+		var viewport = new Escher.Viewport();
 
-		var renderer = new Trenette.Renderer(canvas);
+		var renderer = new Escher.Renderer(canvas);
 		renderer.createRenderLoop(arena, viewport);
 		updateSnake();
 

@@ -1,7 +1,7 @@
 import strip from "rollup-plugin-strip";
 
 export default {
-	input: "source/Trenette.js",
+	input: "source/Escher.js",
 	plugins: [
 		strip(
 		{
@@ -13,13 +13,13 @@ export default {
 	output: [
 		{
 			format: "umd",
-			name: "Trenette",
-			file: "build/trenette.js",
+			name: "Escher",
+			file: "build/escher.js",
 			indent: "\t"
 		},
 		{
 			format: "es",
-			file: "build/trenette.module.js",
+			file: "build/escher.module.js",
 			indent: "\t"
 		}
 	]

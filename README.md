@@ -1,4 +1,4 @@
-# trenette.js
+# escher.js
 
  - Web based 2D graph building framework.
  - Entity based diagram build system, entities are stores as a tree. Parent elements transformations affect the children transforms.
@@ -7,26 +7,26 @@
  - Built in viewport controls with drag, zoom and move functions.
  - Supports mobile web browsers.
 
-![graph](<https://tentone.github.io/trenette.js/readme/example.png>)
+![graph](<https://tentone.github.io/escher.js/readme/example.png>)
 
 
 
 ### Getting started
 
 - There are a couple of example in the example folder, they can be used as base for your project.
-  - [Diagram](https://tentone.github.io/trenette.js/examples/diagram)
-  - [PDF & TIFF (External libraries)](https://tentone.github.io/trenette.js/examples/pdftiff)
-  - [Masks](https://tentone.github.io/trenette.js/examples/mask)
-  - [Snake Game](https://tentone.github.io/trenette.js/examples/snake)
-  - [Stress test](https://tentone.github.io/trenette.js/examples/stress)
+  - [Diagram](https://tentone.github.io/escher.js/examples/diagram)
+  - [PDF & TIFF (External libraries)](https://tentone.github.io/escher.js/examples/pdftiff)
+  - [Masks](https://tentone.github.io/escher.js/examples/mask)
+  - [Snake Game](https://tentone.github.io/escher.js/examples/snake)
+  - [Stress test](https://tentone.github.io/escher.js/examples/stress)
 - There is also available API documentation containing implementation details about all the internal components of the framework and detailed functionality descriptions.
-  - [API Documentation](https://tentone.github.io/trenette.js/docs/)
+  - [API Documentation](https://tentone.github.io/escher.js/docs/)
 
 
 
 ### Setup
 
-- Trenette is based on web canvas, it requires a DOM canvas element to draw its content.
+- Escher is based on web canvas, it requires a DOM canvas element to draw its content.
 - It is necessary for the canvas element width and height parameters to be properly configured since their values are used to process user input.
 - When using other DOM elements with the framework is also necessary to setup a DOM div to store these elements. (Booth the canvas and division should have the same position and size and should be aligned).
 - The code bellow shows how a canvas could be configured for a full screen setup.
@@ -51,7 +51,7 @@ canvas.height = window.innerHeight;
 
 - The coordinate system used, is the same as if using the canvas API directly -Y is down relative to the origin and +X is left relative to the origin. All objects are positioned using this coordinate system.
 
-![graph](<https://tentone.github.io/trenette.js/readme/grid.png>)
+![graph](<https://tentone.github.io/escher.js/readme/grid.png>)
 
 
 
@@ -72,7 +72,7 @@ canvas.height = window.innerHeight;
 - Example of a custom element, drawing a custom box with a red gradient box. Its also possible to extend other base objects like `Box` that already includes the necessary code for mouse events.
 
 ```javascript
-var object = new Trenette.Object2D();
+var object = new Escher.Object2D();
 object.draw = function(context, viewport, canvas)
 {
     // Create gradient
@@ -125,7 +125,7 @@ onButtonUp(pointer, viewport);
 - DOM objects contain a div `element` inside that can be used to attach custom code, by default that element `pointerEvents` CSS style is set to none, disabling all the pointer events, it can be set to auto to re-enable them.
 
 ```javascript
-var dom = new Trenette.DOM(division);
+var dom = new Escher.DOM(division);
 dom.size.set(100, 50);
 dom.origin.set(50, 25);
 group.add(dom);
@@ -162,7 +162,7 @@ xhr.onload = function (e)
 	if(tiffCanvas)
 	{
         // Create the object to draw
-		var tiffImage = new Trenette.Object2D();
+		var tiffImage = new Escher.Object2D();
 		tiffImage.draw = function(context, viewport, canvas)
 		{	
             // Copy the content of the tiff canvas

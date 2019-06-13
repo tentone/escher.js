@@ -5,7 +5,7 @@
 	<title>Diagram</title>
 </head>
 <body>
-	<script type="text/javascript" src="../build/trenette.js"></script>
+	<script type="text/javascript" src="../build/escher.js"></script>
 	<script type="text/javascript" src="./lib/pdf.js"></script>
 	<script type="text/javascript">
 
@@ -47,21 +47,21 @@
 		// Create boxes on double click
 		canvas.ondblclick = function(event)
 		{
-			var p = new Trenette.Vector2(event.clientX, event.clientY);
+			var p = new Escher.Vector2(event.clientX, event.clientY);
 			p = viewport.inverseMatrix.transformPoint(p);
 
-			var box = new Trenette.Box();
+			var box = new Escher.Box();
 			box.position.copy(p);
 			box.draggable = true;
 			boxes.add(box);
 
-			var text = new Trenette.Text();
+			var text = new Escher.Text();
 			text.text = "Box";
 			box.add(text);
 
 			if(boxes.children.length > 1)
 			{
-				var line = new Trenette.Line();
+				var line = new Escher.Line();
 				line.layer = -1;
 				line.from = boxes.children[boxes.children.length - 1].position;
 				line.to = boxes.children[boxes.children.length - 2].position;
@@ -88,10 +88,10 @@
 
 
 		// Group to store other objects
-		var group = new Trenette.Object2D();
+		var group = new Escher.Object2D();
 			
 		// Customized box object
-		var object = new Trenette.Box();
+		var object = new Escher.Box();
 		object.draggable = true;
 		object.layer = 2;
 		object.draw = function(context, viewport, canvas)
@@ -111,16 +111,16 @@
 		};
 		group.add(object);
 
-		Trenette.Helpers.boxResizeTool(object);
+		Escher.Helpers.boxResizeTool(object);
 
 		// Pattern image object
-		var image = new Trenette.Pattern("images/grid.png");
+		var image = new Escher.Pattern("images/grid.png");
 		image.position.set(-300, -400);
 		image.layer = 5;
 		image.draggable = true;
 		group.add(image);
 
-		var graph = new Trenette.Graph();
+		var graph = new Escher.Graph();
 		graph.box.min.set(-500, -50);
 		graph.box.max.set(500, 50);
 		graph.position.set(-300, -400);
@@ -128,7 +128,7 @@
 		graph.draggable = true;
 		group.add(graph);
 
-		Trenette.Helpers.boxResizeTool(graph);
+		Escher.Helpers.boxResizeTool(graph);
 		for(var i = 0; i < 300; i++)
 		{
 			graph.data.push(Math.random() * 9 + 1);
@@ -144,21 +144,21 @@
 
 
 		// Image object
-		var background = new Trenette.Image("images/hexagon.jpg");
+		var background = new Escher.Image("images/hexagon.jpg");
 		background.position.set(-300, -400);
 		background.layer = -2;
 		background.draggable = true;
 		group.add(background);
 
 		// Box
-		var boxA = new Trenette.Box();
+		var boxA = new Escher.Box();
 		boxA.draggable = true;
 		boxA.position.set(-50, -100);
 		group.add(boxA);
-		Trenette.Helpers.boxResizeTool(boxA);
+		Escher.Helpers.boxResizeTool(boxA);
 
 		// DOM
-		var div = new Trenette.DOM(division);
+		var div = new Escher.DOM(division);
 		div.size.set(100, 50);
 		div.origin.set(50, 25);
 		boxA.add(div);
@@ -170,13 +170,13 @@
 		div.element.appendChild(text);
 
 		// Box
-		var boxB = new Trenette.Box();
+		var boxB = new Escher.Box();
 		boxB.position.set(100, 100);
 		boxB.draggable = true;
 		group.add(boxB);
 		
 		// DOM
-		var div = new Trenette.DOM(division);
+		var div = new Escher.DOM(division);
 		div.size.set(100, 50);
 		div.origin.set(50, 25);
 		boxB.add(div);
@@ -188,7 +188,7 @@
 		div.element.appendChild(text);
 
 		// Circle
-		var circle = new Trenette.Circle();
+		var circle = new Escher.Circle();
 		circle.radius = 60;
 		circle.position.set(300, 0);
 		circle.draggable = true;
@@ -198,12 +198,12 @@
 		}
 		group.add(circle);
 
-		var text = new Trenette.Text();
+		var text = new Escher.Text();
 		text.text = "Canvas Text";
 		circle.add(text);
 
 		// Line (connection)
-		var line = new Trenette.Line();
+		var line = new Escher.Line();
 		line.from = boxA.position;
 		line.to = boxB.position;
 		line.layer = -1;
@@ -211,7 +211,7 @@
 		group.add(line);
 
 		// Line (connection)
-		var line = new Trenette.Line();
+		var line = new Escher.Line();
 		line.from = boxA.position;
 		line.to = circle.position;
 		line.layer = -1;
@@ -220,22 +220,22 @@
 		group.add(line);
 
 		// Line (connection)
-		var line = new Trenette.BezierCurve();
+		var line = new Escher.BezierCurve();
 		line.from = boxB.position;
 		line.to = circle.position;
 		line.layer = -1;
 		group.add(line);
-		Trenette.BezierCurve.curveHelper(line);
+		Escher.BezierCurve.curveHelper(line);
 
 		// Boxes group
-		var boxes = new Trenette.Object2D();
+		var boxes = new Escher.Object2D();
 		group.add(boxes);
 
 		// Viewport
-		var viewport = new Trenette.Viewport();
+		var viewport = new Escher.Viewport();
 
 		// Renderer
-		var renderer = new Trenette.Renderer(canvas);
+		var renderer = new Escher.Renderer(canvas);
 		renderer.createRenderLoop(group, viewport);
 	</script>
 </body>

@@ -5,7 +5,7 @@
 	<title>PDF & TIFF</title>
 </head>
 <body>
-	<script type="text/javascript" src="../build/trenette.js"></script>
+	<script type="text/javascript" src="../build/escher.js"></script>
 	<script type="text/javascript" src="./lib/pdf.js"></script>
 	<script type="text/javascript" src="./lib/tiff.min.js"></script>
 	<script type="text/javascript">
@@ -45,7 +45,7 @@
 			canvas.height = window.innerHeight;
 		};
 
-		var group = new Trenette.Object2D();
+		var group = new Escher.Object2D();
 
 		//Draw TIFF image example
 		var xhr = new XMLHttpRequest();
@@ -61,7 +61,7 @@
 
 			if(tiffCanvas)
 			{
-				var tiffObject = new Trenette.Object2D();
+				var tiffObject = new Escher.Object2D();
 				tiffObject.layer = -1;
 				tiffObject.draw = function(context, viewport, canvas)
 				{
@@ -102,7 +102,7 @@
 							viewport: viewport
 						}).promise.then(function()
 						{				
-							var pdfObject = new Trenette.Box();
+							var pdfObject = new Escher.Box();
 							pdfObject.box.min.set(viewport.viewBox[0], viewport.viewBox[1]);
 							pdfObject.box.max.set(viewport.viewBox[2], viewport.viewBox[3]);
 							pdfObject.scale.y = -1;
@@ -114,7 +114,7 @@
 							};
 							group.add(pdfObject);
 
-							Trenette.Helpers.boxResizeTool(pdfObject);
+							Escher.Helpers.boxResizeTool(pdfObject);
 
 							positionY += offCanvas.height;
 						});
@@ -124,10 +124,10 @@
 		});
 
 		// Viewport
-		var viewport = new Trenette.Viewport();
+		var viewport = new Escher.Viewport();
 
 		// Renderer
-		var renderer = new Trenette.Renderer(canvas);
+		var renderer = new Escher.Renderer(canvas);
 		renderer.createRenderLoop(group, viewport);
 	</script>
 </body>
