@@ -27,17 +27,21 @@ function Line()
 	this.to = new Vector2();
 
 	/**
-	 * Color of the line.
-	 */
-	this.strokeStyle = "#000000";
-
-	/**
-	 * Dash line pattern to be used, is empty draws a solid line.
+	 * Dash line pattern to be used, if empty draws a solid line.
+	 *
+	 * Dash parttern is defined as the size of dashes as pairs of space with no line and with line.
+	 *
+	 * E.g if the daspattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
 	 */
 	this.dashPattern = [5, 5];
 
 	/**
-	 * Line width.
+	 * Style of the object line.
+	 */
+	this.strokeStyle = "#000000";
+
+	/**
+	 * Line width of the line.
 	 */
 	this.lineWidth = 1;
 }

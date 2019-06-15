@@ -21,12 +21,14 @@ function Box()
 	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 	/**
-	 * Color of the box border line.
+	 * Style of the object border line.
+	 *
+	 * If set null it is ignored.
 	 */
 	this.strokeStyle = "#000000";
 
 	/**
-	 * Line width.
+	 * Line width, only used if a valid strokeStyle is defined.
 	 */
 	this.lineWidth = 1;
 

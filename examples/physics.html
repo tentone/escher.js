@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Physics</title>
+</head>
+<body>
+	<script type="text/javascript" src="../build/escher.js"></script>
+	<script type="text/javascript" src="./lib/p2.min.js"></script>
+	<script type="text/javascript">
+		var division = document.createElement("div");
+		division.style.position = "absolute";
+		division.style.width = "100%";
+		division.style.height = "100%";
+		division.style.top = "0px";
+		division.style.left = "0px";
+		division.style.overflow = "hidden";
+		document.body.appendChild(division);
+
+		// Setup the display canvas
+		var canvas = document.createElement("canvas");
+		canvas.style.position = "absolute";
+		canvas.style.width = "100%";
+		canvas.style.height = "100%";
+		canvas.style.top = "0px";
+		canvas.style.left = "0px";
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		canvas.oncontextmenu = function(event)
+		{
+			event.preventDefault();
+			return false;
+		};
+		division.appendChild(canvas);
+
+		window.onresize = function()
+		{
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		};
+
+
+		var group = new Escher.Object2D();
+		
+		// Init p2.js
+		var world = new p2.World();
+
+		// Add a circle
+		var circleShape = new p2.Circle({radius: 1});
+		var circleBody = new p2.Body({mass: 1, position: [0,0]});
+		circleBody.addShape(circleShape);
+		world.addBody(circleBody);
+
+		var circle = new Escher.Circle();
+		circle.radius = 1.0;
+		group.add(circle);
+
+		// Add a plane
+		var planeShape = new p2.Plane();
+		var planeBody = new p2.Body();
+		planeBody.addShape(planeShape);
+		world.addBody(planeBody);
+
+		var plane = new Escher.Box();
+		plane.box.min.set(-100, 0);
+		plane.box.max.set(100, 100);
+		group.add(plane);
+
+		var viewport = new Escher.Viewport();
+		viewport.scale = 35.0;
+		viewport.position.set(900, 650);
+
+		var time = performance.now();
+
+		var renderer = new Escher.Renderer(canvas);
+		renderer.createRenderLoop(group, viewport, function()
+		{
+			circle.position.set(circleBody.position[0], -circleBody.position[1]);
+			plane.position.y = -planeBody.position[1];
+			
+			// Move physics bodies forward in time
+			world.step(1/60);
+		});
+	</script>
+</body>
+</html>

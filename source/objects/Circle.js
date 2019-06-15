@@ -18,12 +18,14 @@ function Circle()
 	this.radius = 10.0;
 
 	/**
-	 * Color of the circle border line.
+	 * Style of the object border line.
+	 *
+	 * If set null it is ignored.
 	 */
 	this.strokeStyle = "#000000";
 
 	/**
-	 * Line width.
+	 * Line width, only used if a valid strokeStyle is defined.
 	 */
 	this.lineWidth = 1;
 
@@ -58,9 +60,12 @@ Circle.prototype.draw = function(context, viewport, canvas)
 	context.fillStyle = this.fillStyle;
 	context.fill();
 
-	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
-	context.stroke();
+	if(this.strokeStyle !== null)
+	{
+		context.lineWidth = this.lineWidth;
+		context.strokeStyle = this.strokeStyle;
+		context.stroke();
+	}
 };
 
 export {Circle};
