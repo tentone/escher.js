@@ -1181,15 +1181,15 @@ Key.prototype.reset = function()
 };
 
 /**
- * Pointer instance for input in sync with the running 3D application.
+ * Pointer object is used to colled input from the user, works for booth mouse or touch screens.
  *
- * The pointer object provided by scripts is automatically updated by the runtime handler.
+ * It is responsible for syncronizing user input with the render of the graphics.
  * 
  * @class
  * @param {DOM} domElement DOM element to craete the pointer events.
- * @param {Boolean} dontInitialize If true the pointer events are not created.
+ * @param {DOM} canvas Canvas DOM element where the content is being drawn.
  */
-function Pointer(domElement)
+function Pointer(domElement, canvas)
 {
 	//Raw data
 	this._keys = new Array(5);
@@ -1234,7 +1234,11 @@ function Pointer(domElement)
 	 * Canvas attached to this pointer instance used to calculate position and delta in element space coordinates.
 	 */
 	this.canvas = null;
-	
+	if(canvas !== undefined)
+	{
+		this.setCanvas(canvas);
+	}
+
 	/**
 	 * Event manager responsible for updating the raw data variables.
 	 *
@@ -1578,13 +1582,19 @@ Pointer.dispose = function()
  * Used to indicate how the user views the content inside of the canvas.
  *
  * @class
+ * @param {DOM} canvas Canvas DOM element where the viewport is being rendered.
  */
-function Viewport()
+function Viewport(canvas)
 {
 	/**
 	 * UUID of the object.
 	 */
 	this.uuid = UUID.generate(); 
+
+	/**
+	 * Canvas DOM element where the viewport is being rendered.
+	 */
+	this.canvas = canvas;
 
 	/**
 	 * Position of the object.
@@ -1621,7 +1631,7 @@ function Viewport()
 	 *
 	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
 	 */
-	this.moveOnScale = true;
+	this.moveOnScale = false;
 
 	/**
 	 * Value of the initial point of rotation if the viewport is being rotated.
@@ -1640,9 +1650,30 @@ Viewport.prototype.updateMatrix = function()
 {
 	if(this.matrixNeedsUpdate)
 	{
-		this.matrix.compose(this.position.x, this.position.y, this.scale, this.scale, 0, 0, this.rotation);
+		this.matrix.m = [1, 0, 0, 1, this.position.x, this.position.y];
+
+		if(this.rotation !== 0)
+		{		
+			var c = Math.cos(this.rotation);
+			var s = Math.sin(this.rotation);
+			this.matrix.multiply(new Matrix([c, s, -s, c, 0, 0]));
+		}
+
+		if(this.scale !== 1)
+		{
+			this.matrix.scale(this.scale, this.scale);
+		}
+
+		/*var ox = (this.canvas.width / 2.0);
+		var oy = (this.canvas.height / 2.0);
+
+		if(ox !== 0 || oy !== 0)
+		{	
+			this.matrix.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));
+		}*/
+
 		this.inverseMatrix = this.matrix.getInverse();
-		//this.matrixNeedsUpdate = false;
+		this.matrixNeedsUpdate = false;
 	}
 };
 
@@ -1658,11 +1689,11 @@ Viewport.prototype.centerObject = function(object, canvas)
 {
 	var position = object.globalMatrix.transformPoint(new Vector2());
 	position.multiplyScalar(-this.scale);
-
 	position.x += canvas.width / 2;
 	position.y += canvas.height / 2;
 
 	this.position.copy(position);
+	this.matrixNeedsUpdate = true;
 };
 
 /**
@@ -1697,14 +1728,14 @@ function ViewportControls(viewport)
 	 *
 	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
 	 */
-	this.moveOnScale = true;
+	this.moveOnScale = false;
 
 	/**
 	 * If true allows the viewport to be rotated.
 	 *
 	 * Rotation is performed by holding the RIGHT and LEFT pointer buttons and rotating around the initial point.
 	 */
-	this.allowRotation = false;
+	this.allowRotation = true;
 
 	/**
 	 * Value of the initial point of rotation if the viewport is being rotated.
@@ -1728,23 +1759,37 @@ function ViewportControls(viewport)
  */
 ViewportControls.prototype.update = function(pointer)
 {	
+	// Scale
 	if(this.allowScale && pointer.wheel !== 0)
 	{
-		this.viewport.scale -= pointer.wheel * 1e-3 * this.viewport.scale;
+		var scale = pointer.wheel * 1e-3 * this.viewport.scale;
 
-		if(this.moveOnScale)
+		this.viewport.scale -= scale;
+		this.viewport.matrixNeedsUpdate = true;
+
+		// Move on scale
+		if(this.moveOnScale && pointer.canvas !== null)
 		{	
-			var speed = pointer.wheel;
-			var halfWidth = pointer.canvas.width / 2;
-			var halfWeight = pointer.canvas.height / 2;
+			this.viewport.updateMatrix();
 
-			this.viewport.position.x += ((pointer.position.x - halfWidth) / halfWidth) * speed;
-			this.viewport.position.y += ((pointer.position.y - halfWeight) / halfWeight) * speed;
+			var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
+
+			var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
+			centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
+
+			var delta = pointerWorld.clone();
+			delta.sub(centerWorld);
+			delta.multiplyScalar(0.1);
+
+			this.viewport.position.sub(delta);
+			this.viewport.matrixNeedsUpdate = true;
 		}
 	}
 
+	// Rotation
 	if(this.allowRotation && pointer.buttonPressed(Pointer.RIGHT) && pointer.buttonPressed(Pointer.LEFT))
 	{
+		// Rotation pivot
 		if(this.rotationPoint === null)
 		{
 			this.rotationPoint = pointer.position.clone();
@@ -1755,8 +1800,10 @@ ViewportControls.prototype.update = function(pointer)
 			var pointer = pointer.position.clone();
 			pointer.sub(this.rotationPoint);
 			this.viewport.rotation = this.rotationInitial + pointer.angle();
+			this.viewport.matrixNeedsUpdate = true;
 		}
 	}
+	// Drag
 	else
 	{
 		this.rotationPoint = null;
@@ -1765,6 +1812,7 @@ ViewportControls.prototype.update = function(pointer)
 		{
 			this.viewport.position.x += pointer.delta.x;
 			this.viewport.position.y += pointer.delta.y;
+			this.viewport.matrixNeedsUpdate = true;
 		}
 	}
 };
@@ -1801,8 +1849,7 @@ function Renderer(canvas, options)
 	/**
 	 * Pointer input handler object.
 	 */
-	this.pointer = new Pointer();
-	this.pointer.setCanvas(canvas);
+	this.pointer = new Pointer(window, canvas);
 
 	/**
 	 * Indicates if the canvas should be automatically cleared on each new frame.
@@ -1974,8 +2021,8 @@ Renderer.prototype.update = function(object, viewport)
 			var lastPosition = pointer.position.clone();
 			lastPosition.sub(pointer.delta);
 
-			var positionWorld =  viewport.inverseMatrix.transformPoint(pointer.position);
-			var lastWorld =  viewport.inverseMatrix.transformPoint(lastPosition);
+			var positionWorld = viewport.inverseMatrix.transformPoint(pointer.position);
+			var lastWorld = viewport.inverseMatrix.transformPoint(lastPosition);
 
 			// Mouse delta in world coordinates
 			positionWorld.sub(lastWorld);
@@ -2419,12 +2466,14 @@ function Circle()
 	this.radius = 10.0;
 
 	/**
-	 * Color of the circle border line.
+	 * Style of the object border line.
+	 *
+	 * If set null it is ignored.
 	 */
 	this.strokeStyle = "#000000";
 
 	/**
-	 * Line width.
+	 * Line width, only used if a valid strokeStyle is defined.
 	 */
 	this.lineWidth = 1;
 
@@ -2459,9 +2508,12 @@ Circle.prototype.draw = function(context, viewport, canvas)
 	context.fillStyle = this.fillStyle;
 	context.fill();
 
-	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
-	context.stroke();
+	if(this.strokeStyle !== null)
+	{
+		context.lineWidth = this.lineWidth;
+		context.strokeStyle = this.strokeStyle;
+		context.stroke();
+	}
 };
 
 /**
@@ -2587,12 +2639,14 @@ function Box()
 	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 	/**
-	 * Color of the box border line.
+	 * Style of the object border line.
+	 *
+	 * If set null it is ignored.
 	 */
 	this.strokeStyle = "#000000";
 
 	/**
-	 * Line width.
+	 * Line width, only used if a valid strokeStyle is defined.
 	 */
 	this.lineWidth = 1;
 
@@ -2656,17 +2710,21 @@ function Line()
 	this.to = new Vector2();
 
 	/**
-	 * Color of the line.
-	 */
-	this.strokeStyle = "#000000";
-
-	/**
-	 * Dash line pattern to be used, is empty draws a solid line.
+	 * Dash line pattern to be used, if empty draws a solid line.
+	 *
+	 * Dash parttern is defined as the size of dashes as pairs of space with no line and with line.
+	 *
+	 * E.g if the daspattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
 	 */
 	this.dashPattern = [5, 5];
 
 	/**
-	 * Line width.
+	 * Style of the object line.
+	 */
+	this.strokeStyle = "#000000";
+
+	/**
+	 * Line width of the line.
 	 */
 	this.lineWidth = 1;
 }
@@ -3050,17 +3108,21 @@ function BezierCurve()
 	this.toCp = new Vector2();
 
 	/**
-	 * Color of the line.
-	 */
-	this.strokeStyle = "#000000";
-
-	/**
-	 * Dash line pattern to be used, is empty draws a solid line.
+	 * Dash line pattern to be used, if empty draws a solid line.
+	 *
+	 * Dash parttern is defined as the size of dashes as pairs of space with no line and with line.
+	 *
+	 * E.g if the daspattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
 	 */
 	this.dashPattern = [5, 5];
 
 	/**
-	 * BezierCurve width.
+	 * Style of the object line.
+	 */
+	this.strokeStyle = "#000000";
+
+	/**
+	 * Line width of the line.
 	 */
 	this.lineWidth = 1;
 }
@@ -3089,7 +3151,6 @@ BezierCurve.curveHelper = function(object)
 	fromLine.from = object.from;
 	fromLine.to = object.fromCp;
 	object.parent.add(fromLine);
-
 
 	var toCp = new Circle();
 	toCp.radius = 3;

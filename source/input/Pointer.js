@@ -5,15 +5,15 @@ import {Vector2} from "../math/Vector2.js";
 import {Key} from "./Key.js";
 
 /**
- * Pointer instance for input in sync with the running 3D application.
+ * Pointer object is used to colled input from the user, works for booth mouse or touch screens.
  *
- * The pointer object provided by scripts is automatically updated by the runtime handler.
+ * It is responsible for syncronizing user input with the render of the graphics.
  * 
  * @class
  * @param {DOM} domElement DOM element to craete the pointer events.
- * @param {Boolean} dontInitialize If true the pointer events are not created.
+ * @param {DOM} canvas Canvas DOM element where the content is being drawn.
  */
-function Pointer(domElement)
+function Pointer(domElement, canvas)
 {
 	//Raw data
 	this._keys = new Array(5);
@@ -58,7 +58,11 @@ function Pointer(domElement)
 	 * Canvas attached to this pointer instance used to calculate position and delta in element space coordinates.
 	 */
 	this.canvas = null;
-	
+	if(canvas !== undefined)
+	{
+		this.setCanvas(canvas);
+	}
+
 	/**
 	 * Event manager responsible for updating the raw data variables.
 	 *

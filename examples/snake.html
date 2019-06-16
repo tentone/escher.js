@@ -241,7 +241,7 @@
 			setTimeout(updateSnake, 120);
 		}
 	
-		var viewport = new Escher.Viewport();
+		var viewport = new Escher.Viewport(canvas);
 
 		var renderer = new Escher.Renderer(canvas);
 		renderer.createRenderLoop(arena, viewport);

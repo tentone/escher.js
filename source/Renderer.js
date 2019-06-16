@@ -35,8 +35,7 @@ function Renderer(canvas, options)
 	/**
 	 * Pointer input handler object.
 	 */
-	this.pointer = new Pointer();
-	this.pointer.setCanvas(canvas);
+	this.pointer = new Pointer(window, canvas);
 
 	/**
 	 * Indicates if the canvas should be automatically cleared on each new frame.
@@ -208,8 +207,8 @@ Renderer.prototype.update = function(object, viewport)
 			var lastPosition = pointer.position.clone();
 			lastPosition.sub(pointer.delta);
 
-			var positionWorld =  viewport.inverseMatrix.transformPoint(pointer.position);
-			var lastWorld =  viewport.inverseMatrix.transformPoint(lastPosition);
+			var positionWorld = viewport.inverseMatrix.transformPoint(pointer.position);
+			var lastWorld = viewport.inverseMatrix.transformPoint(lastPosition);
 
 			// Mouse delta in world coordinates
 			positionWorld.sub(lastWorld);

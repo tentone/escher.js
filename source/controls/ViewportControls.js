@@ -2,6 +2,7 @@
 
 import {Viewport} from "../Viewport.js";
 import {Pointer} from "../input/Pointer.js";
+import {Vector2} from "../math/Vector2.js";
 
 /**
  * Viewport controls are used to allow the user to control the viewport.
@@ -35,14 +36,14 @@ function ViewportControls(viewport)
 	 *
 	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
 	 */
-	this.moveOnScale = true;
+	this.moveOnScale = false;
 
 	/**
 	 * If true allows the viewport to be rotated.
 	 *
 	 * Rotation is performed by holding the RIGHT and LEFT pointer buttons and rotating around the initial point.
 	 */
-	this.allowRotation = false;
+	this.allowRotation = true;
 
 	/**
 	 * Value of the initial point of rotation if the viewport is being rotated.
@@ -66,23 +67,37 @@ function ViewportControls(viewport)
  */
 ViewportControls.prototype.update = function(pointer)
 {	
+	// Scale
 	if(this.allowScale && pointer.wheel !== 0)
 	{
-		this.viewport.scale -= pointer.wheel * 1e-3 * this.viewport.scale;
+		var scale = pointer.wheel * 1e-3 * this.viewport.scale;
 
-		if(this.moveOnScale)
+		this.viewport.scale -= scale;
+		this.viewport.matrixNeedsUpdate = true;
+
+		// Move on scale
+		if(this.moveOnScale && pointer.canvas !== null)
 		{	
-			var speed = pointer.wheel;
-			var halfWidth = pointer.canvas.width / 2;
-			var halfWeight = pointer.canvas.height / 2;
+			this.viewport.updateMatrix();
 
-			this.viewport.position.x += ((pointer.position.x - halfWidth) / halfWidth) * speed;
-			this.viewport.position.y += ((pointer.position.y - halfWeight) / halfWeight) * speed;
+			var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
+
+			var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
+			centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
+
+			var delta = pointerWorld.clone();
+			delta.sub(centerWorld);
+			delta.multiplyScalar(0.1);
+
+			this.viewport.position.sub(delta);
+			this.viewport.matrixNeedsUpdate = true;
 		}
 	}
 
+	// Rotation
 	if(this.allowRotation && pointer.buttonPressed(Pointer.RIGHT) && pointer.buttonPressed(Pointer.LEFT))
 	{
+		// Rotation pivot
 		if(this.rotationPoint === null)
 		{
 			this.rotationPoint = pointer.position.clone();
@@ -93,8 +108,10 @@ ViewportControls.prototype.update = function(pointer)
 			var pointer = pointer.position.clone();
 			pointer.sub(this.rotationPoint);
 			this.viewport.rotation = this.rotationInitial + pointer.angle();
+			this.viewport.matrixNeedsUpdate = true;
 		}
 	}
+	// Drag
 	else
 	{
 		this.rotationPoint = null;
@@ -103,6 +120,7 @@ ViewportControls.prototype.update = function(pointer)
 		{
 			this.viewport.position.x += pointer.delta.x;
 			this.viewport.position.y += pointer.delta.y;
+			this.viewport.matrixNeedsUpdate = true;
 		}
 	}
 };

@@ -9,13 +9,19 @@ import {Pointer} from "./input/Pointer.js";
  * Used to indicate how the user views the content inside of the canvas.
  *
  * @class
+ * @param {DOM} canvas Canvas DOM element where the viewport is being rendered.
  */
-function Viewport()
+function Viewport(canvas)
 {
 	/**
 	 * UUID of the object.
 	 */
 	this.uuid = UUID.generate(); 
+
+	/**
+	 * Canvas DOM element where the viewport is being rendered.
+	 */
+	this.canvas = canvas;
 
 	/**
 	 * Position of the object.
@@ -52,7 +58,7 @@ function Viewport()
 	 *
 	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
 	 */
-	this.moveOnScale = true;
+	this.moveOnScale = false;
 
 	/**
 	 * Value of the initial point of rotation if the viewport is being rotated.
@@ -71,9 +77,30 @@ Viewport.prototype.updateMatrix = function()
 {
 	if(this.matrixNeedsUpdate)
 	{
-		this.matrix.compose(this.position.x, this.position.y, this.scale, this.scale, 0, 0, this.rotation);
+		this.matrix.m = [1, 0, 0, 1, this.position.x, this.position.y];
+
+		if(this.rotation !== 0)
+		{		
+			var c = Math.cos(this.rotation);
+			var s = Math.sin(this.rotation);
+			this.matrix.multiply(new Matrix([c, s, -s, c, 0, 0]));
+		}
+
+		if(this.scale !== 1)
+		{
+			this.matrix.scale(this.scale, this.scale);
+		}
+
+		/*var ox = (this.canvas.width / 2.0);
+		var oy = (this.canvas.height / 2.0);
+
+		if(ox !== 0 || oy !== 0)
+		{	
+			this.matrix.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));
+		}*/
+
 		this.inverseMatrix = this.matrix.getInverse();
-		//this.matrixNeedsUpdate = false;
+		this.matrixNeedsUpdate = false;
 	}
 };
 
@@ -89,11 +116,11 @@ Viewport.prototype.centerObject = function(object, canvas)
 {
 	var position = object.globalMatrix.transformPoint(new Vector2());
 	position.multiplyScalar(-this.scale);
-
 	position.x += canvas.width / 2;
 	position.y += canvas.height / 2;
 
 	this.position.copy(position);
+	this.matrixNeedsUpdate = true;
 };
 
 export {Viewport};

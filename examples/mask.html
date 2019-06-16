@@ -6,7 +6,6 @@
 </head>
 <body>
 	<script type="text/javascript" src="../build/escher.js"></script>
-
 	<script type="text/javascript">
 
 		var division = document.createElement("div");
@@ -84,7 +83,7 @@
 
 		canvas.ondblclick();
 
-		var viewport = new Escher.Viewport();
+		var viewport = new Escher.Viewport(canvas);
 
 		var renderer = new Escher.Renderer(canvas);
 		renderer.createRenderLoop(group, viewport);
