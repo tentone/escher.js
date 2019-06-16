@@ -1670,14 +1670,6 @@
 				this.matrix.scale(this.scale, this.scale);
 			}
 
-			/*var ox = (this.canvas.width / 2.0);
-			var oy = (this.canvas.height / 2.0);
-
-			if(ox !== 0 || oy !== 0)
-			{	
-				this.matrix.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));
-			}*/
-
 			this.inverseMatrix = this.matrix.getInverse();
 			this.matrixNeedsUpdate = false;
 		}
