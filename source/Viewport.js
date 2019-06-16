@@ -85,9 +85,7 @@ Viewport.prototype.updateMatrix = function()
 			var s = Math.sin(this.rotation);
 			this.matrix.multiply(new Matrix([c, s, -s, c, 0, 0]));
 		}
-
-		//this.matrix.multiply(new Matrix([c, s, -s, c, 0, 0]));
-
+		
 		if(this.scale !== 1)
 		{
 			this.matrix.scale(this.scale, this.scale);
