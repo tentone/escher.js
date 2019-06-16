@@ -1656,7 +1656,7 @@
 	{
 		if(this.matrixNeedsUpdate)
 		{
-			this.matrix.m = [1, 0, 0, 1, -this.position.x, -this.position.y];
+			this.matrix.m = [1, 0, 0, 1, this.position.x, this.position.y];
 
 			if(this.rotation !== 0)
 			{		
@@ -1670,7 +1670,7 @@
 				this.matrix.scale(this.scale, this.scale);
 			}
 
-			this.matrix.multiply(new Matrix([1, 0, 0, 1, this.position.x - this.canvas.width / 2 * this.scale,  this.position.y - this.canvas.height / 2 * this.scale]));
+			//this.matrix.multiply(new Matrix([1, 0, 0, 1, this.position.x - this.canvas.width / 2 * this.scale,  this.position.y - this.canvas.height / 2 * this.scale]));
 
 			this.inverseMatrix = this.matrix.getInverse();
 			this.matrixNeedsUpdate = false;
