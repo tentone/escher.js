@@ -1656,7 +1656,7 @@
 	{
 		if(this.matrixNeedsUpdate)
 		{
-			this.matrix.m = [1, 0, 0, 1, this.position.x, this.position.y];
+			this.matrix.m = [1, 0, 0, 1, -this.position.x, -this.position.y];
 
 			if(this.rotation !== 0)
 			{		
@@ -1664,11 +1664,13 @@
 				var s = Math.sin(this.rotation);
 				this.matrix.multiply(new Matrix([c, s, -s, c, 0, 0]));
 			}
-			
+
 			if(this.scale !== 1)
 			{
 				this.matrix.scale(this.scale, this.scale);
 			}
+
+			this.matrix.multiply(new Matrix([1, 0, 0, 1, this.position.x - this.canvas.width / 2 * this.scale,  this.position.y - this.canvas.height / 2 * this.scale]));
 
 			this.inverseMatrix = this.matrix.getInverse();
 			this.matrixNeedsUpdate = false;
@@ -1821,6 +1823,8 @@
 	 * Its also resposible for managing the canvas state.
 	 *
 	 * @class
+	 * @param {DOM} canvas Canvas to render the content.
+	 * @param {Object} options Renderer canvas options.
 	 */
 	function Renderer(canvas, options)
 	{
@@ -1894,8 +1898,8 @@
 	 *
 	 * Should be called at a fixed rate preferably using the requestAnimationFrame() method, its also possible to use the createRenderLoop() method, that automatically creates a infinite render loop.
 	 *
-	 * @param object Object to be updated.
-	 * @param viewport Viewport to be updated (should be the one where the objects will be rendered after).
+	 * @param object {Object2D} Object to be updated.
+	 * @param viewport {Viewport} Viewport to be updated (should be the one where the objects will be rendered after).
 	 */
 	Renderer.prototype.update = function(object, viewport)
 	{
