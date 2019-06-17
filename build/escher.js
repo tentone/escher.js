@@ -624,6 +624,9 @@
 
 	/**
 	 * Apply translation to this matrix.
+	 *
+	 * @param {number} x
+	 * @param {number} y
 	 */
 	Matrix.prototype.translate = function(x, y)
 	{
@@ -634,7 +637,7 @@
 	/**
 	 * Apply rotation to this matrix.
 	 *
-	 * @param angle Angle in radians.
+	 * @param {number} angle Angle in radians.
 	 */
 	Matrix.prototype.rotate = function(rad)
 	{
@@ -654,6 +657,9 @@
 
 	/**
 	 * Apply scale to this matrix.
+	 *
+	 * @param {number} sx
+	 * @param {number} sy
 	 */
 	Matrix.prototype.scale = function(sx, sy)
 	{
@@ -665,6 +671,9 @@
 
 	/**
 	 * Set the position of the transformation matrix.
+	 *
+	 * @param {number} x
+	 * @param {number} y
 	 */
 	Matrix.prototype.setPosition = function(x, y)
 	{
@@ -674,6 +683,8 @@
 
 	/**
 	 * Get the scale from the transformation matrix.
+	 *
+	 * @return {Vector2} Scale of the matrix transformation.
 	 */
 	Matrix.prototype.getScale = function()
 	{
@@ -682,6 +693,8 @@
 
 	/**
 	 * Get the position from the transformation matrix.
+	 *
+	 * @return {Vector2} Position of the matrix transformation.
 	 */
 	Matrix.prototype.getPosition = function()
 	{
