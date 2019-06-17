@@ -776,7 +776,11 @@
 	})();
 
 	/**
-	 * Base 2D object class, implements all the object positioning and scalling features.
+	 * Base object class, implements all the object positioning and scalling features.
+	 *
+	 * Stores all the base properties shared between all objects as the position, transformation properties, children etc.
+	 *
+	 * Object2D should be used as a group to store all the other objects drawn.
 	 *
 	 * @class
 	 */
@@ -912,7 +916,7 @@
 	/**
 	 * Traverse the object tree and run a function for all objects.
 	 *
-	 * @param callback Callback function that receives the object as parameter.
+	 * @param {Function} callback Callback function that receives the object as parameter.
 	 */
 	Object2D.prototype.traverse = function(callback)
 	{
@@ -927,9 +931,32 @@
 	};
 
 	/**
-	 * Attach a children to the object.
+	 * Get a object from its children list by its UUID.
 	 *
-	 * @param object Object to attach to this object.
+	 * @param {String} uuid UUID of the object to get.
+	 * @return {Object2D} The object that has the UUID specified, null if the object was not found.
+	 */
+	Object2D.prototype.getChildByUUID = function(uuid)
+	{
+		var object = null;
+
+		this.traverse(function(child)
+		{
+			if(child.uuid === uuid)
+			{
+				object = child;
+			}
+		});
+
+		return object;
+	};
+
+	/**
+	 * Attach a children to this object.
+	 *
+	 * The object is set as children of this object and the transformations applied to this object are traversed to its children.
+	 *
+	 * @param {Object2D} object Object to attach to this object.
 	 */ 
 	Object2D.prototype.add = function(object)
 	{
@@ -950,7 +977,7 @@
 	/**
 	 * Remove object from the children list.
 	 *
-	 * @param object Object to be removed.
+	 * @param {Object2D} object Object to be removed.
 	 */
 	Object2D.prototype.remove = function(object)
 	{
@@ -976,6 +1003,10 @@
 
 	/**
 	 * Check if a point is inside of the object.
+	 *
+	 * Used to update the point events attached to the object.
+	 *
+	 * @return {boolean} True if the point is inside of the object.
 	 */
 	Object2D.prototype.isInside = function(point)
 	{
@@ -984,6 +1015,8 @@
 
 	/**
 	 * Update the transformation matrix of the object.
+	 *
+	 * @param {CanvasContext} context
 	 */
 	Object2D.prototype.updateMatrix = function(context)
 	{
@@ -1036,6 +1069,10 @@
 	 * Delta is the movement of the pointer already translated into local object coordinates.
 	 *
 	 * Receives (pointer, viewport, delta) as arguments.
+	 *
+	 * @param {Pointer} pointer Pointer object that receives the user input.
+	 * @param {Viewport} viewport Viewport where the object is drawn.
+	 * @param {Vector2} delta Pointer movement in world space.
 	 */
 	Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
 	{
@@ -1045,14 +1082,14 @@
 	/**
 	 * Method called when the object its added to a parent.
 	 *
-	 * Receives (parent) as arguments.
+	 * @param {Object2D} parent Parent object were it was added.
 	 */
 	Object2D.prototype.onAdd = null;
 
 	/**
 	 * Method called when the object gets removed from its parent
 	 *
-	 * Receives (parent) as arguments.
+	 * @param {Object2D} parent Parent object from were the object is being removed.
 	 */
 	Object2D.prototype.onRemove = null;
 
@@ -1067,6 +1104,9 @@
 	 * Callback method called when the pointer enters the object.
 	 *
 	 * Receives (pointer, viewport) as arguments.
+	 *
+	 * @param {Pointer} pointer Pointer object that receives the user input.
+	 * @param {Viewport} viewport Viewport where the object is drawn.
 	 */
 	Object2D.prototype.onPointerEnter = null;
 
@@ -1074,6 +1114,9 @@
 	 * Callback method called when the was inside of the object and leaves the object.
 	 *
 	 * Receives (pointer, viewport) as arguments.
+	 *
+	 * @param {Pointer} pointer Pointer object that receives the user input.
+	 * @param {Viewport} viewport Viewport where the object is drawn.
 	 */
 	Object2D.prototype.onPointerLeave = null;
 
@@ -1081,6 +1124,9 @@
 	 * Callback method while the pointer is over (inside) of the object.
 	 *
 	 * Receives (pointer, viewport) as arguments.
+	 *
+	 * @param {Pointer} pointer Pointer object that receives the user input.
+	 * @param {Viewport} viewport Viewport where the object is drawn.
 	 */
 	Object2D.prototype.onPointerOver = null;
 
@@ -1088,6 +1134,9 @@
 	 * Callback method called while the pointer button is pressed.
 	 *
 	 * Receives (pointer, viewport) as arguments.
+	 *
+	 * @param {Pointer} pointer Pointer object that receives the user input.
+	 * @param {Viewport} viewport Viewport where the object is drawn.
 	 */
 	Object2D.prototype.onButtonPressed = null;
 
@@ -1095,6 +1144,9 @@
 	 * Callback method called when the pointer button is pressed down (single time).
 	 *
 	 * Receives (pointer, viewport) as arguments.
+	 *
+	 * @param {Pointer} pointer Pointer object that receives the user input.
+	 * @param {Viewport} viewport Viewport where the object is drawn.
 	 */
 	Object2D.prototype.onButtonDown = null;
 
@@ -1102,6 +1154,9 @@
 	 * Callback method called when the pointer button is released (single time).
 	 *
 	 * Receives (pointer, viewport) as arguments.
+	 *
+	 * @param {Pointer} pointer Pointer object that receives the user input.
+	 * @param {Viewport} viewport Viewport where the object is drawn.
 	 */
 	Object2D.prototype.onButtonUp = null;
 
@@ -1670,8 +1725,6 @@
 				this.matrix.scale(this.scale, this.scale);
 			}
 
-			//this.matrix.multiply(new Matrix([1, 0, 0, 1, this.position.x - this.canvas.width / 2 * this.scale,  this.position.y - this.canvas.height / 2 * this.scale]));
-
 			this.inverseMatrix = this.matrix.getInverse();
 			this.matrixNeedsUpdate = false;
 		}
@@ -1898,7 +1951,7 @@
 	 *
 	 * Should be called at a fixed rate preferably using the requestAnimationFrame() method, its also possible to use the createRenderLoop() method, that automatically creates a infinite render loop.
 	 *
-	 * @param object {Object2D} Object to be updated.
+	 * @param object {Object2D} Object to be updated and drawn into the canvas, the Object2D should be used as a group to store all the other objects to be updated and drawn.
 	 * @param viewport {Viewport} Viewport to be updated (should be the one where the objects will be rendered after).
 	 */
 	Renderer.prototype.update = function(object, viewport)
@@ -2456,6 +2509,8 @@
 	/**
 	 * Circle object draw a circular object, into the canvas.
 	 *
+	 * Can be used as a base to implement other circular objects, already implements the circle collision for pointer events.
+	 *
 	 * @class
 	 */
 	function Circle()
@@ -2481,6 +2536,8 @@
 
 		/**
 		 * Background color of the circle.
+		 *
+		 * If set null it is ignored.
 		 */
 		this.fillStyle = "#FFFFFF";
 	}
@@ -2507,8 +2564,11 @@
 		context.beginPath();
 		context.arc(0, 0, this.radius, 0, 2 * Math.PI);
 		
-		context.fillStyle = this.fillStyle;
-		context.fill();
+		if(this.fillStyle !== null)
+		{	
+			context.fillStyle = this.fillStyle;
+			context.fill();
+		}
 
 		if(this.strokeStyle !== null)
 		{
@@ -2627,7 +2687,9 @@
 	};
 
 	/**
-	 * Box object draw a box.
+	 * Box object draw a rectangular object.
+	 *
+	 * Can be used as a base to implement other box objects, already implements collision for pointer events.
 	 *
 	 * @class
 	 */
@@ -2654,6 +2716,8 @@
 
 		/**
 		 * Background color of the box.
+		 *
+		 * If set null it is ignored.
 		 */
 		this.fillStyle = "#FFFFFF";
 	}
@@ -2680,12 +2744,18 @@
 		var width = this.box.max.x - this.box.min.x;
 		var height = this.box.max.y - this.box.min.y;
 
-		context.fillStyle = this.fillStyle;
-		context.fillRect(this.box.min.x, this.box.min.y, width, height);
+		if(this.fillStyle !== null)
+		{	
+			context.fillStyle = this.fillStyle;
+			context.fillRect(this.box.min.x, this.box.min.y, width, height);
+		}
 
-		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
-		context.strokeRect(this.box.min.x, this.box.min.y, width, height);
+		if(this.strokeStyle !== null)
+		{
+			context.lineWidth = this.lineWidth;
+			context.strokeStyle = this.strokeStyle;
+			context.strokeRect(this.box.min.x, this.box.min.y, width, height);
+		}
 	};
 
 	/**

@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Pointer<span class="signature">(domElement, dontInitialize)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Pointer<span class="signature">(domElement, canvas)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="Pointer"><span class="type-signature"></span>new Pointer<span class="signature">(domElement, dontInitialize)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Pointer"><span class="type-signature"></span>new Pointer<span class="signature">(domElement, canvas)</span><span class="type-signature"></span></h4>
     
 
     
@@ -49,7 +49,7 @@
 
 
 <div class="description">
-    Pointer instance for input in sync with the running 3D application.The pointer object provided by scripts is automatically updated by the runtime handler.
+    Pointer object is used to colled input from the user, works for booth mouse or touch screens.It is responsible for syncronizing user input with the render of the graphics.
 </div>
 
 
@@ -108,13 +108,13 @@
 
         <tr>
             
-                <td class="name"><code>dontInitialize</code></td>
+                <td class="name"><code>canvas</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Boolean</span>
+<span class="param-type"><a href="DOM.html">DOM</a></span>
 
 
             
@@ -124,7 +124,7 @@
 
             
 
-            <td class="description last">If true the pointer events are not created.</td>
+            <td class="description last">Canvas DOM element where the content is being drawn.</td>
         </tr>
 
     
@@ -259,7 +259,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line203">line 203</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line207">line 207</a>
     </li></ul></dd>
     
 
@@ -321,7 +321,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line208">line 208</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line212">line 212</a>
     </li></ul></dd>
     
 
@@ -383,7 +383,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line188">line 188</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line192">line 192</a>
     </li></ul></dd>
     
 
@@ -445,7 +445,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line193">line 193</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line197">line 197</a>
     </li></ul></dd>
     
 
@@ -507,7 +507,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line198">line 198</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line202">line 202</a>
     </li></ul></dd>
     
 
@@ -817,7 +817,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line69">line 69</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line73">line 73</a>
     </li></ul></dd>
     
 
@@ -1132,7 +1132,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line259">line 259</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line263">line 263</a>
     </li></ul></dd>
     
 
@@ -1291,7 +1291,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line270">line 270</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line274">line 274</a>
     </li></ul></dd>
     
 
@@ -1450,7 +1450,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line281">line 281</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line285">line 285</a>
     </li></ul></dd>
     
 
@@ -1609,7 +1609,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line248">line 248</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line252">line 252</a>
     </li></ul></dd>
     
 
@@ -1719,7 +1719,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line388">line 388</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line392">line 392</a>
     </li></ul></dd>
     
 
@@ -1807,7 +1807,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line396">line 396</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line400">line 400</a>
     </li></ul></dd>
     
 
@@ -1895,7 +1895,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line237">line 237</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line241">line 241</a>
     </li></ul></dd>
     
 
@@ -2054,7 +2054,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line215">line 215</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line219">line 219</a>
     </li></ul></dd>
     
 
@@ -2142,7 +2142,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line330">line 330</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line334">line 334</a>
     </li></ul></dd>
     
 
@@ -2302,7 +2302,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line319">line 319</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line323">line 323</a>
     </li></ul></dd>
     
 
@@ -2508,7 +2508,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line296">line 296</a>
+        <a href="input_Pointer.js.html">input/Pointer.js</a>, <a href="input_Pointer.js.html#line300">line 300</a>
     </li></ul></dd>
     
 
@@ -2560,7 +2560,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Thu Jun 13 2019 11:59:09 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Mon Jun 17 2019 11:15:30 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
