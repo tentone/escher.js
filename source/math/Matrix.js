@@ -24,6 +24,8 @@ function Matrix(values)
 
 /**
  * Copy the content of another matrix and store in this one.
+ *
+ * @param {Matrix} mat
  */
 Matrix.prototype.copy = function(mat)
 {
@@ -49,7 +51,7 @@ Matrix.prototype.identity = function()
 /**
  * Multiply another matrix by this one and store the result.
  *
- * @param mat Matrix array.
+ * @param {Matrix} mat
  */
 Matrix.prototype.multiply = function(mat)
 {
@@ -66,7 +68,7 @@ Matrix.prototype.multiply = function(mat)
 /**
  * Premultiply another matrix by this one and store the result.
  *
- * @param mat Matrix array to multiply.
+ * @param {Matrix} mat
  */
 Matrix.prototype.premultiply = function(mat)
 {
@@ -82,6 +84,14 @@ Matrix.prototype.premultiply = function(mat)
 
 /**
  * Compose this transformation matrix with position scale and rotation and origin point.
+ *
+ * @param {number} px Position X
+ * @param {number} py Position Y
+ * @param {number} sx Scale X
+ * @param {number} sy Scale Y
+ * @param {number} ox Origin X (applied before scale and rotation)
+ * @param {number} oy Origin Y (applied before scale and rotation)
+ * @param {number} a Rotation angle (radians).
  */
 Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, a)
 {
@@ -94,14 +104,14 @@ Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, a)
 		this.multiply(new Matrix([c, s, -s, c, 0, 0]));
 	}
 
-	if(ox !== 0 || oy !== 0)
-	{	
-		this.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));
-	}
-
 	if(sx !== 1 || sy !== 1)
 	{
 		this.scale(sx, sy);
+	}
+
+	if(ox !== 0 || oy !== 0)
+	{	
+		this.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));
 	}
 };
 

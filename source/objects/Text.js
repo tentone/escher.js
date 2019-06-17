@@ -22,9 +22,23 @@ function Text()
 	this.font = "16px Arial";
 
 	/**
-	 * Color (style) of the text.
+	 * Style of the object border line.
+	 *
+	 * If set null it is ignored.
 	 */
-	this.color = "#000000";
+	this.strokeStyle = null;
+
+	/**
+	 * Line width, only used if a valid strokeStyle is defined.
+	 */
+	this.lineWidth = 1;
+
+	/**
+	 * Background color of the box.
+	 *
+	 * If set null it is ignored.
+	 */
+	this.fillStyle = "#000000";
 
 	/**
 	 * Text align property.
@@ -38,10 +52,19 @@ Text.prototype.draw = function(context, viewport, canvas)
 {
 	context.font = this.font;
 	context.textAlign = this.textAlign;
-	context.fillStyle = this.color;
 	context.textBaseline = "middle";
 	
-	context.fillText(this.text, 0, 0);
+	if(this.fillStyle !== null)
+	{
+		context.fillStyle = this.fillStyle;
+		context.fillText(this.text, 0, 0);
+	}
+
+	if(this.strokeStyle !== null)
+	{
+		context.strokeStyle = this.strokeStyle;
+		context.strokeText(this.text, 0, 0);
+	}
 };
 
 export {Text};

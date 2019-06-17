@@ -531,6 +531,8 @@
 
 	/**
 	 * Copy the content of another matrix and store in this one.
+	 *
+	 * @param {Matrix} mat
 	 */
 	Matrix.prototype.copy = function(mat)
 	{
@@ -556,7 +558,7 @@
 	/**
 	 * Multiply another matrix by this one and store the result.
 	 *
-	 * @param mat Matrix array.
+	 * @param {Matrix} mat
 	 */
 	Matrix.prototype.multiply = function(mat)
 	{
@@ -573,7 +575,7 @@
 	/**
 	 * Premultiply another matrix by this one and store the result.
 	 *
-	 * @param mat Matrix array to multiply.
+	 * @param {Matrix} mat
 	 */
 	Matrix.prototype.premultiply = function(mat)
 	{
@@ -589,6 +591,14 @@
 
 	/**
 	 * Compose this transformation matrix with position scale and rotation and origin point.
+	 *
+	 * @param {number} px Position X
+	 * @param {number} py Position Y
+	 * @param {number} sx Scale X
+	 * @param {number} sy Scale Y
+	 * @param {number} ox Origin X (applied before scale and rotation)
+	 * @param {number} oy Origin Y (applied before scale and rotation)
+	 * @param {number} a Rotation angle (radians).
 	 */
 	Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, a)
 	{
@@ -601,14 +611,14 @@
 			this.multiply(new Matrix([c, s, -s, c, 0, 0]));
 		}
 
-		if(ox !== 0 || oy !== 0)
-		{	
-			this.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));
-		}
-
 		if(sx !== 1 || sy !== 1)
 		{
 			this.scale(sx, sy);
+		}
+
+		if(ox !== 0 || oy !== 0)
+		{	
+			this.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));
 		}
 	};
 
@@ -1139,6 +1149,16 @@
 	 * @param {Viewport} viewport Viewport where the object is drawn.
 	 */
 	Object2D.prototype.onButtonPressed = null;
+
+	/**
+	 * Callback method called while the pointer button is double clicked.
+	 *
+	 * Receives (pointer, viewport) as arguments.
+	 *
+	 * @param {Pointer} pointer Pointer object that receives the user input.
+	 * @param {Viewport} viewport Viewport where the object is drawn.
+	 */
+	Object2D.prototype.onDoubleClick = null;
 
 	/**
 	 * Callback method called when the pointer button is pressed down (single time).
@@ -2013,6 +2033,12 @@
 						child.onPointerOver(pointer, viewport);
 					}
 
+					// Double click
+					if(pointer.buttonDoubleClicked(Pointer.LEFT) && child.onDoubleClick !== null)
+					{
+						child.onDoubleClick(pointer, viewport);
+					}
+
 					// Pointer pressed
 					if(pointer.buttonPressed(Pointer.LEFT) && child.onButtonPressed !== null)
 					{	
@@ -2835,9 +2861,23 @@
 		this.font = "16px Arial";
 
 		/**
-		 * Color (style) of the text.
+		 * Style of the object border line.
+		 *
+		 * If set null it is ignored.
 		 */
-		this.color = "#000000";
+		this.strokeStyle = null;
+
+		/**
+		 * Line width, only used if a valid strokeStyle is defined.
+		 */
+		this.lineWidth = 1;
+
+		/**
+		 * Background color of the box.
+		 *
+		 * If set null it is ignored.
+		 */
+		this.fillStyle = "#000000";
 
 		/**
 		 * Text align property.
@@ -2851,10 +2891,19 @@
 	{
 		context.font = this.font;
 		context.textAlign = this.textAlign;
-		context.fillStyle = this.color;
 		context.textBaseline = "middle";
 		
-		context.fillText(this.text, 0, 0);
+		if(this.fillStyle !== null)
+		{
+			context.fillStyle = this.fillStyle;
+			context.fillText(this.text, 0, 0);
+		}
+
+		if(this.strokeStyle !== null)
+		{
+			context.strokeStyle = this.strokeStyle;
+			context.strokeText(this.text, 0, 0);
+		}
 	};
 
 	/**

@@ -192,7 +192,7 @@
 		circle.radius = 60;
 		circle.position.set(300, 0);
 		circle.draggable = true;
-		circle.onButtonDown = function()
+		circle.onDoubleClick = function()
 		{
 			viewport.centerObject(circle, canvas);
 		}
@@ -200,6 +200,14 @@
 
 		var text = new Escher.Text();
 		text.text = "Canvas Text";
+		circle.add(text);
+
+		var text = new Escher.Text();
+		text.text = "Double-click to center!";
+		text.font = "30px Comic Sans MS";
+		text.position.set(0, -75);
+		text.strokeStyle = "#000000";
+		text.fillStyle = "#FFFFFF";
 		circle.add(text);
 
 		// Line (connection)

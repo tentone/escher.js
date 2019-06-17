@@ -370,6 +370,16 @@ Object2D.prototype.onPointerOver = null;
 Object2D.prototype.onButtonPressed = null;
 
 /**
+ * Callback method called while the pointer button is double clicked.
+ *
+ * Receives (pointer, viewport) as arguments.
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
+ */
+Object2D.prototype.onDoubleClick = null;
+
+/**
  * Callback method called when the pointer button is pressed down (single time).
  *
  * Receives (pointer, viewport) as arguments.

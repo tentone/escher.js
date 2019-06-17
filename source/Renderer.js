@@ -146,6 +146,12 @@ Renderer.prototype.update = function(object, viewport)
 					child.onPointerOver(pointer, viewport);
 				}
 
+				// Double click
+				if(pointer.buttonDoubleClicked(Pointer.LEFT) && child.onDoubleClick !== null)
+				{
+					child.onDoubleClick(pointer, viewport);
+				}
+
 				// Pointer pressed
 				if(pointer.buttonPressed(Pointer.LEFT) && child.onButtonPressed !== null)
 				{	
