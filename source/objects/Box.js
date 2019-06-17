@@ -7,7 +7,9 @@ import {Helpers} from "../utils/Helpers.js";
 import {Circle} from "./Circle.js";
 
 /**
- * Box object draw a box.
+ * Box object draw a rectangular object.
+ *
+ * Can be used as a base to implement other box objects, already implements collision for pointer events.
  *
  * @class
  */
@@ -34,6 +36,8 @@ function Box()
 
 	/**
 	 * Background color of the box.
+	 *
+	 * If set null it is ignored.
 	 */
 	this.fillStyle = "#FFFFFF";
 }
@@ -60,12 +64,18 @@ Box.prototype.draw = function(context, viewport, canvas)
 	var width = this.box.max.x - this.box.min.x;
 	var height = this.box.max.y - this.box.min.y;
 
-	context.fillStyle = this.fillStyle;
-	context.fillRect(this.box.min.x, this.box.min.y, width, height);
+	if(this.fillStyle !== null)
+	{	
+		context.fillStyle = this.fillStyle;
+		context.fillRect(this.box.min.x, this.box.min.y, width, height);
+	}
 
-	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
-	context.strokeRect(this.box.min.x, this.box.min.y, width, height);
+	if(this.strokeStyle !== null)
+	{
+		context.lineWidth = this.lineWidth;
+		context.strokeStyle = this.strokeStyle;
+		context.strokeRect(this.box.min.x, this.box.min.y, width, height);
+	}
 };
 
 export {Box};

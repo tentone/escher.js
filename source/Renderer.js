@@ -84,7 +84,7 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
  *
  * Should be called at a fixed rate preferably using the requestAnimationFrame() method, its also possible to use the createRenderLoop() method, that automatically creates a infinite render loop.
  *
- * @param object {Object2D} Object to be updated.
+ * @param object {Object2D} Object to be updated and drawn into the canvas, the Object2D should be used as a group to store all the other objects to be updated and drawn.
  * @param viewport {Viewport} Viewport to be updated (should be the one where the objects will be rendered after).
  */
 Renderer.prototype.update = function(object, viewport)

@@ -6,6 +6,8 @@ import {Vector2} from "../math/Vector2.js";
 /**
  * Circle object draw a circular object, into the canvas.
  *
+ * Can be used as a base to implement other circular objects, already implements the circle collision for pointer events.
+ *
  * @class
  */
 function Circle()
@@ -31,6 +33,8 @@ function Circle()
 
 	/**
 	 * Background color of the circle.
+	 *
+	 * If set null it is ignored.
 	 */
 	this.fillStyle = "#FFFFFF";
 }
@@ -57,8 +61,11 @@ Circle.prototype.draw = function(context, viewport, canvas)
 	context.beginPath();
 	context.arc(0, 0, this.radius, 0, 2 * Math.PI);
 	
-	context.fillStyle = this.fillStyle;
-	context.fill();
+	if(this.fillStyle !== null)
+	{	
+		context.fillStyle = this.fillStyle;
+		context.fill();
+	}
 
 	if(this.strokeStyle !== null)
 	{

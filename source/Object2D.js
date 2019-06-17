@@ -5,7 +5,11 @@ import {Matrix} from "./math/Matrix.js";
 import {UUID} from "./math/UUID.js";
 
 /**
- * Base 2D object class, implements all the object positioning and scalling features.
+ * Base object class, implements all the object positioning and scalling features.
+ *
+ * Stores all the base properties shared between all objects as the position, transformation properties, children etc.
+ *
+ * Object2D should be used as a group to store all the other objects drawn.
  *
  * @class
  */
@@ -141,7 +145,7 @@ function Object2D()
 /**
  * Traverse the object tree and run a function for all objects.
  *
- * @param callback Callback function that receives the object as parameter.
+ * @param {Function} callback Callback function that receives the object as parameter.
  */
 Object2D.prototype.traverse = function(callback)
 {
@@ -156,9 +160,32 @@ Object2D.prototype.traverse = function(callback)
 };
 
 /**
- * Attach a children to the object.
+ * Get a object from its children list by its UUID.
  *
- * @param object Object to attach to this object.
+ * @param {String} uuid UUID of the object to get.
+ * @return {Object2D} The object that has the UUID specified, null if the object was not found.
+ */
+Object2D.prototype.getChildByUUID = function(uuid)
+{
+	var object = null;
+
+	this.traverse(function(child)
+	{
+		if(child.uuid === uuid)
+		{
+			object = child;
+		}
+	});
+
+	return object;
+};
+
+/**
+ * Attach a children to this object.
+ *
+ * The object is set as children of this object and the transformations applied to this object are traversed to its children.
+ *
+ * @param {Object2D} object Object to attach to this object.
  */ 
 Object2D.prototype.add = function(object)
 {
@@ -179,7 +206,7 @@ Object2D.prototype.add = function(object)
 /**
  * Remove object from the children list.
  *
- * @param object Object to be removed.
+ * @param {Object2D} object Object to be removed.
  */
 Object2D.prototype.remove = function(object)
 {
@@ -205,6 +232,10 @@ Object2D.prototype.remove = function(object)
 
 /**
  * Check if a point is inside of the object.
+ *
+ * Used to update the point events attached to the object.
+ *
+ * @return {boolean} True if the point is inside of the object.
  */
 Object2D.prototype.isInside = function(point)
 {
@@ -213,6 +244,8 @@ Object2D.prototype.isInside = function(point)
 
 /**
  * Update the transformation matrix of the object.
+ *
+ * @param {CanvasContext} context
  */
 Object2D.prototype.updateMatrix = function(context)
 {
@@ -265,6 +298,10 @@ Object2D.prototype.draw = function(context, viewport, canvas){};
  * Delta is the movement of the pointer already translated into local object coordinates.
  *
  * Receives (pointer, viewport, delta) as arguments.
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
+ * @param {Vector2} delta Pointer movement in world space.
  */
 Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
 {
@@ -274,14 +311,14 @@ Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
 /**
  * Method called when the object its added to a parent.
  *
- * Receives (parent) as arguments.
+ * @param {Object2D} parent Parent object were it was added.
  */
 Object2D.prototype.onAdd = null;
 
 /**
  * Method called when the object gets removed from its parent
  *
- * Receives (parent) as arguments.
+ * @param {Object2D} parent Parent object from were the object is being removed.
  */
 Object2D.prototype.onRemove = null;
 
@@ -296,6 +333,9 @@ Object2D.prototype.onUpdate = null;
  * Callback method called when the pointer enters the object.
  *
  * Receives (pointer, viewport) as arguments.
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onPointerEnter = null;
 
@@ -303,6 +343,9 @@ Object2D.prototype.onPointerEnter = null;
  * Callback method called when the was inside of the object and leaves the object.
  *
  * Receives (pointer, viewport) as arguments.
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onPointerLeave = null;
 
@@ -310,6 +353,9 @@ Object2D.prototype.onPointerLeave = null;
  * Callback method while the pointer is over (inside) of the object.
  *
  * Receives (pointer, viewport) as arguments.
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onPointerOver = null;
 
@@ -317,6 +363,9 @@ Object2D.prototype.onPointerOver = null;
  * Callback method called while the pointer button is pressed.
  *
  * Receives (pointer, viewport) as arguments.
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onButtonPressed = null;
 
@@ -324,6 +373,9 @@ Object2D.prototype.onButtonPressed = null;
  * Callback method called when the pointer button is pressed down (single time).
  *
  * Receives (pointer, viewport) as arguments.
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onButtonDown = null;
 
@@ -331,6 +383,9 @@ Object2D.prototype.onButtonDown = null;
  * Callback method called when the pointer button is released (single time).
  *
  * Receives (pointer, viewport) as arguments.
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onButtonUp = null;
 
