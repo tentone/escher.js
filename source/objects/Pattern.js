@@ -12,6 +12,7 @@ import {Circle} from "./Circle.js";
  * Its similar to the Image class but the image can be repeat infinitly.
  *
  * @class
+ * @extends {Object2D}
  */
 function Pattern(src)
 {

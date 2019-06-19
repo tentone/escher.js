@@ -14,6 +14,7 @@ import {Box2} from "../../math/Box2.js";
  * A mask objects is draw using the context.clip() method.
  *
  * @class
+ * @extends {Object2D}
  */
 function Mask()
 {

@@ -7,6 +7,7 @@ import {Vector2} from "../math/Vector2.js";
  * Line object draw a line from one point to another.
  *
  * @class
+ * @extends {Object2D}
  */
 function Line()
 {

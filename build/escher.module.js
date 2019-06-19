@@ -2468,6 +2468,7 @@ Box2.prototype.equals = function(box)
  * A mask objects is draw using the context.clip() method.
  *
  * @class
+ * @extends {Object2D}
  */
 function Mask()
 {
@@ -2545,6 +2546,7 @@ BoxMask.prototype.clip = function(context, viewport, canvas)
  * Can be used as a base to implement other circular objects, already implements the circle collision for pointer events.
  *
  * @class
+ * @extends {Object2D}
  */
 function Circle()
 {
@@ -2725,6 +2727,7 @@ Helpers.boxResizeTool = function(object)
  * Can be used as a base to implement other box objects, already implements collision for pointer events.
  *
  * @class
+ * @extends {Object2D}
  */
 function Box()
 {
@@ -2795,6 +2798,7 @@ Box.prototype.draw = function(context, viewport, canvas)
  * Line object draw a line from one point to another.
  *
  * @class
+ * @extends {Object2D}
  */
 function Line()
 {
@@ -2852,6 +2856,7 @@ Line.prototype.draw = function(context, viewport, canvas)
  * Text element, used to draw text into the canvas.
  *
  * @class
+ * @extends {Object2D}
  */
 function Text()
 {
@@ -2918,6 +2923,7 @@ Text.prototype.draw = function(context, viewport, canvas)
  *
  * @class
  * @param {string} [src] Source URL of the image.
+ * @extends {Object2D}
  */
 function Image(src)
 {
@@ -2983,6 +2989,7 @@ Image.prototype.draw = function(context, viewport, canvas)
  * @class
  * @param parentDOM Parent DOM element that contains the drawing canvas.
  * @param type Type of the DOM element (e.g. "div", "p", ...)
+ * @extends {Object2D}
  */
 function DOM(parentDOM, type)
 {
@@ -3046,6 +3053,7 @@ DOM.prototype.transform = function(context, viewport, canvas)
  * Its similar to the Image class but the image can be repeat infinitly.
  *
  * @class
+ * @extends {Object2D}
  */
 function Pattern(src)
 {
@@ -3116,6 +3124,7 @@ Pattern.prototype.draw = function(context, viewport, canvas)
  * Graph data is composed of X, Y values.
  *
  * @class
+ * @extends {Object2D}
  */
 function Graph()
 {

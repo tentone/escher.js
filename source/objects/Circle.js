@@ -9,6 +9,7 @@ import {Vector2} from "../math/Vector2.js";
  * Can be used as a base to implement other circular objects, already implements the circle collision for pointer events.
  *
  * @class
+ * @extends {Object2D}
  */
 function Circle()
 {

@@ -13,6 +13,7 @@ import {Vector2} from "../math/Vector2.js";
  * @class
  * @param parentDOM Parent DOM element that contains the drawing canvas.
  * @param type Type of the DOM element (e.g. "div", "p", ...)
+ * @extends {Object2D}
  */
 function DOM(parentDOM, type)
 {

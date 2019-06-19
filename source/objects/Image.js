@@ -9,6 +9,7 @@ import {Vector2} from "../math/Vector2.js";
  *
  * @class
  * @param {string} [src] Source URL of the image.
+ * @extends {Object2D}
  */
 function Image(src)
 {

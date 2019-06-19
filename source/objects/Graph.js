@@ -12,6 +12,7 @@ import {Circle} from "./Circle.js";
  * Graph data is composed of X, Y values.
  *
  * @class
+ * @extends {Object2D}
  */
 function Graph()
 {

@@ -12,6 +12,7 @@ import {Circle} from "./Circle.js";
  * Can be used as a base to implement other box objects, already implements collision for pointer events.
  *
  * @class
+ * @extends {Object2D}
  */
 function Box()
 {

@@ -6,6 +6,7 @@ import {Object2D} from "../Object2D.js";
  * Text element, used to draw text into the canvas.
  *
  * @class
+ * @extends {Object2D}
  */
 function Text()
 {
