@@ -169,6 +169,21 @@
 		text.innerHTML = "DOM text!";
 		div.element.appendChild(text);
 
+		// DOM Fixed
+		var div = new Escher.DOM(division);
+		div.size.set(100, 50);
+		div.origin.set(50, 25);
+		div.position.set(200, 200);
+		boxA.add(div);
+
+		var text = document.createElement("div");
+		text.style.fontFamily = "Arial";
+		text.style.textAlign = "center";
+		text.innerHTML = "DOM Derp!";
+		div.element.appendChild(text);
+
+		group.add(div);
+
 		// Box
 		var boxB = new Escher.Box();
 		boxB.position.set(100, 100);

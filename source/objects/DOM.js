@@ -58,10 +58,17 @@ DOM.prototype.onRemove = function()
 
 DOM.prototype.transform = function(context, viewport, canvas)
 {
-	// CSS trasnformation matrix
-	var projection = viewport.matrix.clone();
-	projection.multiply(this.globalMatrix);
-	this.element.style.transform = projection.cssTransform();
+	// CSS transformation matrix
+	if(this.ignoreViewport)
+	{
+		this.element.style.transform = this.globalMatrix.cssTransform();
+	}
+	else
+	{
+		var projection = viewport.matrix.clone();
+		projection.multiply(this.globalMatrix);
+		this.element.style.transform = projection.cssTransform();
+	}
 
 	// Size of the element
 	this.element.style.width = this.size.x + "px";
