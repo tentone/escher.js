@@ -40,20 +40,43 @@
 		};
 
 
+		function PhysicsCircle()
+		{
+			Escher.Circle.call(this);
+
+			this.strokeStyle = null;
+			this.fillStyle = Math.random() > 0.5 ? "#00FF00" : "#0000FF";
+
+			this.radius = 1.0;
+
+			this.shape = new p2.Circle({radius: this.radius});
+
+			this.body = new p2.Body({mass: 1, position: [0,0]});
+			this.body.addShape(this.shape);
+		}
+
+		PhysicsCircle.prototype = Object.create(Escher.Circle.prototype);
+		PhysicsCircle.prototype.onPointerEnter = function(pointer, viewport){};
+		PhysicsCircle.prototype.onPointerLeave = function(pointer, viewport){};
+		PhysicsCircle.prototype.draw = function(context, viewport, canvas)
+		{
+			this.position.set(this.body.position[0], -this.body.position[1]);
+			
+			Escher.Circle.prototype.draw.call(this, context, viewport, canvas);
+		}
+
 		var group = new Escher.Object2D();
 		
 		// Init p2.js
 		var world = new p2.World();
 
-		// Add a circle
-		var circleShape = new p2.Circle({radius: 1});
-		var circleBody = new p2.Body({mass: 1, position: [0,0]});
-		circleBody.addShape(circleShape);
-		world.addBody(circleBody);
-
-		var circle = new Escher.Circle();
-		circle.radius = 1.0;
-		group.add(circle);
+		for(var i = 0; i < 150; i++)
+		{		
+			var circle = new PhysicsCircle();
+			circle.body.position.set([Math.random() * 30 - 15, Math.random() * 200]);
+			world.addBody(circle.body);
+			group.add(circle);
+		}
 
 		// Add a plane
 		var planeShape = new p2.Plane();
@@ -62,8 +85,12 @@
 		world.addBody(planeBody);
 
 		var plane = new Escher.Box();
-		plane.box.min.set(-100, 0);
-		plane.box.max.set(100, 100);
+		plane.strokeStyle = null;
+		plane.fillStyle = "#556677";
+		plane.onPointerLeave = null;
+		plane.onPointerEnter = null;
+		plane.box.min.set(-1000, 0);
+		plane.box.max.set(1000, 100);
 		group.add(plane);
 
 		var viewport = new Escher.Viewport(canvas);
@@ -75,7 +102,7 @@
 		var renderer = new Escher.Renderer(canvas);
 		renderer.createRenderLoop(group, viewport, function()
 		{
-			circle.position.set(circleBody.position[0], -circleBody.position[1]);
+
 			plane.position.y = -planeBody.position[1];
 			
 			// Move physics bodies forward in time
