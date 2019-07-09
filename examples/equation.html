@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Equation Editor</title>
+</head>
+<body style="font-size:30px; font-family: Arial;">
+	<div style="position:absolute; width:60px; height:50px; top:0px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperator('*');">+</div>
+	<div style="position:absolute; width:60px; height:50px; top:50px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperator('-');">-</div>
+	<div style="position:absolute; width:60px; height:50px; top:100px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperator('*');">x</div>
+	<div style="position:absolute; width:60px; height:50px; top:150px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperator('/');">/</div>
+	<div style="position:absolute; width:60px; height:50px; top:200px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperator('/');">Num</div>
+	<script type="text/javascript" src="../build/escher.js"></script>
+	<script type="text/javascript">
+		// Division
+		var division = document.createElement("div");
+		division.style.position = "absolute";
+		division.style.width = "100%";
+		division.style.height = "100%";
+		division.style.top = "0px";
+		division.style.left = "0px";
+		division.style.overflow = "hidden";
+		document.body.appendChild(division);
+
+		// Canvas
+		var canvas = document.createElement("canvas");
+		canvas.style.position = "absolute";
+		canvas.style.width = "100%";
+		canvas.style.height = "100%";
+		canvas.style.top = "0px";
+		canvas.style.left = "0px";
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		division.appendChild(canvas);
+
+		// Prevent context menu events
+		document.body.oncontextmenu = function(event)
+		{
+			event.preventDefault();
+			return false;
+		};
+
+
+
+		// Resize canvas on window resize
+		window.onresize = function()
+		{
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		};
+
+		window.addOperator = function(symbol)
+		{
+			// Box
+			var box = new Escher.Box();
+			box.position.set(100, 100);
+			box.draggable = true;
+			group.add(box);
+			
+			// DOM
+			var div = new Escher.DOM(division);
+			div.size.set(100, 50);
+			div.origin.set(50, 25);
+			box.add(div);
+
+			var text = document.createElement("div");
+			text.style.fontFamily = "Arial";
+			text.style.textAlign = "center";
+			text.innerHTML = symbol;
+			div.element.appendChild(text);
+		};
+
+		// Group to store other objects
+		var group = new Escher.Object2D();
+
+
+		// Line (connection)
+		var line = new Escher.BezierCurve();
+		//line.from = box.position;
+		//line.to = circle.position;
+		line.layer = -1;
+		group.add(line);
+
+		// Viewport
+		var viewport = new Escher.Viewport(canvas);
+
+		// Renderer
+		var renderer = new Escher.Renderer(canvas);
+		renderer.createRenderLoop(group, viewport);
+	</script>
+</body>
+</html>
