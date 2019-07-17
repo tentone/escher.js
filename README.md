@@ -1,4 +1,5 @@
 # escher.js
+[![npm version](https://badge.fury.io/js/escher.js.svg)](https://badge.fury.io/js/escher.js)
 
  - Web based 2D graph building framework.
  - Entity based diagram build system, entities are stores as a tree. Parent elements transformations affect the children transforms.
@@ -25,7 +26,7 @@
 
 
 ### Setup
-
+- Add the library to your project by using the precompiled file availabe on the repository or by downloading it from NPM.
 - Escher is based on web canvas, it requires a DOM canvas element to draw its content.
 - It is necessary for the canvas element width and height parameters to be properly configured since their values are used to process user input.
 - When using other DOM elements with the framework is also necessary to setup a DOM div to store these elements. (Booth the canvas and division should have the same position and size and should be aligned).
