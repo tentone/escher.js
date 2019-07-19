@@ -5,11 +5,11 @@
 	<title>Equation Editor</title>
 </head>
 <body style="font-size:30px; font-family: Arial;">
-	<div style="position:absolute; width:60px; height:50px; top:0px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperator('*');">+</div>
-	<div style="position:absolute; width:60px; height:50px; top:50px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperator('-');">-</div>
-	<div style="position:absolute; width:60px; height:50px; top:100px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperator('*');">x</div>
-	<div style="position:absolute; width:60px; height:50px; top:150px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperator('/');">/</div>
-	<div style="position:absolute; width:60px; height:50px; top:200px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperator('/');">Num</div>
+	<div style="position:absolute; width:60px; height:50px; top:0px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperatorBlock('+');">+</div>
+	<div style="position:absolute; width:60px; height:50px; top:50px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperatorBlock('-');">-</div>
+	<div style="position:absolute; width:60px; height:50px; top:100px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperatorBlock('*');">x</div>
+	<div style="position:absolute; width:60px; height:50px; top:150px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperatorBlock('/');">/</div>
+	<div style="position:absolute; width:60px; height:50px; top:200px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addConstantBlock(prompt('Input value'));">Num</div>
 	<script type="text/javascript" src="../build/escher.js"></script>
 	<script type="text/javascript">
 		// Division
@@ -41,7 +41,6 @@
 		};
 
 
-
 		// Resize canvas on window resize
 		window.onresize = function()
 		{
@@ -49,7 +48,7 @@
 			canvas.height = window.innerHeight;
 		};
 
-		window.addOperator = function(symbol)
+		window.addOperatorBlock = function(symbol)
 		{
 			// Box
 			var box = new Escher.Box();
@@ -70,9 +69,48 @@
 			div.element.appendChild(text);
 		};
 
+		//
+		window.addConstantBlock = function(value, type)
+		{
+
+		};
+
+		/**
+		 * Represents a feed of data.
+		 *
+		 * Usually represented as a connection (from output to input).
+		 */
+		function DataBlock(value)
+		{
+			this.value = value;
+			this.type = DataBlock.NUMBER;
+
+			this.from = null;
+			this.to = null;
+		}
+
+		DataBlock.NUMBER = 0;
+
+		/**
+		 * Represents a code logic block.
+		 */
+		function CodeBlock()
+		{
+			Escher.Object2D.call(this);
+
+			this.inputs = [];
+			this.output = [];
+		}
+
+		CodeBlock.prototype = Object.create(Escher.Object2D.prototype);
+
+		/**
+		 * Take inputs read them and write to the outputs the value.
+		 */
+		CodeBlock.prototype.process = function(){};
+
 		// Group to store other objects
 		var group = new Escher.Object2D();
-
 
 		// Line (connection)
 		var line = new Escher.BezierCurve();
