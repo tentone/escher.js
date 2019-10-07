@@ -74,37 +74,32 @@
 
 		//Draw PDF example
 		var task = pdfjsLib.getDocument("./images/vrml.pdf");
-		console.log(task);
 
 		task.promise.then(function(pdf)
 		{
 			var numPages = pdf._pdfInfo.numPages;
-			var ppi = 72;
-
-			console.log(pdf);
 
 			if(numPages > 0)
 			{
 				var positionY = 0;
 
-				for(var p = 0; p < numPages && p < 2; p++)
+				for(var p = 1; p <= numPages; p++)
 				{	
 					pdf.getPage(p).then(function(page)
 					{	
-						var scale = 3.0;
-						var viewport = page.getViewport(scale);
-						var width = (viewport.viewBox[2] - viewport.viewBox[0]) * scale;
-						var height = (viewport.viewBox[3] - viewport.viewBox[1]) * scale;
+						var scale = 5.0;
+						var pdfViewport = page.getViewport(scale);
+						console.log(pdfViewport);
 
 						var offCanvas = document.createElement("canvas");
-						offCanvas.width = width;
-						offCanvas.height = height;
+						offCanvas.width = pdfViewport.width;
+						offCanvas.height = pdfViewport.height;
 						var offContext = offCanvas.getContext("2d");
 
 						page.render(
 						{
 							canvasContext: offContext,
-							viewport: viewport,
+							viewport: pdfViewport,
 							intent: "display",
 							renderInteractiveForms: false,
 							enableWebGL: false,
@@ -113,19 +108,21 @@
 						}).promise.then(function()
 						{				
 							var pdfObject = new Escher.Box();
-							pdfObject.box.min.set(viewport.viewBox[0], viewport.viewBox[1]);
-							pdfObject.box.max.set(viewport.viewBox[2], viewport.viewBox[3]);
+							pdfObject.box.min.set(pdfViewport.offsetX, pdfViewport.offsetY);
+							pdfObject.box.max.set(pdfViewport.width + pdfViewport.offsetX, pdfViewport.height + pdfViewport.offsetY);
 							pdfObject.draggable = true;
+							pdfObject.scale.set(1 / scale, 1 / scale);
 							pdfObject.position.y = positionY;
 							pdfObject.draw = function(context, viewport, canvas)
 							{
-								context.drawImage(offCanvas, 0, 0, width, height, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
+								context.drawImage(offCanvas, 0, 0, pdfViewport.width, pdfViewport.height, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
 							};
 							group.add(pdfObject);
 
 							Escher.Helpers.boxResizeTool(pdfObject);
 
-							positionY += (viewport.viewBox[3] - viewport.viewBox[1]);
+							// Move bellow other pages
+							positionY += pdfViewport.height / scale;
 						});
 					});
 				}
