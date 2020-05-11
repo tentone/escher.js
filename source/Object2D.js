@@ -3,11 +3,11 @@ import {Matrix} from "./math/Matrix.js";
 import {UUID} from "./math/UUID.js";
 
 /**
- * Base object class, implements all the object positioning and scalling features.
+ * Base object class, implements all the object positioning and scaling features.
  *
  * Stores all the base properties shared between all objects as the position, transformation properties, children etc.
  *
- * Object2D should be used as a group to store all the other objects drawn.
+ * Object2D object can be used as a group to the other objects drawn.
  *
  * @class
  */
@@ -263,11 +263,9 @@ Object2D.prototype.updateMatrix = function(context)
 };
 
 /**
- * Apply the transform to the rendering context.
+ * Apply the transform to the rendering context, it is assumed that the viewport transform is pre-applied to the context.
  *
- * It is assumed that the viewport transform is pre-applied to the context.
- *
- * Can also be used for pre rendering logic.
+ * This is called before style() and draw(). It can also be used for some pre-rendering logic.
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport applied to the canvas.
@@ -278,12 +276,25 @@ Object2D.prototype.transform = function(context, viewport)
 };
 
 /**
- * Draw the object into the canvas.
+ * Style is called right before draw() it should not draw any content into the canvas, all context styling should be applied here (colors, fonts, etc).
  *
- * Has to be implemented by underlying classes.
+ * The draw() and style() methods can be  useful for objects that share the same styling attributes but are drawing differently.
+ *
+ * Should be implemented by underlying classes.
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
- * @param {Viewport} viewport Viewport applied to the canvas.
+ * @param {Viewport} viewport Viewport used to view the canvas content.
+ * @param {DOM} canvas DOM canvas element where the content is being drawn.
+ */
+Object2D.prototype.style = function(context, viewport, canvas){};
+
+/**
+ * Draw the object into the canvas, this is called transform() and style(), should be where the content is actually drawn into the canvas.
+ *
+ * Should be implemented by underlying classes.
+ *
+ * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
+ * @param {Viewport} viewport Viewport used to view the canvas content.
  * @param {DOM} canvas DOM canvas element where the content is being drawn.
  */
 Object2D.prototype.draw = function(context, viewport, canvas){};

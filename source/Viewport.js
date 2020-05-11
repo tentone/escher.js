@@ -3,7 +3,9 @@ import {Matrix} from "./math/Matrix.js";
 import {UUID} from "./math/UUID.js";
 
 /**
- * Used to indicate how the user views the content inside of the canvas.
+ * Viewport defines the user view into the content being rendered, similar to a camera it defines the size of the content, rotation and position of the content.
+ *
+ * The viewport can be moved, rotated and scaled to navigate the virtual canvas.
  *
  * @class
  * @param {Element} canvas Canvas DOM element where the viewport is being rendered.
@@ -51,9 +53,9 @@ function Viewport(canvas)
 	this.matrixNeedsUpdate = true;
 
 	/**
-	 * Flag to indicate if the viewport should move when scalling.
+	 * Flag to indicate if the viewport should move when scaling.
 	 *
-	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
+	 * For some application its easier to focus the target if the viewport moves to the pointer location while scaling.
 	 */
 	this.moveOnScale = false;
 

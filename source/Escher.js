@@ -21,7 +21,14 @@ export {Image} from "./objects/Image.js";
 export {DOM} from "./objects/DOM.js";
 export {Pattern} from "./objects/Pattern.js";
 export {Graph} from "./objects/Graph.js";
+
 export {BezierCurve} from "./objects/BezierCurve.js";
+export {QuadraticCurve} from "./objects/QuadraticCurve.js";
+
+export {Node} from "./objects/node/Node.js";
+export {NodeConnector} from "./objects/node/NodeConnector.js";
+export {NodeInput} from "./objects/node/NodeInput.js";
+export {NodeOutput} from "./objects/node/NodeOutput.js";
 
 export {ViewportControls} from "./controls/ViewportControls.js";
 

@@ -7,6 +7,7 @@ import {Line} from "./Line.js";
  * Bezier curve object draw as bezier curve between two points.
  *
  * @class
+ * @extends {Object2D}
  */
 function BezierCurve()
 {
