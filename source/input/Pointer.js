@@ -1,17 +1,15 @@
-"use strict";
-
 import {EventManager} from "../EventManager.js";
 import {Vector2} from "../math/Vector2.js";
 import {Key} from "./Key.js";
 
 /**
- * Pointer object is used to colled input from the user, works for booth mouse or touch screens.
+ * Pointer object is used to called input from the user, works for booth mouse or touch screens.
  *
- * It is responsible for syncronizing user input with the render of the graphics.
+ * It is responsible for synchronizing user input with the render of the graphics.
  * 
  * @class
- * @param {DOM} domElement DOM element to craete the pointer events.
- * @param {DOM} canvas Canvas DOM element where the content is being drawn.
+ * @param {Element} domElement DOM element to create the pointer events.
+ * @param {Element} canvas Canvas DOM element where the content is being drawn.
  */
 function Pointer(domElement, canvas)
 {

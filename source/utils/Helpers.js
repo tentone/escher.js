@@ -1,5 +1,3 @@
-"use strict";
-
 import {Circle} from "../objects/Circle.js";
 import {Object2D} from "../Object2D.js";
 

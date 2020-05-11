@@ -1,7 +1,4 @@
-"use strict";
-
-
-/** 
+/**
  * Class representing a 2D vector. A 2D vector is an ordered pair of numbers (labeled x and y), which can be used to represent points in space, directions, etc.
  *
  * @class
@@ -148,7 +145,7 @@ Vector2.prototype.multiply = function(v)
 /**
  * Multiply a scalar value by booth vector components.
  *
- * @param {number} s
+ * @param {number} scalar
  */
 Vector2.prototype.multiplyScalar = function(scalar)
 {

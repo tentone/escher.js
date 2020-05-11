@@ -4,13 +4,13 @@ import {Vector2} from "../math/Vector2.js";
 /**
  * A DOM object transformed using CSS3D to ver included in the graph.
  *
- * DOM objects always stay on top of everything else, mouse events are not supported for these.
+ * DOM objects always stay on top of everything else, mouse events are not supported for these objects.
  *
- * Use the normal DOM events for interaction.
+ * Use the DOM events for interaction with these types of objects.
  *
  * @class
- * @param parentDOM Parent DOM element that contains the drawing canvas.
- * @param type Type of the DOM element (e.g. "div", "p", ...)
+ * @param {Element} parentDOM Parent DOM element that contains the drawing canvas.
+ * @param {string} type Type of the DOM element (e.g. "div", "p", ...)
  * @extends {Object2D}
  */
 function DOM(parentDOM, type)

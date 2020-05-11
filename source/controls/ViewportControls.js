@@ -1,5 +1,3 @@
-"use strict";
-
 import {Viewport} from "../Viewport.js";
 import {Pointer} from "../input/Pointer.js";
 import {Vector2} from "../math/Vector2.js";

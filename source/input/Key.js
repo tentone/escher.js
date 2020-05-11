@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * Key is used by Keyboard, Pointer, etc, to represent a key state.
  *
@@ -22,7 +20,6 @@ function Key()
 	 */
 	this.justReleased = false;
 }
-
 
 Key.DOWN = -1;
 Key.UP = 1;

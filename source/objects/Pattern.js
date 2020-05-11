@@ -1,16 +1,14 @@
 import {Object2D} from "../Object2D.js";
-import {Vector2} from "../math/Vector2.js";
 import {Box2} from "../math/Box2.js";
-import {Helpers} from "../utils/Helpers.js";
-import {Circle} from "./Circle.js";
 
 /**
  * Pattern object draw a image repeated as a pattern.
  *
- * Its similar to the Image class but the image can be repeat infinitly.
+ * Its similar to the Image class but the image can be repeat infinitely.
  *
  * @class
  * @extends {Object2D}
+ * @param {string} src Source image URL.
  */
 function Pattern(src)
 {

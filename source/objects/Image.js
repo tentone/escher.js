@@ -1,12 +1,11 @@
 import {Object2D} from "../Object2D.js";
 import {Box2} from "../math/Box2.js";
-import {Vector2} from "../math/Vector2.js";
 
 /**
  * Image object is used to draw an image from URL.
  *
  * @class
- * @param {string} [src] Source URL of the image.
+ * @param {string} src Source URL of the image.
  * @extends {Object2D}
  */
 function Image(src)

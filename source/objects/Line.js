@@ -2,7 +2,9 @@ import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 
 /**
- * Line object draw a line from one point to another.
+ * Line object draw a line from one point to another without any kind of interpolation.
+ *
+ * For drawing lines with interpolation check {BezierCurve}
  *
  * @class
  * @extends {Object2D}

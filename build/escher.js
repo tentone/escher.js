@@ -5,7 +5,7 @@
 }(this, (function (exports) { 'use strict';
 
 	/**
-	 * EventManager is used to manager DOM events creationg and destruction in a single function call.
+	 * EventManager is used to manager DOM events creating and destruction in a single function call.
 	 *
 	 * It is used by objects to make it easier to add and remove events from global DOM objects.
 	 *
@@ -70,7 +70,7 @@
 		}
 	};
 
-	/** 
+	/**
 	 * Class representing a 2D vector. A 2D vector is an ordered pair of numbers (labeled x and y), which can be used to represent points in space, directions, etc.
 	 *
 	 * @class
@@ -217,7 +217,7 @@
 	/**
 	 * Multiply a scalar value by booth vector components.
 	 *
-	 * @param {number} s
+	 * @param {number} scalar
 	 */
 	Vector2.prototype.multiplyScalar = function(scalar)
 	{
@@ -1216,7 +1216,6 @@
 		this.justReleased = false;
 	}
 
-
 	Key.DOWN = -1;
 	Key.UP = 1;
 	Key.RESET = 0;
@@ -1275,13 +1274,13 @@
 	};
 
 	/**
-	 * Pointer object is used to colled input from the user, works for booth mouse or touch screens.
+	 * Pointer object is used to called input from the user, works for booth mouse or touch screens.
 	 *
-	 * It is responsible for syncronizing user input with the render of the graphics.
+	 * It is responsible for synchronizing user input with the render of the graphics.
 	 * 
 	 * @class
-	 * @param {DOM} domElement DOM element to craete the pointer events.
-	 * @param {DOM} canvas Canvas DOM element where the content is being drawn.
+	 * @param {Element} domElement DOM element to create the pointer events.
+	 * @param {Element} canvas Canvas DOM element where the content is being drawn.
 	 */
 	function Pointer(domElement, canvas)
 	{
@@ -1676,7 +1675,7 @@
 	 * Used to indicate how the user views the content inside of the canvas.
 	 *
 	 * @class
-	 * @param {DOM} canvas Canvas DOM element where the viewport is being rendered.
+	 * @param {Element} canvas Canvas DOM element where the viewport is being rendered.
 	 */
 	function Viewport(canvas)
 	{
@@ -1769,7 +1768,7 @@
 	 * The position of the object is used a central point, this method does not consider "box" attributes or other strucures in the object.
 	 *
 	 * @param {Object2D} object Object to be centered on the viewport.
-	 * @param {DOM} canvas Canvas element where the image is drawn.
+	 * @param {Element} canvas Canvas element where the image is drawn.
 	 */
 	Viewport.prototype.centerObject = function(object, canvas)
 	{
@@ -1904,12 +1903,10 @@
 	};
 
 	/**
-	 * The renderer is resposible for drawing the structure into the canvas element.
-	 *
-	 * Its also resposible for managing the canvas state.
+	 * The renderer is responsible for drawing the objects structure into the canvas element and manage its rendering state.
 	 *
 	 * @class
-	 * @param {DOM} canvas Canvas to render the content.
+	 * @param {Element} canvas Canvas to render the content.
 	 * @param {Object} options Renderer canvas options.
 	 */
 	function Renderer(canvas, options)
@@ -1950,14 +1947,13 @@
 	 *
 	 * The render loop cannot be destroyed, and it automatically creates a viewport controls object.
 	 *
-	 * @param {Object2D} group Group to be rendererd.
+	 * @param {Object2D} group Group to be rendered.
 	 * @param {Viewport} viewport Viewport into the objects.
 	 * @param {Function} onUpdate Function called before rendering the frame.
 	 */
 	Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 	{
 		var self = this;
-		
 		var controls = new ViewportControls(viewport);
 
 		function loop()
@@ -2469,7 +2465,7 @@
 	 *
 	 * Masks are treated as objects their shape is used to filter other objects shape.
 	 *
-	 * Multiple mask objects can be active simulatenously, they have to be attached to the object mask list to filter the render region.
+	 * Multiple mask objects can be active simultaneously, they have to be attached to the object mask list to filter the render region.
 	 *
 	 * A mask objects is draw using the context.clip() method.
 	 *
@@ -2488,7 +2484,7 @@
 	/**
 	 * Clip the canvas context, to ensure that next objects being drawn are cliped to the path stored here.
 	 *
-	 * @param {CanvasContext} context Canvas 2d drawing context.
+	 * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
 	 * @param {Viewport} viewport Viewport applied to the canvas.
 	 * @param {DOM} canvas DOM canvas element where the content is being drawn.
 	 */
@@ -2497,7 +2493,7 @@
 	/**
 	 * Box mask can be used to clear a box mask region.
 	 *
-	 * It will limit the drwaing region to this box.
+	 * It will limit the drawing region to this box.
 	 *
 	 * @class
 	 * @extends {Mask}
@@ -2544,187 +2540,6 @@
 		}
 
 		context.clip();
-	};
-
-	/**
-	 * Circle object draw a circular object, into the canvas.
-	 *
-	 * Can be used as a base to implement other circular objects, already implements the circle collision for pointer events.
-	 *
-	 * @class
-	 * @extends {Object2D}
-	 */
-	function Circle()
-	{
-		Object2D.call(this);
-
-		/**
-		 * Radius of the circle.
-		 */
-		this.radius = 10.0;
-
-		/**
-		 * Style of the object border line.
-		 *
-		 * If set null it is ignored.
-		 */
-		this.strokeStyle = "#000000";
-
-		/**
-		 * Line width, only used if a valid strokeStyle is defined.
-		 */
-		this.lineWidth = 1;
-
-		/**
-		 * Background color of the circle.
-		 *
-		 * If set null it is ignored.
-		 */
-		this.fillStyle = "#FFFFFF";
-	}
-
-	Circle.prototype = Object.create(Object2D.prototype);
-
-	Circle.prototype.isInside = function(point)
-	{
-		return point.length() <= this.radius;
-	};
-
-	Circle.prototype.onPointerEnter = function(pointer, viewport)
-	{
-		this.fillStyle = "#CCCCCC";
-	};
-
-	Circle.prototype.onPointerLeave = function(pointer, viewport)
-	{
-		this.fillStyle = "#FFFFFF";
-	};
-
-	Circle.prototype.draw = function(context, viewport, canvas)
-	{
-		context.beginPath();
-		context.arc(0, 0, this.radius, 0, 2 * Math.PI);
-		
-		if(this.fillStyle !== null)
-		{	
-			context.fillStyle = this.fillStyle;
-			context.fill();
-		}
-
-		if(this.strokeStyle !== null)
-		{
-			context.lineWidth = this.lineWidth;
-			context.strokeStyle = this.strokeStyle;
-			context.stroke();
-		}
-	};
-
-	/**
-	 * Class contains helper functions to create editing object tools.
-	 *
-	 * @class
-	 */
-	function Helpers(){}
-
-	/**
-	 * Create a rotation tool helper.
-	 *
-	 * When the object is dragged is changes the parent object rotation.
-	 *
-	 * @static
-	 */
-	Helpers.rotateTool = function(object)
-	{
-		var tool = new Circle();
-		tool.radius = 4;
-		tool.layer = object.layer + 1;
-		tool.onPointerDrag = function(pointer, viewport, delta)
-		{
-			object.rotation += delta.x * 1e-3;
-		};
-		object.add(tool);
-	};
-
-	/**
-	 * Create a box resize helper and attach it to an object to change the size of the object box.
-	 *
-	 * Each helper is positioned on one corner of the box, and the value of the corner is copied to the boxes as they are dragged.
-	 *
-	 * This method required to object to have a box property.
-	 *
-	 * @static
-	 */
-	Helpers.boxResizeTool = function(object)
-	{
-		if(object.box === undefined)
-		{
-			console.warn("escher.js: Helpers.boxResizeTool(), object box property missing.");
-			return;
-		}
-
-		function updateHelpers()
-		{
-			topRight.position.copy(object.box.min);
-			bottomLeft.position.copy(object.box.max);
-			topLeft.position.set(object.box.max.x, object.box.min.y);
-			bottomRight.position.set(object.box.min.x, object.box.max.y);
-		}
-
-		var topRight = new Circle();
-		topRight.radius = 4;
-		topRight.layer = object.layer + 1;
-		topRight.draggable = true;
-		topRight.onPointerDrag = function(pointer, viewport, delta)
-		{
-			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
-
-			object.box.min.copy(topRight.position);
-			updateHelpers();
-		};
-		object.add(topRight);
-
-		var topLeft = new Circle();
-		topLeft.radius = 4;
-		topLeft.layer = object.layer + 1;
-		topLeft.draggable = true;
-		topLeft.onPointerDrag = function(pointer, viewport, delta)
-		{
-			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
-
-			object.box.max.x = topLeft.position.x;
-			object.box.min.y = topLeft.position.y;
-			updateHelpers();
-		};
-		object.add(topLeft);
-
-		var bottomLeft = new Circle();
-		bottomLeft.radius = 4;
-		bottomLeft.layer = object.layer + 1;
-		bottomLeft.draggable = true;
-		bottomLeft.onPointerDrag = function(pointer, viewport, delta)
-		{
-			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
-
-			object.box.max.copy(bottomLeft.position);
-			updateHelpers();
-		};
-		object.add(bottomLeft);
-
-		var bottomRight = new Circle();
-		bottomRight.radius = 4;
-		bottomRight.layer = object.layer + 1;
-		bottomRight.draggable = true;
-		bottomRight.onPointerDrag = function(pointer, viewport, delta)
-		{
-			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
-
-			object.box.min.x = bottomRight.position.x;
-			object.box.max.y = bottomRight.position.y;
-			updateHelpers();
-		};
-		object.add(bottomRight);
-
-		updateHelpers();
 	};
 
 	/**
@@ -2801,6 +2616,79 @@
 	};
 
 	/**
+	 * Circle object draw a circular object, into the canvas.
+	 *
+	 * Can be used as a base to implement other circular objects, already implements the circle collision for pointer events.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function Circle()
+	{
+		Object2D.call(this);
+
+		/**
+		 * Radius of the circle.
+		 */
+		this.radius = 10.0;
+
+		/**
+		 * Style of the object border line.
+		 *
+		 * If set null it is ignored.
+		 */
+		this.strokeStyle = "#000000";
+
+		/**
+		 * Line width, only used if a valid strokeStyle is defined.
+		 */
+		this.lineWidth = 1;
+
+		/**
+		 * Background color of the circle.
+		 *
+		 * If set null it is ignored.
+		 */
+		this.fillStyle = "#FFFFFF";
+	}
+
+	Circle.prototype = Object.create(Object2D.prototype);
+
+	Circle.prototype.isInside = function(point)
+	{
+		return point.length() <= this.radius;
+	};
+
+	Circle.prototype.onPointerEnter = function(pointer, viewport)
+	{
+		this.fillStyle = "#CCCCCC";
+	};
+
+	Circle.prototype.onPointerLeave = function(pointer, viewport)
+	{
+		this.fillStyle = "#FFFFFF";
+	};
+
+	Circle.prototype.draw = function(context, viewport, canvas)
+	{
+		context.beginPath();
+		context.arc(0, 0, this.radius, 0, 2 * Math.PI);
+		
+		if(this.fillStyle !== null)
+		{	
+			context.fillStyle = this.fillStyle;
+			context.fill();
+		}
+
+		if(this.strokeStyle !== null)
+		{
+			context.lineWidth = this.lineWidth;
+			context.strokeStyle = this.strokeStyle;
+			context.stroke();
+		}
+	};
+
+	/**
 	 * Line object draw a line from one point to another.
 	 *
 	 * @class
@@ -2827,9 +2715,9 @@
 		/**
 		 * Dash line pattern to be used, if empty draws a solid line.
 		 *
-		 * Dash parttern is defined as the size of dashes as pairs of space with no line and with line.
+		 * Dash pattern is defined as the size of dashes as pairs of space with no line and with line.
 		 *
-		 * E.g if the daspattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
+		 * E.g if the dash pattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
 		 */
 		this.dashPattern = [5, 5];
 
@@ -2928,7 +2816,7 @@
 	 * Image object is used to draw an image from URL.
 	 *
 	 * @class
-	 * @param {string} [src] Source URL of the image.
+	 * @param {string} src Source URL of the image.
 	 * @extends {Object2D}
 	 */
 	function Image(src)
@@ -2988,13 +2876,13 @@
 	/**
 	 * A DOM object transformed using CSS3D to ver included in the graph.
 	 *
-	 * DOM objects always stay on top of everything else, mouse events are not supported for these.
+	 * DOM objects always stay on top of everything else, mouse events are not supported for these objects.
 	 *
-	 * Use the normal DOM events for interaction.
+	 * Use the DOM events for interaction with these types of objects.
 	 *
 	 * @class
-	 * @param parentDOM Parent DOM element that contains the drawing canvas.
-	 * @param type Type of the DOM element (e.g. "div", "p", ...)
+	 * @param {Element} parentDOM Parent DOM element that contains the drawing canvas.
+	 * @param {string} type Type of the DOM element (e.g. "div", "p", ...)
 	 * @extends {Object2D}
 	 */
 	function DOM(parentDOM, type)
@@ -3063,10 +2951,11 @@
 	/**
 	 * Pattern object draw a image repeated as a pattern.
 	 *
-	 * Its similar to the Image class but the image can be repeat infinitly.
+	 * Its similar to the Image class but the image can be repeat infinitely.
 	 *
 	 * @class
 	 * @extends {Object2D}
+	 * @param {string} src Source image URL.
 	 */
 	function Pattern(src)
 	{
@@ -3225,7 +3114,7 @@
 	};
 
 	/**
-	 * BezierCurve object draw as bezier curve between two points.
+	 * Bezier curve object draw as bezier curve between two points.
 	 *
 	 * @class
 	 */
@@ -3329,6 +3218,114 @@
 		context.moveTo(this.from.x, this.from.y);
 		context.bezierCurveTo(this.fromCp.x, this.fromCp.y, this.toCp.x, this.toCp.y, this.to.x, this.to.y);
 		context.stroke();
+	};
+
+	/**
+	 * Class contains helper functions to create editing object tools.
+	 *
+	 * @class
+	 */
+	function Helpers(){}
+
+	/**
+	 * Create a rotation tool helper.
+	 *
+	 * When the object is dragged is changes the parent object rotation.
+	 *
+	 * @static
+	 */
+	Helpers.rotateTool = function(object)
+	{
+		var tool = new Circle();
+		tool.radius = 4;
+		tool.layer = object.layer + 1;
+		tool.onPointerDrag = function(pointer, viewport, delta)
+		{
+			object.rotation += delta.x * 1e-3;
+		};
+		object.add(tool);
+	};
+
+	/**
+	 * Create a box resize helper and attach it to an object to change the size of the object box.
+	 *
+	 * Each helper is positioned on one corner of the box, and the value of the corner is copied to the boxes as they are dragged.
+	 *
+	 * This method required to object to have a box property.
+	 *
+	 * @static
+	 */
+	Helpers.boxResizeTool = function(object)
+	{
+		if(object.box === undefined)
+		{
+			console.warn("escher.js: Helpers.boxResizeTool(), object box property missing.");
+			return;
+		}
+
+		function updateHelpers()
+		{
+			topRight.position.copy(object.box.min);
+			bottomLeft.position.copy(object.box.max);
+			topLeft.position.set(object.box.max.x, object.box.min.y);
+			bottomRight.position.set(object.box.min.x, object.box.max.y);
+		}
+
+		var topRight = new Circle();
+		topRight.radius = 4;
+		topRight.layer = object.layer + 1;
+		topRight.draggable = true;
+		topRight.onPointerDrag = function(pointer, viewport, delta)
+		{
+			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+
+			object.box.min.copy(topRight.position);
+			updateHelpers();
+		};
+		object.add(topRight);
+
+		var topLeft = new Circle();
+		topLeft.radius = 4;
+		topLeft.layer = object.layer + 1;
+		topLeft.draggable = true;
+		topLeft.onPointerDrag = function(pointer, viewport, delta)
+		{
+			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+
+			object.box.max.x = topLeft.position.x;
+			object.box.min.y = topLeft.position.y;
+			updateHelpers();
+		};
+		object.add(topLeft);
+
+		var bottomLeft = new Circle();
+		bottomLeft.radius = 4;
+		bottomLeft.layer = object.layer + 1;
+		bottomLeft.draggable = true;
+		bottomLeft.onPointerDrag = function(pointer, viewport, delta)
+		{
+			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+
+			object.box.max.copy(bottomLeft.position);
+			updateHelpers();
+		};
+		object.add(bottomLeft);
+
+		var bottomRight = new Circle();
+		bottomRight.radius = 4;
+		bottomRight.layer = object.layer + 1;
+		bottomRight.draggable = true;
+		bottomRight.onPointerDrag = function(pointer, viewport, delta)
+		{
+			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+
+			object.box.min.x = bottomRight.position.x;
+			object.box.max.y = bottomRight.position.y;
+			updateHelpers();
+		};
+		object.add(bottomRight);
+
+		updateHelpers();
 	};
 
 	exports.BezierCurve = BezierCurve;

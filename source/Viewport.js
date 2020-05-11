@@ -1,15 +1,12 @@
-"use strict";
-
 import {Vector2} from "./math/Vector2.js";
 import {Matrix} from "./math/Matrix.js";
 import {UUID} from "./math/UUID.js";
-import {Pointer} from "./input/Pointer.js";
 
 /**
  * Used to indicate how the user views the content inside of the canvas.
  *
  * @class
- * @param {DOM} canvas Canvas DOM element where the viewport is being rendered.
+ * @param {Element} canvas Canvas DOM element where the viewport is being rendered.
  */
 function Viewport(canvas)
 {
@@ -102,7 +99,7 @@ Viewport.prototype.updateMatrix = function()
  * The position of the object is used a central point, this method does not consider "box" attributes or other strucures in the object.
  *
  * @param {Object2D} object Object to be centered on the viewport.
- * @param {DOM} canvas Canvas element where the image is drawn.
+ * @param {Element} canvas Canvas element where the image is drawn.
  */
 Viewport.prototype.centerObject = function(object, canvas)
 {

@@ -1,5 +1,3 @@
-"use strict";
-
 export {EventManager} from "./EventManager.js";
 export {Object2D} from "./Object2D.js";
 export {Renderer} from "./Renderer.js";

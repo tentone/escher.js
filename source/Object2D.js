@@ -1,5 +1,3 @@
-"use strict";
-
 import {Vector2} from "./math/Vector2.js";
 import {Matrix} from "./math/Matrix.js";
 import {UUID} from "./math/UUID.js";
@@ -245,7 +243,7 @@ Object2D.prototype.isInside = function(point)
 /**
  * Update the transformation matrix of the object.
  *
- * @param {CanvasContext} context
+ * @param {CanvasRenderingContext2D} context
  */
 Object2D.prototype.updateMatrix = function(context)
 {
@@ -271,7 +269,7 @@ Object2D.prototype.updateMatrix = function(context)
  *
  * Can also be used for pre rendering logic.
  *
- * @param {CanvasContext} context Canvas 2d drawing context.
+ * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport applied to the canvas.
  */
 Object2D.prototype.transform = function(context, viewport)
@@ -284,7 +282,7 @@ Object2D.prototype.transform = function(context, viewport)
  *
  * Has to be implemented by underlying classes.
  *
- * @param {CanvasContext} context Canvas 2d drawing context.
+ * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport applied to the canvas.
  * @param {DOM} canvas DOM canvas element where the content is being drawn.
  */

@@ -5,7 +5,7 @@ import {ViewportControls} from "./controls/ViewportControls.js";
  * The renderer is responsible for drawing the objects structure into the canvas element and manage its rendering state.
  *
  * @class
- * @param {DOM} canvas Canvas to render the content.
+ * @param {Element} canvas Canvas to render the content.
  * @param {Object} options Renderer canvas options.
  */
 function Renderer(canvas, options)
@@ -53,7 +53,6 @@ function Renderer(canvas, options)
 Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 {
 	var self = this;
-	
 	var controls = new ViewportControls(viewport);
 
 	function loop()

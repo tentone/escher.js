@@ -1,5 +1,4 @@
 import {Object2D} from "../Object2D.js";
-import {Vector2} from "../math/Vector2.js";
 
 /**
  * Circle object draw a circular object, into the canvas.

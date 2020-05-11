@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * Class to implement UUID generation methods.
  *
