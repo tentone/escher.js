@@ -1,5 +1,3 @@
-"use strict";
-
 import {Object2D} from "../Object2D.js";
 import {Box2} from "../math/Box2.js";
 import {Vector2} from "../math/Vector2.js";

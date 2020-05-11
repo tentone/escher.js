@@ -1,12 +1,8 @@
-"use strict";
-
 import {Pointer} from "./input/Pointer.js";
 import {ViewportControls} from "./controls/ViewportControls.js";
 
 /**
- * The renderer is resposible for drawing the structure into the canvas element.
- *
- * Its also resposible for managing the canvas state.
+ * The renderer is responsible for drawing the objects structure into the canvas element and manage its rendering state.
  *
  * @class
  * @param {DOM} canvas Canvas to render the content.
@@ -50,7 +46,7 @@ function Renderer(canvas, options)
  *
  * The render loop cannot be destroyed, and it automatically creates a viewport controls object.
  *
- * @param {Object2D} group Group to be rendererd.
+ * @param {Object2D} group Group to be rendered.
  * @param {Viewport} viewport Viewport into the objects.
  * @param {Function} onUpdate Function called before rendering the frame.
  */

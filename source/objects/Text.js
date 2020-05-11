@@ -1,5 +1,3 @@
-"use strict";
-
 import {Object2D} from "../Object2D.js";
 
 /**

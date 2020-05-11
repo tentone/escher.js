@@ -1,7 +1,5 @@
-"use strict";
-
 /**
- * EventManager is used to manager DOM events creationg and destruction in a single function call.
+ * EventManager is used to manager DOM events creating and destruction in a single function call.
  *
  * It is used by objects to make it easier to add and remove events from global DOM objects.
  *

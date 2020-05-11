@@ -2,7 +2,7 @@
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
 	(global = global || self, factory(global.Escher = {}));
-}(this, function (exports) { 'use strict';
+}(this, (function (exports) { 'use strict';
 
 	/**
 	 * EventManager is used to manager DOM events creationg and destruction in a single function call.
@@ -3357,4 +3357,4 @@
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));

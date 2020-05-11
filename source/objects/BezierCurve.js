@@ -1,12 +1,10 @@
-"use strict";
-
 import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 import {Circle} from "./Circle.js";
 import {Line} from "./Line.js";
 
 /**
- * BezierCurve object draw as bezier curve between two points.
+ * Bezier curve object draw as bezier curve between two points.
  *
  * @class
  */
