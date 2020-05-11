@@ -799,11 +799,11 @@
 	})();
 
 	/**
-	 * Base object class, implements all the object positioning and scalling features.
+	 * Base object class, implements all the object positioning and scaling features.
 	 *
 	 * Stores all the base properties shared between all objects as the position, transformation properties, children etc.
 	 *
-	 * Object2D should be used as a group to store all the other objects drawn.
+	 * Object2D object can be used as a group to the other objects drawn.
 	 *
 	 * @class
 	 */
@@ -1039,7 +1039,7 @@
 	/**
 	 * Update the transformation matrix of the object.
 	 *
-	 * @param {CanvasContext} context
+	 * @param {CanvasRenderingContext2D} context
 	 */
 	Object2D.prototype.updateMatrix = function(context)
 	{
@@ -1059,13 +1059,11 @@
 	};
 
 	/**
-	 * Apply the transform to the rendering context.
+	 * Apply the transform to the rendering context, it is assumed that the viewport transform is pre-applied to the context.
 	 *
-	 * It is assumed that the viewport transform is pre-applied to the context.
+	 * This is called before style() and draw(). It can also be used for some pre-rendering logic.
 	 *
-	 * Can also be used for pre rendering logic.
-	 *
-	 * @param {CanvasContext} context Canvas 2d drawing context.
+	 * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
 	 * @param {Viewport} viewport Viewport applied to the canvas.
 	 */
 	Object2D.prototype.transform = function(context, viewport)
@@ -1074,12 +1072,25 @@
 	};
 
 	/**
-	 * Draw the object into the canvas.
+	 * Style is called right before draw() it should not draw any content into the canvas, all context styling should be applied here (colors, fonts, etc).
 	 *
-	 * Has to be implemented by underlying classes.
+	 * The draw() and style() methods can be  useful for objects that share the same styling attributes but are drawing differently.
 	 *
-	 * @param {CanvasContext} context Canvas 2d drawing context.
-	 * @param {Viewport} viewport Viewport applied to the canvas.
+	 * Should be implemented by underlying classes.
+	 *
+	 * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
+	 * @param {Viewport} viewport Viewport used to view the canvas content.
+	 * @param {DOM} canvas DOM canvas element where the content is being drawn.
+	 */
+	Object2D.prototype.style = function(context, viewport, canvas){};
+
+	/**
+	 * Draw the object into the canvas, this is called transform() and style(), should be where the content is actually drawn into the canvas.
+	 *
+	 * Should be implemented by underlying classes.
+	 *
+	 * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
+	 * @param {Viewport} viewport Viewport used to view the canvas content.
 	 * @param {DOM} canvas DOM canvas element where the content is being drawn.
 	 */
 	Object2D.prototype.draw = function(context, viewport, canvas){};
@@ -1672,7 +1683,9 @@
 	};
 
 	/**
-	 * Used to indicate how the user views the content inside of the canvas.
+	 * Viewport defines the user view into the content being rendered, similar to a camera it defines the size of the content, rotation and position of the content.
+	 *
+	 * The viewport can be moved, rotated and scaled to navigate the virtual canvas.
 	 *
 	 * @class
 	 * @param {Element} canvas Canvas DOM element where the viewport is being rendered.
@@ -1720,9 +1733,9 @@
 		this.matrixNeedsUpdate = true;
 
 		/**
-		 * Flag to indicate if the viewport should move when scalling.
+		 * Flag to indicate if the viewport should move when scaling.
 		 *
-		 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
+		 * For some application its easier to focus the target if the viewport moves to the pointer location while scaling.
 		 */
 		this.moveOnScale = false;
 
@@ -2182,6 +2195,7 @@
 
 			// Apply the object transform to the canvas context
 			objects[i].transform(this.context, viewport, this.canvas);
+			objects[i].style(this.context, viewport, this.canvas);
 			objects[i].draw(this.context, viewport, this.canvas);
 
 			if(objects[i].restoreContextState)
@@ -2689,7 +2703,9 @@
 	};
 
 	/**
-	 * Line object draw a line from one point to another.
+	 * Line object draw a line from one point to another without any kind of interpolation.
+	 *
+	 * For drawing lines with interpolation check {BezierCurve}
 	 *
 	 * @class
 	 * @extends {Object2D}
@@ -3117,6 +3133,7 @@
 	 * Bezier curve object draw as bezier curve between two points.
 	 *
 	 * @class
+	 * @extends {Object2D}
 	 */
 	function BezierCurve()
 	{
@@ -3171,7 +3188,10 @@
 	/**
 	 * Create a bezier curve helper, to edit the bezier curve anchor points.
 	 *
+	 * Helper objects are added to the parent of the curve object.
+	 *
 	 * @static
+	 * @param {BezierCurve} object Object to create the helper for.
 	 */
 	BezierCurve.curveHelper = function(object)
 	{
@@ -3219,6 +3239,163 @@
 		context.bezierCurveTo(this.fromCp.x, this.fromCp.y, this.toCp.x, this.toCp.y, this.to.x, this.to.y);
 		context.stroke();
 	};
+
+	/**
+	 * Bezier curve object draw as bezier curve between two points.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function QuadraticCurve()
+	{
+		Object2D.call(this);
+
+		/**
+		 * Initial point of the curve.
+		 *
+		 * Can be equal to the position object of another object. (Making it automatically follow that object.)
+		 */
+		this.from = new Vector2();
+
+		/**
+		 * Control point of the quadratic curve used to control the curvature of the line between the from and to point.
+		 */
+		this.controlPoint = new Vector2();
+
+		/**
+		 * Final point of the curve.
+		 *
+		 * Can be equal to the position object of another object. (Making it automatically follow that object.)
+		 */
+		this.to = new Vector2();
+
+		/**
+		 * Dash line pattern to be used, if empty draws a solid line.
+		 *
+		 * Dash pattern is defined as the size of dashes as pairs of space with no line and with line.
+		 *
+		 * E.g if the pattern is [1, 2] we get 1 point with line, 2 without line repeat infinitely.
+		 */
+		this.dashPattern = [5, 5];
+
+		/**
+		 * Style of the object line.
+		 */
+		this.strokeStyle = "#000000";
+
+		/**
+		 * Line width of the line.
+		 */
+		this.lineWidth = 1;
+	}
+
+	QuadraticCurve.prototype = Object.create(Object2D.prototype);
+
+	/**
+	 * Create a quadratic curve helper, to edit the curve control point.
+	 *
+	 * Helper objects are added to the parent of the curve object.
+	 *
+	 * @static
+	 * @param {QuadraticCurve} object Object to create the helper for.
+	 */
+	QuadraticCurve.curveHelper = function(object)
+	{
+		var fromLine = new Line();
+		fromLine.from = object.from;
+		fromLine.to = object.controlPoint;
+		object.parent.add(fromLine);
+
+		var controlPoint = new Circle();
+		controlPoint.radius = 3;
+		controlPoint.layer = object.layer + 1;
+		controlPoint.draggable = true;
+		controlPoint.position = object.controlPoint;
+		controlPoint.onPointerDrag = function(pointer, viewport, delta)
+		{
+			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+			object.controlPoint.copy(controlPoint.position);
+		};
+		object.parent.add(controlPoint);
+
+		var toLine = new Line();
+		toLine.from = object.to;
+		toLine.to = object.controlPoint;
+		object.parent.add(toLine);
+	};
+
+	QuadraticCurve.prototype.draw = function(context, viewport, canvas)
+	{
+		context.lineWidth = this.lineWidth;
+		context.strokeStyle = this.strokeStyle;
+		context.setLineDash(this.dashPattern);
+		
+		context.beginPath();
+		context.moveTo(this.from.x, this.from.y);
+		context.quadraticCurveTo(this.controlPoint.x, this.controlPoint.y, this.to.x, this.to.y);
+		context.stroke();
+	};
+
+	/**
+	 * Node objects can be connected between them to create graphs.
+	 *
+	 * Each node contains inputs, outputs and a set of attributes containing their state. Inputs can be connected to outputs of other nodes, and vice-versa.
+	 *
+	 * This class implements node basic functionality, the logic to connected node and define inputs/outputs of the nodes.
+	 *
+	 * @class Node
+	 */
+	function Node()
+	{
+		Box.call(this);
+
+		this.inputs = [];
+		this.outputs = [];
+	}
+
+	Node.prototype = Object.create(Box.prototype);
+
+	/**
+	 * Node connector is used to connect a output of a node to a input of another node.
+	 *
+	 * Some nodes inputs/outputs might support just one or multiple connections.
+	 *
+	 * @class NodeConnector
+	 */
+	function NodeConnector()
+	{
+		BezierCurve.call(this);
+
+		// TODO <ADD CODE HERE>
+	}
+
+	NodeConnector.prototype = Object.create(BezierCurve.prototype);
+
+	/**
+	 * TODO
+	 *
+	 * @class NodeInput
+	 */
+	function NodeInput()
+	{
+		Circle.call(this);
+
+	}
+
+	NodeInput.prototype = Object.create(Circle.prototype);
+
+	/**
+	 * TODO
+	 *
+	 * @class NodeInput
+	 */
+	function NodeOutput()
+	{
+		Circle.call(this);
+
+	}
+
+	NodeOutput.prototype = Object.create(Circle.prototype);
 
 	/**
 	 * Class contains helper functions to create editing object tools.
@@ -3342,9 +3519,14 @@
 	exports.Line = Line;
 	exports.Mask = Mask;
 	exports.Matrix = Matrix;
+	exports.Node = Node;
+	exports.NodeConnector = NodeConnector;
+	exports.NodeInput = NodeInput;
+	exports.NodeOutput = NodeOutput;
 	exports.Object2D = Object2D;
 	exports.Pattern = Pattern;
 	exports.Pointer = Pointer;
+	exports.QuadraticCurve = QuadraticCurve;
 	exports.Renderer = Renderer;
 	exports.Text = Text;
 	exports.UUID = UUID;

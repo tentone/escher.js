@@ -62,7 +62,10 @@ BezierCurve.prototype = Object.create(Object2D.prototype);
 /**
  * Create a bezier curve helper, to edit the bezier curve anchor points.
  *
+ * Helper objects are added to the parent of the curve object.
+ *
  * @static
+ * @param {BezierCurve} object Object to create the helper for.
  */
 BezierCurve.curveHelper = function(object)
 {

@@ -22,6 +22,8 @@ function QuadraticCurve()
 
 	/**
 	 * Control point of the quadratic curve used to control the curvature of the line between the from and to point.
+	 *
+	 * The curve is interpolated in the direction of the control point it defined the path of the curve.
 	 */
 	this.controlPoint = new Vector2();
 
@@ -57,7 +59,10 @@ QuadraticCurve.prototype = Object.create(Object2D.prototype);
 /**
  * Create a quadratic curve helper, to edit the curve control point.
  *
+ * Helper objects are added to the parent of the curve object.
+ *
  * @static
+ * @param {QuadraticCurve} object Object to create the helper for.
  */
 QuadraticCurve.curveHelper = function(object)
 {
@@ -70,6 +75,7 @@ QuadraticCurve.curveHelper = function(object)
 	controlPoint.radius = 3;
 	controlPoint.layer = object.layer + 1;
 	controlPoint.draggable = true;
+	controlPoint.position = object.controlPoint;
 	controlPoint.onPointerDrag = function(pointer, viewport, delta)
 	{
 		Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);

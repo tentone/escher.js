@@ -281,6 +281,7 @@ Renderer.prototype.update = function(object, viewport)
 
 		// Apply the object transform to the canvas context
 		objects[i].transform(this.context, viewport, this.canvas);
+		objects[i].style(this.context, viewport, this.canvas);
 		objects[i].draw(this.context, viewport, this.canvas);
 
 		if(objects[i].restoreContextState)

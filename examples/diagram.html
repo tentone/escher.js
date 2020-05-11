@@ -250,6 +250,15 @@
 		group.add(line);
 		Escher.BezierCurve.curveHelper(line);
 
+		// Line (connection)
+		var line = new Escher.QuadraticCurve();
+		line.from = boxA.position;
+		line.to.set(-100, -300);
+		line.controlPoint.set(-100, -200);
+		line.layer = -1;
+		group.add(line);
+		Escher.QuadraticCurve.curveHelper(line);
+
 		// Boxes group
 		var boxes = new Escher.Object2D();
 		group.add(boxes);
