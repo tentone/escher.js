@@ -7,57 +7,25 @@ import {Line} from "./Line.js";
  * Bezier curve object draw as bezier curve between two points.
  *
  * @class
- * @extends {Object2D}
+ * @extends {Line}
  */
 function BezierCurve()
 {
-	Object2D.call(this);
-
-	/**
-	 * Initial point of the curve.
-	 *
-	 * Can be equal to the position object of another object. (Making it automatically follow that object.)
-	 */
-	this.from = new Vector2();
+	Line.call(this);
 
 	/**
 	 * Intial position control point, indicates the tangent of the bezier curve on the first point.
 	 */
 	this.fromCp = new Vector2();
 
-	/**
-	 * Final point of the curve.
-	 *
-	 * Can be equal to the position object of another object. (Making it automatically follow that object.)
-	 */
-	this.to = new Vector2();
 
 	/**
 	 * Final position control point, indicates the tangent of the bezier curve on the last point.
 	 */
 	this.toCp = new Vector2();
-
-	/**
-	 * Dash line pattern to be used, if empty draws a solid line.
-	 *
-	 * Dash parttern is defined as the size of dashes as pairs of space with no line and with line.
-	 *
-	 * E.g if the daspattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
-	 */
-	this.dashPattern = [5, 5];
-
-	/**
-	 * Style of the object line.
-	 */
-	this.strokeStyle = "#000000";
-
-	/**
-	 * Line width of the line.
-	 */
-	this.lineWidth = 1;
 }
 
-BezierCurve.prototype = Object.create(Object2D.prototype);
+BezierCurve.prototype = Object.create(Line.prototype);
 
 /**
  * Create a bezier curve helper, to edit the bezier curve anchor points.
@@ -104,10 +72,6 @@ BezierCurve.curveHelper = function(object)
 
 BezierCurve.prototype.draw = function(context, viewport, canvas)
 {
-	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
-	context.setLineDash(this.dashPattern);
-	
 	context.beginPath();
 	context.moveTo(this.from.x, this.from.y);
 	context.bezierCurveTo(this.fromCp.x, this.fromCp.y, this.toCp.x, this.toCp.y, this.to.x, this.to.y);

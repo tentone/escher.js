@@ -36,7 +36,9 @@ function Renderer(canvas, options)
 	this.pointer = new Pointer(window, canvas);
 
 	/**
-	 * Indicates if the canvas should be automatically cleared on each new frame.
+	 * Indicates if the canvas should be automatically cleared before new frame is drawn.
+	 *
+	 * If set to false the user should clear the frame before drawing.
 	 */
 	this.autoClear = true;
 }
@@ -281,8 +283,18 @@ Renderer.prototype.update = function(object, viewport)
 
 		// Apply the object transform to the canvas context
 		objects[i].transform(this.context, viewport, this.canvas);
-		objects[i].style(this.context, viewport, this.canvas);
-		objects[i].draw(this.context, viewport, this.canvas);
+
+		// Style the canvas context
+		if(objects[i].style !== null)
+		{
+			objects[i].style(this.context, viewport, this.canvas);
+		}
+
+		// Draw content into the canvas.
+		if(objects[i].draw !== null)
+		{
+			objects[i].draw(this.context, viewport, this.canvas);
+		}
 
 		if(objects[i].restoreContextState)
 		{

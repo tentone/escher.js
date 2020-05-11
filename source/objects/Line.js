@@ -16,14 +16,14 @@ function Line()
 	/**
 	 * Initial point of the line.
 	 *
-	 * Can be equal to the position object of another object. (Making it automatically follow that object.)
+	 * Can be equal to the position object of another object. Making it automatically follow that object.
 	 */
 	this.from = new Vector2();
 
 	/**
 	 * Final point of the line.
 	 *
-	 * Can be equal to the position object of another object. (Making it automatically follow that object.)
+	 * Can be equal to the position object of another object. Making it automatically follow that object.
 	 */
 	this.to = new Vector2();
 
@@ -49,12 +49,15 @@ function Line()
 
 Line.prototype = Object.create(Object2D.prototype);
 
-Line.prototype.draw = function(context, viewport, canvas)
+Line.prototype.style = function(context, viewport, canvas)
 {
 	context.lineWidth = this.lineWidth;
 	context.strokeStyle = this.strokeStyle;
 	context.setLineDash(this.dashPattern);
-	
+};
+
+Line.prototype.draw = function(context, viewport, canvas)
+{
 	context.beginPath();
 	context.moveTo(this.from.x, this.from.y);
 	context.lineTo(this.to.x, this.to.y);

@@ -14,7 +14,9 @@ function Node()
 	Box.call(this);
 
 	this.inputs = [];
+
 	this.outputs = [];
+
 }
 
 Node.prototype = Object.create(Box.prototype);

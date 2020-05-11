@@ -20,7 +20,7 @@ function EventManager()
 /**
  * Add new event to the manager.
  *
- * @param {DOM} target Event target element.
+ * @param {Element} target Event target element.
  * @param {String} event Event name.
  * @param {Function} callback Callback function.
  */

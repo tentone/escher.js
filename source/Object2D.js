@@ -286,7 +286,7 @@ Object2D.prototype.transform = function(context, viewport)
  * @param {Viewport} viewport Viewport used to view the canvas content.
  * @param {DOM} canvas DOM canvas element where the content is being drawn.
  */
-Object2D.prototype.style = function(context, viewport, canvas){};
+Object2D.prototype.style = null; // function(context, viewport, canvas){};
 
 /**
  * Draw the object into the canvas, this is called transform() and style(), should be where the content is actually drawn into the canvas.
@@ -297,7 +297,7 @@ Object2D.prototype.style = function(context, viewport, canvas){};
  * @param {Viewport} viewport Viewport used to view the canvas content.
  * @param {DOM} canvas DOM canvas element where the content is being drawn.
  */
-Object2D.prototype.draw = function(context, viewport, canvas){};
+Object2D.prototype.draw = null; // function(context, viewport, canvas){};
 
 /**
  * Callback method while the object is being dragged across the screen.
