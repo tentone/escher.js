@@ -1,3 +1,5 @@
+import {MultiLineText} from "./objects/MultiLineText";
+
 export {EventManager} from "./EventManager.js";
 export {Object2D} from "./Object2D.js";
 export {Renderer} from "./Renderer.js";
@@ -21,7 +23,7 @@ export {Image} from "./objects/Image.js";
 export {DOM} from "./objects/DOM.js";
 export {Pattern} from "./objects/Pattern.js";
 export {Graph} from "./objects/Graph.js";
-
+export {MultiLineText} from "./objects/MultiLineText.js";
 export {BezierCurve} from "./objects/BezierCurve.js";
 export {QuadraticCurve} from "./objects/QuadraticCurve.js";
 

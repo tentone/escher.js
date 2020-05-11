@@ -259,6 +259,17 @@
 		group.add(line);
 		Escher.QuadraticCurve.curveHelper(line);
 
+		var multiline = new Escher.MultiLineText();
+		multiline.position.set(-500, -400);
+		multiline.text = "This is a multiline text!\n\nvar line = new Escher.QuadraticCurve();\n" +
+		"\t\tline.from = boxA.position;\n" +
+		"\t\tline.to.set(-100, -300);\n" +
+		"\t\tline.controlPoint.set(-100, -200);\n" +
+		"\t\tline.layer = -1;\n" +
+		"\t\tgroup.add(line);\n" +
+		"\t\tEscher.QuadraticCurve.curveHelper(line);";
+		group.add(multiline);
+
 		// Boxes group
 		var boxes = new Escher.Object2D();
 		group.add(boxes);

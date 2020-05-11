@@ -5,72 +5,6 @@
 }(this, (function (exports) { 'use strict';
 
 	/**
-	 * EventManager is used to manager DOM events creating and destruction in a single function call.
-	 *
-	 * It is used by objects to make it easier to add and remove events from global DOM objects.
-	 *
-	 * @class
-	 */
-	function EventManager()
-	{
-		/**
-		 * Stores all events in the manager, their target and callback.
-		 * 
-		 * Format [target, event, callback, active]
-		 * 
-		 * @type {Array}
-		 */
-		this.events = [];
-	}
-
-	/**
-	 * Add new event to the manager.
-	 *
-	 * @param {DOM} target Event target element.
-	 * @param {String} event Event name.
-	 * @param {Function} callback Callback function.
-	 */
-	EventManager.prototype.add = function(target, event, callback)
-	{
-		this.events.push([target, event, callback, false]);
-	};
-
-	/**
-	 * Destroys this manager and remove all events.
-	 */
-	EventManager.prototype.clear = function()
-	{
-		this.destroy();
-		this.events = [];
-	};
-
-	/**
-	 * Creates all events in this manager.
-	 */
-	EventManager.prototype.create = function()
-	{
-		for(var i = 0; i < this.events.length; i++)
-		{
-			var event = this.events[i];
-			event[0].addEventListener(event[1], event[2]);
-			event[3] = true;
-		}
-	};
-
-	/**
-	 * Removes all events in this manager.
-	 */
-	EventManager.prototype.destroy = function()
-	{
-		for(var i = 0; i < this.events.length; i++)
-		{
-			var event = this.events[i];
-			event[0].removeEventListener(event[1], event[2]);
-			event[3] = false;
-		}
-	};
-
-	/**
 	 * Class representing a 2D vector. A 2D vector is an ordered pair of numbers (labeled x and y), which can be used to represent points in space, directions, etc.
 	 *
 	 * @class
@@ -1082,7 +1016,7 @@
 	 * @param {Viewport} viewport Viewport used to view the canvas content.
 	 * @param {DOM} canvas DOM canvas element where the content is being drawn.
 	 */
-	Object2D.prototype.style = function(context, viewport, canvas){};
+	Object2D.prototype.style = null; // function(context, viewport, canvas){};
 
 	/**
 	 * Draw the object into the canvas, this is called transform() and style(), should be where the content is actually drawn into the canvas.
@@ -1093,7 +1027,7 @@
 	 * @param {Viewport} viewport Viewport used to view the canvas content.
 	 * @param {DOM} canvas DOM canvas element where the content is being drawn.
 	 */
-	Object2D.prototype.draw = function(context, viewport, canvas){};
+	Object2D.prototype.draw = null; // function(context, viewport, canvas){};
 
 	/**
 	 * Callback method while the object is being dragged across the screen.
@@ -1203,6 +1137,239 @@
 	 * @param {Viewport} viewport Viewport where the object is drawn.
 	 */
 	Object2D.prototype.onButtonUp = null;
+
+	/**
+	 * Text element, used to draw text into the canvas.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function Text()
+	{
+		Object2D.call(this);
+
+		/**
+		 * Text value.
+		 */
+		this.text = "";
+
+		/**
+		 * Font of the text.
+		 */
+		this.font = "16px Arial";
+
+		/**
+		 * Style of the object border line.
+		 *
+		 * If set null it is ignored.
+		 */
+		this.strokeStyle = null;
+
+		/**
+		 * Line width, only used if a valid strokeStyle is defined.
+		 */
+		this.lineWidth = 1;
+
+		/**
+		 * Background color of the box.
+		 *
+		 * If set null it is ignored.
+		 */
+		this.fillStyle = "#000000";
+
+		/**
+		 * Text align property.
+		 */
+		this.textAlign = "center";
+	}
+
+	Text.prototype = Object.create(Object2D.prototype);
+
+	Text.prototype.draw = function(context, viewport, canvas)
+	{
+		context.font = this.font;
+		context.textAlign = this.textAlign;
+		context.textBaseline = "middle";
+		
+		if(this.fillStyle !== null)
+		{
+			context.fillStyle = this.fillStyle;
+			context.fillText(this.text, 0, 0);
+		}
+
+		if(this.strokeStyle !== null)
+		{
+			context.strokeStyle = this.strokeStyle;
+			context.strokeText(this.text, 0, 0);
+		}
+	};
+
+	/**
+	 * Multiple line text drawing directly into the canvas.
+	 *
+	 * Has support for basic text indent and alignment.
+	 *
+	 * @class
+	 * @extends {Text}
+	 */
+	function MultiLineText()
+	{
+		Text.call(this);
+
+		/**
+		 * Text baseline defines the vertical position of the text relative to the imaginary line Y position.
+		 *
+		 * @type {string}
+		 */
+		this.textBaseline = "middle";
+
+		/**
+		 * Maximum width of the text content. After text reaches the max width a line break is placed.
+		 *
+		 * Can be set to null to be ignored.
+		 *
+		 * @type {number}
+		 */
+		this.maxWidth = null;
+
+		/**
+		 * Height of each line of text, can be smaller or larger than the actual font size.
+		 *
+		 * Can be set to null to be ignored.
+		 *
+		 * @type {number}
+		 */
+		this.lineHeight = null;
+	}
+
+	MultiLineText.prototype = Object.create(Text.prototype);
+
+	MultiLineText.prototype.draw = function(context, viewport, canvas)
+	{
+		context.font = this.font;
+		context.textAlign = this.textAlign;
+		context.textBaseline = this.textBaseline;
+
+		var lineHeight = this.lineHeight || Number.parseFloat(this.font);
+		var lines = this.text.split("\n");
+		var offsetY = 0;
+
+		// Iterate trough all lines (breakpoints)
+		for(var i = 0; i < lines.length; i++)
+		{
+			var line = lines[i];
+			var size = context.measureText(line);
+			var sublines = [];
+
+			// Split into multiple sub-lines
+			if(this.maxWidth !== null && size.width > this.maxWidth)
+			{
+				while(line.length > 0)
+				{
+					var subline = "";
+					var subsize = context.measureText(subline + line[0]);
+
+					while(subsize.width < this.maxWidth && line.length > 0)
+					{
+						subline += line[0];
+						line = line.substr(1);
+						subsize = context.measureText(subline + line[0]);
+					}
+
+					sublines.push(subline);
+				}
+
+			}
+			// Fits into a single line
+			else
+			{
+				sublines = [line];
+			}
+
+			for(var j = 0; j < sublines.length; j++)
+			{
+				if(this.fillStyle !== null)
+				{
+					context.fillStyle = this.fillStyle;
+					context.fillText(sublines[j], this.position.x, this.position.y + offsetY);
+				}
+
+				if(this.strokeStyle !== null)
+				{
+					context.strokeStyle = this.strokeStyle;
+					context.strokeText(sublines[j], this.position.x, this.position.y + offsetY);
+				}
+
+				offsetY += lineHeight;
+			}
+		}
+	};
+
+	/**
+	 * EventManager is used to manager DOM events creating and destruction in a single function call.
+	 *
+	 * It is used by objects to make it easier to add and remove events from global DOM objects.
+	 *
+	 * @class
+	 */
+	function EventManager()
+	{
+		/**
+		 * Stores all events in the manager, their target and callback.
+		 * 
+		 * Format [target, event, callback, active]
+		 * 
+		 * @type {Array}
+		 */
+		this.events = [];
+	}
+
+	/**
+	 * Add new event to the manager.
+	 *
+	 * @param {Element} target Event target element.
+	 * @param {String} event Event name.
+	 * @param {Function} callback Callback function.
+	 */
+	EventManager.prototype.add = function(target, event, callback)
+	{
+		this.events.push([target, event, callback, false]);
+	};
+
+	/**
+	 * Destroys this manager and remove all events.
+	 */
+	EventManager.prototype.clear = function()
+	{
+		this.destroy();
+		this.events = [];
+	};
+
+	/**
+	 * Creates all events in this manager.
+	 */
+	EventManager.prototype.create = function()
+	{
+		for(var i = 0; i < this.events.length; i++)
+		{
+			var event = this.events[i];
+			event[0].addEventListener(event[1], event[2]);
+			event[3] = true;
+		}
+	};
+
+	/**
+	 * Removes all events in this manager.
+	 */
+	EventManager.prototype.destroy = function()
+	{
+		for(var i = 0; i < this.events.length; i++)
+		{
+			var event = this.events[i];
+			event[0].removeEventListener(event[1], event[2]);
+			event[3] = false;
+		}
+	};
 
 	/**
 	 * Key is used by Keyboard, Pointer, etc, to represent a key state.
@@ -1950,7 +2117,9 @@
 		this.pointer = new Pointer(window, canvas);
 
 		/**
-		 * Indicates if the canvas should be automatically cleared on each new frame.
+		 * Indicates if the canvas should be automatically cleared before new frame is drawn.
+		 *
+		 * If set to false the user should clear the frame before drawing.
 		 */
 		this.autoClear = true;
 	}
@@ -2195,8 +2364,18 @@
 
 			// Apply the object transform to the canvas context
 			objects[i].transform(this.context, viewport, this.canvas);
-			objects[i].style(this.context, viewport, this.canvas);
-			objects[i].draw(this.context, viewport, this.canvas);
+
+			// Style the canvas context
+			if(objects[i].style !== null)
+			{
+				objects[i].style(this.context, viewport, this.canvas);
+			}
+
+			// Draw content into the canvas.
+			if(objects[i].draw !== null)
+			{
+				objects[i].draw(this.context, viewport, this.canvas);
+			}
 
 			if(objects[i].restoreContextState)
 			{
@@ -2717,14 +2896,14 @@
 		/**
 		 * Initial point of the line.
 		 *
-		 * Can be equal to the position object of another object. (Making it automatically follow that object.)
+		 * Can be equal to the position object of another object. Making it automatically follow that object.
 		 */
 		this.from = new Vector2();
 
 		/**
 		 * Final point of the line.
 		 *
-		 * Can be equal to the position object of another object. (Making it automatically follow that object.)
+		 * Can be equal to the position object of another object. Making it automatically follow that object.
 		 */
 		this.to = new Vector2();
 
@@ -2750,82 +2929,19 @@
 
 	Line.prototype = Object.create(Object2D.prototype);
 
-	Line.prototype.draw = function(context, viewport, canvas)
+	Line.prototype.style = function(context, viewport, canvas)
 	{
 		context.lineWidth = this.lineWidth;
 		context.strokeStyle = this.strokeStyle;
 		context.setLineDash(this.dashPattern);
-		
+	};
+
+	Line.prototype.draw = function(context, viewport, canvas)
+	{
 		context.beginPath();
 		context.moveTo(this.from.x, this.from.y);
 		context.lineTo(this.to.x, this.to.y);
 		context.stroke();
-	};
-
-	/**
-	 * Text element, used to draw text into the canvas.
-	 *
-	 * @class
-	 * @extends {Object2D}
-	 */
-	function Text()
-	{
-		Object2D.call(this);
-
-		/**
-		 * Text value.
-		 */
-		this.text = "";
-
-		/**
-		 * Font of the text.
-		 */
-		this.font = "16px Arial";
-
-		/**
-		 * Style of the object border line.
-		 *
-		 * If set null it is ignored.
-		 */
-		this.strokeStyle = null;
-
-		/**
-		 * Line width, only used if a valid strokeStyle is defined.
-		 */
-		this.lineWidth = 1;
-
-		/**
-		 * Background color of the box.
-		 *
-		 * If set null it is ignored.
-		 */
-		this.fillStyle = "#000000";
-
-		/**
-		 * Text align property.
-		 */
-		this.textAlign = "center";
-	}
-
-	Text.prototype = Object.create(Object2D.prototype);
-
-	Text.prototype.draw = function(context, viewport, canvas)
-	{
-		context.font = this.font;
-		context.textAlign = this.textAlign;
-		context.textBaseline = "middle";
-		
-		if(this.fillStyle !== null)
-		{
-			context.fillStyle = this.fillStyle;
-			context.fillText(this.text, 0, 0);
-		}
-
-		if(this.strokeStyle !== null)
-		{
-			context.strokeStyle = this.strokeStyle;
-			context.strokeText(this.text, 0, 0);
-		}
 	};
 
 	/**
@@ -3133,57 +3249,25 @@
 	 * Bezier curve object draw as bezier curve between two points.
 	 *
 	 * @class
-	 * @extends {Object2D}
+	 * @extends {Line}
 	 */
 	function BezierCurve()
 	{
-		Object2D.call(this);
-
-		/**
-		 * Initial point of the curve.
-		 *
-		 * Can be equal to the position object of another object. (Making it automatically follow that object.)
-		 */
-		this.from = new Vector2();
+		Line.call(this);
 
 		/**
 		 * Intial position control point, indicates the tangent of the bezier curve on the first point.
 		 */
 		this.fromCp = new Vector2();
 
-		/**
-		 * Final point of the curve.
-		 *
-		 * Can be equal to the position object of another object. (Making it automatically follow that object.)
-		 */
-		this.to = new Vector2();
 
 		/**
 		 * Final position control point, indicates the tangent of the bezier curve on the last point.
 		 */
 		this.toCp = new Vector2();
-
-		/**
-		 * Dash line pattern to be used, if empty draws a solid line.
-		 *
-		 * Dash parttern is defined as the size of dashes as pairs of space with no line and with line.
-		 *
-		 * E.g if the daspattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
-		 */
-		this.dashPattern = [5, 5];
-
-		/**
-		 * Style of the object line.
-		 */
-		this.strokeStyle = "#000000";
-
-		/**
-		 * Line width of the line.
-		 */
-		this.lineWidth = 1;
 	}
 
-	BezierCurve.prototype = Object.create(Object2D.prototype);
+	BezierCurve.prototype = Object.create(Line.prototype);
 
 	/**
 	 * Create a bezier curve helper, to edit the bezier curve anchor points.
@@ -3230,10 +3314,6 @@
 
 	BezierCurve.prototype.draw = function(context, viewport, canvas)
 	{
-		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
-		context.setLineDash(this.dashPattern);
-		
 		context.beginPath();
 		context.moveTo(this.from.x, this.from.y);
 		context.bezierCurveTo(this.fromCp.x, this.fromCp.y, this.toCp.x, this.toCp.y, this.to.x, this.to.y);
@@ -3248,48 +3328,17 @@
 	 */
 	function QuadraticCurve()
 	{
-		Object2D.call(this);
-
-		/**
-		 * Initial point of the curve.
-		 *
-		 * Can be equal to the position object of another object. (Making it automatically follow that object.)
-		 */
-		this.from = new Vector2();
+		Line.call(this);
 
 		/**
 		 * Control point of the quadratic curve used to control the curvature of the line between the from and to point.
+		 *
+		 * The curve is interpolated in the direction of the control point it defined the path of the curve.
 		 */
 		this.controlPoint = new Vector2();
-
-		/**
-		 * Final point of the curve.
-		 *
-		 * Can be equal to the position object of another object. (Making it automatically follow that object.)
-		 */
-		this.to = new Vector2();
-
-		/**
-		 * Dash line pattern to be used, if empty draws a solid line.
-		 *
-		 * Dash pattern is defined as the size of dashes as pairs of space with no line and with line.
-		 *
-		 * E.g if the pattern is [1, 2] we get 1 point with line, 2 without line repeat infinitely.
-		 */
-		this.dashPattern = [5, 5];
-
-		/**
-		 * Style of the object line.
-		 */
-		this.strokeStyle = "#000000";
-
-		/**
-		 * Line width of the line.
-		 */
-		this.lineWidth = 1;
 	}
 
-	QuadraticCurve.prototype = Object.create(Object2D.prototype);
+	QuadraticCurve.prototype = Object.create(Line.prototype);
 
 	/**
 	 * Create a quadratic curve helper, to edit the curve control point.
@@ -3326,10 +3375,6 @@
 
 	QuadraticCurve.prototype.draw = function(context, viewport, canvas)
 	{
-		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
-		context.setLineDash(this.dashPattern);
-		
 		context.beginPath();
 		context.moveTo(this.from.x, this.from.y);
 		context.quadraticCurveTo(this.controlPoint.x, this.controlPoint.y, this.to.x, this.to.y);
@@ -3350,7 +3395,9 @@
 		Box.call(this);
 
 		this.inputs = [];
+
 		this.outputs = [];
+
 	}
 
 	Node.prototype = Object.create(Box.prototype);
@@ -3519,6 +3566,7 @@
 	exports.Line = Line;
 	exports.Mask = Mask;
 	exports.Matrix = Matrix;
+	exports.MultiLineText = MultiLineText;
 	exports.Node = Node;
 	exports.NodeConnector = NodeConnector;
 	exports.NodeInput = NodeInput;

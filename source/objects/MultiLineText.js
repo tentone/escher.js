@@ -1,4 +1,4 @@
-import {Text} from "../Text.js";
+import {Text} from "./Text.js";
 
 /**
  * Multiple line text drawing directly into the canvas.
@@ -22,9 +22,11 @@ function MultiLineText()
 	/**
 	 * Maximum width of the text content. After text reaches the max width a line break is placed.
 	 *
+	 * Can be set to null to be ignored.
+	 *
 	 * @type {number}
 	 */
-	this.maxWidth = 100;
+	this.maxWidth = null;
 
 	/**
 	 * Height of each line of text, can be smaller or larger than the actual font size.
@@ -33,7 +35,7 @@ function MultiLineText()
 	 *
 	 * @type {number}
 	 */
-	this.lineHeight = 100;
+	this.lineHeight = null;
 }
 
 MultiLineText.prototype = Object.create(Text.prototype);
@@ -43,10 +45,9 @@ MultiLineText.prototype.draw = function(context, viewport, canvas)
 	context.font = this.font;
 	context.textAlign = this.textAlign;
 	context.textBaseline = this.textBaseline;
-	context.font = font;
 
-	var lineHeight = this.lineHeight || Number.parseFloat(font);
-	var lines = text.split("\n");
+	var lineHeight = this.lineHeight || Number.parseFloat(this.font);
+	var lines = this.text.split("\n");
 	var offsetY = 0;
 
 	// Iterate trough all lines (breakpoints)
@@ -57,7 +58,7 @@ MultiLineText.prototype.draw = function(context, viewport, canvas)
 		var sublines = [];
 
 		// Split into multiple sub-lines
-		if(size.width > this.maxWidth)
+		if(this.maxWidth !== null && size.width > this.maxWidth)
 		{
 			while(line.length > 0)
 			{
@@ -86,13 +87,13 @@ MultiLineText.prototype.draw = function(context, viewport, canvas)
 			if(this.fillStyle !== null)
 			{
 				context.fillStyle = this.fillStyle;
-				context.fillText(sublines[j], x, y + offsetY);
+				context.fillText(sublines[j], this.position.x, this.position.y + offsetY);
 			}
 
 			if(this.strokeStyle !== null)
 			{
 				context.strokeStyle = this.strokeStyle;
-				context.strokeText(sublines[j], x, y + offsetY);
+				context.strokeText(sublines[j], this.position.x, this.position.y + offsetY);
 			}
 
 			offsetY += lineHeight;
