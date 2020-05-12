@@ -6,16 +6,14 @@
 function UUID(){}
 
 /**
- * Generate new random UUID v4 as string.
- *
- * http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
+ * Generates a new random UUID v4 as string.
  *
  * @static
+ * @return {string} UUID generated as string.
  */
 UUID.generate = (function ()
 {
 	var lut = [];
-
 	for(var i = 0; i < 256; i++)
 	{
 		lut[i] = (i < 16 ? "0" : "") + (i).toString(16);

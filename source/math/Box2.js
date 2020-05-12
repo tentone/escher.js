@@ -181,7 +181,7 @@ Box2.prototype.expandByScalar = function(scalar)
  */
 Box2.prototype.containsPoint = function(point)
 {
-	return point.x < this.min.x || point.x > this.max.x || point.y < this.min.y || point.y > this.max.y ? false : true;
+	return !(point.x < this.min.x || point.x > this.max.x || point.y < this.min.y || point.y > this.max.y);
 };
 
 /**
@@ -205,7 +205,7 @@ Box2.prototype.containsBox = function(box)
  */
 Box2.prototype.intersectsBox = function(box)
 {
-	return box.max.x < this.min.x || box.min.x > this.max.x || box.max.y < this.min.y || box.min.y > this.max.y ? false : true;
+	return !(box.max.x < this.min.x || box.min.x > this.max.x || box.max.y < this.min.y || box.min.y > this.max.y);
 };
 
 /**

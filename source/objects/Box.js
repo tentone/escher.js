@@ -17,7 +17,7 @@ function Box()
 	/**
 	 * Box object containing the size of the object.
 	 */
-	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
+	this.box = new Box2(new Vector2(-50, -50), new Vector2(50, 50));
 
 	/**
 	 * Style of the object border line.

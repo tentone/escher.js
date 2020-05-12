@@ -13,12 +13,28 @@ function Node()
 {
 	Box.call(this);
 
+	/**
+	 * List of inputs of the node.
+	 *
+	 * @type {NodeHook[]}
+	 */
 	this.inputs = [];
 
+	/**
+	 * List of outputs of the node.
+	 *
+	 * @type {NodeHook[]}
+	 */
 	this.outputs = [];
-
 }
 
 Node.prototype = Object.create(Box.prototype);
+
+Node.prototype.draw = function(context, viewport, canvas)
+{
+	Box.prototype.draw.call(this, context, viewport, canvas);
+
+	// TODO <ADD CODE HERE>
+};
 
 export {Node};

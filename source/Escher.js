@@ -29,7 +29,7 @@ export {QuadraticCurve} from "./objects/QuadraticCurve.js";
 
 export {Node} from "./objects/node/Node.js";
 export {NodeConnector} from "./objects/node/NodeConnector.js";
-export {NodeInput} from "./objects/node/NodeInput.js";
+export {NodeHook} from "./objects/node/NodeHook.js";
 export {NodeOutput} from "./objects/node/NodeOutput.js";
 
 export {ViewportControls} from "./controls/ViewportControls.js";

@@ -11,7 +11,19 @@ function NodeConnector()
 {
 	BezierCurve.call(this);
 
-	// TODO <ADD CODE HERE>
+	/**
+	 * Origin hook that is attached to a node.
+	 *
+	 * @type {NodeHook}
+	 */
+	this.origin = null;
+
+	/**
+	 * Destination hook that is attached to a node.
+	 *
+	 * @type {NodeHook}
+	 */
+	this.destination = null;
 }
 
 NodeConnector.prototype = Object.create(BezierCurve.prototype);

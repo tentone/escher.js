@@ -2,19 +2,21 @@ import {Circle} from "../Circle";
 import {Node} from "./Node";
 
 /**
- * Represents a node input point. Is attached to the node element and represented visually.
+ * Represents a node hook point. Is attached to the node element and represented visually.
  *
- * @class NodeInput
+ * Can be used as a node input, output or as a bidirectional connection.
+ *
+ * @class NodeHook
  */
-function NodeInput(node)
+function NodeHook(node)
 {
 	Circle.call(this);
 
 	/**
 	 * Direction of the node hook.
 	 */
-	this.direction = NodeInput.INPUT;
-	
+	this.direction = NodeHook.INPUT;
+
 	/**
 	 * Node where this input element in attached.
 	 *
@@ -23,9 +25,10 @@ function NodeInput(node)
 	this.node = null;
 }
 
-NodeInput.INPUT = 1;
-NodeInput.OUTPUT = 2;
+NodeHook.INPUT = 1;
+NodeHook.OUTPUT = 2;
+NodeHook.BIDIRECTIONAL = 3;
 
-NodeInput.prototype = Object.create(Circle.prototype);
+NodeHook.prototype = Object.create(Circle.prototype);
 
-export {NodeInput};
+export {NodeHook};
