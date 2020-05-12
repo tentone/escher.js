@@ -43,16 +43,16 @@
 		window.addOperatorBlock = function(symbol)
 		{
 			// Box
-			var box = new Escher.Box();
-			box.position.set(100, 100);
-			box.draggable = true;
-			group.add(box);
+			var node = new Escher.Node();
+			node.position.set(100, 100);
+			node.draggable = true;
+			group.add(node);
 			
 			// DOM
 			var div = new Escher.DOM(canvas.parentElement);
 			div.size.set(100, 50);
 			div.origin.set(50, 25);
-			box.add(div);
+			node.add(div);
 
 			var text = document.createElement("div");
 			text.style.fontFamily = "Arial";
@@ -63,19 +63,15 @@
 
 
 
-
-		function NodeHook()
-		{
-			this.inputs = [];
-			this.outputs = [];
-		}
-
-
-
 		// Group to store other objects
 		var group = new Escher.Object2D();
 
-		// Line (connection)
+		var node = new Escher.Node();
+		node.position.set(100, 100);
+		node.draggable = true;
+		group.add(node);
+
+			// Line (connection)
 		//var line = new Escher.BezierCurve();
 		//line.from = box.position;
 		//line.to = circle.position;

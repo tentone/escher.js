@@ -1,12 +1,12 @@
 import {Vector2} from "./Vector2.js";
 
 /**
- * 2D 3x2 transformation matrix, applied to the canvas elements.
+ * 2D 3x2 transformation matrix, used to represent linear geometric transformations over objects.
  *
- * The values of the matrix are stored in a numeric array.
+ * The values of the matrix are stored in a numeric array and can be applied to the canvas or DOM elements.
  *
  * @class
- * @param {array} [values]
+ * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values.
  */
 function Matrix(values)
 {
@@ -23,7 +23,7 @@ function Matrix(values)
 /**
  * Copy the content of another matrix and store in this one.
  *
- * @param {Matrix} mat
+ * @param {Matrix} mat Matrix to copy values from.
  */
 Matrix.prototype.copy = function(mat)
 {
@@ -32,6 +32,8 @@ Matrix.prototype.copy = function(mat)
 
 /**
  * Create a new matrix object with a copy of the content of this one.
+ *
+ * @return {Matrix} Copy of this matrix.
  */
 Matrix.prototype.clone = function()
 {
@@ -39,7 +41,7 @@ Matrix.prototype.clone = function()
 };
 
 /**
- * Reset this matrix to indentity.
+ * Reset this matrix to identity.
  */
 Matrix.prototype.identity = function()
 {
@@ -116,6 +118,8 @@ Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, a)
 /**
  * Apply translation to this matrix.
  *
+ * Adds position over the transformation already stored in the matrix.
+ *
  * @param {number} x
  * @param {number} y
  */
@@ -128,7 +132,7 @@ Matrix.prototype.translate = function(x, y)
 /**
  * Apply rotation to this matrix.
  *
- * @param {number} angle Angle in radians.
+ * @param {number} rad Angle to rotate the matrix in radians.
  */
 Matrix.prototype.rotate = function(rad)
 {
@@ -173,7 +177,7 @@ Matrix.prototype.setPosition = function(x, y)
 };
 
 /**
- * Get the scale from the transformation matrix.
+ * Extract the scale from the transformation matrix.
  *
  * @return {Vector2} Scale of the matrix transformation.
  */
@@ -183,7 +187,7 @@ Matrix.prototype.getScale = function()
 };
 
 /**
- * Get the position from the transformation matrix.
+ * Extract the position from the transformation matrix.
  *
  * @return {Vector2} Position of the matrix transformation.
  */
@@ -202,6 +206,8 @@ Matrix.prototype.skew = function(radianX, radianY)
 
 /**
  * Get the matrix determinant.
+ *
+ * @return {number} Determinant of this matrix.
  */
 Matrix.prototype.determinant = function()
 {
@@ -210,6 +216,8 @@ Matrix.prototype.determinant = function()
 
 /**
  * Get the inverse matrix.
+ *
+ * @return {Matrix} New matrix instance containing the inverse matrix.
  */
 Matrix.prototype.getInverse = function()
 {
@@ -220,6 +228,9 @@ Matrix.prototype.getInverse = function()
 
 /**
  * Transform a point using this matrix.
+ *
+ * @param {Vector2} p Point to be transformed.
+ * @return {Vector2} Transformed point.
  */
 Matrix.prototype.transformPoint = function(p)
 {
@@ -231,6 +242,8 @@ Matrix.prototype.transformPoint = function(p)
 
 /**
  * Set a canvas context to use this transformation.
+ *
+ * @param {CanvasRenderingContext2D} context Canvas context to apply this matrix transform.
  */
 Matrix.prototype.setContextTransform = function(context)
 {
@@ -239,12 +252,19 @@ Matrix.prototype.setContextTransform = function(context)
 
 /**
  * Transform on top of the current context transformation.
+ *
+ * @param {CanvasRenderingContext2D} context Canvas context to apply this matrix transform.
  */
 Matrix.prototype.tranformContext = function(context)
 {
 	context.transform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
 };
 
+/**
+ * Generate a CSS transform string that can be applied to the transform style of any DOM element.
+ *
+ * @returns {string} CSS transform matrix.
+ */
 Matrix.prototype.cssTransform = function()
 {
 	return "matrix(" + this.m[0] + "," + this.m[1] + "," + this.m[2] + "," + this.m[3] + "," + this.m[4] + "," + this.m[5] + ")";

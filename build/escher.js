@@ -701,16 +701,14 @@
 	function UUID(){}
 
 	/**
-	 * Generate new random UUID v4 as string.
-	 *
-	 * http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
+	 * Generates a new random UUID v4 as string.
 	 *
 	 * @static
+	 * @return {string} UUID generated as string.
 	 */
 	UUID.generate = (function ()
 	{
 		var lut = [];
-
 		for(var i = 0; i < 256; i++)
 		{
 			lut[i] = (i < 16 ? "0" : "") + (i).toString(16);
@@ -745,48 +743,66 @@
 	{	
 		/**
 		 * UUID of the object.
+		 *
+		 * @type {string}
 		 */
 		this.uuid = UUID.generate(); 
 
 		/**
 		 * List of children objects attached to the object.
+		 *
+		 * @type {Object2D[]}
 		 */
 		this.children = [];
 
 		/**
 		 * Parent object, the object position is affected by its parent position.
+		 *
+		 * @type {Object2D}
 		 */
 		this.parent = null;
 
 		/**
 		 * Depth level in the object tree, objects with higher depth are drawn on top.
 		 *
-		 * The layer value is considered first. 
+		 * The layer value is considered first.
+		 *
+		 * @type {number}
 		 */
 		this.level = 0;
 
 		/**
 		 * Position of the object.
+		 *
+		 * @type {Vector2}
 		 */
 		this.position = new Vector2(0, 0);
 
 		/**
 		 * Origin of the object used as point of rotation.
+		 *
+		 * @type {Vector2}
 		 */
 		this.origin = new Vector2(0, 0);
 
 		/**
 		 * Scale of the object.
+		 *
+		 * @type {Vector2}
 		 */
 		this.scale = new Vector2(1, 1);
 
 		/**
 		 * Rotation of the object relative to its center.
+		 *
+		 * @type {number}
 		 */
 		this.rotation = 0.0;
 
 		/**
 		 * Indicates if the object is visible.
+		 *
+		 * @type {boolean}
 		 */
 		this.visible = true;
 
@@ -794,11 +810,15 @@
 		 * Layer of this object, objects are sorted by layer value.
 		 *
 		 * Lower layer value is draw first.
+		 *
+		 * @type {number}
 		 */
 		this.layer = 0;
 
 		/**
-		 * Local transformation matrix applied to the object. 
+		 * Local transformation matrix applied to the object.
+		 *
+		 * @type {Matrix}
 		 */
 		this.matrix = new Matrix();
 
@@ -806,6 +826,8 @@
 		 * Global transformation matrix multiplied by the parent matrix.
 		 *
 		 * Used to transform the object before projecting into screen coordinates.
+		 *
+		 * @type {Matrix}
 		 */
 		this.globalMatrix = new Matrix();
 
@@ -813,6 +835,8 @@
 		 * Inverse of the global matrix.
 		 *
 		 * Used to convert pointer input points into object coordinates.
+		 *
+		 * @type {Matrix}
 		 */
 		this.inverseGlobalMatrix = new Matrix();
 
@@ -820,18 +844,26 @@
 		 * Masks being applied to this object.
 		 *
 		 * Multiple masks can be used simultaneously.
+		 *
+		 * @type {Mask[]}
 		 */
 		this.masks = [];
 
 		/**
 		 * If true the matrix is updated before rendering the object.
+		 *
+		 * After the matrix is updated this attribute is automatically reset to false.
+		 *
+		 * @type {boolean}
 		 */
 		this.matrixNeedsUpdate = true;
 
 		/**
-		 * Indicates if its possible to drag the object around.
+		 * Draggable controls if its possible to drag the object around. Set this true to enable dragging events on this object.
 		 *
-		 * If true the onPointerDrag callback is used to update the state of the object.
+		 * The onPointerDrag callback is used to update the state of the object while being dragged, by default it just updates the object position.
+		 *
+		 * @type {boolean}
 		 */
 		this.draggable = false;
 
@@ -839,21 +871,29 @@
 		 * Indicates if this object uses pointer events.
 		 *
 		 * Can be set false to skip the pointer interaction events.
+		 *
+		 * @type {boolean}
 		 */
 		this.pointerEvents = true;
 
 		/**
-		 * Flag to indicate wheter this objet ignores the viewport transformation.
+		 * Flag to indicate whether this object ignores the viewport transformation.
+		 *
+		 * @type {boolean}
 		 */
 		this.ignoreViewport = false;
 
 		/**
 		 * Flag to indicate if the context of canvas should be saved before render.
+		 *
+		 * @type {boolean}
 		 */
 		this.saveContextState = true;
 
 		/**
 		 * Flag to indicate if the context of canvas should be restored after render.
+		 *
+		 * @type {boolean}
 		 */
 		this.restoreContextState = true;
 
@@ -861,11 +901,15 @@
 		 * Flag indicating if the pointer is inside of the element.
 		 *
 		 * Used to control object event.
+		 *
+		 * @type {boolean}
 		 */
 		this.pointerInside = false;
 
 		/**
 		 * Flag to indicate if the object is currently being dragged.
+		 *
+		 * @type {boolean}
 		 */
 		this.beingDragged = false;
 	}
@@ -890,7 +934,7 @@
 	/**
 	 * Get a object from its children list by its UUID.
 	 *
-	 * @param {String} uuid UUID of the object to get.
+	 * @param {string} uuid UUID of the object to get.
 	 * @return {Object2D} The object that has the UUID specified, null if the object was not found.
 	 */
 	Object2D.prototype.getChildByUUID = function(uuid)
@@ -934,11 +978,11 @@
 	/**
 	 * Remove object from the children list.
 	 *
-	 * @param {Object2D} object Object to be removed.
+	 * @param {Object2D} children Object to be removed.
 	 */
-	Object2D.prototype.remove = function(object)
+	Object2D.prototype.remove = function(children)
 	{
-		var index = this.children.indexOf(object);
+		var index = this.children.indexOf(children);
 		
 		if(index !== -1)
 		{
@@ -973,7 +1017,7 @@
 	/**
 	 * Update the transformation matrix of the object.
 	 *
-	 * @param {CanvasRenderingContext2D} context
+	 * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
 	 */
 	Object2D.prototype.updateMatrix = function(context)
 	{
@@ -988,7 +1032,7 @@
 			}
 
 			this.inverseGlobalMatrix = this.globalMatrix.getInverse();
-			//this.matrixNeedsUpdate = false;
+			this.matrixNeedsUpdate = false;
 		}
 	};
 
@@ -2565,7 +2609,7 @@
 	 */
 	Box2.prototype.containsPoint = function(point)
 	{
-		return point.x < this.min.x || point.x > this.max.x || point.y < this.min.y || point.y > this.max.y ? false : true;
+		return !(point.x < this.min.x || point.x > this.max.x || point.y < this.min.y || point.y > this.max.y);
 	};
 
 	/**
@@ -2589,7 +2633,7 @@
 	 */
 	Box2.prototype.intersectsBox = function(box)
 	{
-		return box.max.x < this.min.x || box.min.x > this.max.x || box.max.y < this.min.y || box.min.y > this.max.y ? false : true;
+		return !(box.max.x < this.min.x || box.min.x > this.max.x || box.max.y < this.min.y || box.min.y > this.max.y);
 	};
 
 	/**
@@ -2750,7 +2794,7 @@
 		/**
 		 * Box object containing the size of the object.
 		 */
-		this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
+		this.box = new Box2(new Vector2(-50, -50), new Vector2(50, 50));
 
 		/**
 		 * Style of the object border line.
@@ -3394,13 +3438,57 @@
 	{
 		Box.call(this);
 
+		this.draggable = true;
+
+		/**
+		 * List of inputs of the node.
+		 *
+		 * @type {NodeHook[]}
+		 */
 		this.inputs = [];
 
+		/**
+		 * List of outputs of the node.
+		 *
+		 * @type {NodeHook[]}
+		 */
 		this.outputs = [];
-
 	}
 
 	Node.prototype = Object.create(Box.prototype);
+
+	/**
+	 * Add input to this node.
+	 *
+	 * @param type
+	 */
+	Node.prototype.addInput = function(type)
+	{
+		var hook = new NodeHook(this, NodeHook.INPUT);
+		hook.type = type;
+		this.add(hook);
+	};
+
+	/**
+	 * Add output hook to this node.
+	 *
+	 * @param type
+	 */
+	Node.prototype.addOutput = function(type)
+	{
+		var hook = new NodeHook(this, NodeHook.OUTPUT);
+		hook.type = type;
+		this.add(hook);
+	};
+
+
+	Node.prototype.draw = function(context, viewport, canvas)
+	{
+		// Position the hooks in the box.
+		// TODO <ADD CODE HERE>
+
+		Box.prototype.draw.call(this, context, viewport, canvas);
+	};
 
 	/**
 	 * Node connector is used to connect a output of a node to a input of another node.
@@ -3413,36 +3501,93 @@
 	{
 		BezierCurve.call(this);
 
-		// TODO <ADD CODE HERE>
+		/**
+		 * Origin hook that is attached to a node.
+		 *
+		 * @type {NodeHook}
+		 */
+		this.origin = null;
+
+		/**
+		 * Destination hook that is attached to a node.
+		 *
+		 * @type {NodeHook}
+		 */
+		this.destination = null;
 	}
 
 	NodeConnector.prototype = Object.create(BezierCurve.prototype);
 
 	/**
-	 * TODO
+	 * Represents a node hook point. Is attached to the node element and represented visually.
 	 *
-	 * @class NodeInput
+	 * Can be used as a node input, output or as a bidirectional connection.
+	 *
+	 * @class NodeHook
+	 * @param {Node} node Node of this hook.
+	 * @param {number} direction Direction of the hook.
 	 */
-	function NodeInput()
+	function NodeHook$1(node, direction)
 	{
 		Circle.call(this);
 
-	}
+		/**
+		 * If set true the hook can be connected to multiple hooks.
+		 *
+		 * @type {boolean}
+		 */
+		this.multiple = false;
 
-	NodeInput.prototype = Object.create(Circle.prototype);
+		/**
+		 * Direction of the node hook.
+		 *
+		 * @type {number}
+		 */
+		this.direction = direction;
+
+		/**
+		 * Type of hook. Hooks of the same type can be connected.
+		 *
+		 * @type {string}
+		 */
+		this.type = "";
+
+		/**
+		 * Node where this input element in attached.
+		 *
+		 * @type {Node}
+		 */
+		this.node = node;
+	}
 
 	/**
-	 * TODO
+	 * Input hook can only be connected to an output.
 	 *
-	 * @class NodeInput
+	 * Is used to read data from the output.
+	 *
+	 * @type {number}
 	 */
-	function NodeOutput()
-	{
-		Circle.call(this);
+	NodeHook$1.INPUT = 1;
 
-	}
+	/**
+	 * Output hook can only be connected to an input.
+	 *
+	 * Writes data to the output.
+	 *
+	 * @type {number}
+	 */
+	NodeHook$1.OUTPUT = 2;
 
-	NodeOutput.prototype = Object.create(Circle.prototype);
+	/**
+	 * Bidirectional hook can be connected to any type of hook.
+	 *
+	 * Can be used to write and read from inputs and/or outputs.
+	 *
+	 * @type {number}
+	 */
+	NodeHook$1.BIDIRECTIONAL = 3;
+
+	NodeHook$1.prototype = Object.create(Circle.prototype);
 
 	/**
 	 * Class contains helper functions to create editing object tools.
@@ -3569,8 +3714,7 @@
 	exports.MultiLineText = MultiLineText;
 	exports.Node = Node;
 	exports.NodeConnector = NodeConnector;
-	exports.NodeInput = NodeInput;
-	exports.NodeOutput = NodeOutput;
+	exports.NodeHook = NodeHook$1;
 	exports.Object2D = Object2D;
 	exports.Pattern = Pattern;
 	exports.Pointer = Pointer;
