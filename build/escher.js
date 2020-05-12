@@ -1127,6 +1127,14 @@
 	};
 
 	/**
+	 * Callback method called when the pointer drag ends after the button has been released.
+	 *
+	 * @param {Pointer} pointer Pointer object that receives the user input.
+	 * @param {Viewport} viewport Viewport where the object is drawn.
+	 */
+	Object2D.prototype.onPointerDragEnd = null;
+
+	/**
 	 * Method called when the object its added to a parent.
 	 *
 	 * @param {Object2D} parent Parent object were it was added.
@@ -2355,6 +2363,11 @@
 				{	
 					if(child.draggable)
 					{
+						// On drag end callback
+						if(child.beingDragged === true && child.onPointerDragEnd !== null)
+						{
+							child.onPointerDragEnd(pointer, viewport);
+						}
 						child.beingDragged = false;
 					}
 				}
@@ -3488,6 +3501,13 @@
 
 	NodeConnector.prototype = Object.create(BezierCurve.prototype);
 
+	NodeConnector.prototype.draw = function(context, viewport, canvas)
+	{
+		// TODO <SET POSITIONS>
+
+		BezierCurve.prototype.draw.call(this, context, viewport, canvas);
+	};
+
 	/**
 	 * Represents a node hook point. Is attached to the node element and represented visually.
 	 *
@@ -3500,6 +3520,8 @@
 	function NodeHook(node, direction)
 	{
 		Circle.call(this);
+
+		this.draggable = true;
 
 		this.radius = 6;
 		this.layer = 1;
@@ -3576,9 +3598,11 @@
 
 	NodeHook.prototype.onButtonPressed = function()
 	{
-		// Create new connector
 		if(this.connector === null)
 		{
+			// TODO <REMOVE THIS>
+			console.log("Create a new connector.");
+
 			var connector = new NodeConnector();
 			if(this.direction === NodeHook.INPUT)
 			{
@@ -3589,7 +3613,26 @@
 				connector.outputHook = this;
 			}
 
+			this.connector = connector;
 			this.node.parent.add(connector);
+		}
+	};
+
+	NodeHook.prototype.onPointerDrag = function(pointer, viewport, delta)
+	{
+		if(this.connector !== null)
+		{
+			// TODO <REMOVE THIS>
+			console.log("Dragging around");
+		}
+	};
+
+	NodeHook.prototype.onPointerDragEnd = function(pointer, viewport)
+	{
+		if(this.connector !== null)
+		{
+			// TODO <REMOVE THIS>
+			console.log("Finished drag.");
 		}
 	};
 
