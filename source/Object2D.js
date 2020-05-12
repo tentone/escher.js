@@ -157,7 +157,7 @@ function Object2D()
 	/**
 	 * Indicates if this object uses pointer events.
 	 *
-	 * Can be set false to skip the pointer interaction events.
+	 * Can be set false to skip the pointer interaction events, better performance if pointer events are not required.
 	 *
 	 * @type {boolean}
 	 */

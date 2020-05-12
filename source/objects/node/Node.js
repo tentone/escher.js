@@ -1,4 +1,6 @@
 import {Box} from "../Box";
+import {Vector2} from "../../math/Vector2";
+import {NodeHook} from "./NodeHook";
 
 /**
  * Node objects can be connected between them to create graphs.
@@ -41,6 +43,7 @@ Node.prototype.addInput = function(type)
 {
 	var hook = new NodeHook(this, NodeHook.INPUT);
 	hook.type = type;
+	this.inputs.push(hook);
 	this.add(hook);
 };
 
@@ -53,14 +56,31 @@ Node.prototype.addOutput = function(type)
 {
 	var hook = new NodeHook(this, NodeHook.OUTPUT);
 	hook.type = type;
+	this.outputs.push(hook);
 	this.add(hook);
 };
 
-
 Node.prototype.draw = function(context, viewport, canvas)
 {
-	// Position the hooks in the box.
-	// TODO <ADD CODE HERE>
+	var height = this.box.max.y - this.box.min.y;
+
+	// Input hooks position
+	var step = height / (this.inputs.length + 1);
+	var start = this.box.min.y + step;
+
+	for(var i = 0; i < this.inputs.length; i++)
+	{
+		this.inputs[i].position.set(this.box.min.x, start + step * i);
+	}
+
+	// Output hooks position
+	var step = height / (this.outputs.length + 1);
+	var start = this.box.min.y + step;
+
+	for(var i = 0; i < this.outputs.length; i++)
+	{
+		this.outputs[i].position.set(this.box.max.x, start + step * i);
+	}
 
 	Box.prototype.draw.call(this, context, viewport, canvas);
 };

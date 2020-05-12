@@ -444,12 +444,12 @@
 	};
 
 	/**
-	 * 2D 3x2 transformation matrix, applied to the canvas elements.
+	 * 2D 3x2 transformation matrix, used to represent linear geometric transformations over objects.
 	 *
-	 * The values of the matrix are stored in a numeric array.
+	 * The values of the matrix are stored in a numeric array and can be applied to the canvas or DOM elements.
 	 *
 	 * @class
-	 * @param {array} [values]
+	 * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values.
 	 */
 	function Matrix(values)
 	{
@@ -466,7 +466,7 @@
 	/**
 	 * Copy the content of another matrix and store in this one.
 	 *
-	 * @param {Matrix} mat
+	 * @param {Matrix} mat Matrix to copy values from.
 	 */
 	Matrix.prototype.copy = function(mat)
 	{
@@ -475,6 +475,8 @@
 
 	/**
 	 * Create a new matrix object with a copy of the content of this one.
+	 *
+	 * @return {Matrix} Copy of this matrix.
 	 */
 	Matrix.prototype.clone = function()
 	{
@@ -482,7 +484,7 @@
 	};
 
 	/**
-	 * Reset this matrix to indentity.
+	 * Reset this matrix to identity.
 	 */
 	Matrix.prototype.identity = function()
 	{
@@ -559,6 +561,8 @@
 	/**
 	 * Apply translation to this matrix.
 	 *
+	 * Adds position over the transformation already stored in the matrix.
+	 *
 	 * @param {number} x
 	 * @param {number} y
 	 */
@@ -571,7 +575,7 @@
 	/**
 	 * Apply rotation to this matrix.
 	 *
-	 * @param {number} angle Angle in radians.
+	 * @param {number} rad Angle to rotate the matrix in radians.
 	 */
 	Matrix.prototype.rotate = function(rad)
 	{
@@ -616,7 +620,7 @@
 	};
 
 	/**
-	 * Get the scale from the transformation matrix.
+	 * Extract the scale from the transformation matrix.
 	 *
 	 * @return {Vector2} Scale of the matrix transformation.
 	 */
@@ -626,7 +630,7 @@
 	};
 
 	/**
-	 * Get the position from the transformation matrix.
+	 * Extract the position from the transformation matrix.
 	 *
 	 * @return {Vector2} Position of the matrix transformation.
 	 */
@@ -645,6 +649,8 @@
 
 	/**
 	 * Get the matrix determinant.
+	 *
+	 * @return {number} Determinant of this matrix.
 	 */
 	Matrix.prototype.determinant = function()
 	{
@@ -653,6 +659,8 @@
 
 	/**
 	 * Get the inverse matrix.
+	 *
+	 * @return {Matrix} New matrix instance containing the inverse matrix.
 	 */
 	Matrix.prototype.getInverse = function()
 	{
@@ -663,6 +671,9 @@
 
 	/**
 	 * Transform a point using this matrix.
+	 *
+	 * @param {Vector2} p Point to be transformed.
+	 * @return {Vector2} Transformed point.
 	 */
 	Matrix.prototype.transformPoint = function(p)
 	{
@@ -674,6 +685,8 @@
 
 	/**
 	 * Set a canvas context to use this transformation.
+	 *
+	 * @param {CanvasRenderingContext2D} context Canvas context to apply this matrix transform.
 	 */
 	Matrix.prototype.setContextTransform = function(context)
 	{
@@ -682,12 +695,19 @@
 
 	/**
 	 * Transform on top of the current context transformation.
+	 *
+	 * @param {CanvasRenderingContext2D} context Canvas context to apply this matrix transform.
 	 */
 	Matrix.prototype.tranformContext = function(context)
 	{
 		context.transform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
 	};
 
+	/**
+	 * Generate a CSS transform string that can be applied to the transform style of any DOM element.
+	 *
+	 * @returns {string} CSS transform matrix.
+	 */
 	Matrix.prototype.cssTransform = function()
 	{
 		return "matrix(" + this.m[0] + "," + this.m[1] + "," + this.m[2] + "," + this.m[3] + "," + this.m[4] + "," + this.m[5] + ")";
@@ -774,6 +794,8 @@
 		/**
 		 * Position of the object.
 		 *
+		 * The world position of the object is affected by its parent transform.
+		 *
 		 * @type {Vector2}
 		 */
 		this.position = new Vector2(0, 0);
@@ -788,12 +810,16 @@
 		/**
 		 * Scale of the object.
 		 *
+		 * The world scale of the object is affected by the parent transform.
+		 *
 		 * @type {Vector2}
 		 */
 		this.scale = new Vector2(1, 1);
 
 		/**
 		 * Rotation of the object relative to its center.
+		 *
+		 * The world rotation of the object is affected by the parent transform.
 		 *
 		 * @type {number}
 		 */
@@ -809,7 +835,7 @@
 		/**
 		 * Layer of this object, objects are sorted by layer value.
 		 *
-		 * Lower layer value is draw first.
+		 * Lower layer value is draw first, higher layer value is drawn on top.
 		 *
 		 * @type {number}
 		 */
@@ -841,18 +867,27 @@
 		this.inverseGlobalMatrix = new Matrix();
 
 		/**
-		 * Masks being applied to this object.
+		 * Mask objects being applied to this object. Used to mask/subtract portions of this object when rendering.
 		 *
-		 * Multiple masks can be used simultaneously.
+		 * Multiple masks can be used simultaneously. Same mask might be reused for multiple objects.
 		 *
 		 * @type {Mask[]}
 		 */
 		this.masks = [];
 
 		/**
-		 * If true the matrix is updated before rendering the object.
+		 * Indicates if the transform matrix should be automatically updated every frame.
 		 *
-		 * After the matrix is updated this attribute is automatically reset to false.
+		 * Set this false for better performance. But if you do so dont forget to set matrixNeedsUpdate every time that a transform attribute is changed.
+		 *
+		 * @type {boolean}
+		 */
+		this.matrixAutoUpdate = true;
+
+		/**
+		 * Indicates if the matrix needs to be updated, should be set true after changes to the object position, scale or rotation.
+		 *
+		 * The matrix is updated before rendering the object, after the matrix is updated this attribute is automatically reset to false.
 		 *
 		 * @type {boolean}
 		 */
@@ -870,7 +905,7 @@
 		/**
 		 * Indicates if this object uses pointer events.
 		 *
-		 * Can be set false to skip the pointer interaction events.
+		 * Can be set false to skip the pointer interaction events (improves performance).
 		 *
 		 * @type {boolean}
 		 */
@@ -1021,7 +1056,7 @@
 	 */
 	Object2D.prototype.updateMatrix = function(context)
 	{
-		if(this.matrixNeedsUpdate)
+		if(this.matrixAutoUpdate || this.matrixNeedsUpdate)
 		{
 			this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.origin.x, this.origin.y, this.rotation);
 			this.globalMatrix.copy(this.matrix);
@@ -3426,6 +3461,140 @@
 	};
 
 	/**
+	 * Node connector is used to connect a output of a node to a input of another node.
+	 *
+	 * Some nodes inputs/outputs might support just one or multiple connections.
+	 *
+	 * @class NodeConnector
+	 */
+	function NodeConnector()
+	{
+		BezierCurve.call(this);
+
+		/**
+		 * Origin hook that is attached to a node.
+		 *
+		 * @type {NodeHook}
+		 */
+		this.origin = null;
+
+		/**
+		 * Destination hook that is attached to a node.
+		 *
+		 * @type {NodeHook}
+		 */
+		this.destination = null;
+	}
+
+	NodeConnector.prototype = Object.create(BezierCurve.prototype);
+
+	/**
+	 * Represents a node hook point. Is attached to the node element and represented visually.
+	 *
+	 * Can be used as a node input, output or as a bidirectional connection.
+	 *
+	 * @class NodeHook
+	 * @param {Node} node Node of this hook.
+	 * @param {number} direction Direction of the hook.
+	 */
+	function NodeHook(node, direction)
+	{
+		Circle.call(this);
+
+		this.radius = 6;
+		this.layer = 1;
+
+		/**
+		 * Name of the hook presented to the user.
+		 */
+		this.name = "";
+
+		/**
+		 * Type of hook. Hooks of the same type can be connected.
+		 *
+		 * @type {string}
+		 */
+		this.type = "";
+
+		/**
+		 * If set true the hook can be connected to multiple hooks.
+		 *
+		 * @type {boolean}
+		 */
+		this.multiple = false;
+
+		/**
+		 * Direction of the node hook.
+		 *
+		 * @type {number}
+		 */
+		this.direction = direction;
+
+		/**
+		 * Node where this input element in attached.
+		 *
+		 * @type {Node}
+		 */
+		this.node = node;
+
+		/**
+		 * Node connector used to connect this hook to another node hook.
+		 *
+		 * @type {NodeConnector}
+		 */
+		this.connector = null;
+	}
+
+	/**
+	 * Input hook can only be connected to an output.
+	 *
+	 * Is used to read data from the output.
+	 *
+	 * @type {number}
+	 */
+	NodeHook.INPUT = 1;
+
+	/**
+	 * Output hook can only be connected to an input.
+	 *
+	 * Writes data to the output.
+	 *
+	 * @type {number}
+	 */
+	NodeHook.OUTPUT = 2;
+
+	/**
+	 * Bidirectional hook can be connected to any type of hook.
+	 *
+	 * Can be used to write and read from inputs and/or outputs.
+	 *
+	 * @type {number}
+	 */
+	NodeHook.BIDIRECTIONAL = 3;
+
+	NodeHook.prototype = Object.create(Circle.prototype);
+
+	NodeHook.prototype.onButtonPressed = function()
+	{
+		// Create new connector
+		if(this.connector === null)
+		{
+			var connector = new NodeConnector();
+
+			if(this.direction === NodeHook.INPUT)
+			{
+				connector.destination = this;
+			}
+			else if(this.direction === NodeHook.OUTPUT)
+			{
+				connector.origin = this;
+			}
+
+			this.node.parent.add(connector);
+		}
+	};
+
+	/**
 	 * Node objects can be connected between them to create graphs.
 	 *
 	 * Each node contains inputs, outputs and a set of attributes containing their state. Inputs can be connected to outputs of other nodes, and vice-versa.
@@ -3466,6 +3635,7 @@
 	{
 		var hook = new NodeHook(this, NodeHook.INPUT);
 		hook.type = type;
+		this.inputs.push(hook);
 		this.add(hook);
 	};
 
@@ -3478,116 +3648,34 @@
 	{
 		var hook = new NodeHook(this, NodeHook.OUTPUT);
 		hook.type = type;
+		this.outputs.push(hook);
 		this.add(hook);
 	};
 
-
 	Node.prototype.draw = function(context, viewport, canvas)
 	{
-		// Position the hooks in the box.
-		// TODO <ADD CODE HERE>
+		var height = this.box.max.y - this.box.min.y;
+
+		// Input hooks position
+		var step = height / (this.inputs.length + 1);
+		var start = this.box.min.y + step;
+
+		for(var i = 0; i < this.inputs.length; i++)
+		{
+			this.inputs[i].position.set(this.box.min.x, start + step * i);
+		}
+
+		// Output hooks position
+		var step = height / (this.outputs.length + 1);
+		var start = this.box.min.y + step;
+
+		for(var i = 0; i < this.outputs.length; i++)
+		{
+			this.outputs[i].position.set(this.box.max.x, start + step * i);
+		}
 
 		Box.prototype.draw.call(this, context, viewport, canvas);
 	};
-
-	/**
-	 * Node connector is used to connect a output of a node to a input of another node.
-	 *
-	 * Some nodes inputs/outputs might support just one or multiple connections.
-	 *
-	 * @class NodeConnector
-	 */
-	function NodeConnector()
-	{
-		BezierCurve.call(this);
-
-		/**
-		 * Origin hook that is attached to a node.
-		 *
-		 * @type {NodeHook}
-		 */
-		this.origin = null;
-
-		/**
-		 * Destination hook that is attached to a node.
-		 *
-		 * @type {NodeHook}
-		 */
-		this.destination = null;
-	}
-
-	NodeConnector.prototype = Object.create(BezierCurve.prototype);
-
-	/**
-	 * Represents a node hook point. Is attached to the node element and represented visually.
-	 *
-	 * Can be used as a node input, output or as a bidirectional connection.
-	 *
-	 * @class NodeHook
-	 * @param {Node} node Node of this hook.
-	 * @param {number} direction Direction of the hook.
-	 */
-	function NodeHook$1(node, direction)
-	{
-		Circle.call(this);
-
-		/**
-		 * If set true the hook can be connected to multiple hooks.
-		 *
-		 * @type {boolean}
-		 */
-		this.multiple = false;
-
-		/**
-		 * Direction of the node hook.
-		 *
-		 * @type {number}
-		 */
-		this.direction = direction;
-
-		/**
-		 * Type of hook. Hooks of the same type can be connected.
-		 *
-		 * @type {string}
-		 */
-		this.type = "";
-
-		/**
-		 * Node where this input element in attached.
-		 *
-		 * @type {Node}
-		 */
-		this.node = node;
-	}
-
-	/**
-	 * Input hook can only be connected to an output.
-	 *
-	 * Is used to read data from the output.
-	 *
-	 * @type {number}
-	 */
-	NodeHook$1.INPUT = 1;
-
-	/**
-	 * Output hook can only be connected to an input.
-	 *
-	 * Writes data to the output.
-	 *
-	 * @type {number}
-	 */
-	NodeHook$1.OUTPUT = 2;
-
-	/**
-	 * Bidirectional hook can be connected to any type of hook.
-	 *
-	 * Can be used to write and read from inputs and/or outputs.
-	 *
-	 * @type {number}
-	 */
-	NodeHook$1.BIDIRECTIONAL = 3;
-
-	NodeHook$1.prototype = Object.create(Circle.prototype);
 
 	/**
 	 * Class contains helper functions to create editing object tools.
@@ -3714,7 +3802,7 @@
 	exports.MultiLineText = MultiLineText;
 	exports.Node = Node;
 	exports.NodeConnector = NodeConnector;
-	exports.NodeHook = NodeHook$1;
+	exports.NodeHook = NodeHook;
 	exports.Object2D = Object2D;
 	exports.Pattern = Pattern;
 	exports.Pointer = Pointer;
