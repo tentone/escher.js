@@ -195,6 +195,10 @@ Renderer.prototype.update = function(object, viewport)
 			{	
 				if(child.draggable)
 				{
+					if(child.onPointerDragEnd !== null)
+					{
+						child.onPointerDragEnd(pointer, viewport);
+					}
 					child.beingDragged = false;
 				}
 			}

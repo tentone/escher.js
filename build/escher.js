@@ -905,7 +905,7 @@
 		/**
 		 * Indicates if this object uses pointer events.
 		 *
-		 * Can be set false to skip the pointer interaction events (improves performance).
+		 * Can be set false to skip the pointer interaction events, better performance if pointer events are not required.
 		 *
 		 * @type {boolean}
 		 */
@@ -3476,14 +3476,14 @@
 		 *
 		 * @type {NodeHook}
 		 */
-		this.origin = null;
+		this.outputHook = null;
 
 		/**
 		 * Destination hook that is attached to a node.
 		 *
 		 * @type {NodeHook}
 		 */
-		this.destination = null;
+		this.inputHook = null;
 	}
 
 	NodeConnector.prototype = Object.create(BezierCurve.prototype);
@@ -3580,14 +3580,13 @@
 		if(this.connector === null)
 		{
 			var connector = new NodeConnector();
-
 			if(this.direction === NodeHook.INPUT)
 			{
-				connector.destination = this;
+				connector.inputHook = this;
 			}
 			else if(this.direction === NodeHook.OUTPUT)
 			{
-				connector.origin = this;
+				connector.outputHook = this;
 			}
 
 			this.node.parent.add(connector);

@@ -1,4 +1,6 @@
 import {BezierCurve} from "../BezierCurve";
+import {Box} from "../Box";
+import {Node} from "./Node";
 
 /**
  * Node connector is used to connect a output of a node to a input of another node.
@@ -16,16 +18,24 @@ function NodeConnector()
 	 *
 	 * @type {NodeHook}
 	 */
-	this.origin = null;
+	this.outputHook = null;
 
 	/**
 	 * Destination hook that is attached to a node.
 	 *
 	 * @type {NodeHook}
 	 */
-	this.destination = null;
+	this.inputHook = null;
 }
 
 NodeConnector.prototype = Object.create(BezierCurve.prototype);
+
+NodeConnector.prototype.draw = function(context, viewport, canvas)
+{
+	// TODO <SET POSITIONS>
+
+	BezierCurve.prototype.draw.call(this, context, viewport, canvas);
+};
+
 
 export {NodeConnector};

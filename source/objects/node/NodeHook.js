@@ -1,6 +1,7 @@
 import {Circle} from "../Circle";
 import {Node} from "./Node";
 import {NodeConnector} from "./NodeConnector";
+import {Object2D} from "../../Object2D";
 
 /**
  * Represents a node hook point. Is attached to the node element and represented visually.
@@ -14,6 +15,8 @@ import {NodeConnector} from "./NodeConnector";
 function NodeHook(node, direction)
 {
 	Circle.call(this);
+
+	this.draggable = true;
 
 	this.radius = 6;
 	this.layer = 1;
@@ -90,21 +93,41 @@ NodeHook.prototype = Object.create(Circle.prototype);
 
 NodeHook.prototype.onButtonPressed = function()
 {
-	// Create new connector
 	if(this.connector === null)
 	{
-		var connector = new NodeConnector();
+		// TODO <REMOVE THIS>
+		console.log("Create a new connector.")
 
+		var connector = new NodeConnector();
 		if(this.direction === NodeHook.INPUT)
 		{
-			connector.destination = this;
+			connector.inputHook = this;
 		}
 		else if(this.direction === NodeHook.OUTPUT)
 		{
-			connector.origin = this;
+			connector.outputHook = this;
 		}
 
+		this.connector = connector;
 		this.node.parent.add(connector);
+	}
+};
+
+NodeHook.prototype.onPointerDrag = function(pointer, viewport, delta)
+{
+	if(this.connector !== null)
+	{
+		// TODO <REMOVE THIS>
+		console.log("Dragging around");
+	}
+};
+
+NodeHook.prototype.onPointerDragEnd = function(pointer, viewport)
+{
+	if(this.connector !== null)
+	{
+		// TODO <REMOVE THIS>
+		console.log("Finished drag.");
 	}
 };
 

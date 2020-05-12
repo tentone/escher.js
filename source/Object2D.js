@@ -379,6 +379,14 @@ Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
 };
 
 /**
+ * Callback method called when the pointer drag ends after the button has been released.
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
+ */
+Object2D.prototype.onPointerDragEnd = null;
+
+/**
  * Method called when the object its added to a parent.
  *
  * @param {Object2D} parent Parent object were it was added.
