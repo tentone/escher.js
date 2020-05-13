@@ -73,8 +73,8 @@ Node.prototype.onUpdate = function()
 	}
 
 	// Output hooks position
-	var step = height / (this.outputs.length + 1);
-	var start = this.box.min.y + step;
+	step = height / (this.outputs.length + 1);
+	start = this.box.min.y + step;
 
 	for(var i = 0; i < this.outputs.length; i++)
 	{
