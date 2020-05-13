@@ -1,5 +1,6 @@
 import {Box} from "../Box";
 import {NodeSocket} from "./NodeSocket";
+import {RoundedBox} from "../RoundedBox";
 
 /**
  * Node objects can be connected between them to create graphs.
@@ -12,7 +13,7 @@ import {NodeSocket} from "./NodeSocket";
  */
 function Node()
 {
-	Box.call(this);
+	RoundedBox.call(this);
 
 	this.draggable = true;
 
@@ -31,7 +32,7 @@ function Node()
 	this.outputs = [];
 }
 
-Node.prototype = Object.create(Box.prototype);
+Node.prototype = Object.create(RoundedBox.prototype);
 
 /**
  * Add input to this node, can be connected to other nodes to receive data.

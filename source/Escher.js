@@ -26,6 +26,7 @@ export {Graph} from "./objects/Graph.js";
 export {MultiLineText} from "./objects/MultiLineText.js";
 export {BezierCurve} from "./objects/BezierCurve.js";
 export {QuadraticCurve} from "./objects/QuadraticCurve.js";
+export {RoundedBox} from "./objects/RoundedBox.js";
 
 export {Node} from "./objects/node/Node.js";
 export {NodeConnector} from "./objects/node/NodeConnector.js";
