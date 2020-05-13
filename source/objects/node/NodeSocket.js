@@ -1,6 +1,7 @@
 import {Circle} from "../Circle";
 import {Node} from "./Node";
 import {NodeConnector} from "./NodeConnector";
+import {Text} from "../Text";
 
 /**
  * Represents a node hook point. Is attached to the node element and represented visually.
@@ -10,27 +11,30 @@ import {NodeConnector} from "./NodeConnector";
  * @class NodeSocket
  * @param {Node} node Node of this hook.
  * @param {number} direction Direction of the hook.
+ * @param {string} type Data type of the node socket.
+ * @param {string} name Name of the node socket.
  */
-function NodeSocket(node, direction)
+function NodeSocket(node, direction, type, name)
 {
 	Circle.call(this);
 
 	this.draggable = true;
-
 	this.radius = 6;
 	this.layer = 1;
 
 	/**
 	 * Name of the hook presented to the user.
-	 */
-	this.name = "";
-
-	/**
-	 * Type of hook. Hooks of the same type can be connected.
 	 *
 	 * @type {string}
 	 */
-	this.type = "";
+	this.name = name !== undefined ? name : "";
+
+	/**
+	 * Type of data available from this socket, only hooks of the same type can be connected.
+	 *
+	 * @type {string}
+	 */
+	this.type = type !== undefined ? type : "";
 
 	/**
 	 * Direction of the node hook.
@@ -52,6 +56,25 @@ function NodeSocket(node, direction)
 	 * @type {NodeConnector}
 	 */
 	this.connector = null;
+
+	/**
+	 * Text object used to present the name of the socket.
+	 *
+	 * @type {Text}
+	 */
+	this.text = new Text();
+	this.text.text = this.name;
+	if(this.direction === NodeSocket.INPUT)
+	{
+		this.text.position.x -= 10;
+		this.text.textAlign = "right";
+	}
+	else if(this.direction === NodeSocket.OUTPUT)
+	{
+		this.text.position.x += 10;
+		this.text.textAlign = "left";
+	}
+	this.add(this.text);
 }
 
 /**
@@ -74,6 +97,26 @@ NodeSocket.OUTPUT = 2;
 
 NodeSocket.prototype = Object.create(Circle.prototype);
 
+/**
+ * Connect this node socket to another socket.
+ *
+ * Sockets have to be compatible otherwise the connection cannot be made and an error will be thrown.
+ *
+ * @param {NodeSocket} socket Socket to be connected with this
+ * @return {NodeConnector} Node connector created.
+ */
+NodeSocket.prototype.connectTo = function(socket)
+{
+	if(!this.isCompatible(socket))
+	{
+		throw new Error("Sockets are not compatible they cannot be connected.");
+	}
+
+	var connector = new NodeConnector();
+	this.attachConnector(connector);
+	socket.attachConnector(connector);
+	return connector;
+};
 /**
  * Attach a node connector to this socket. Sets the correct input/output attributes on the socket and the connector.
  *
@@ -148,7 +191,7 @@ NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
 		{
 			if(objects[i] instanceof NodeSocket)
 			{
-				if(this.direction !== objects[i].direction && this.type === objects[i].type)
+				if(this.isCompatible(objects[i]))
 				{
 					objects[i].attachConnector(this.connector);
 					found = true;
@@ -160,11 +203,7 @@ NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
 		if(!found)
 		{
 			this.connector.destroy();
-			this.connector = null;
 		}
-
-		// TODO <REMOVE THIS>
-		console.log("Finished drag.", objects);
 	}
 };
 

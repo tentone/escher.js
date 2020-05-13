@@ -14,13 +14,16 @@ function BezierCurve()
 	Line.call(this);
 
 	/**
-	 * Intial position control point, indicates the tangent of the bezier curve on the first point.
+	 * Initial position control point, indicates the tangent of the bezier curve on the first point.
+	 *
+	 * @type {Vector2}
 	 */
 	this.fromCp = new Vector2();
 
-
 	/**
 	 * Final position control point, indicates the tangent of the bezier curve on the last point.
+	 *
+	 * @type {Vector2}
 	 */
 	this.toCp = new Vector2();
 }

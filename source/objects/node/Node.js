@@ -34,29 +34,33 @@ function Node()
 Node.prototype = Object.create(Box.prototype);
 
 /**
- * Add input to this node.
+ * Add input to this node, can be connected to other nodes to receive data.
  *
- * @param type
+ * @param {string} type Data type of the node socket.
+ * @param {string} name Name of the node socket.
+ * @return {NodeSocket} Node socket created for this node.
  */
-Node.prototype.addInput = function(type)
+Node.prototype.addInput = function(type, name)
 {
-	var hook = new NodeSocket(this, NodeSocket.INPUT);
-	hook.type = type;
-	this.inputs.push(hook);
-	this.parent.add(hook);
+	var socket = new NodeSocket(this, NodeSocket.INPUT, type, name);
+	this.inputs.push(socket);
+	this.parent.add(socket);
+	return socket;
 };
 
 /**
- * Add output hook to this node.
+ * Add output socket to this node, can be connected to other nodes to send data.
  *
- * @param type
+ * @param {string} type Data type of the node socket.
+ * @param {string} name Name of the node socket.
+ * @return {NodeSocket} Node socket created for this node.
  */
-Node.prototype.addOutput = function(type)
+Node.prototype.addOutput = function(type, name)
 {
-	var hook = new NodeSocket(this, NodeSocket.OUTPUT);
-	hook.type = type;
-	this.outputs.push(hook);
-	this.parent.add(hook);
+	var socket = new NodeSocket(this, NodeSocket.OUTPUT, type, name);
+	this.outputs.push(socket);
+	this.parent.add(socket);
+	return socket;
 };
 
 Node.prototype.onUpdate = function()

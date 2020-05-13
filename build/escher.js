@@ -1299,7 +1299,9 @@
 	Object2D.prototype.onButtonUp = null;
 
 	/**
-	 * Text element, used to draw text into the canvas.
+	 * Text element, used to draw single line text into the canvas.
+	 *
+	 * For multi line text with support for line break check {MultiLineText} object.
 	 *
 	 * @class
 	 * @extends {Object2D}
@@ -1309,38 +1311,57 @@
 		Object2D.call(this);
 
 		/**
-		 * Text value.
+		 * Text value displayed by this element.
+		 *
+		 * @type {string}
 		 */
 		this.text = "";
 
 		/**
 		 * Font of the text.
+		 *
+		 * @type {string}
 		 */
 		this.font = "16px Arial";
 
 		/**
-		 * Style of the object border line.
+		 * Style of the object border line. If set null it is ignored.
 		 *
-		 * If set null it is ignored.
+		 * @type {string}
 		 */
 		this.strokeStyle = null;
 
 		/**
 		 * Line width, only used if a valid strokeStyle is defined.
+		 *
+		 * @type {number}
 		 */
 		this.lineWidth = 1;
 
 		/**
-		 * Background color of the box.
+		 * CSS background color of the box. If set null it is ignored.
 		 *
-		 * If set null it is ignored.
+		 * @type {string}
 		 */
 		this.fillStyle = "#000000";
 
 		/**
-		 * Text align property.
+		 * Text align property. Same values as used for canvas text applies
+		 *
+		 * Check documentation at https://developer.mozilla.org/en-US/docs/Web/CSS/text-align for mode details about this property.
+		 *
+		 * @type {string}
 		 */
 		this.textAlign = "center";
+
+		/**
+		 * Text baseline defines the vertical position of the text relative to the imaginary line Y position. Same values as used for canvas text applies
+		 *
+		 * Check documentation at https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textBaseline for mode details about this property.
+		 *
+		 * @type {string}
+		 */
+		this.textBaseline = "middle";
 	}
 
 	Text.prototype = Object.create(Object2D.prototype);
@@ -1349,7 +1370,7 @@
 	{
 		context.font = this.font;
 		context.textAlign = this.textAlign;
-		context.textBaseline = "middle";
+		context.textBaseline = this.textBaseline ;
 		
 		if(this.fillStyle !== null)
 		{
@@ -1375,13 +1396,6 @@
 	function MultiLineText()
 	{
 		Text.call(this);
-
-		/**
-		 * Text baseline defines the vertical position of the text relative to the imaginary line Y position.
-		 *
-		 * @type {string}
-		 */
-		this.textBaseline = "middle";
 
 		/**
 		 * Maximum width of the text content. After text reaches the max width a line break is placed.
@@ -3430,13 +3444,16 @@
 		Line.call(this);
 
 		/**
-		 * Intial position control point, indicates the tangent of the bezier curve on the first point.
+		 * Initial position control point, indicates the tangent of the bezier curve on the first point.
+		 *
+		 * @type {Vector2}
 		 */
 		this.fromCp = new Vector2();
 
-
 		/**
 		 * Final position control point, indicates the tangent of the bezier curve on the last point.
+		 *
+		 * @type {Vector2}
 		 */
 		this.toCp = new Vector2();
 	}
@@ -3508,6 +3525,8 @@
 		 * Control point of the quadratic curve used to control the curvature of the line between the from and to point.
 		 *
 		 * The curve is interpolated in the direction of the control point it defined the path of the curve.
+		 *
+		 * @type {Vector2}
 		 */
 		this.controlPoint = new Vector2();
 	}
@@ -3564,7 +3583,9 @@
 	 */
 	function NodeConnector()
 	{
-		Line.call(this);
+		BezierCurve.call(this);
+
+		this.lineWidth = 2;
 
 		/**
 		 * Origin hook that is attached to a node.
@@ -3581,13 +3602,21 @@
 		this.inputSocket = null;
 	}
 
-	NodeConnector.prototype = Object.create(Line.prototype);
+	NodeConnector.prototype = Object.create(BezierCurve.prototype);
 
 	NodeConnector.prototype.destroy = function()
 	{
-		Line.prototype.destroy.call(this);
+		if(this.outputSocket !== null)
+		{
+			this.outputSocket.connector = null;
+		}
 
-		// TODO <REMOVE FROM HOOKS>
+		if(this.inputSocket !== null)
+		{
+			this.inputSocket.connector = null;
+		}
+
+		BezierCurve.prototype.destroy.call(this);
 	};
 
 	NodeConnector.prototype.onUpdate = function()
@@ -3601,6 +3630,30 @@
 		{
 			this.to.copy(this.inputSocket.position);
 		}
+
+		// Center control points
+		this.fromCp.copy(this.from);
+		this.fromCp.add(this.to);
+		this.fromCp.multiplyScalar(0.5);
+		this.toCp.copy(this.fromCp);
+
+		var curvature = 0.5;
+
+		// Check vertical/horizontal distances
+		var yDistance = this.to.y - this.from.y;
+		var xDistance = this.to.x - this.from.x;
+
+		// Apply a offset to the control points
+		if(Math.abs(xDistance) > Math.abs(yDistance))
+		{
+			this.toCp.x += xDistance * curvature;
+			this.fromCp.x -= xDistance * curvature;
+		}
+		else
+		{
+			this.toCp.y += yDistance * curvature;
+			this.fromCp.y -= yDistance * curvature;
+		}
 	};
 
 	/**
@@ -3611,34 +3664,30 @@
 	 * @class NodeSocket
 	 * @param {Node} node Node of this hook.
 	 * @param {number} direction Direction of the hook.
+	 * @param {string} type Data type of the node socket.
+	 * @param {string} name Name of the node socket.
 	 */
-	function NodeSocket(node, direction)
+	function NodeSocket(node, direction, type, name)
 	{
 		Circle.call(this);
 
 		this.draggable = true;
-
 		this.radius = 6;
 		this.layer = 1;
 
 		/**
 		 * Name of the hook presented to the user.
-		 */
-		this.name = "";
-
-		/**
-		 * Type of hook. Hooks of the same type can be connected.
 		 *
 		 * @type {string}
 		 */
-		this.type = "";
+		this.name = name !== undefined ? name : "";
 
 		/**
-		 * If set true the hook can be connected to multiple hooks.
+		 * Type of data available from this socket, only hooks of the same type can be connected.
 		 *
-		 * @type {boolean}
+		 * @type {string}
 		 */
-		this.multiple = false;
+		this.type = type !== undefined ? type : "";
 
 		/**
 		 * Direction of the node hook.
@@ -3660,6 +3709,25 @@
 		 * @type {NodeConnector}
 		 */
 		this.connector = null;
+
+		/**
+		 * Text object used to present the name of the socket.
+		 *
+		 * @type {Text}
+		 */
+		this.text = new Text();
+		this.text.text = this.name;
+		if(this.direction === NodeSocket.INPUT)
+		{
+			this.text.position.x -= 10;
+			this.text.textAlign = "right";
+		}
+		else if(this.direction === NodeSocket.OUTPUT)
+		{
+			this.text.position.x += 10;
+			this.text.textAlign = "left";
+		}
+		this.add(this.text);
 	}
 
 	/**
@@ -3707,6 +3775,20 @@
 		}
 	};
 
+	/**
+	 * Check if this socket can be connected (is compatible) with another socket.
+	 *
+	 * For two sockets to be compatible the data flow should be correct (one input and a output) and they should carry the same data type.
+	 *
+	 * @param {NodeSocket} socket Socket to verify compatibility with.
+	 * @return {boolean} Returns true if the two sockets are compatible.
+	 */
+	NodeSocket.prototype.isCompatible = function(socket)
+	{
+		return this.direction !== socket.direction && this.type === socket.type;
+	};
+
+
 	NodeSocket.prototype.onPointerDragStart = function(pointer, viewport)
 	{
 		if(this.connector === null)
@@ -3742,7 +3824,7 @@
 			{
 				if(objects[i] instanceof NodeSocket)
 				{
-					if(this.direction !== objects[i].direction)
+					if(this.isCompatible(objects[i]))
 					{
 						objects[i].attachConnector(this.connector);
 						found = true;
@@ -3754,11 +3836,7 @@
 			if(!found)
 			{
 				this.connector.destroy();
-				this.connector = null;
 			}
-
-			// TODO <REMOVE THIS>
-			console.log("Finished drag.", objects);
 		}
 	};
 
@@ -3795,27 +3873,27 @@
 	Node.prototype = Object.create(Box.prototype);
 
 	/**
-	 * Add input to this node.
+	 * Add input to this node, can be connected to other nodes to receive data.
 	 *
-	 * @param type
+	 * @param {string} type Data type of the node socket.
+	 * @param {string} name Name of the node socket.
 	 */
-	Node.prototype.addInput = function(type)
+	Node.prototype.addInput = function(type, name)
 	{
-		var hook = new NodeSocket(this, NodeSocket.INPUT);
-		hook.type = type;
+		var hook = new NodeSocket(this, NodeSocket.INPUT, type, name);
 		this.inputs.push(hook);
 		this.parent.add(hook);
 	};
 
 	/**
-	 * Add output hook to this node.
+	 * Add output socket to this node, can be connected to other nodes to send data.
 	 *
-	 * @param type
+	 * @param {string} type Data type of the node socket.
+	 * @param {string} name Name of the node socket.
 	 */
-	Node.prototype.addOutput = function(type)
+	Node.prototype.addOutput = function(type, name)
 	{
-		var hook = new NodeSocket(this, NodeSocket.OUTPUT);
-		hook.type = type;
+		var hook = new NodeSocket(this, NodeSocket.OUTPUT, type, name);
 		this.outputs.push(hook);
 		this.parent.add(hook);
 	};
@@ -3834,8 +3912,8 @@
 		}
 
 		// Output hooks position
-		var step = height / (this.outputs.length + 1);
-		var start = this.box.min.y + step;
+		step = height / (this.outputs.length + 1);
+		start = this.box.min.y + step;
 
 		for(var i = 0; i < this.outputs.length; i++)
 		{

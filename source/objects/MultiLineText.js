@@ -13,13 +13,6 @@ function MultiLineText()
 	Text.call(this);
 
 	/**
-	 * Text baseline defines the vertical position of the text relative to the imaginary line Y position.
-	 *
-	 * @type {string}
-	 */
-	this.textBaseline = "middle";
-
-	/**
 	 * Maximum width of the text content. After text reaches the max width a line break is placed.
 	 *
 	 * Can be set to null to be ignored.

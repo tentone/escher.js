@@ -17,6 +17,8 @@ function QuadraticCurve()
 	 * Control point of the quadratic curve used to control the curvature of the line between the from and to point.
 	 *
 	 * The curve is interpolated in the direction of the control point it defined the path of the curve.
+	 *
+	 * @type {Vector2}
 	 */
 	this.controlPoint = new Vector2();
 }
