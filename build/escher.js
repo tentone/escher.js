@@ -858,9 +858,9 @@
 		this.globalMatrix = new Matrix();
 
 		/**
-		 * Inverse of the global matrix.
+		 * Inverse of the global (world) transform matrix.
 		 *
-		 * Used to convert pointer input points into object coordinates.
+		 * Used to convert pointer input points (viewport space) into object coordinates.
 		 *
 		 * @type {Matrix}
 		 */
@@ -1125,6 +1125,14 @@
 	{
 		this.position.add(delta);
 	};
+
+	/**
+	 * Callback method called when the pointer drag ends after the button has been released.
+	 *
+	 * @param {Pointer} pointer Pointer object that receives the user input.
+	 * @param {Viewport} viewport Viewport where the object is drawn.
+	 */
+	Object2D.prototype.onPointerDragEnd = null;
 
 	/**
 	 * Callback method called when the pointer drag ends after the button has been released.
@@ -3482,7 +3490,7 @@
 	 */
 	function NodeConnector()
 	{
-		BezierCurve.call(this);
+		Line.call(this);
 
 		/**
 		 * Origin hook that is attached to a node.
@@ -3499,13 +3507,21 @@
 		this.inputHook = null;
 	}
 
-	NodeConnector.prototype = Object.create(BezierCurve.prototype);
+	NodeConnector.prototype = Object.create(Line.prototype);
 
 	NodeConnector.prototype.draw = function(context, viewport, canvas)
 	{
-		// TODO <SET POSITIONS>
+		if(this.outputHook !== null)
+		{
+			this.from.copy(this.outputHook.position);
+		}
 
-		BezierCurve.prototype.draw.call(this, context, viewport, canvas);
+		if(this.inputHook !== null)
+		{
+			this.to.copy(this.inputHook.position);
+		}
+
+		Line.prototype.draw.call(this, context, viewport, canvas);
 	};
 
 	/**
@@ -3596,7 +3612,7 @@
 
 	NodeHook.prototype = Object.create(Circle.prototype);
 
-	NodeHook.prototype.onButtonPressed = function()
+	NodeHook.prototype.onButtonDown = function()
 	{
 		if(this.connector === null)
 		{
@@ -3614,7 +3630,7 @@
 			}
 
 			this.connector = connector;
-			this.node.parent.add(connector);
+			this.parent.add(connector);
 		}
 	};
 
@@ -3622,6 +3638,17 @@
 	{
 		if(this.connector !== null)
 		{
+			var position = viewport.inverseMatrix.transformPoint(pointer.position);
+
+			if(this.direction === NodeHook.INPUT)
+			{
+				this.connector.from.copy(position);
+			}
+			else if(this.direction === NodeHook.OUTPUT)
+			{
+				this.connector.to.copy(position);
+			}
+
 			// TODO <REMOVE THIS>
 			console.log("Dragging around");
 		}
@@ -3631,6 +3658,8 @@
 	{
 		if(this.connector !== null)
 		{
+			//
+
 			// TODO <REMOVE THIS>
 			console.log("Finished drag.");
 		}
@@ -3678,7 +3707,7 @@
 		var hook = new NodeHook(this, NodeHook.INPUT);
 		hook.type = type;
 		this.inputs.push(hook);
-		this.add(hook);
+		this.parent.add(hook);
 	};
 
 	/**
@@ -3691,7 +3720,7 @@
 		var hook = new NodeHook(this, NodeHook.OUTPUT);
 		hook.type = type;
 		this.outputs.push(hook);
-		this.add(hook);
+		this.parent.add(hook);
 	};
 
 	Node.prototype.draw = function(context, viewport, canvas)
@@ -3704,7 +3733,7 @@
 
 		for(var i = 0; i < this.inputs.length; i++)
 		{
-			this.inputs[i].position.set(this.box.min.x, start + step * i);
+			this.inputs[i].position.set(this.position.x + this.box.min.x, this.position.y + (start + step * i));
 		}
 
 		// Output hooks position
@@ -3713,7 +3742,7 @@
 
 		for(var i = 0; i < this.outputs.length; i++)
 		{
-			this.outputs[i].position.set(this.box.max.x, start + step * i);
+			this.outputs[i].position.set(this.position.x + this.box.max.x, this.position.y + (start + step * i));
 		}
 
 		Box.prototype.draw.call(this, context, viewport, canvas);

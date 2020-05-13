@@ -110,9 +110,9 @@ function Object2D()
 	this.globalMatrix = new Matrix();
 
 	/**
-	 * Inverse of the global matrix.
+	 * Inverse of the global (world) transform matrix.
 	 *
-	 * Used to convert pointer input points into object coordinates.
+	 * Used to convert pointer input points (viewport space) into object coordinates.
 	 *
 	 * @type {Matrix}
 	 */
@@ -377,6 +377,14 @@ Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
 {
 	this.position.add(delta);
 };
+
+/**
+ * Callback method called when the pointer drag ends after the button has been released.
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
+ */
+Object2D.prototype.onPointerDragEnd = null;
 
 /**
  * Callback method called when the pointer drag ends after the button has been released.

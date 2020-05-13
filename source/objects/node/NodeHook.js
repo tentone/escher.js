@@ -91,7 +91,7 @@ NodeHook.BIDIRECTIONAL = 3;
 
 NodeHook.prototype = Object.create(Circle.prototype);
 
-NodeHook.prototype.onButtonPressed = function()
+NodeHook.prototype.onButtonDown = function()
 {
 	if(this.connector === null)
 	{
@@ -109,7 +109,7 @@ NodeHook.prototype.onButtonPressed = function()
 		}
 
 		this.connector = connector;
-		this.node.parent.add(connector);
+		this.parent.add(connector);
 	}
 };
 
@@ -117,6 +117,17 @@ NodeHook.prototype.onPointerDrag = function(pointer, viewport, delta)
 {
 	if(this.connector !== null)
 	{
+		var position = viewport.inverseMatrix.transformPoint(pointer.position);
+
+		if(this.direction === NodeHook.INPUT)
+		{
+			this.connector.from.copy(position);
+		}
+		else if(this.direction === NodeHook.OUTPUT)
+		{
+			this.connector.to.copy(position);
+		}
+
 		// TODO <REMOVE THIS>
 		console.log("Dragging around");
 	}
@@ -126,6 +137,8 @@ NodeHook.prototype.onPointerDragEnd = function(pointer, viewport)
 {
 	if(this.connector !== null)
 	{
+		//
+
 		// TODO <REMOVE THIS>
 		console.log("Finished drag.");
 	}

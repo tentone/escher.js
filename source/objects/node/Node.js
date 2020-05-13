@@ -44,7 +44,7 @@ Node.prototype.addInput = function(type)
 	var hook = new NodeHook(this, NodeHook.INPUT);
 	hook.type = type;
 	this.inputs.push(hook);
-	this.add(hook);
+	this.parent.add(hook);
 };
 
 /**
@@ -57,7 +57,7 @@ Node.prototype.addOutput = function(type)
 	var hook = new NodeHook(this, NodeHook.OUTPUT);
 	hook.type = type;
 	this.outputs.push(hook);
-	this.add(hook);
+	this.parent.add(hook);
 };
 
 Node.prototype.draw = function(context, viewport, canvas)
@@ -70,7 +70,7 @@ Node.prototype.draw = function(context, viewport, canvas)
 
 	for(var i = 0; i < this.inputs.length; i++)
 	{
-		this.inputs[i].position.set(this.box.min.x, start + step * i);
+		this.inputs[i].position.set(this.position.x + this.box.min.x, this.position.y + (start + step * i));
 	}
 
 	// Output hooks position
@@ -79,7 +79,7 @@ Node.prototype.draw = function(context, viewport, canvas)
 
 	for(var i = 0; i < this.outputs.length; i++)
 	{
-		this.outputs[i].position.set(this.box.max.x, start + step * i);
+		this.outputs[i].position.set(this.position.x + this.box.max.x, this.position.y + (start + step * i));
 	}
 
 	Box.prototype.draw.call(this, context, viewport, canvas);
