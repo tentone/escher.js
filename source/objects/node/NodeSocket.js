@@ -23,7 +23,7 @@ function NodeSocket(node, direction, type, name)
 	this.layer = 1;
 
 	/**
-	 * Name of the hook presented to the user.
+	 * Name of the socket presented to the user.
 	 *
 	 * @type {string}
 	 */

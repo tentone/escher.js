@@ -64,24 +64,18 @@
 
 
 		// Group to store other objects
-		var group = new Escher.Object2D();
+		var graph = new Escher.NodeGraph();
 
-		var node = new Escher.Node();
-		node.position.set(100, 100);
-		group.add(node);
+		var a = graph.createNode(Escher.Node);
+		a.addInput("test", "a");
+		var aa = a.addOutput("test", "a");
 
-		node.addInput("test", "aaaaaaaaaa");
-		node.addOutput("test", "aaaaaaaaaa");
-
-		var node = new Escher.Node();
-		node.position.set(100, 100);
-		group.add(node);
-
-		node.addInput("test", "aaaaa");
-		node.addInput("test", "bbb");
-		node.addInput("test", "ccccccccc");
-		node.addOutput("test", "aaaaaaaa");
-
+		var b = graph.createNode(Escher.Node);
+		var bb = b.addInput("test", "a");
+		b.addInput("test", "b");
+		b.addInput("test", "c");
+		b.addOutput("test", "a");
+		bb.connectTo(aa);
 
 		// Line (connection)
 		//var line = new Escher.BezierCurve();
@@ -95,7 +89,7 @@
 
 		// Renderer
 		var renderer = new Escher.Renderer(canvas);
-		renderer.createRenderLoop(group, viewport);
+		renderer.createRenderLoop(graph, viewport);
 	</script>
 </body>
 </html>

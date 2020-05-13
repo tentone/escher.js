@@ -30,6 +30,7 @@ export {QuadraticCurve} from "./objects/QuadraticCurve.js";
 export {Node} from "./objects/node/Node.js";
 export {NodeConnector} from "./objects/node/NodeConnector.js";
 export {NodeSocket} from "./objects/node/NodeSocket.js";
+export {NodeGraph} from "./objects/node/NodeGraph.js";
 
 export {ViewportControls} from "./controls/ViewportControls.js";
 

@@ -3676,7 +3676,7 @@
 		this.layer = 1;
 
 		/**
-		 * Name of the hook presented to the user.
+		 * Name of the socket presented to the user.
 		 *
 		 * @type {string}
 		 */
@@ -3750,6 +3750,26 @@
 
 	NodeSocket.prototype = Object.create(Circle.prototype);
 
+	/**
+	 * Connect this node socket to another socket.
+	 *
+	 * Sockets have to be compatible otherwise the connection cannot be made and an error will be thrown.
+	 *
+	 * @param {NodeSocket} socket Socket to be connected with this
+	 * @return {NodeConnector} Node connector created.
+	 */
+	NodeSocket.prototype.connectTo = function(socket)
+	{
+		if(!this.isCompatible(socket))
+		{
+			throw new Error("Sockets are not compatible they cannot be connected.");
+		}
+
+		var connector = new NodeConnector();
+		this.attachConnector(connector);
+		socket.attachConnector(connector);
+		return connector;
+	};
 	/**
 	 * Attach a node connector to this socket. Sets the correct input/output attributes on the socket and the connector.
 	 *
@@ -3877,12 +3897,14 @@
 	 *
 	 * @param {string} type Data type of the node socket.
 	 * @param {string} name Name of the node socket.
+	 * @return {NodeSocket} Node socket created for this node.
 	 */
 	Node.prototype.addInput = function(type, name)
 	{
-		var hook = new NodeSocket(this, NodeSocket.INPUT, type, name);
-		this.inputs.push(hook);
-		this.parent.add(hook);
+		var socket = new NodeSocket(this, NodeSocket.INPUT, type, name);
+		this.inputs.push(socket);
+		this.parent.add(socket);
+		return socket;
 	};
 
 	/**
@@ -3890,12 +3912,14 @@
 	 *
 	 * @param {string} type Data type of the node socket.
 	 * @param {string} name Name of the node socket.
+	 * @return {NodeSocket} Node socket created for this node.
 	 */
 	Node.prototype.addOutput = function(type, name)
 	{
-		var hook = new NodeSocket(this, NodeSocket.OUTPUT, type, name);
-		this.outputs.push(hook);
-		this.parent.add(hook);
+		var socket = new NodeSocket(this, NodeSocket.OUTPUT, type, name);
+		this.outputs.push(socket);
+		this.parent.add(socket);
+		return socket;
 	};
 
 	Node.prototype.onUpdate = function()
@@ -3919,6 +3943,56 @@
 		{
 			this.outputs[i].position.set(this.position.x + this.box.max.x, this.position.y + (start + step * i));
 		}
+	};
+
+	/**
+	 * Node graph object should be used as a container for node elements.
+	 *
+	 * The node graph object specifies how the nodes are processed, each individual node can store and process data, the node graph specified how this information is processed.
+	 *
+	 * All node elements are stored as children of the node graph.
+	 *
+	 * @class NodeGraph
+	 */
+	function NodeGraph()
+	{
+		Object2D.call(this);
+
+		// TODO <ADD CODE HERE>
+	}
+
+	NodeGraph.prototype = Object.create(Object2D.prototype);
+
+	/**
+	 * Create and add a new node of specific node type to the graph.
+	 *
+	 * Automatically finds an empty space as close as possible to other nodes to add this new node.
+	 *
+	 * @param {Function} NodeConstructor Constructor of the node type to be created.
+	 * @return {Node} Node created (already added to the graph).
+	 */
+	NodeGraph.prototype.createNode = function(NodeConstructor)
+	{
+		// Check available position on screen.
+		var x = 0, y = 0;
+		for(var i = 0; i < this.children.length; i++)
+		{
+			if(this.children[i].position.x > x)
+			{
+				x = this.children[i].position.x;
+			}
+			if(this.children[i].position.y > y)
+			{
+				y = this.children[i].position.y;
+			}
+		}
+
+		// Create and add new node
+		var node = new NodeConstructor();
+		node.position.set(x + 300, y / 2.0);
+		this.add(node);
+
+		return node;
 	};
 
 	/**
@@ -4046,6 +4120,7 @@
 	exports.MultiLineText = MultiLineText;
 	exports.Node = Node;
 	exports.NodeConnector = NodeConnector;
+	exports.NodeGraph = NodeGraph;
 	exports.NodeSocket = NodeSocket;
 	exports.Object2D = Object2D;
 	exports.Pattern = Pattern;
