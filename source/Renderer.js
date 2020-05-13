@@ -73,9 +73,9 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 };
 
 /**
- * Update the renderer state, update the input handlers, calculate the object and viewport transformation matrices.
+ * Renders a object using a user defined viewport into a canvas element.
  *
- * Render the object using the viewport into a canvas element.
+ * Before rendering automatically updates the input handlers and calculates the objects/viewport transformation matrices.
  *
  * The canvas state is saved and restored for each individual object, ensuring that the code of one object does not affect another one.
  *
@@ -87,7 +87,9 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 Renderer.prototype.update = function(object, viewport)
 {
 	// Get objects to be rendered
-	var objects = []
+	var objects = [];
+
+	// Traverse object and get all objects into a list.
 	object.traverse(function(child)
 	{
 		if(child.visible)
@@ -123,13 +125,14 @@ Renderer.prototype.update = function(object, viewport)
 	{
 		var child = objects[i];
 		
-		//Process the
+		//Process the object pointer events
 		if(child.pointerEvents)
 		{
-			var childPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
+			// Calculate the pointer position in the object coordinates
+			var localPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
 
 			// Check if the pointer pointer is inside
-			if(child.isInside(childPoint))
+			if(child.isInside(localPoint))
 			{
 				// Pointer enter
 				if(!child.pointerInside && child.onPointerEnter !== null)
@@ -173,6 +176,10 @@ Renderer.prototype.update = function(object, viewport)
 					if(child.draggable)
 					{
 						child.beingDragged = true;
+						if(child.onPointerDragStart !== null)
+						{
+							child.onPointerDragStart(pointer, viewport);
+						}
 						break;
 					}
 				}
@@ -213,19 +220,21 @@ Renderer.prototype.update = function(object, viewport)
 
 		// Pointer drag event
 		if(child.beingDragged)
-		{	
-			var lastPosition = pointer.position.clone();
-			lastPosition.sub(pointer.delta);
-
-			var positionWorld = viewport.inverseMatrix.transformPoint(pointer.position);
-			var lastWorld = viewport.inverseMatrix.transformPoint(lastPosition);
-
-			// Mouse delta in world coordinates
-			positionWorld.sub(lastWorld);
-
+		{
 			if(child.onPointerDrag !== null)
 			{
-				child.onPointerDrag(pointer, viewport, positionWorld);
+				var lastPosition = pointer.position.clone();
+				lastPosition.sub(pointer.delta);
+
+				// Get position and last position in world space to calculate world pointer movement
+				var positionWorld = viewport.inverseMatrix.transformPoint(pointer.position);
+				var lastWorld = viewport.inverseMatrix.transformPoint(lastPosition);
+
+				// Pointer movement delta in world coordinates
+				var delta = positionWorld.clone();
+				delta.sub(lastWorld);
+
+				child.onPointerDrag(pointer, viewport, delta, positionWorld);
 			}
 		}
 

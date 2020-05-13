@@ -202,6 +202,45 @@ function Object2D()
 }
 
 /**
+ * Check if a point in world coordinates intersects this object or some of its children.
+ *
+ * @param {Vector2} point Point in world coordinates.
+ * @param {boolean} recursive If set to false it will only check intersections with this object.
+ */
+Object2D.prototype.intersect = function(point, recursive)
+{
+	// Calculate the pointer position in the object coordinates
+	var localPoint = this.inverseGlobalMatrix.transformPoint(point);
+
+	// TODO <APPLY MATRIX TO POINT>
+
+	if(recursive)
+	{
+		for(var i = 0; i < this.children.length; i++)
+		{
+			if(this.children[i].intersect(point, true))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+};
+
+
+/**
+ * Destroy the object, removes it from the parent object.
+ */
+Object2D.prototype.destroy = function()
+{
+	if(this.parent !== null)
+	{
+		this.parent.remove(this);
+	}
+};
+
+/**
  * Traverse the object tree and run a function for all objects.
  *
  * @param {Function} callback Callback function that receives the object as parameter.
@@ -210,11 +249,9 @@ Object2D.prototype.traverse = function(callback)
 {
 	callback(this);
 
-	var children = this.children;
-
-	for(var i = 0; i < children.length; i++)
+	for(var i = 0; i < this.children.length; i++)
 	{
-		children[i].traverse(callback);
+		this.children[i].traverse(callback);
 	}
 };
 
@@ -290,10 +327,13 @@ Object2D.prototype.remove = function(children)
 };
 
 /**
- * Check if a point is inside of the object.
+ * Check if a point is inside of the object. Used by the renderer check for pointer collision (required for the object to properly process pointer events).
  *
- * Used to update the point events attached to the object.
+ * Point should be in local object coordinates.
  *
+ * To check if a point in world coordinates intersects the object the inverseGlobalMatrix should be applied to that point before calling this method.
+ *
+ * @param {Vector2} point Point in local object coordinates.
  * @return {boolean} True if the point is inside of the object.
  */
 Object2D.prototype.isInside = function(point)
@@ -367,24 +407,25 @@ Object2D.prototype.draw = null; // function(context, viewport, canvas){};
  *
  * Delta is the movement of the pointer already translated into local object coordinates.
  *
- * Receives (pointer, viewport, delta) as arguments.
+ * To detect when the object drag stops the onPointerDragEnd() method can be used.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
- * @param {Vector2} delta Pointer movement in world space.
+ * @param {Vector2} delta Pointer movement diff in world space since the last frame.
+ * @param {Vector2} positionWorld Position of the dragging pointer in world coordinates.
  */
-Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
+Object2D.prototype.onPointerDrag = function(pointer, viewport, delta, positionWorld)
 {
 	this.position.add(delta);
 };
 
 /**
- * Callback method called when the pointer drag ends after the button has been released.
+ * Callback method called when the pointer drag start after the button was pressed
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
  */
-Object2D.prototype.onPointerDragEnd = null;
+Object2D.prototype.onPointerDragStart = null;
 
 /**
  * Callback method called when the pointer drag ends after the button has been released.

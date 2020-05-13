@@ -137,6 +137,9 @@ NodeHook.prototype.onPointerDragEnd = function(pointer, viewport)
 {
 	if(this.connector !== null)
 	{
+
+		this.connector.destroy();
+		this.connector = null;
 		//
 
 		// TODO <REMOVE THIS>
