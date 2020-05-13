@@ -14,33 +14,38 @@ function NodeConnector()
 	/**
 	 * Origin hook that is attached to a node.
 	 *
-	 * @type {NodeHook}
+	 * @type {NodeSocket}
 	 */
-	this.outputHook = null;
+	this.outputSocket = null;
 
 	/**
 	 * Destination hook that is attached to a node.
 	 *
-	 * @type {NodeHook}
+	 * @type {NodeSocket}
 	 */
-	this.inputHook = null;
+	this.inputSocket = null;
 }
 
 NodeConnector.prototype = Object.create(Line.prototype);
 
-NodeConnector.prototype.draw = function(context, viewport, canvas)
+NodeConnector.prototype.destroy = function()
 {
-	if(this.outputHook !== null)
+	Line.prototype.destroy.call(this);
+
+	// TODO <REMOVE FROM HOOKS>
+};
+
+NodeConnector.prototype.onUpdate = function()
+{
+	if(this.outputSocket !== null)
 	{
-		this.from.copy(this.outputHook.position);
+		this.from.copy(this.outputSocket.position);
 	}
 
-	if(this.inputHook !== null)
+	if(this.inputSocket !== null)
 	{
-		this.to.copy(this.inputHook.position);
+		this.to.copy(this.inputSocket.position);
 	}
-
-	Line.prototype.draw.call(this, context, viewport, canvas);
 };
 
 

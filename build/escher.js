@@ -950,21 +950,57 @@
 	}
 
 	/**
+	 * Check if a point in world coordinates intersects this object or its children and get a list of the objects intersected.
+	 *
+	 * @param {Vector2} point Point in world coordinates.
+	 * @param {Object2D[]} list List of objects intersected passed to children objects recursively.
+	 * @return {Object2D[]} List of object intersected by this point.
+	 */
+	Object2D.prototype.getWorldPointIntersections = function(point, list)
+	{
+		if(list === undefined)
+		{
+			list = [];
+		}
+
+		// Calculate the pointer position in the object coordinates
+		var localPoint = this.inverseGlobalMatrix.transformPoint(point);
+		if(this.isInside(localPoint))
+		{
+			list.push(this);
+		}
+
+		// Iterate trough the children
+		for(var i = 0; i < this.children.length; i++)
+		{
+			this.children[i].getWorldPointIntersections(point, list);
+		}
+
+		return list;
+	};
+
+	/**
 	 * Check if a point in world coordinates intersects this object or some of its children.
 	 *
 	 * @param {Vector2} point Point in world coordinates.
-	 * @param {boolean} recursive If set to false it will only check intersections with this object.
+	 * @param {boolean} recursive If set to true it will also check intersections with the object children.
+	 * @return {boolean} Returns true if the point in inside of the object.
 	 */
-	Object2D.prototype.intersect = function(point, recursive)
+	Object2D.prototype.isWorldPointInside = function(point, recursive)
 	{
+		// Calculate the pointer position in the object coordinates
+		var localPoint = this.inverseGlobalMatrix.transformPoint(point);
+		if(this.isInside(localPoint))
+		{
+			return true;
+		}
 
-		// TODO <APPLY MATRIX TO POINT>
-
+		// Iterate trough the children
 		if(recursive)
 		{
 			for(var i = 0; i < this.children.length; i++)
 			{
-				if(this.children[i].intersect(point, true))
+				if(this.children[i].isWorldPointInside(point, true))
 				{
 					return true;
 				}
@@ -1158,9 +1194,9 @@
 	 * @param {Pointer} pointer Pointer object that receives the user input.
 	 * @param {Viewport} viewport Viewport where the object is drawn.
 	 * @param {Vector2} delta Pointer movement diff in world space since the last frame.
-	 * @param {Vector2} position Position of the dragging pointer in world coordinates.
+	 * @param {Vector2} positionWorld Position of the dragging pointer in world coordinates.
 	 */
-	Object2D.prototype.onPointerDrag = function(pointer, viewport, delta, position)
+	Object2D.prototype.onPointerDrag = function(pointer, viewport, delta, positionWorld)
 	{
 		this.position.add(delta);
 	};
@@ -1198,14 +1234,16 @@
 	/**
 	 * Callback method called every time before the object is draw into the canvas.
 	 *
-	 * Can be used to run preparation code, move the object, etc.
+	 * Should be used to run object logic, any preparation code, move the object, etc.
+	 *
+	 * This method is called for every object before rendering.
 	 */
 	Object2D.prototype.onUpdate = null;
 
 	/**
 	 * Callback method called when the pointer enters the object.
 	 *
-	 * Receives (pointer, viewport) as arguments.
+	 * It is not called while the pointer is inside of the object, just on the first time that the pointer enters the object for that use onPointerOver()
 	 *
 	 * @param {Pointer} pointer Pointer object that receives the user input.
 	 * @param {Viewport} viewport Viewport where the object is drawn.
@@ -1213,9 +1251,7 @@
 	Object2D.prototype.onPointerEnter = null;
 
 	/**
-	 * Callback method called when the was inside of the object and leaves the object.
-	 *
-	 * Receives (pointer, viewport) as arguments.
+	 * Method called when the was inside of the object and leaves the object.
 	 *
 	 * @param {Pointer} pointer Pointer object that receives the user input.
 	 * @param {Viewport} viewport Viewport where the object is drawn.
@@ -1223,9 +1259,7 @@
 	Object2D.prototype.onPointerLeave = null;
 
 	/**
-	 * Callback method while the pointer is over (inside) of the object.
-	 *
-	 * Receives (pointer, viewport) as arguments.
+	 * Method while the pointer is over (inside) of the object.
 	 *
 	 * @param {Pointer} pointer Pointer object that receives the user input.
 	 * @param {Viewport} viewport Viewport where the object is drawn.
@@ -1233,9 +1267,7 @@
 	Object2D.prototype.onPointerOver = null;
 
 	/**
-	 * Callback method called while the pointer button is pressed.
-	 *
-	 * Receives (pointer, viewport) as arguments.
+	 * Method called while the pointer button is pressed.
 	 *
 	 * @param {Pointer} pointer Pointer object that receives the user input.
 	 * @param {Viewport} viewport Viewport where the object is drawn.
@@ -1243,9 +1275,7 @@
 	Object2D.prototype.onButtonPressed = null;
 
 	/**
-	 * Callback method called while the pointer button is double clicked.
-	 *
-	 * Receives (pointer, viewport) as arguments.
+	 * Method called while the pointer button is double clicked.
 	 *
 	 * @param {Pointer} pointer Pointer object that receives the user input.
 	 * @param {Viewport} viewport Viewport where the object is drawn.
@@ -1255,17 +1285,13 @@
 	/**
 	 * Callback method called when the pointer button is pressed down (single time).
 	 *
-	 * Receives (pointer, viewport) as arguments.
-	 *
 	 * @param {Pointer} pointer Pointer object that receives the user input.
 	 * @param {Viewport} viewport Viewport where the object is drawn.
 	 */
 	Object2D.prototype.onButtonDown = null;
 
 	/**
-	 * Callback method called when the pointer button is released (single time).
-	 *
-	 * Receives (pointer, viewport) as arguments.
+	 * Method called when the pointer button is released (single time).
 	 *
 	 * @param {Pointer} pointer Pointer object that receives the user input.
 	 * @param {Viewport} viewport Viewport where the object is drawn.
@@ -2340,13 +2366,14 @@
 		{
 			var child = objects[i];
 			
-			//Process the
+			//Process the object pointer events
 			if(child.pointerEvents)
 			{
-				var childPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
+				// Calculate the pointer position in the object coordinates
+				var localPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
 
 				// Check if the pointer pointer is inside
-				if(child.isInside(childPoint))
+				if(child.isInside(localPoint))
 				{
 					// Pointer enter
 					if(!child.pointerInside && child.onPointerEnter !== null)
@@ -3542,33 +3569,38 @@
 		/**
 		 * Origin hook that is attached to a node.
 		 *
-		 * @type {NodeHook}
+		 * @type {NodeSocket}
 		 */
-		this.outputHook = null;
+		this.outputSocket = null;
 
 		/**
 		 * Destination hook that is attached to a node.
 		 *
-		 * @type {NodeHook}
+		 * @type {NodeSocket}
 		 */
-		this.inputHook = null;
+		this.inputSocket = null;
 	}
 
 	NodeConnector.prototype = Object.create(Line.prototype);
 
-	NodeConnector.prototype.draw = function(context, viewport, canvas)
+	NodeConnector.prototype.destroy = function()
 	{
-		if(this.outputHook !== null)
+		Line.prototype.destroy.call(this);
+
+		// TODO <REMOVE FROM HOOKS>
+	};
+
+	NodeConnector.prototype.onUpdate = function()
+	{
+		if(this.outputSocket !== null)
 		{
-			this.from.copy(this.outputHook.position);
+			this.from.copy(this.outputSocket.position);
 		}
 
-		if(this.inputHook !== null)
+		if(this.inputSocket !== null)
 		{
-			this.to.copy(this.inputHook.position);
+			this.to.copy(this.inputSocket.position);
 		}
-
-		Line.prototype.draw.call(this, context, viewport, canvas);
 	};
 
 	/**
@@ -3576,11 +3608,11 @@
 	 *
 	 * Can be used as a node input, output or as a bidirectional connection.
 	 *
-	 * @class NodeHook
+	 * @class NodeSocket
 	 * @param {Node} node Node of this hook.
 	 * @param {number} direction Direction of the hook.
 	 */
-	function NodeHook(node, direction)
+	function NodeSocket(node, direction)
 	{
 		Circle.call(this);
 
@@ -3637,7 +3669,7 @@
 	 *
 	 * @type {number}
 	 */
-	NodeHook.INPUT = 1;
+	NodeSocket.INPUT = 1;
 
 	/**
 	 * Output hook can only be connected to an input.
@@ -3646,71 +3678,87 @@
 	 *
 	 * @type {number}
 	 */
-	NodeHook.OUTPUT = 2;
+	NodeSocket.OUTPUT = 2;
+
+	NodeSocket.prototype = Object.create(Circle.prototype);
 
 	/**
-	 * Bidirectional hook can be connected to any type of hook.
+	 * Attach a node connector to this socket. Sets the correct input/output attributes on the socket and the connector.
 	 *
-	 * Can be used to write and read from inputs and/or outputs.
+	 * Automatically adds the connector to the same parent and the node socket if no parent defined for the connector.
 	 *
-	 * @type {number}
+	 * @param {NodeConnector} connector Connector to be attached to this socket.
 	 */
-	NodeHook.BIDIRECTIONAL = 3;
-
-	NodeHook.prototype = Object.create(Circle.prototype);
-
-	NodeHook.prototype.onButtonDown = function()
+	NodeSocket.prototype.attachConnector = function(connector)
 	{
-		if(this.connector === null)
+		if(this.direction === NodeSocket.INPUT)
 		{
-			// TODO <REMOVE THIS>
-			console.log("Create a new connector.");
+			connector.inputSocket = this;
+		}
+		else if(this.direction === NodeSocket.OUTPUT)
+		{
+			connector.outputSocket = this;
+		}
 
-			var connector = new NodeConnector();
-			if(this.direction === NodeHook.INPUT)
-			{
-				connector.inputHook = this;
-			}
-			else if(this.direction === NodeHook.OUTPUT)
-			{
-				connector.outputHook = this;
-			}
-
-			this.connector = connector;
+		this.connector = connector;
+		if(connector.parent === null)
+		{
 			this.parent.add(connector);
 		}
 	};
 
-	NodeHook.prototype.onPointerDrag = function(pointer, viewport, delta)
+	NodeSocket.prototype.onPointerDragStart = function(pointer, viewport)
+	{
+		if(this.connector === null)
+		{
+			this.attachConnector(new NodeConnector());
+		}
+	};
+
+	NodeSocket.prototype.onPointerDrag = function(pointer, viewport, delta, position)
+	{
+		if(this.connector !== null)
+		{
+			if(this.direction === NodeSocket.INPUT)
+			{
+				this.connector.from.copy(position);
+			}
+			else if(this.direction === NodeSocket.OUTPUT)
+			{
+				this.connector.to.copy(position);
+			}
+		}
+	};
+
+	NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
 	{
 		if(this.connector !== null)
 		{
 			var position = viewport.inverseMatrix.transformPoint(pointer.position);
+			var objects = this.parent.getWorldPointIntersections(position);
+			var found = false;
 
-			if(this.direction === NodeHook.INPUT)
+			for(var i = 0; i < objects.length; i++)
 			{
-				this.connector.from.copy(position);
+				if(objects[i] instanceof NodeSocket)
+				{
+					if(this.direction !== objects[i].direction)
+					{
+						objects[i].attachConnector(this.connector);
+						found = true;
+						break;
+					}
+				}
 			}
-			else if(this.direction === NodeHook.OUTPUT)
+
+			if(!found)
 			{
-				this.connector.to.copy(position);
+				this.connector.destroy();
+				this.connector = null;
 			}
 
 			// TODO <REMOVE THIS>
-			console.log("Dragging around");
-		}
-	};
-
-	NodeHook.prototype.onPointerDragEnd = function(pointer, viewport)
-	{
-		if(this.connector !== null)
-		{
-			this.connector.destroy();
-			this.connector = null;
-			//
-
-			// TODO <REMOVE THIS>
-			console.log("Finished drag.");
+			console.log("Finished drag.", objects);
 		}
 	};
 
@@ -3732,14 +3780,14 @@
 		/**
 		 * List of inputs of the node.
 		 *
-		 * @type {NodeHook[]}
+		 * @type {NodeSocket[]}
 		 */
 		this.inputs = [];
 
 		/**
 		 * List of outputs of the node.
 		 *
-		 * @type {NodeHook[]}
+		 * @type {NodeSocket[]}
 		 */
 		this.outputs = [];
 	}
@@ -3753,7 +3801,7 @@
 	 */
 	Node.prototype.addInput = function(type)
 	{
-		var hook = new NodeHook(this, NodeHook.INPUT);
+		var hook = new NodeSocket(this, NodeSocket.INPUT);
 		hook.type = type;
 		this.inputs.push(hook);
 		this.parent.add(hook);
@@ -3766,13 +3814,13 @@
 	 */
 	Node.prototype.addOutput = function(type)
 	{
-		var hook = new NodeHook(this, NodeHook.OUTPUT);
+		var hook = new NodeSocket(this, NodeSocket.OUTPUT);
 		hook.type = type;
 		this.outputs.push(hook);
 		this.parent.add(hook);
 	};
 
-	Node.prototype.draw = function(context, viewport, canvas)
+	Node.prototype.onUpdate = function()
 	{
 		var height = this.box.max.y - this.box.min.y;
 
@@ -3793,8 +3841,6 @@
 		{
 			this.outputs[i].position.set(this.position.x + this.box.max.x, this.position.y + (start + step * i));
 		}
-
-		Box.prototype.draw.call(this, context, viewport, canvas);
 	};
 
 	/**
@@ -3922,7 +3968,7 @@
 	exports.MultiLineText = MultiLineText;
 	exports.Node = Node;
 	exports.NodeConnector = NodeConnector;
-	exports.NodeHook = NodeHook;
+	exports.NodeSocket = NodeSocket;
 	exports.Object2D = Object2D;
 	exports.Pattern = Pattern;
 	exports.Pointer = Pointer;

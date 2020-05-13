@@ -1,6 +1,5 @@
 import {Box} from "../Box";
-import {Vector2} from "../../math/Vector2";
-import {NodeHook} from "./NodeHook";
+import {NodeSocket} from "./NodeSocket";
 
 /**
  * Node objects can be connected between them to create graphs.
@@ -20,14 +19,14 @@ function Node()
 	/**
 	 * List of inputs of the node.
 	 *
-	 * @type {NodeHook[]}
+	 * @type {NodeSocket[]}
 	 */
 	this.inputs = [];
 
 	/**
 	 * List of outputs of the node.
 	 *
-	 * @type {NodeHook[]}
+	 * @type {NodeSocket[]}
 	 */
 	this.outputs = [];
 }
@@ -41,7 +40,7 @@ Node.prototype = Object.create(Box.prototype);
  */
 Node.prototype.addInput = function(type)
 {
-	var hook = new NodeHook(this, NodeHook.INPUT);
+	var hook = new NodeSocket(this, NodeSocket.INPUT);
 	hook.type = type;
 	this.inputs.push(hook);
 	this.parent.add(hook);
@@ -54,13 +53,13 @@ Node.prototype.addInput = function(type)
  */
 Node.prototype.addOutput = function(type)
 {
-	var hook = new NodeHook(this, NodeHook.OUTPUT);
+	var hook = new NodeSocket(this, NodeSocket.OUTPUT);
 	hook.type = type;
 	this.outputs.push(hook);
 	this.parent.add(hook);
 };
 
-Node.prototype.draw = function(context, viewport, canvas)
+Node.prototype.onUpdate = function()
 {
 	var height = this.box.max.y - this.box.min.y;
 
@@ -81,8 +80,6 @@ Node.prototype.draw = function(context, viewport, canvas)
 	{
 		this.outputs[i].position.set(this.position.x + this.box.max.x, this.position.y + (start + step * i));
 	}
-
-	Box.prototype.draw.call(this, context, viewport, canvas);
 };
 
 export {Node};

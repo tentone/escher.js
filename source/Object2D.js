@@ -202,23 +202,57 @@ function Object2D()
 }
 
 /**
+ * Check if a point in world coordinates intersects this object or its children and get a list of the objects intersected.
+ *
+ * @param {Vector2} point Point in world coordinates.
+ * @param {Object2D[]} list List of objects intersected passed to children objects recursively.
+ * @return {Object2D[]} List of object intersected by this point.
+ */
+Object2D.prototype.getWorldPointIntersections = function(point, list)
+{
+	if(list === undefined)
+	{
+		list = [];
+	}
+
+	// Calculate the pointer position in the object coordinates
+	var localPoint = this.inverseGlobalMatrix.transformPoint(point);
+	if(this.isInside(localPoint))
+	{
+		list.push(this);
+	}
+
+	// Iterate trough the children
+	for(var i = 0; i < this.children.length; i++)
+	{
+		this.children[i].getWorldPointIntersections(point, list);
+	}
+
+	return list;
+};
+
+/**
  * Check if a point in world coordinates intersects this object or some of its children.
  *
  * @param {Vector2} point Point in world coordinates.
- * @param {boolean} recursive If set to false it will only check intersections with this object.
+ * @param {boolean} recursive If set to true it will also check intersections with the object children.
+ * @return {boolean} Returns true if the point in inside of the object.
  */
-Object2D.prototype.intersect = function(point, recursive)
+Object2D.prototype.isWorldPointInside = function(point, recursive)
 {
 	// Calculate the pointer position in the object coordinates
 	var localPoint = this.inverseGlobalMatrix.transformPoint(point);
+	if(this.isInside(localPoint))
+	{
+		return true;
+	}
 
-	// TODO <APPLY MATRIX TO POINT>
-
+	// Iterate trough the children
 	if(recursive)
 	{
 		for(var i = 0; i < this.children.length; i++)
 		{
-			if(this.children[i].intersect(point, true))
+			if(this.children[i].isWorldPointInside(point, true))
 			{
 				return true;
 			}
@@ -452,14 +486,16 @@ Object2D.prototype.onRemove = null;
 /**
  * Callback method called every time before the object is draw into the canvas.
  *
- * Can be used to run preparation code, move the object, etc.
+ * Should be used to run object logic, any preparation code, move the object, etc.
+ *
+ * This method is called for every object before rendering.
  */
 Object2D.prototype.onUpdate = null;
 
 /**
  * Callback method called when the pointer enters the object.
  *
- * Receives (pointer, viewport) as arguments.
+ * It is not called while the pointer is inside of the object, just on the first time that the pointer enters the object for that use onPointerOver()
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -467,9 +503,7 @@ Object2D.prototype.onUpdate = null;
 Object2D.prototype.onPointerEnter = null;
 
 /**
- * Callback method called when the was inside of the object and leaves the object.
- *
- * Receives (pointer, viewport) as arguments.
+ * Method called when the was inside of the object and leaves the object.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -477,9 +511,7 @@ Object2D.prototype.onPointerEnter = null;
 Object2D.prototype.onPointerLeave = null;
 
 /**
- * Callback method while the pointer is over (inside) of the object.
- *
- * Receives (pointer, viewport) as arguments.
+ * Method while the pointer is over (inside) of the object.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -487,9 +519,7 @@ Object2D.prototype.onPointerLeave = null;
 Object2D.prototype.onPointerOver = null;
 
 /**
- * Callback method called while the pointer button is pressed.
- *
- * Receives (pointer, viewport) as arguments.
+ * Method called while the pointer button is pressed.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -497,9 +527,7 @@ Object2D.prototype.onPointerOver = null;
 Object2D.prototype.onButtonPressed = null;
 
 /**
- * Callback method called while the pointer button is double clicked.
- *
- * Receives (pointer, viewport) as arguments.
+ * Method called while the pointer button is double clicked.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -509,17 +537,13 @@ Object2D.prototype.onDoubleClick = null;
 /**
  * Callback method called when the pointer button is pressed down (single time).
  *
- * Receives (pointer, viewport) as arguments.
- *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onButtonDown = null;
 
 /**
- * Callback method called when the pointer button is released (single time).
- *
- * Receives (pointer, viewport) as arguments.
+ * Method called when the pointer button is released (single time).
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
