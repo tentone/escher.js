@@ -69,9 +69,14 @@
 
 			registerSockets()
 			{
-				this.addInput("number", "a");
-				this.addInput("number", "b");
-				this.addOutput("number", "r");
+				this.a = this.addInput("number", "a");
+				this.b = this.addInput("number", "b");
+				this.r = this.addOutput("number", "r");
+
+				this.r.getValue = () =>
+				{
+					return "(" + this.a.getValue() + this.operation +  this.b.getValue() + ")";
+				};
 			}
 		}
 
@@ -93,23 +98,49 @@
 
 			registerSockets()
 			{
-				this.addOutput("number", "v");
+				this.out = this.addOutput("number", "v");
+				this.out.getValue = () =>
+				{
+					return this.div.element.value;
+				};
+			}
+		}
+
+		class ResultNode extends Escher.Node
+		{
+			constructor()
+			{
+				super();
+
+				this.box.set(new Escher.Vector2(-80, -30), new Escher.Vector2(80, 30));
+
+				this.text = new Escher.Text();
+				this.text.text = "";
+				this.text.font = "12px Arial";
+				this.text.layer = 2;
+				this.add(this.text);
+			}
+
+			registerSockets()
+			{
+				this.r = this.addInput("number", "r");
+			}
+
+			onUpdate()
+			{
+				super.onUpdate();
+
+				var value = this.r.getValue();
+
+				this.text.text = value + " = " + eval(value);
 			}
 		}
 
 		// Group to store other objects
 		var graph = new Escher.NodeGraph();
 
-		var a = graph.addNode(new Escher.Node());
-		a.addInput("test", "a");
-		var aa = a.addOutput("test", "a");
-
-		var b = graph.addNode(new Escher.Node());
-		var bb = b.addInput("test", "a");
-		b.addInput("test", "b");
-		b.addInput("test", "c");
-		b.addOutput("test", "a");
-		bb.connectTo(aa);
+		var result = new ResultNode();
+		graph.addNode(result);
 
 		// Viewport
 		var viewport = new Escher.Viewport(canvas);

@@ -3653,7 +3653,9 @@
 	/**
 	 * Node connector is used to connect a output of a node to a input of another node.
 	 *
-	 * Some nodes inputs/outputs might support just one or multiple connections.
+	 * Some nodes outputs might support multiple connections having an output connected to multiple inputs.
+	 *
+	 * Data always goes from the output node to a input node.
 	 *
 	 * @class NodeConnector
 	 */
@@ -3664,14 +3666,14 @@
 		this.lineWidth = 2;
 
 		/**
-		 * Origin hook that is attached to a node.
+		 * Origin output socket that is attached to a node.
 		 *
 		 * @type {NodeSocket}
 		 */
 		this.outputSocket = null;
 
 		/**
-		 * Destination hook that is attached to a node.
+		 * Destination input socket that is attached to a node.
 		 *
 		 * @type {NodeSocket}
 		 */
@@ -3759,30 +3761,36 @@
 		this.name = name !== undefined ? name : "";
 
 		/**
-		 * Type of data available from this socket, only hooks of the same type can be connected.
+		 * Type of data available from this socket. Only sockets of the same type can be connected.
 		 *
-		 * Should directly store data type as text
+		 * Should directly store the data type name (e.g. "string", "number", "Object", etc).
 		 *
 		 * @type {string}
 		 */
 		this.type = type !== undefined ? type : "";
 
 		/**
-		 * Direction of the node hook.
+		 * Direction of the node hook, indicates the data flow of the socket.
+		 *
+		 * Can be INPUT or OUTPUT.
 		 *
 		 * @type {number}
 		 */
 		this.direction = direction;
 
 		/**
-		 * Node where this input element in attached.
+		 * Node where this socket is attached to.
+		 *
+		 * Should be used to get data from node GUI and from other sockets.
 		 *
 		 * @type {Node}
 		 */
 		this.node = node;
 
 		/**
-		 * Node connector used to connect this hook to another node hook.
+		 * Node connector used to connect this socket to another node socket.
+		 *
+		 * Can be used to access the adjacent node.
 		 *
 		 * @type {NodeConnector}
 		 */
@@ -3790,6 +3798,8 @@
 
 		/**
 		 * Text object used to present the name of the socket.
+		 *
+		 * Depending on the socket direction the text is aligned to the left or to the right.
 		 *
 		 * @type {Text}
 		 */
@@ -3829,6 +3839,27 @@
 	NodeSocket.prototype = Object.create(Circle.prototype);
 
 	/**
+	 * Get value stored or calculated in node socket. For output values it should be the calculated value from node logic, node inputs etc.
+	 *
+	 * For input nodes the value should be fetched trough the connector object that is connected to an output node elsewhere.
+	 *
+	 * By default it the socket is an INPUT it gets the value trough the connector if available, if the socket is an OUTPUT or there is no connection the method returns null.
+	 *
+	 * The method should be extended by implementations of this class to process data. The node object can be access to get information from other sockets.
+	 *
+	 * @return {Object} Return data calculated from the node.
+	 */
+	NodeSocket.prototype.getValue = function()
+	{
+		if(this.direction === NodeSocket.INPUT && this.connector !== null && this.connector.outputSocket !== null)
+		{
+			return this.connector.outputSocket.getValue();
+		}
+
+		return null;
+	};
+
+	/**
 	 * Connect this node socket to another socket.
 	 *
 	 * Sockets have to be compatible otherwise the connection cannot be made and an error will be thrown.
@@ -3848,6 +3879,7 @@
 		socket.attachConnector(connector);
 		return connector;
 	};
+
 	/**
 	 * Attach a node connector to this socket. Sets the correct input/output attributes on the socket and the connector.
 	 *
@@ -3952,7 +3984,7 @@
 	 *
 	 * Each node contains inputs, outputs and a set of attributes containing their state. Inputs can be connected to outputs of other nodes, and vice-versa.
 	 *
-	 * This class implements node basic functionality, the logic to connected node and define inputs/outputs of the nodes.
+	 * This class implements node basic functionality, the logic to connect node and define inputs/outputs of the nodes.
 	 *
 	 * @class Node
 	 */
@@ -4014,6 +4046,44 @@
 		this.outputs.push(socket);
 		this.parent.add(socket);
 		return socket;
+	};
+
+	/**
+	 * Get a output socket by its name. If there are multiple sockets with the same name only the first one found is returned.
+	 *
+	 * @param {string} name Name of the node socket to get.
+	 * @return {NodeSocket} Node socket if it was found, null otherwise.
+	 */
+	Node.prototype.getOutput = function(name)
+	{
+		for(var i = 0; i < this.outputs.length; i++)
+		{
+			if(this.outputs[i].name === name)
+			{
+				return this.outputs[i];
+			}
+		}
+
+		return null;
+	};
+
+	/**
+	 * Get a input socket by its name. If there are multiple sockets with the same name only the first one found is returned.
+	 *
+	 * @param {string} name Name of the node socket to get.
+	 * @return {NodeSocket} Node socket if it was found, null otherwise.
+	 */
+	Node.prototype.getInput = function(name)
+	{
+		for(var i = 0; i < this.inputs.length; i++)
+		{
+			if(this.inputs[i].name === name)
+			{
+				return this.inputs[i];
+			}
+		}
+
+		return null;
 	};
 
 	Node.prototype.destroy = function()
