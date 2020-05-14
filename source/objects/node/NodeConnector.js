@@ -3,7 +3,9 @@ import {BezierCurve} from "../BezierCurve";
 /**
  * Node connector is used to connect a output of a node to a input of another node.
  *
- * Some nodes inputs/outputs might support just one or multiple connections.
+ * Some nodes outputs might support multiple connections having an output connected to multiple inputs.
+ *
+ * Data always goes from the output node to a input node.
  *
  * @class NodeConnector
  */
@@ -14,14 +16,14 @@ function NodeConnector()
 	this.lineWidth = 2;
 
 	/**
-	 * Origin hook that is attached to a node.
+	 * Origin output socket that is attached to a node.
 	 *
 	 * @type {NodeSocket}
 	 */
 	this.outputSocket = null;
 
 	/**
-	 * Destination hook that is attached to a node.
+	 * Destination input socket that is attached to a node.
 	 *
 	 * @type {NodeSocket}
 	 */

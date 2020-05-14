@@ -30,30 +30,36 @@ function NodeSocket(node, direction, type, name)
 	this.name = name !== undefined ? name : "";
 
 	/**
-	 * Type of data available from this socket, only hooks of the same type can be connected.
+	 * Type of data available from this socket. Only sockets of the same type can be connected.
 	 *
-	 * Should directly store data type as text
+	 * Should directly store the data type name (e.g. "string", "number", "Object", etc).
 	 *
 	 * @type {string}
 	 */
 	this.type = type !== undefined ? type : "";
 
 	/**
-	 * Direction of the node hook.
+	 * Direction of the node hook, indicates the data flow of the socket.
+	 *
+	 * Can be INPUT or OUTPUT.
 	 *
 	 * @type {number}
 	 */
 	this.direction = direction;
 
 	/**
-	 * Node where this input element in attached.
+	 * Node where this socket is attached to.
+	 *
+	 * Should be used to get data from node GUI and from other sockets.
 	 *
 	 * @type {Node}
 	 */
 	this.node = node;
 
 	/**
-	 * Node connector used to connect this hook to another node hook.
+	 * Node connector used to connect this socket to another node socket.
+	 *
+	 * Can be used to access the adjacent node.
 	 *
 	 * @type {NodeConnector}
 	 */
@@ -61,6 +67,8 @@ function NodeSocket(node, direction, type, name)
 
 	/**
 	 * Text object used to present the name of the socket.
+	 *
+	 * Depending on the socket direction the text is aligned to the left or to the right.
 	 *
 	 * @type {Text}
 	 */
@@ -100,6 +108,27 @@ NodeSocket.OUTPUT = 2;
 NodeSocket.prototype = Object.create(Circle.prototype);
 
 /**
+ * Get value stored or calculated in node socket. For output values it should be the calculated value from node logic, node inputs etc.
+ *
+ * For input nodes the value should be fetched trough the connector object that is connected to an output node elsewhere.
+ *
+ * By default it the socket is an INPUT it gets the value trough the connector if available, if the socket is an OUTPUT or there is no connection the method returns null.
+ *
+ * The method should be extended by implementations of this class to process data. The node object can be access to get information from other sockets.
+ *
+ * @return {Object} Return data calculated from the node.
+ */
+NodeSocket.prototype.getValue = function()
+{
+	if(this.direction === NodeSocket.INPUT && this.connector !== null && this.connector.outputSocket !== null)
+	{
+		return this.connector.outputSocket.getValue();
+	}
+
+	return null;
+};
+
+/**
  * Connect this node socket to another socket.
  *
  * Sockets have to be compatible otherwise the connection cannot be made and an error will be thrown.
@@ -119,6 +148,7 @@ NodeSocket.prototype.connectTo = function(socket)
 	socket.attachConnector(connector);
 	return connector;
 };
+
 /**
  * Attach a node connector to this socket. Sets the correct input/output attributes on the socket and the connector.
  *
@@ -156,8 +186,6 @@ NodeSocket.prototype.isCompatible = function(socket)
 {
 	return this.direction !== socket.direction && this.type === socket.type;
 };
-
-NodeSocket
 
 NodeSocket.prototype.destroy = function()
 {
