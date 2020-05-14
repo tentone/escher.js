@@ -15,7 +15,8 @@
 ### Getting started
 
 - There are a couple of example in the example folder, they can be used as base for your project.
-  - [Diagram](https://tentone.github.io/escher.js/examples/diagram)
+  - [Playground](https://tentone.github.io/escher.js/examples/playground)
+  - [Physics](https://tentone.github.io/escher.js/examples/physics)
   - [PDF & TIFF (External libraries)](https://tentone.github.io/escher.js/examples/pdftiff)
   - [Masks](https://tentone.github.io/escher.js/examples/mask)
   - [Snake Game](https://tentone.github.io/escher.js/examples/snake)

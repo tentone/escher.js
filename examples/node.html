@@ -81,16 +81,14 @@
 			{
 				super();
 
-				this.div = new Escher.DOM(canvas.parentElement);
-				this.div.size.set(100, 50);
-				this.div.origin.set(50, 25);
+				this.div = new Escher.DOM(canvas.parentElement, "input");
+				this.div.size.set(70, 20);
+				this.div.origin.set(35, 10);
+				this.div.element.style.pointerEvents = "auto";
+				this.div.element.type = "number";
+				this.div.element.style.fontFamily = "Arial";
+				this.div.element.style.textAlign = "center";
 				this.add(this.div);
-
-				this.input = document.createElement("input");
-				this.input.type = "number";
-				this.input.style.fontFamily = "Arial";
-				this.input.style.textAlign = "center";
-				this.div.element.appendChild(this.input);
 			}
 
 			registerSockets()

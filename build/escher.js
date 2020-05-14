@@ -3194,11 +3194,11 @@
 	};
 
 	/**
-	 * A DOM object transformed using CSS3D to ver included in the graph.
+	 * A DOM object transformed using CSS3D to be included in the scene.
 	 *
-	 * DOM objects always stay on top of everything else, mouse events are not supported for these objects.
+	 * DOM objects always stay on top of everything else, it is not possible to layer these object with regular canvas objects.
 	 *
-	 * Use the DOM events for interaction with these types of objects.
+	 * By default mouse events are not supported for these objects (it does not implement pointer collision checking). Use the DOM events for interaction with these types of objects.
 	 *
 	 * @class
 	 * @param {Element} parentDOM Parent DOM element that contains the drawing canvas.
@@ -3211,15 +3211,19 @@
 
 		/**
 		 * Parent element that contains this DOM div.
+		 *
+		 * @type {Element}
 		 */
 		this.parentDOM = parentDOM;
 
 		/**
 		 * DOM element contained by this object.
 		 *
-		 * Bye default it has the pointerEvents style set to none.
+		 * By default it has the pointerEvents style set to none. In order to use any DOM event with this object first you have to set the element.style.pointerEvents to "auto".
+		 *
+		 * @type {Element}
 		 */
-		this.element = document.createElement("div");
+		this.element = document.createElement(type || "div");
 		this.element.style.transformStyle = "preserve-3d";
 		this.element.style.position = "absolute";
 		this.element.style.top = "0px";
@@ -3236,11 +3240,17 @@
 
 	DOM.prototype = Object.create(Object2D.prototype);
 
+	/**
+	 * DOM object implements onAdd() method to automatically attach the DOM object to the DOM tree.
+	 */
 	DOM.prototype.onAdd = function()
 	{
 		this.parentDOM.appendChild(this.element);
 	};
 
+	/**
+	 * DOM object implements onAdd() method to automatically remove the DOM object to the DOM tree.
+	 */
 	DOM.prototype.onRemove = function()
 	{
 		this.parentDOM.removeChild(this.element);

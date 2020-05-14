@@ -157,6 +157,8 @@ NodeSocket.prototype.isCompatible = function(socket)
 	return this.direction !== socket.direction && this.type === socket.type;
 };
 
+NodeSocket
+
 NodeSocket.prototype.destroy = function()
 {
 	Circle.prototype.destroy.call(this);
