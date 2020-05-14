@@ -7,7 +7,8 @@ import {BezierCurve} from "../BezierCurve";
  *
  * Data always goes from the output node to a input node.
  *
- * @class NodeConnector
+ * @class
+ * @extends {BezierCurve}
  */
 function NodeConnector()
 {

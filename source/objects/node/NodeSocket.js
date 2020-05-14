@@ -8,7 +8,8 @@ import {Text} from "../Text";
  *
  * Can be used as a node input, output or as a bidirectional connection.
  *
- * @class NodeSocket
+ * @class
+ * @extends {Circle}
  * @param {Node} node Node of this hook.
  * @param {number} direction Direction of the hook.
  * @param {string} type Data type of the node socket.

@@ -8,7 +8,8 @@ import {RoundedBox} from "../RoundedBox";
  *
  * This class implements node basic functionality, the logic to connect node and define inputs/outputs of the nodes.
  *
- * @class Node
+ * @class
+ * @extends {RoundedBox}
  */
 function Node()
 {

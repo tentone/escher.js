@@ -12,7 +12,7 @@ import {UUID} from "./math/UUID.js";
  * @class
  */
 function Object2D()
-{	
+{
 	/**
 	 * UUID of the object.
 	 *
@@ -549,5 +549,9 @@ Object2D.prototype.onButtonDown = null;
  * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onButtonUp = null;
+
+/**
+ * Function used to serialize the data
+ */
 
 export {Object2D};

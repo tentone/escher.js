@@ -760,7 +760,7 @@
 	 * @class
 	 */
 	function Object2D()
-	{	
+	{
 		/**
 		 * UUID of the object.
 		 *
@@ -3657,7 +3657,8 @@
 	 *
 	 * Data always goes from the output node to a input node.
 	 *
-	 * @class NodeConnector
+	 * @class
+	 * @extends {BezierCurve}
 	 */
 	function NodeConnector()
 	{
@@ -3739,7 +3740,8 @@
 	 *
 	 * Can be used as a node input, output or as a bidirectional connection.
 	 *
-	 * @class NodeSocket
+	 * @class
+	 * @extends {Circle}
 	 * @param {Node} node Node of this hook.
 	 * @param {number} direction Direction of the hook.
 	 * @param {string} type Data type of the node socket.
@@ -3986,7 +3988,8 @@
 	 *
 	 * This class implements node basic functionality, the logic to connect node and define inputs/outputs of the nodes.
 	 *
-	 * @class Node
+	 * @class
+	 * @extends {RoundedBox}
 	 */
 	function Node()
 	{
@@ -4131,7 +4134,8 @@
 	 *
 	 * All node elements are stored as children of the node graph.
 	 *
-	 * @class NodeGraph
+	 * @class
+	 * @extends {Object2D}
 	 */
 	function NodeGraph()
 	{

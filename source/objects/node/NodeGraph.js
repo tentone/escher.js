@@ -7,7 +7,8 @@ import {Object2D} from "../../Object2D";
  *
  * All node elements are stored as children of the node graph.
  *
- * @class NodeGraph
+ * @class
+ * @extends {Object2D}
  */
 function NodeGraph()
 {
