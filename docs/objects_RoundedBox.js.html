@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Line.js</title>
+    <title>JSDoc: Source: objects/RoundedBox.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Line.js</h1>
+    <h1 class="page-title">Source: objects/RoundedBox.js</h1>
 
     
 
@@ -26,73 +26,75 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import {Object2D} from "../Object2D.js";
-import {Vector2} from "../math/Vector2.js";
+            <pre class="prettyprint source linenums"><code>import {Box} from "./Box";
 
 /**
- * Line object draw a line from one point to another without any kind of interpolation.
- *
- * For drawing lines with interpolation check {BezierCurve}
+ * Rounded box object draw a rectangular object with rounded corners.
  *
  * @class
- * @extends {Object2D}
+ * @extends {Box}
  */
-function Line()
+function RoundedBox()
 {
-	Object2D.call(this);
+	Box.call(this);
 
 	/**
-	 * Initial point of the line.
+	 * Radius of the circular section that makes up the box corners.
 	 *
-	 * Can be equal to the position object of another object. Making it automatically follow that object.
+	 * @type {number}
 	 */
-	this.from = new Vector2();
-
-	/**
-	 * Final point of the line.
-	 *
-	 * Can be equal to the position object of another object. Making it automatically follow that object.
-	 */
-	this.to = new Vector2();
-
-	/**
-	 * Dash line pattern to be used, if empty draws a solid line.
-	 *
-	 * Dash pattern is defined as the size of dashes as pairs of space with no line and with line.
-	 *
-	 * E.g if the dash pattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
-	 */
-	this.dashPattern = [5, 5];
-
-	/**
-	 * Style of the object line.
-	 */
-	this.strokeStyle = "#000000";
-
-	/**
-	 * Line width of the line.
-	 */
-	this.lineWidth = 1;
+	this.radius = 5;
 }
 
-Line.prototype = Object.create(Object2D.prototype);
+RoundedBox.prototype = Object.create(Box.prototype);
 
-Line.prototype.style = function(context, viewport, canvas)
-{
-	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
-	context.setLineDash(this.dashPattern);
-};
-
-Line.prototype.draw = function(context, viewport, canvas)
+/**
+ * Draw a rounded rectangle into the canvas context using path to draw the rounded rectangle.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {number} x The top left x coordinate
+ * @param {number} y The top left y coordinate
+ * @param {number} width The width of the rectangle
+ * @param {number} height The height of the rectangle
+ * @param {number} radius Radius of the rectangle corners.
+ */
+RoundedBox.roundRect = function(context, x, y, width, height, radius)
 {
 	context.beginPath();
-	context.moveTo(this.from.x, this.from.y);
-	context.lineTo(this.to.x, this.to.y);
-	context.stroke();
+	context.moveTo(x + radius, y);
+	context.lineTo(x + width - radius, y);
+	context.quadraticCurveTo(x + width, y, x + width, y + radius);
+	context.lineTo(x + width, y + height - radius);
+	context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+	context.lineTo(x + radius, y + height);
+	context.quadraticCurveTo(x, y + height, x, y + height - radius);
+	context.lineTo(x, y + radius);
+	context.quadraticCurveTo(x, y, x + radius, y);
+	context.closePath();
 };
 
-export {Line};
+RoundedBox.prototype.draw = function(context, viewport, canvas)
+{
+	var width = this.box.max.x - this.box.min.x;
+	var height = this.box.max.y - this.box.min.y;
+
+	if(this.fillStyle !== null)
+	{	
+		context.fillStyle = this.fillStyle;
+		RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
+		context.fill();
+	}
+
+	if(this.strokeStyle !== null)
+	{
+		context.lineWidth = this.lineWidth;
+		context.strokeStyle = this.strokeStyle;
+		RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
+		context.stroke();
+	}
+};
+
+export {RoundedBox};
 </code></pre>
         </article>
     </section>

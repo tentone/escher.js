@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Matrix<span class="signature">(values<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Matrix<span class="signature">(values)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="Matrix"><span class="type-signature"></span>new Matrix<span class="signature">(values<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Matrix"><span class="type-signature"></span>new Matrix<span class="signature">(values)</span><span class="type-signature"></span></h4>
     
 
     
@@ -49,7 +49,9 @@
 
 
 <div class="description">
-    2D 3x2 transformation matrix, applied to the canvas elements.The values of the matrix are stored in a numeric array.
+    2D 3x2 transformation matrix, used to represent linear geometric transformations over objects.
+
+The values of the matrix are stored in a numeric array and can be applied to the canvas or DOM elements.
 </div>
 
 
@@ -73,8 +75,6 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -93,27 +93,17 @@
             <td class="type">
             
                 
-<span class="param-type">array</span>
+<span class="param-type">Array.&lt;number></span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Array of matrix values by row, needs to have exactly 6 values.</td>
         </tr>
 
     
@@ -154,7 +144,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line13">line 13</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line11">line 11</a>
     </li></ul></dd>
     
 
@@ -210,7 +200,7 @@
     
 
     
-    <h4 class="name" id="clone"><span class="type-signature"></span>clone<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="clone"><span class="type-signature"></span>clone<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Matrix.html">Matrix</a>}</span></h4>
     
 
     
@@ -287,6 +277,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Copy of this matrix.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Matrix.html">Matrix</a></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -633,7 +645,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Matrix to copy values from.</td>
         </tr>
 
     
@@ -674,7 +686,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line30">line 30</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line28">line 28</a>
     </li></ul></dd>
     
 
@@ -710,7 +722,117 @@
     
 
     
-    <h4 class="name" id="determinant"><span class="type-signature"></span>determinant<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="cssTransform"><span class="type-signature"></span>cssTransform<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Generate a CSS transform string that can be applied to the transform style of any DOM element.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line268">line 268</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    CSS transform matrix.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="determinant"><span class="type-signature"></span>determinant<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -762,7 +884,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line208">line 208</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line212">line 212</a>
     </li></ul></dd>
     
 
@@ -787,6 +909,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Determinant of this matrix.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -798,7 +942,7 @@
     
 
     
-    <h4 class="name" id="getInverse"><span class="type-signature"></span>getInverse<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getInverse"><span class="type-signature"></span>getInverse<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Matrix.html">Matrix</a>}</span></h4>
     
 
     
@@ -850,7 +994,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line216">line 216</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line222">line 222</a>
     </li></ul></dd>
     
 
@@ -875,6 +1019,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    New matrix instance containing the inverse matrix.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Matrix.html">Matrix</a></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -894,7 +1060,7 @@
 
 
 <div class="description">
-    Get the position from the transformation matrix.
+    Extract the position from the transformation matrix.
 </div>
 
 
@@ -938,7 +1104,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line192">line 192</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line194">line 194</a>
     </li></ul></dd>
     
 
@@ -1004,7 +1170,7 @@
 
 
 <div class="description">
-    Get the scale from the transformation matrix.
+    Extract the scale from the transformation matrix.
 </div>
 
 
@@ -1048,7 +1214,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line182">line 182</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line184">line 184</a>
     </li></ul></dd>
     
 
@@ -1114,7 +1280,7 @@
 
 
 <div class="description">
-    Reset this matrix to indentity.
+    Reset this matrix to identity.
 </div>
 
 
@@ -1468,7 +1634,7 @@
     
 
     
-    <h4 class="name" id="rotate"><span class="type-signature"></span>rotate<span class="signature">(angle)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="rotate"><span class="type-signature"></span>rotate<span class="signature">(rad)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1512,7 +1678,7 @@
 
         <tr>
             
-                <td class="name"><code>angle</code></td>
+                <td class="name"><code>rad</code></td>
             
 
             <td class="type">
@@ -1528,7 +1694,7 @@
 
             
 
-            <td class="description last">Angle in radians.</td>
+            <td class="description last">Angle to rotate the matrix in radians.</td>
         </tr>
 
     
@@ -1569,7 +1735,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line135">line 135</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line137">line 137</a>
     </li></ul></dd>
     
 
@@ -1729,7 +1895,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line157">line 157</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line159">line 159</a>
     </li></ul></dd>
     
 
@@ -1765,7 +1931,7 @@
     
 
     
-    <h4 class="name" id="setContextTransform"><span class="type-signature"></span>setContextTransform<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="setContextTransform"><span class="type-signature"></span>setContextTransform<span class="signature">(context)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1782,6 +1948,55 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">CanvasRenderingContext2D</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Canvas context to apply this matrix transform.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -1817,7 +2032,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line237">line 237</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line248">line 248</a>
     </li></ul></dd>
     
 
@@ -1977,7 +2192,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line171">line 171</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line173">line 173</a>
     </li></ul></dd>
     
 
@@ -2065,7 +2280,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line200">line 200</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line202">line 202</a>
     </li></ul></dd>
     
 
@@ -2101,7 +2316,7 @@
     
 
     
-    <h4 class="name" id="tranformContext"><span class="type-signature"></span>tranformContext<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="tranformContext"><span class="type-signature"></span>tranformContext<span class="signature">(context)</span><span class="type-signature"></span></h4>
     
 
     
@@ -2120,6 +2335,55 @@
 
 
 
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">CanvasRenderingContext2D</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Canvas context to apply this matrix transform.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
 
 
 
@@ -2153,7 +2417,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line245">line 245</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line258">line 258</a>
     </li></ul></dd>
     
 
@@ -2189,7 +2453,7 @@
     
 
     
-    <h4 class="name" id="transformPoint"><span class="type-signature"></span>transformPoint<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="transformPoint"><span class="type-signature"></span>transformPoint<span class="signature">(p)</span><span class="type-signature"> &rarr; {<a href="Vector2.html">Vector2</a>}</span></h4>
     
 
     
@@ -2206,6 +2470,55 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>p</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Point to be transformed.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -2241,7 +2554,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line226">line 226</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line235">line 235</a>
     </li></ul></dd>
     
 
@@ -2266,6 +2579,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Transformed point.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -2286,6 +2621,8 @@
 
 <div class="description">
     Apply translation to this matrix.
+
+Adds position over the transformation already stored in the matrix.
 </div>
 
 
@@ -2401,7 +2738,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line124">line 124</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line126">line 126</a>
     </li></ul></dd>
     
 
@@ -2447,13 +2784,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#connector">connector</a></li><li><a href="global.html#direction">direction</a></li><li><a href="global.html#inputs">inputs</a></li><li><a href="global.html#inputSocket">inputSocket</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#node">node</a></li><li><a href="global.html#outputs">outputs</a></li><li><a href="global.html#outputSocket">outputSocket</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#type">type</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue Jun 25 2019 14:27:21 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 14 2020 18:02:06 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

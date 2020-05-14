@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Graph</title>
+    <title>JSDoc: Class: RoundedBox</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Graph</h1>
+    <h1 class="page-title">Class: RoundedBox</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Graph<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>RoundedBox<span class="signature">()</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="Graph"><span class="type-signature"></span>new Graph<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="RoundedBox"><span class="type-signature"></span>new RoundedBox<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -49,9 +49,7 @@
 
 
 <div class="description">
-    Graph object is used to draw simple graph data into the canvas.
-
-Graph data is composed of X, Y values.
+    Rounded box object draw a rectangular object with rounded corners.
 </div>
 
 
@@ -95,7 +93,7 @@ Graph data is composed of X, Y values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line13">line 13</a>
+        <a href="objects_RoundedBox.js.html">objects/RoundedBox.js</a>, <a href="objects_RoundedBox.js.html#line9">line 9</a>
     </li></ul></dd>
     
 
@@ -135,7 +133,7 @@ Graph data is composed of X, Y values.
 
 
     <ul>
-        <li><a href="Object2D.html">Object2D</a></li>
+        <li><a href="Box.html">Box</a></li>
     </ul>
 
 
@@ -239,7 +237,7 @@ Graph data is composed of X, Y values.
 
 
 <div class="description">
-    Graph object containing the size of the object.
+    Box object containing the size of the object.
 </div>
 
 
@@ -254,6 +252,11 @@ Graph data is composed of X, Y values.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Box.html#box">Box#box</a>
+    </li></ul></dd>
     
 
     
@@ -277,7 +280,7 @@ Graph data is composed of X, Y values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line20">line 20</a>
+        <a href="objects_Box.js.html">objects/Box.js</a>, <a href="objects_Box.js.html#line20">line 20</a>
     </li></ul></dd>
     
 
@@ -355,70 +358,6 @@ Graph data is composed of X, Y values.
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line28">line 28</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="data"><span class="type-signature"></span>data<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    Data to be presented in the graph.
-
-The array should store numeric values.
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line52">line 52</a>
     </li></ul></dd>
     
 
@@ -543,7 +482,7 @@ Should be implemented by underlying classes.
     
     <dt class="tag-overrides">Overrides:</dt>
     <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="Object2D.html#draw">Object2D#draw</a>
+        <a href="Box.html#draw">Box#draw</a>
     </li></ul></dd>
     
 
@@ -591,6 +530,8 @@ Should be implemented by underlying classes.
 
 <div class="description">
     Background color of the box.
+
+If set null it is ignored.
 </div>
 
 
@@ -605,6 +546,11 @@ Should be implemented by underlying classes.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Box.html#fillStyle">Box#fillStyle</a>
+    </li></ul></dd>
     
 
     
@@ -628,7 +574,7 @@ Should be implemented by underlying classes.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line35">line 35</a>
+        <a href="objects_Box.js.html">objects/Box.js</a>, <a href="objects_Box.js.html#line39">line 39</a>
     </li></ul></dd>
     
 
@@ -1045,7 +991,7 @@ The layer value is considered first.
 
 
 <div class="description">
-    Line width.
+    Line width, only used if a valid strokeStyle is defined.
 </div>
 
 
@@ -1060,6 +1006,11 @@ The layer value is considered first.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Box.html#lineWidth">Box#lineWidth</a>
+    </li></ul></dd>
     
 
     
@@ -1083,7 +1034,7 @@ The layer value is considered first.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line30">line 30</a>
+        <a href="objects_Box.js.html">objects/Box.js</a>, <a href="objects_Box.js.html#line32">line 32</a>
     </li></ul></dd>
     
 
@@ -1398,130 +1349,6 @@ The matrix is updated before rendering the object, after the matrix is updated t
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line146">line 146</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="max"><span class="type-signature"></span>max<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    Maximum value of the graph.
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line45">line 45</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="min"><span class="type-signature"></span>min<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    Minimum value of the graph.
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line40">line 40</a>
     </li></ul></dd>
     
 
@@ -2740,6 +2567,78 @@ The world position of the object is affected by its parent transform.
 
         
             
+<h4 class="name" id="radius"><span class="type-signature"></span>radius<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    Radius of the circular section that makes up the box corners.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objects_RoundedBox.js.html">objects/RoundedBox.js</a>, <a href="objects_RoundedBox.js.html#line18">line 18</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
 <h4 class="name" id="restoreContextState"><span class="type-signature"></span>restoreContextState<span class="type-signature"> :boolean</span></h4>
 
 
@@ -3058,7 +2957,9 @@ The world scale of the object is affected by the parent transform.
 
 
 <div class="description">
-    Color of the box border line.
+    Style of the object border line.
+
+If set null it is ignored.
 </div>
 
 
@@ -3073,6 +2974,11 @@ The world scale of the object is affected by the parent transform.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Box.html#strokeStyle">Box#strokeStyle</a>
+    </li></ul></dd>
     
 
     
@@ -3096,7 +3002,7 @@ The world scale of the object is affected by the parent transform.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Graph.js.html">objects/Graph.js</a>, <a href="objects_Graph.js.html#line25">line 25</a>
+        <a href="objects_Box.js.html">objects/Box.js</a>, <a href="objects_Box.js.html#line27">line 27</a>
     </li></ul></dd>
     
 
@@ -3342,6 +3248,258 @@ Should be implemented by underlying classes.
 
     
         <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".roundRect"><span class="type-signature">(static) </span>roundRect<span class="signature">(context, x, y, width, height, radius)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Draw a rounded rectangle into the canvas context using path to draw the rounded rectangle.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">CanvasRenderingContext2D</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The top left x coordinate</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The top left y coordinate</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>width</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The width of the rectangle</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>height</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The height of the rectangle</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>radius</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Radius of the rectangle corners.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objects_RoundedBox.js.html">objects/RoundedBox.js</a>, <a href="objects_RoundedBox.js.html#line33">line 33</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         
             
@@ -4020,12 +4178,12 @@ To check if a point in world coordinates intersects the object the inverseGlobal
     
 
     
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
         <a href="Object2D.html#isInside">Object2D#isInside</a>
     </li></ul></dd>
+    
+
     
 
     

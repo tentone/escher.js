@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Line.js</title>
+    <title>JSDoc: Source: objects/QuadraticCurve.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Line.js</h1>
+    <h1 class="page-title">Source: objects/QuadraticCurve.js</h1>
 
     
 
@@ -28,71 +28,73 @@
         <article>
             <pre class="prettyprint source linenums"><code>import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
+import {Circle} from "./Circle.js";
+import {Line} from "./Line.js";
 
 /**
- * Line object draw a line from one point to another without any kind of interpolation.
- *
- * For drawing lines with interpolation check {BezierCurve}
+ * Bezier curve object draw as bezier curve between two points.
  *
  * @class
  * @extends {Object2D}
  */
-function Line()
+function QuadraticCurve()
 {
-	Object2D.call(this);
+	Line.call(this);
 
 	/**
-	 * Initial point of the line.
+	 * Control point of the quadratic curve used to control the curvature of the line between the from and to point.
 	 *
-	 * Can be equal to the position object of another object. Making it automatically follow that object.
-	 */
-	this.from = new Vector2();
-
-	/**
-	 * Final point of the line.
+	 * The curve is interpolated in the direction of the control point it defined the path of the curve.
 	 *
-	 * Can be equal to the position object of another object. Making it automatically follow that object.
+	 * @type {Vector2}
 	 */
-	this.to = new Vector2();
-
-	/**
-	 * Dash line pattern to be used, if empty draws a solid line.
-	 *
-	 * Dash pattern is defined as the size of dashes as pairs of space with no line and with line.
-	 *
-	 * E.g if the dash pattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
-	 */
-	this.dashPattern = [5, 5];
-
-	/**
-	 * Style of the object line.
-	 */
-	this.strokeStyle = "#000000";
-
-	/**
-	 * Line width of the line.
-	 */
-	this.lineWidth = 1;
+	this.controlPoint = new Vector2();
 }
 
-Line.prototype = Object.create(Object2D.prototype);
+QuadraticCurve.prototype = Object.create(Line.prototype);
 
-Line.prototype.style = function(context, viewport, canvas)
+/**
+ * Create a quadratic curve helper, to edit the curve control point.
+ *
+ * Helper objects are added to the parent of the curve object.
+ *
+ * @static
+ * @param {QuadraticCurve} object Object to create the helper for.
+ */
+QuadraticCurve.curveHelper = function(object)
 {
-	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
-	context.setLineDash(this.dashPattern);
+	var fromLine = new Line();
+	fromLine.from = object.from;
+	fromLine.to = object.controlPoint;
+	object.parent.add(fromLine);
+
+	var controlPoint = new Circle();
+	controlPoint.radius = 3;
+	controlPoint.layer = object.layer + 1;
+	controlPoint.draggable = true;
+	controlPoint.position = object.controlPoint;
+	controlPoint.onPointerDrag = function(pointer, viewport, delta)
+	{
+		Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+		object.controlPoint.copy(controlPoint.position);
+	};
+	object.parent.add(controlPoint);
+
+	var toLine = new Line();
+	toLine.from = object.to;
+	toLine.to = object.controlPoint;
+	object.parent.add(toLine);
 };
 
-Line.prototype.draw = function(context, viewport, canvas)
+QuadraticCurve.prototype.draw = function(context, viewport, canvas)
 {
 	context.beginPath();
 	context.moveTo(this.from.x, this.from.y);
-	context.lineTo(this.to.x, this.to.y);
+	context.quadraticCurveTo(this.controlPoint.x, this.controlPoint.y, this.to.x, this.to.y);
 	context.stroke();
 };
 
-export {Line};
+export {QuadraticCurve};
 </code></pre>
         </article>
     </section>

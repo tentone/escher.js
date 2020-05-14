@@ -26,18 +26,16 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>"use strict";
-
-import {Vector2} from "./math/Vector2.js";
+            <pre class="prettyprint source linenums"><code>import {Vector2} from "./math/Vector2.js";
 import {Matrix} from "./math/Matrix.js";
 import {UUID} from "./math/UUID.js";
 
 /**
- * Base object class, implements all the object positioning and scalling features.
+ * Base object class, implements all the object positioning and scaling features.
  *
  * Stores all the base properties shared between all objects as the position, transformation properties, children etc.
  *
- * Object2D should be used as a group to store all the other objects drawn.
+ * Object2D object can be used as a group to the other objects drawn.
  *
  * @class
  */
@@ -45,60 +43,88 @@ function Object2D()
 {	
 	/**
 	 * UUID of the object.
+	 *
+	 * @type {string}
 	 */
 	this.uuid = UUID.generate(); 
 
 	/**
 	 * List of children objects attached to the object.
+	 *
+	 * @type {Object2D[]}
 	 */
 	this.children = [];
 
 	/**
 	 * Parent object, the object position is affected by its parent position.
+	 *
+	 * @type {Object2D}
 	 */
 	this.parent = null;
 
 	/**
 	 * Depth level in the object tree, objects with higher depth are drawn on top.
 	 *
-	 * The layer value is considered first. 
+	 * The layer value is considered first.
+	 *
+	 * @type {number}
 	 */
 	this.level = 0;
 
 	/**
 	 * Position of the object.
+	 *
+	 * The world position of the object is affected by its parent transform.
+	 *
+	 * @type {Vector2}
 	 */
 	this.position = new Vector2(0, 0);
 
 	/**
 	 * Origin of the object used as point of rotation.
+	 *
+	 * @type {Vector2}
 	 */
 	this.origin = new Vector2(0, 0);
 
 	/**
 	 * Scale of the object.
+	 *
+	 * The world scale of the object is affected by the parent transform.
+	 *
+	 * @type {Vector2}
 	 */
 	this.scale = new Vector2(1, 1);
 
 	/**
 	 * Rotation of the object relative to its center.
+	 *
+	 * The world rotation of the object is affected by the parent transform.
+	 *
+	 * @type {number}
 	 */
 	this.rotation = 0.0;
 
 	/**
 	 * Indicates if the object is visible.
+	 *
+	 * @type {boolean}
 	 */
 	this.visible = true;
 
 	/**
 	 * Layer of this object, objects are sorted by layer value.
 	 *
-	 * Lower layer value is draw first.
+	 * Lower layer value is draw first, higher layer value is drawn on top.
+	 *
+	 * @type {number}
 	 */
 	this.layer = 0;
 
 	/**
-	 * Local transformation matrix applied to the object. 
+	 * Local transformation matrix applied to the object.
+	 *
+	 * @type {Matrix}
 	 */
 	this.matrix = new Matrix();
 
@@ -106,54 +132,83 @@ function Object2D()
 	 * Global transformation matrix multiplied by the parent matrix.
 	 *
 	 * Used to transform the object before projecting into screen coordinates.
+	 *
+	 * @type {Matrix}
 	 */
 	this.globalMatrix = new Matrix();
 
 	/**
-	 * Inverse of the global matrix.
+	 * Inverse of the global (world) transform matrix.
 	 *
-	 * Used to convert pointer input points into object coordinates.
+	 * Used to convert pointer input points (viewport space) into object coordinates.
+	 *
+	 * @type {Matrix}
 	 */
 	this.inverseGlobalMatrix = new Matrix();
 
 	/**
-	 * Masks being applied to this object.
+	 * Mask objects being applied to this object. Used to mask/subtract portions of this object when rendering.
 	 *
-	 * Multiple masks can be used simultaneously.
+	 * Multiple masks can be used simultaneously. Same mask might be reused for multiple objects.
+	 *
+	 * @type {Mask[]}
 	 */
 	this.masks = [];
 
 	/**
-	 * If true the matrix is updated before rendering the object.
+	 * Indicates if the transform matrix should be automatically updated every frame.
+	 *
+	 * Set this false for better performance. But if you do so dont forget to set matrixNeedsUpdate every time that a transform attribute is changed.
+	 *
+	 * @type {boolean}
+	 */
+	this.matrixAutoUpdate = true;
+
+	/**
+	 * Indicates if the matrix needs to be updated, should be set true after changes to the object position, scale or rotation.
+	 *
+	 * The matrix is updated before rendering the object, after the matrix is updated this attribute is automatically reset to false.
+	 *
+	 * @type {boolean}
 	 */
 	this.matrixNeedsUpdate = true;
 
 	/**
-	 * Indicates if its possible to drag the object around.
+	 * Draggable controls if its possible to drag the object around. Set this true to enable dragging events on this object.
 	 *
-	 * If true the onPointerDrag callback is used to update the state of the object.
+	 * The onPointerDrag callback is used to update the state of the object while being dragged, by default it just updates the object position.
+	 *
+	 * @type {boolean}
 	 */
 	this.draggable = false;
 
 	/**
 	 * Indicates if this object uses pointer events.
 	 *
-	 * Can be set false to skip the pointer interaction events.
+	 * Can be set false to skip the pointer interaction events, better performance if pointer events are not required.
+	 *
+	 * @type {boolean}
 	 */
 	this.pointerEvents = true;
 
 	/**
-	 * Flag to indicate wheter this objet ignores the viewport transformation.
+	 * Flag to indicate whether this object ignores the viewport transformation.
+	 *
+	 * @type {boolean}
 	 */
 	this.ignoreViewport = false;
 
 	/**
 	 * Flag to indicate if the context of canvas should be saved before render.
+	 *
+	 * @type {boolean}
 	 */
 	this.saveContextState = true;
 
 	/**
 	 * Flag to indicate if the context of canvas should be restored after render.
+	 *
+	 * @type {boolean}
 	 */
 	this.restoreContextState = true;
 
@@ -161,14 +216,91 @@ function Object2D()
 	 * Flag indicating if the pointer is inside of the element.
 	 *
 	 * Used to control object event.
+	 *
+	 * @type {boolean}
 	 */
 	this.pointerInside = false;
 
 	/**
 	 * Flag to indicate if the object is currently being dragged.
+	 *
+	 * @type {boolean}
 	 */
 	this.beingDragged = false;
 }
+
+/**
+ * Check if a point in world coordinates intersects this object or its children and get a list of the objects intersected.
+ *
+ * @param {Vector2} point Point in world coordinates.
+ * @param {Object2D[]} list List of objects intersected passed to children objects recursively.
+ * @return {Object2D[]} List of object intersected by this point.
+ */
+Object2D.prototype.getWorldPointIntersections = function(point, list)
+{
+	if(list === undefined)
+	{
+		list = [];
+	}
+
+	// Calculate the pointer position in the object coordinates
+	var localPoint = this.inverseGlobalMatrix.transformPoint(point);
+	if(this.isInside(localPoint))
+	{
+		list.push(this);
+	}
+
+	// Iterate trough the children
+	for(var i = 0; i &lt; this.children.length; i++)
+	{
+		this.children[i].getWorldPointIntersections(point, list);
+	}
+
+	return list;
+};
+
+/**
+ * Check if a point in world coordinates intersects this object or some of its children.
+ *
+ * @param {Vector2} point Point in world coordinates.
+ * @param {boolean} recursive If set to true it will also check intersections with the object children.
+ * @return {boolean} Returns true if the point in inside of the object.
+ */
+Object2D.prototype.isWorldPointInside = function(point, recursive)
+{
+	// Calculate the pointer position in the object coordinates
+	var localPoint = this.inverseGlobalMatrix.transformPoint(point);
+	if(this.isInside(localPoint))
+	{
+		return true;
+	}
+
+	// Iterate trough the children
+	if(recursive)
+	{
+		for(var i = 0; i &lt; this.children.length; i++)
+		{
+			if(this.children[i].isWorldPointInside(point, true))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+};
+
+
+/**
+ * Destroy the object, removes it from the parent object.
+ */
+Object2D.prototype.destroy = function()
+{
+	if(this.parent !== null)
+	{
+		this.parent.remove(this);
+	}
+};
 
 /**
  * Traverse the object tree and run a function for all objects.
@@ -179,18 +311,16 @@ Object2D.prototype.traverse = function(callback)
 {
 	callback(this);
 
-	var children = this.children;
-
-	for(var i = 0; i &lt; children.length; i++)
+	for(var i = 0; i &lt; this.children.length; i++)
 	{
-		children[i].traverse(callback);
+		this.children[i].traverse(callback);
 	}
 };
 
 /**
  * Get a object from its children list by its UUID.
  *
- * @param {String} uuid UUID of the object to get.
+ * @param {string} uuid UUID of the object to get.
  * @return {Object2D} The object that has the UUID specified, null if the object was not found.
  */
 Object2D.prototype.getChildByUUID = function(uuid)
@@ -234,11 +364,11 @@ Object2D.prototype.add = function(object)
 /**
  * Remove object from the children list.
  *
- * @param {Object2D} object Object to be removed.
+ * @param {Object2D} children Object to be removed.
  */
-Object2D.prototype.remove = function(object)
+Object2D.prototype.remove = function(children)
 {
-	var index = this.children.indexOf(object);
+	var index = this.children.indexOf(children);
 	
 	if(index !== -1)
 	{
@@ -259,10 +389,13 @@ Object2D.prototype.remove = function(object)
 };
 
 /**
- * Check if a point is inside of the object.
+ * Check if a point is inside of the object. Used by the renderer check for pointer collision (required for the object to properly process pointer events).
  *
- * Used to update the point events attached to the object.
+ * Point should be in local object coordinates.
  *
+ * To check if a point in world coordinates intersects the object the inverseGlobalMatrix should be applied to that point before calling this method.
+ *
+ * @param {Vector2} point Point in local object coordinates.
  * @return {boolean} True if the point is inside of the object.
  */
 Object2D.prototype.isInside = function(point)
@@ -273,11 +406,11 @@ Object2D.prototype.isInside = function(point)
 /**
  * Update the transformation matrix of the object.
  *
- * @param {CanvasContext} context
+ * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  */
 Object2D.prototype.updateMatrix = function(context)
 {
-	if(this.matrixNeedsUpdate)
+	if(this.matrixAutoUpdate || this.matrixNeedsUpdate)
 	{
 		this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.origin.x, this.origin.y, this.rotation);
 		this.globalMatrix.copy(this.matrix);
@@ -288,18 +421,16 @@ Object2D.prototype.updateMatrix = function(context)
 		}
 
 		this.inverseGlobalMatrix = this.globalMatrix.getInverse()
-		//this.matrixNeedsUpdate = false;
+		this.matrixNeedsUpdate = false;
 	}
 };
 
 /**
- * Apply the transform to the rendering context.
+ * Apply the transform to the rendering context, it is assumed that the viewport transform is pre-applied to the context.
  *
- * It is assumed that the viewport transform is pre-applied to the context.
+ * This is called before style() and draw(). It can also be used for some pre-rendering logic.
  *
- * Can also be used for pre rendering logic.
- *
- * @param {CanvasContext} context Canvas 2d drawing context.
+ * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport applied to the canvas.
  */
 Object2D.prototype.transform = function(context, viewport)
@@ -308,15 +439,28 @@ Object2D.prototype.transform = function(context, viewport)
 };
 
 /**
- * Draw the object into the canvas.
+ * Style is called right before draw() it should not draw any content into the canvas, all context styling should be applied here (colors, fonts, etc).
  *
- * Has to be implemented by underlying classes.
+ * The draw() and style() methods can be  useful for objects that share the same styling attributes but are drawing differently.
  *
- * @param {CanvasContext} context Canvas 2d drawing context.
- * @param {Viewport} viewport Viewport applied to the canvas.
+ * Should be implemented by underlying classes.
+ *
+ * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
+ * @param {Viewport} viewport Viewport used to view the canvas content.
  * @param {DOM} canvas DOM canvas element where the content is being drawn.
  */
-Object2D.prototype.draw = function(context, viewport, canvas){};
+Object2D.prototype.style = null; // function(context, viewport, canvas){};
+
+/**
+ * Draw the object into the canvas, this is called transform() and style(), should be where the content is actually drawn into the canvas.
+ *
+ * Should be implemented by underlying classes.
+ *
+ * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
+ * @param {Viewport} viewport Viewport used to view the canvas content.
+ * @param {DOM} canvas DOM canvas element where the content is being drawn.
+ */
+Object2D.prototype.draw = null; // function(context, viewport, canvas){};
 
 /**
  * Callback method while the object is being dragged across the screen.
@@ -325,16 +469,33 @@ Object2D.prototype.draw = function(context, viewport, canvas){};
  *
  * Delta is the movement of the pointer already translated into local object coordinates.
  *
- * Receives (pointer, viewport, delta) as arguments.
+ * To detect when the object drag stops the onPointerDragEnd() method can be used.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
- * @param {Vector2} delta Pointer movement in world space.
+ * @param {Vector2} delta Pointer movement diff in world space since the last frame.
+ * @param {Vector2} positionWorld Position of the dragging pointer in world coordinates.
  */
-Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
+Object2D.prototype.onPointerDrag = function(pointer, viewport, delta, positionWorld)
 {
 	this.position.add(delta);
 };
+
+/**
+ * Callback method called when the pointer drag start after the button was pressed
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
+ */
+Object2D.prototype.onPointerDragStart = null;
+
+/**
+ * Callback method called when the pointer drag ends after the button has been released.
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
+ */
+Object2D.prototype.onPointerDragEnd = null;
 
 /**
  * Method called when the object its added to a parent.
@@ -353,14 +514,16 @@ Object2D.prototype.onRemove = null;
 /**
  * Callback method called every time before the object is draw into the canvas.
  *
- * Can be used to run preparation code, move the object, etc.
+ * Should be used to run object logic, any preparation code, move the object, etc.
+ *
+ * This method is called for every object before rendering.
  */
 Object2D.prototype.onUpdate = null;
 
 /**
  * Callback method called when the pointer enters the object.
  *
- * Receives (pointer, viewport) as arguments.
+ * It is not called while the pointer is inside of the object, just on the first time that the pointer enters the object for that use onPointerOver()
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -368,9 +531,7 @@ Object2D.prototype.onUpdate = null;
 Object2D.prototype.onPointerEnter = null;
 
 /**
- * Callback method called when the was inside of the object and leaves the object.
- *
- * Receives (pointer, viewport) as arguments.
+ * Method called when the was inside of the object and leaves the object.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -378,9 +539,7 @@ Object2D.prototype.onPointerEnter = null;
 Object2D.prototype.onPointerLeave = null;
 
 /**
- * Callback method while the pointer is over (inside) of the object.
- *
- * Receives (pointer, viewport) as arguments.
+ * Method while the pointer is over (inside) of the object.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -388,9 +547,7 @@ Object2D.prototype.onPointerLeave = null;
 Object2D.prototype.onPointerOver = null;
 
 /**
- * Callback method called while the pointer button is pressed.
- *
- * Receives (pointer, viewport) as arguments.
+ * Method called while the pointer button is pressed.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -398,9 +555,7 @@ Object2D.prototype.onPointerOver = null;
 Object2D.prototype.onButtonPressed = null;
 
 /**
- * Callback method called while the pointer button is double clicked.
- *
- * Receives (pointer, viewport) as arguments.
+ * Method called while the pointer button is double clicked.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -410,17 +565,13 @@ Object2D.prototype.onDoubleClick = null;
 /**
  * Callback method called when the pointer button is pressed down (single time).
  *
- * Receives (pointer, viewport) as arguments.
- *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onButtonDown = null;
 
 /**
- * Callback method called when the pointer button is released (single time).
- *
- * Receives (pointer, viewport) as arguments.
+ * Method called when the pointer button is released (single time).
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -438,13 +589,13 @@ export {Object2D};
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#connector">connector</a></li><li><a href="global.html#direction">direction</a></li><li><a href="global.html#inputs">inputs</a></li><li><a href="global.html#inputSocket">inputSocket</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#node">node</a></li><li><a href="global.html#outputs">outputs</a></li><li><a href="global.html#outputSocket">outputSocket</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#type">type</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue Jun 25 2019 14:27:21 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 14 2020 18:02:06 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

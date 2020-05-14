@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Line.js</title>
+    <title>JSDoc: Source: objects/node/NodeGraph.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Line.js</h1>
+    <h1 class="page-title">Source: objects/node/NodeGraph.js</h1>
 
     
 
@@ -26,73 +26,61 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import {Object2D} from "../Object2D.js";
-import {Vector2} from "../math/Vector2.js";
+            <pre class="prettyprint source linenums"><code>import {Object2D} from "../../Object2D";
 
 /**
- * Line object draw a line from one point to another without any kind of interpolation.
+ * Node graph object should be used as a container for node elements.
  *
- * For drawing lines with interpolation check {BezierCurve}
+ * The node graph object specifies how the nodes are processed, each individual node can store and process data, the node graph specified how this information is processed.
  *
- * @class
- * @extends {Object2D}
+ * All node elements are stored as children of the node graph.
+ *
+ * @class NodeGraph
  */
-function Line()
+function NodeGraph()
 {
 	Object2D.call(this);
-
-	/**
-	 * Initial point of the line.
-	 *
-	 * Can be equal to the position object of another object. Making it automatically follow that object.
-	 */
-	this.from = new Vector2();
-
-	/**
-	 * Final point of the line.
-	 *
-	 * Can be equal to the position object of another object. Making it automatically follow that object.
-	 */
-	this.to = new Vector2();
-
-	/**
-	 * Dash line pattern to be used, if empty draws a solid line.
-	 *
-	 * Dash pattern is defined as the size of dashes as pairs of space with no line and with line.
-	 *
-	 * E.g if the dash pattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
-	 */
-	this.dashPattern = [5, 5];
-
-	/**
-	 * Style of the object line.
-	 */
-	this.strokeStyle = "#000000";
-
-	/**
-	 * Line width of the line.
-	 */
-	this.lineWidth = 1;
 }
 
-Line.prototype = Object.create(Object2D.prototype);
+NodeGraph.prototype = Object.create(Object2D.prototype);
 
-Line.prototype.style = function(context, viewport, canvas)
+/**
+ * Create and add a new node of specific node type to the graph.
+ *
+ * Automatically finds an empty space as close as possible to other nodes to add this new node.
+ *
+ * @param {Node} node Node object to be added.
+ * @return {Node} Node created (already added to the graph).
+ */
+NodeGraph.prototype.addNode = function(node)
 {
-	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
-	context.setLineDash(this.dashPattern);
+	// Check available position on screen.
+	var x = 0, y = 0;
+	for(var i = 0; i &lt; this.children.length; i++)
+	{
+		if(this.children[i].position.x > x)
+		{
+			x = this.children[i].position.x;
+		}
+		if(this.children[i].position.y > y)
+		{
+			y = this.children[i].position.y;
+		}
+	}
+
+	// Create and add new node
+	node.position.set(x + 200, y / 2.0);
+	this.add(node);
+
+	if(node.registerSockets !== null)
+	{
+		node.registerSockets();
+	}
+
+	return node;
 };
 
-Line.prototype.draw = function(context, viewport, canvas)
-{
-	context.beginPath();
-	context.moveTo(this.from.x, this.from.y);
-	context.lineTo(this.to.x, this.to.y);
-	context.stroke();
-};
-
-export {Line};
+export {NodeGraph};
 </code></pre>
         </article>
     </section>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Line.js</title>
+    <title>JSDoc: Source: objects/node/NodeConnector.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Line.js</h1>
+    <h1 class="page-title">Source: objects/node/NodeConnector.js</h1>
 
     
 
@@ -26,73 +26,94 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import {Object2D} from "../Object2D.js";
-import {Vector2} from "../math/Vector2.js";
+            <pre class="prettyprint source linenums"><code>import {BezierCurve} from "../BezierCurve";
 
 /**
- * Line object draw a line from one point to another without any kind of interpolation.
+ * Node connector is used to connect a output of a node to a input of another node.
  *
- * For drawing lines with interpolation check {BezierCurve}
+ * Some nodes outputs might support multiple connections having an output connected to multiple inputs.
  *
- * @class
- * @extends {Object2D}
+ * Data always goes from the output node to a input node.
+ *
+ * @class NodeConnector
  */
-function Line()
+function NodeConnector()
 {
-	Object2D.call(this);
+	BezierCurve.call(this);
+
+	this.lineWidth = 2;
 
 	/**
-	 * Initial point of the line.
+	 * Origin output socket that is attached to a node.
 	 *
-	 * Can be equal to the position object of another object. Making it automatically follow that object.
+	 * @type {NodeSocket}
 	 */
-	this.from = new Vector2();
+	this.outputSocket = null;
 
 	/**
-	 * Final point of the line.
+	 * Destination input socket that is attached to a node.
 	 *
-	 * Can be equal to the position object of another object. Making it automatically follow that object.
+	 * @type {NodeSocket}
 	 */
-	this.to = new Vector2();
-
-	/**
-	 * Dash line pattern to be used, if empty draws a solid line.
-	 *
-	 * Dash pattern is defined as the size of dashes as pairs of space with no line and with line.
-	 *
-	 * E.g if the dash pattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
-	 */
-	this.dashPattern = [5, 5];
-
-	/**
-	 * Style of the object line.
-	 */
-	this.strokeStyle = "#000000";
-
-	/**
-	 * Line width of the line.
-	 */
-	this.lineWidth = 1;
+	this.inputSocket = null;
 }
 
-Line.prototype = Object.create(Object2D.prototype);
+NodeConnector.prototype = Object.create(BezierCurve.prototype);
 
-Line.prototype.style = function(context, viewport, canvas)
+NodeConnector.prototype.destroy = function()
 {
-	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
-	context.setLineDash(this.dashPattern);
+	BezierCurve.prototype.destroy.call(this);
+
+	if(this.outputSocket !== null)
+	{
+		this.outputSocket.connector = null;
+	}
+
+	if(this.inputSocket !== null)
+	{
+		this.inputSocket.connector = null;
+	}
 };
 
-Line.prototype.draw = function(context, viewport, canvas)
+NodeConnector.prototype.onUpdate = function()
 {
-	context.beginPath();
-	context.moveTo(this.from.x, this.from.y);
-	context.lineTo(this.to.x, this.to.y);
-	context.stroke();
+	if(this.outputSocket !== null)
+	{
+		this.from.copy(this.outputSocket.position);
+	}
+
+	if(this.inputSocket !== null)
+	{
+		this.to.copy(this.inputSocket.position);
+	}
+
+	// Center control points
+	this.fromCp.copy(this.from);
+	this.fromCp.add(this.to);
+	this.fromCp.multiplyScalar(0.5);
+	this.toCp.copy(this.fromCp);
+
+	var curvature = 0.5;
+
+	// Check vertical/horizontal distances
+	var yDistance = this.to.y - this.from.y;
+	var xDistance = this.to.x - this.from.x;
+
+	// Apply a offset to the control points
+	if(Math.abs(xDistance) > Math.abs(yDistance))
+	{
+		this.toCp.x += xDistance * curvature;
+		this.fromCp.x -= xDistance * curvature;
+	}
+	else
+	{
+		this.toCp.y += yDistance * curvature;
+		this.fromCp.y -= yDistance * curvature;
+	}
 };
 
-export {Line};
+
+export {NodeConnector};
 </code></pre>
         </article>
     </section>

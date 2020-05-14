@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Helpers</title>
+    <title>JSDoc: Class: NodeGraph</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Helpers</h1>
+    <h1 class="page-title">Class: NodeGraph</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Helpers<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>NodeGraph<span class="signature">()</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="Helpers"><span class="type-signature"></span>new Helpers<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="NodeGraph"><span class="type-signature"></span>new NodeGraph<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -49,7 +49,7 @@
 
 
 <div class="description">
-    Class contains helper functions to create editing object tools.
+    Node graph object should be used as a container for node elements.The node graph object specifies how the nodes are processed, each individual node can store and process data, the node graph specified how this information is processed.All node elements are stored as children of the node graph.
 </div>
 
 
@@ -93,7 +93,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_Helpers.js.html">utils/Helpers.js</a>, <a href="utils_Helpers.js.html#line9">line 9</a>
+        <a href="objects_node_NodeGraph.js.html">objects/node/NodeGraph.js</a>, <a href="objects_node_NodeGraph.js.html#line3">line 3</a>
     </li></ul></dd>
     
 
@@ -149,7 +149,7 @@
     
 
     
-    <h4 class="name" id=".boxResizeTool"><span class="type-signature">(static) </span>boxResizeTool<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="addNode"><span class="type-signature"></span>addNode<span class="signature">(node)</span><span class="type-signature"> &rarr; {<a href="Node.html">Node</a>}</span></h4>
     
 
     
@@ -157,11 +157,7 @@
 
 
 <div class="description">
-    Create a box resize helper and attach it to an object to change the size of the object box.
-
-Each helper is positioned on one corner of the box, and the value of the corner is copied to the boxes as they are dragged.
-
-This method required to object to have a box property.
+    Create and add a new node of specific node type to the graph.Automatically finds an empty space as close as possible to other nodes to add this new node.
 </div>
 
 
@@ -172,94 +168,53 @@ This method required to object to have a box property.
 
 
 
-
-
-
-
-<dl class="details">
-
+    <h5>Parameters:</h5>
     
 
-    
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_Helpers.js.html">utils/Helpers.js</a>, <a href="utils_Helpers.js.html#line39">line 39</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        <th>Type</th>
 
         
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>node</code></td>
             
 
-    
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Node object to be added.</td>
+        </tr>
 
     
-    <h4 class="name" id=".rotateTool"><span class="type-signature">(static) </span>rotateTool<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Create a rotation tool helper.
-
-When the object is dragged is changes the parent object rotation.
-</div>
-
-
-
-
-
-
-
+    </tbody>
+</table>
 
 
 
@@ -295,7 +250,7 @@ When the object is dragged is changes the parent object rotation.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_Helpers.js.html">utils/Helpers.js</a>, <a href="utils_Helpers.js.html#line18">line 18</a>
+        <a href="objects_node_NodeGraph.js.html">objects/node/NodeGraph.js</a>, <a href="objects_node_NodeGraph.js.html#line27">line 27</a>
     </li></ul></dd>
     
 
@@ -320,6 +275,28 @@ When the object is dragged is changes the parent object rotation.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Node created (already added to the graph).
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 

@@ -26,21 +26,19 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>"use strict";
-
-import {Object2D} from "../Object2D.js";
+            <pre class="prettyprint source linenums"><code>import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 
 /**
- * A DOM object transformed using CSS3D to ver included in the graph.
+ * A DOM object transformed using CSS3D to be included in the scene.
  *
- * DOM objects always stay on top of everything else, mouse events are not supported for these.
+ * DOM objects always stay on top of everything else, it is not possible to layer these object with regular canvas objects.
  *
- * Use the normal DOM events for interaction.
+ * By default mouse events are not supported for these objects (it does not implement pointer collision checking). Use the DOM events for interaction with these types of objects.
  *
  * @class
- * @param parentDOM Parent DOM element that contains the drawing canvas.
- * @param type Type of the DOM element (e.g. "div", "p", ...)
+ * @param {Element} parentDOM Parent DOM element that contains the drawing canvas.
+ * @param {string} type Type of the DOM element (e.g. "div", "p", ...)
  * @extends {Object2D}
  */
 function DOM(parentDOM, type)
@@ -49,15 +47,19 @@ function DOM(parentDOM, type)
 
 	/**
 	 * Parent element that contains this DOM div.
+	 *
+	 * @type {Element}
 	 */
 	this.parentDOM = parentDOM;
 
 	/**
 	 * DOM element contained by this object.
 	 *
-	 * Bye default it has the pointerEvents style set to none.
+	 * By default it has the pointerEvents style set to none. In order to use any DOM event with this object first you have to set the element.style.pointerEvents to "auto".
+	 *
+	 * @type {Element}
 	 */
-	this.element = document.createElement("div");
+	this.element = document.createElement(type || "div");
 	this.element.style.transformStyle = "preserve-3d";
 	this.element.style.position = "absolute";
 	this.element.style.top = "0px";
@@ -74,11 +76,17 @@ function DOM(parentDOM, type)
 
 DOM.prototype = Object.create(Object2D.prototype);
 
+/**
+ * DOM object implements onAdd() method to automatically attach the DOM object to the DOM tree.
+ */
 DOM.prototype.onAdd = function()
 {
 	this.parentDOM.appendChild(this.element);
 };
 
+/**
+ * DOM object implements onAdd() method to automatically remove the DOM object to the DOM tree.
+ */
 DOM.prototype.onRemove = function()
 {
 	this.parentDOM.removeChild(this.element);
@@ -106,7 +114,8 @@ DOM.prototype.transform = function(context, viewport, canvas)
 	this.element.style.display = this.visible ? "block" : "none"; 
 };
 
-export {DOM};</code></pre>
+export {DOM};
+</code></pre>
         </article>
     </section>
 
@@ -116,13 +125,13 @@ export {DOM};</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#connector">connector</a></li><li><a href="global.html#direction">direction</a></li><li><a href="global.html#inputs">inputs</a></li><li><a href="global.html#inputSocket">inputSocket</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#node">node</a></li><li><a href="global.html#outputs">outputs</a></li><li><a href="global.html#outputSocket">outputSocket</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#type">type</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue Jun 25 2019 14:27:21 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 14 2020 18:02:06 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

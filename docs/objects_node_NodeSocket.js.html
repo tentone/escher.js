@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: objects/node/NodeSocket.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: objects/node/NodeSocket.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {Circle} from "../Circle";
+import {Node} from "./Node";
+import {NodeConnector} from "./NodeConnector";
+import {Text} from "../Text";
+
+/**
+ * Represents a node hook point. Is attached to the node element and represented visually.
+ *
+ * Can be used as a node input, output or as a bidirectional connection.
+ *
+ * @class NodeSocket
+ * @param {Node} node Node of this hook.
+ * @param {number} direction Direction of the hook.
+ * @param {string} type Data type of the node socket.
+ * @param {string} name Name of the node socket.
+ */
+function NodeSocket(node, direction, type, name)
+{
+	Circle.call(this);
+
+	this.draggable = true;
+	this.radius = 6;
+	this.layer = 1;
+
+	/**
+	 * Name of the socket presented to the user.
+	 *
+	 * @type {string}
+	 */
+	this.name = name !== undefined ? name : "";
+
+	/**
+	 * Type of data available from this socket. Only sockets of the same type can be connected.
+	 *
+	 * Should directly store the data type name (e.g. "string", "number", "Object", etc).
+	 *
+	 * @type {string}
+	 */
+	this.type = type !== undefined ? type : "";
+
+	/**
+	 * Direction of the node hook, indicates the data flow of the socket.
+	 *
+	 * Can be INPUT or OUTPUT.
+	 *
+	 * @type {number}
+	 */
+	this.direction = direction;
+
+	/**
+	 * Node where this socket is attached to.
+	 *
+	 * Should be used to get data from node GUI and from other sockets.
+	 *
+	 * @type {Node}
+	 */
+	this.node = node;
+
+	/**
+	 * Node connector used to connect this socket to another node socket.
+	 *
+	 * Can be used to access the adjacent node.
+	 *
+	 * @type {NodeConnector}
+	 */
+	this.connector = null;
+
+	/**
+	 * Text object used to present the name of the socket.
+	 *
+	 * Depending on the socket direction the text is aligned to the left or to the right.
+	 *
+	 * @type {Text}
+	 */
+	this.text = new Text();
+	this.text.text = this.name;
+	if(this.direction === NodeSocket.INPUT)
+	{
+		this.text.position.x -= 10;
+		this.text.textAlign = "right";
+	}
+	else if(this.direction === NodeSocket.OUTPUT)
+	{
+		this.text.position.x += 10;
+		this.text.textAlign = "left";
+	}
+	this.add(this.text);
+}
+
+/**
+ * Input hook can only be connected to an output.
+ *
+ * Is used to read data from the output.
+ *
+ * @type {number}
+ */
+NodeSocket.INPUT = 1;
+
+/**
+ * Output hook can only be connected to an input.
+ *
+ * Writes data to the output.
+ *
+ * @type {number}
+ */
+NodeSocket.OUTPUT = 2;
+
+NodeSocket.prototype = Object.create(Circle.prototype);
+
+/**
+ * Get value stored or calculated in node socket, it should be the calculated from node logic, node inputs, user input, etc.
+ *
+ * For input nodes the value should be fetched trough the connector object that is connected to an output node elsewhere.
+ *
+ * By default it the socket is an INPUT it gets the value trough the connector if available. Inputs will recursively propagate the method trough the graph to get their value.
+ *
+ * If the socket is an OUTPUT or there is no connection the method returns null by default, in this case the method should be extended by implementations of this class to process data.
+ *
+ * @return {Object} Return data calculated from the node.
+ */
+NodeSocket.prototype.getValue = function()
+{
+	if(this.direction === NodeSocket.INPUT &amp;&amp; this.connector !== null &amp;&amp; this.connector.outputSocket !== null)
+	{
+		return this.connector.outputSocket.getValue();
+	}
+
+	return null;
+};
+
+/**
+ * Connect this node socket to another socket.
+ *
+ * Sockets have to be compatible otherwise the connection cannot be made and an error will be thrown.
+ *
+ * @param {NodeSocket} socket Socket to be connected with this
+ * @return {NodeConnector} Node connector created.
+ */
+NodeSocket.prototype.connectTo = function(socket)
+{
+	if(!this.isCompatible(socket))
+	{
+		throw new Error("Sockets are not compatible they cannot be connected.");
+	}
+
+	var connector = new NodeConnector();
+	this.attachConnector(connector);
+	socket.attachConnector(connector);
+	return connector;
+};
+
+/**
+ * Attach a node connector to this socket. Sets the correct input/output attributes on the socket and the connector.
+ *
+ * Automatically adds the connector to the same parent and the node socket if no parent defined for the connector.
+ *
+ * @param {NodeConnector} connector Connector to be attached to this socket.
+ */
+NodeSocket.prototype.attachConnector = function(connector)
+{
+	if(this.direction === NodeSocket.INPUT)
+	{
+		connector.inputSocket = this;
+	}
+	else if(this.direction === NodeSocket.OUTPUT)
+	{
+		connector.outputSocket = this;
+	}
+
+	this.connector = connector;
+	if(connector.parent === null)
+	{
+		this.parent.add(connector);
+	}
+};
+
+/**
+ * Check if this socket can be connected (is compatible) with another socket.
+ *
+ * For two sockets to be compatible the data flow should be correct (one input and a output) and they should carry the same data type.
+ *
+ * @param {NodeSocket} socket Socket to verify compatibility with.
+ * @return {boolean} Returns true if the two sockets are compatible.
+ */
+NodeSocket.prototype.isCompatible = function(socket)
+{
+	return this.direction !== socket.direction &amp;&amp; this.type === socket.type;
+};
+
+NodeSocket.prototype.destroy = function()
+{
+	Circle.prototype.destroy.call(this);
+
+	if(this.connector !== null)
+	{
+		this.connector.destroy();
+	}
+};
+
+NodeSocket.prototype.onPointerDragStart = function(pointer, viewport)
+{
+	if(this.connector === null)
+	{
+		this.attachConnector(new NodeConnector());
+	}
+};
+
+NodeSocket.prototype.onPointerDrag = function(pointer, viewport, delta, position)
+{
+	if(this.connector !== null)
+	{
+		if(this.direction === NodeSocket.INPUT)
+		{
+			this.connector.from.copy(position);
+		}
+		else if(this.direction === NodeSocket.OUTPUT)
+		{
+			this.connector.to.copy(position);
+		}
+	}
+};
+
+NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
+{
+	if(this.connector !== null)
+	{
+		var position = viewport.inverseMatrix.transformPoint(pointer.position);
+		var objects = this.parent.getWorldPointIntersections(position);
+		var found = false;
+
+		for(var i = 0; i &lt; objects.length; i++)
+		{
+			if(objects[i] instanceof NodeSocket)
+			{
+				if(this.isCompatible(objects[i]))
+				{
+					objects[i].attachConnector(this.connector);
+					found = true;
+					break;
+				}
+			}
+		}
+
+		if(!found)
+		{
+			this.connector.destroy();
+		}
+	}
+};
+
+export {NodeSocket};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#connector">connector</a></li><li><a href="global.html#direction">direction</a></li><li><a href="global.html#inputs">inputs</a></li><li><a href="global.html#inputSocket">inputSocket</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#node">node</a></li><li><a href="global.html#outputs">outputs</a></li><li><a href="global.html#outputSocket">outputSocket</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#type">type</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 14 2020 18:02:06 GMT+0100 (Western European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

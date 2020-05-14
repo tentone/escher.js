@@ -26,17 +26,15 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>"use strict";
-
-import {Vector2} from "./Vector2.js";
+            <pre class="prettyprint source linenums"><code>import {Vector2} from "./Vector2.js";
 
 /**
- * 2D 3x2 transformation matrix, applied to the canvas elements.
+ * 2D 3x2 transformation matrix, used to represent linear geometric transformations over objects.
  *
- * The values of the matrix are stored in a numeric array.
+ * The values of the matrix are stored in a numeric array and can be applied to the canvas or DOM elements.
  *
  * @class
- * @param {array} [values]
+ * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values.
  */
 function Matrix(values)
 {
@@ -53,7 +51,7 @@ function Matrix(values)
 /**
  * Copy the content of another matrix and store in this one.
  *
- * @param {Matrix} mat
+ * @param {Matrix} mat Matrix to copy values from.
  */
 Matrix.prototype.copy = function(mat)
 {
@@ -62,6 +60,8 @@ Matrix.prototype.copy = function(mat)
 
 /**
  * Create a new matrix object with a copy of the content of this one.
+ *
+ * @return {Matrix} Copy of this matrix.
  */
 Matrix.prototype.clone = function()
 {
@@ -69,7 +69,7 @@ Matrix.prototype.clone = function()
 };
 
 /**
- * Reset this matrix to indentity.
+ * Reset this matrix to identity.
  */
 Matrix.prototype.identity = function()
 {
@@ -146,6 +146,8 @@ Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, a)
 /**
  * Apply translation to this matrix.
  *
+ * Adds position over the transformation already stored in the matrix.
+ *
  * @param {number} x
  * @param {number} y
  */
@@ -158,7 +160,7 @@ Matrix.prototype.translate = function(x, y)
 /**
  * Apply rotation to this matrix.
  *
- * @param {number} angle Angle in radians.
+ * @param {number} rad Angle to rotate the matrix in radians.
  */
 Matrix.prototype.rotate = function(rad)
 {
@@ -203,7 +205,7 @@ Matrix.prototype.setPosition = function(x, y)
 };
 
 /**
- * Get the scale from the transformation matrix.
+ * Extract the scale from the transformation matrix.
  *
  * @return {Vector2} Scale of the matrix transformation.
  */
@@ -213,7 +215,7 @@ Matrix.prototype.getScale = function()
 };
 
 /**
- * Get the position from the transformation matrix.
+ * Extract the position from the transformation matrix.
  *
  * @return {Vector2} Position of the matrix transformation.
  */
@@ -232,6 +234,8 @@ Matrix.prototype.skew = function(radianX, radianY)
 
 /**
  * Get the matrix determinant.
+ *
+ * @return {number} Determinant of this matrix.
  */
 Matrix.prototype.determinant = function()
 {
@@ -240,6 +244,8 @@ Matrix.prototype.determinant = function()
 
 /**
  * Get the inverse matrix.
+ *
+ * @return {Matrix} New matrix instance containing the inverse matrix.
  */
 Matrix.prototype.getInverse = function()
 {
@@ -250,6 +256,9 @@ Matrix.prototype.getInverse = function()
 
 /**
  * Transform a point using this matrix.
+ *
+ * @param {Vector2} p Point to be transformed.
+ * @return {Vector2} Transformed point.
  */
 Matrix.prototype.transformPoint = function(p)
 {
@@ -261,6 +270,8 @@ Matrix.prototype.transformPoint = function(p)
 
 /**
  * Set a canvas context to use this transformation.
+ *
+ * @param {CanvasRenderingContext2D} context Canvas context to apply this matrix transform.
  */
 Matrix.prototype.setContextTransform = function(context)
 {
@@ -269,12 +280,19 @@ Matrix.prototype.setContextTransform = function(context)
 
 /**
  * Transform on top of the current context transformation.
+ *
+ * @param {CanvasRenderingContext2D} context Canvas context to apply this matrix transform.
  */
 Matrix.prototype.tranformContext = function(context)
 {
 	context.transform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
 };
 
+/**
+ * Generate a CSS transform string that can be applied to the transform style of any DOM element.
+ *
+ * @returns {string} CSS transform matrix.
+ */
 Matrix.prototype.cssTransform = function()
 {
 	return "matrix(" + this.m[0] + "," + this.m[1] + "," + this.m[2] + "," + this.m[3] + "," + this.m[4] + "," + this.m[5] + ")";
@@ -291,13 +309,13 @@ export {Matrix};
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#connector">connector</a></li><li><a href="global.html#direction">direction</a></li><li><a href="global.html#inputs">inputs</a></li><li><a href="global.html#inputSocket">inputSocket</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#node">node</a></li><li><a href="global.html#outputs">outputs</a></li><li><a href="global.html#outputSocket">outputSocket</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#type">type</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue Jun 25 2019 14:27:21 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 14 2020 18:02:06 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

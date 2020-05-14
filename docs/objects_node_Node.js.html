@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: objects/node/Node.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: objects/node/Node.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {NodeSocket} from "./NodeSocket";
+import {RoundedBox} from "../RoundedBox";
+
+/**
+ * Node objects can be connected between them to create graphs.
+ *
+ * Each node contains inputs, outputs and a set of attributes containing their state. Inputs can be connected to outputs of other nodes, and vice-versa.
+ *
+ * This class implements node basic functionality, the logic to connect node and define inputs/outputs of the nodes.
+ *
+ * @class Node
+ */
+function Node()
+{
+	RoundedBox.call(this);
+
+	this.draggable = true;
+
+	/**
+	 * List of inputs of the node.
+	 *
+	 * @type {NodeSocket[]}
+	 */
+	this.inputs = [];
+
+	/**
+	 * List of outputs of the node.
+	 *
+	 * @type {NodeSocket[]}
+	 */
+	this.outputs = [];
+}
+
+Node.prototype = Object.create(RoundedBox.prototype);
+
+/**
+ * This method should be used for the node to register their socket inputs/outputs.
+ *
+ * It is called automatically after the node is added to the node graph to create sockets.
+ */
+Node.prototype.registerSockets = null;
+
+/**
+ * Add input to this node, can be connected to other nodes to receive data.
+ *
+ * @param {string} type Data type of the node socket.
+ * @param {string} name Name of the node socket.
+ * @return {NodeSocket} Node socket created for this node.
+ */
+Node.prototype.addInput = function(type, name)
+{
+	var socket = new NodeSocket(this, NodeSocket.INPUT, type, name);
+	this.inputs.push(socket);
+	this.parent.add(socket);
+	return socket;
+};
+
+/**
+ * Add output socket to this node, can be connected to other nodes to send data.
+ *
+ * @param {string} type Data type of the node socket.
+ * @param {string} name Name of the node socket.
+ * @return {NodeSocket} Node socket created for this node.
+ */
+Node.prototype.addOutput = function(type, name)
+{
+	var socket = new NodeSocket(this, NodeSocket.OUTPUT, type, name);
+	this.outputs.push(socket);
+	this.parent.add(socket);
+	return socket;
+};
+
+/**
+ * Get a output socket by its name. If there are multiple sockets with the same name only the first one found is returned.
+ *
+ * @param {string} name Name of the node socket to get.
+ * @return {NodeSocket} Node socket if it was found, null otherwise.
+ */
+Node.prototype.getOutput = function(name)
+{
+	for(var i = 0; i &lt; this.outputs.length; i++)
+	{
+		if(this.outputs[i].name === name)
+		{
+			return this.outputs[i];
+		}
+	}
+
+	return null;
+};
+
+/**
+ * Get a input socket by its name. If there are multiple sockets with the same name only the first one found is returned.
+ *
+ * @param {string} name Name of the node socket to get.
+ * @return {NodeSocket} Node socket if it was found, null otherwise.
+ */
+Node.prototype.getInput = function(name)
+{
+	for(var i = 0; i &lt; this.inputs.length; i++)
+	{
+		if(this.inputs[i].name === name)
+		{
+			return this.inputs[i];
+		}
+	}
+
+	return null;
+};
+
+Node.prototype.destroy = function()
+{
+	RoundedBox.prototype.destroy.call(this);
+
+	for(var i = 0; i &lt; this.inputs.length; i++)
+	{
+		this.inputs[i].destroy();
+	}
+
+	for(var i = 0; i &lt; this.outputs.length; i++)
+	{
+		this.outputs[i].destroy();
+	}
+};
+
+Node.prototype.onUpdate = function()
+{
+	var height = this.box.max.y - this.box.min.y;
+
+	// Input hooks position
+	var step = height / (this.inputs.length + 1);
+	var start = this.box.min.y + step;
+
+	for(var i = 0; i &lt; this.inputs.length; i++)
+	{
+		this.inputs[i].position.set(this.position.x + this.box.min.x, this.position.y + (start + step * i));
+	}
+
+	// Output hooks position
+	step = height / (this.outputs.length + 1);
+	start = this.box.min.y + step;
+
+	for(var i = 0; i &lt; this.outputs.length; i++)
+	{
+		this.outputs[i].position.set(this.position.x + this.box.max.x, this.position.y + (start + step * i));
+	}
+};
+
+export {Node};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#connector">connector</a></li><li><a href="global.html#direction">direction</a></li><li><a href="global.html#inputs">inputs</a></li><li><a href="global.html#inputSocket">inputSocket</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#node">node</a></li><li><a href="global.html#outputs">outputs</a></li><li><a href="global.html#outputSocket">outputSocket</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#type">type</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 14 2020 18:02:06 GMT+0100 (Western European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

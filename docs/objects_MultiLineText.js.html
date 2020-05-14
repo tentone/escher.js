@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Line.js</title>
+    <title>JSDoc: Source: objects/MultiLineText.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Line.js</h1>
+    <h1 class="page-title">Source: objects/MultiLineText.js</h1>
 
     
 
@@ -26,73 +26,103 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import {Object2D} from "../Object2D.js";
-import {Vector2} from "../math/Vector2.js";
+            <pre class="prettyprint source linenums"><code>import {Text} from "./Text.js";
 
 /**
- * Line object draw a line from one point to another without any kind of interpolation.
+ * Multiple line text drawing directly into the canvas.
  *
- * For drawing lines with interpolation check {BezierCurve}
+ * Has support for basic text indent and alignment.
  *
  * @class
- * @extends {Object2D}
+ * @extends {Text}
  */
-function Line()
+function MultiLineText()
 {
-	Object2D.call(this);
+	Text.call(this);
 
 	/**
-	 * Initial point of the line.
+	 * Maximum width of the text content. After text reaches the max width a line break is placed.
 	 *
-	 * Can be equal to the position object of another object. Making it automatically follow that object.
-	 */
-	this.from = new Vector2();
-
-	/**
-	 * Final point of the line.
+	 * Can be set to null to be ignored.
 	 *
-	 * Can be equal to the position object of another object. Making it automatically follow that object.
+	 * @type {number}
 	 */
-	this.to = new Vector2();
+	this.maxWidth = null;
 
 	/**
-	 * Dash line pattern to be used, if empty draws a solid line.
+	 * Height of each line of text, can be smaller or larger than the actual font size.
 	 *
-	 * Dash pattern is defined as the size of dashes as pairs of space with no line and with line.
+	 * Can be set to null to be ignored.
 	 *
-	 * E.g if the dash pattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
+	 * @type {number}
 	 */
-	this.dashPattern = [5, 5];
-
-	/**
-	 * Style of the object line.
-	 */
-	this.strokeStyle = "#000000";
-
-	/**
-	 * Line width of the line.
-	 */
-	this.lineWidth = 1;
+	this.lineHeight = null;
 }
 
-Line.prototype = Object.create(Object2D.prototype);
+MultiLineText.prototype = Object.create(Text.prototype);
 
-Line.prototype.style = function(context, viewport, canvas)
+MultiLineText.prototype.draw = function(context, viewport, canvas)
 {
-	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
-	context.setLineDash(this.dashPattern);
+	context.font = this.font;
+	context.textAlign = this.textAlign;
+	context.textBaseline = this.textBaseline;
+
+	var lineHeight = this.lineHeight || Number.parseFloat(this.font);
+	var lines = this.text.split("\n");
+	var offsetY = 0;
+
+	// Iterate trough all lines (breakpoints)
+	for(var i = 0; i &lt; lines.length; i++)
+	{
+		var line = lines[i];
+		var size = context.measureText(line);
+		var sublines = [];
+
+		// Split into multiple sub-lines
+		if(this.maxWidth !== null &amp;&amp; size.width > this.maxWidth)
+		{
+			while(line.length > 0)
+			{
+				var subline = "";
+				var subsize = context.measureText(subline + line[0]);
+
+				while(subsize.width &lt; this.maxWidth &amp;&amp; line.length > 0)
+				{
+					subline += line[0];
+					line = line.substr(1);
+					subsize = context.measureText(subline + line[0]);
+				}
+
+				sublines.push(subline);
+			}
+
+		}
+		// Fits into a single line
+		else
+		{
+			sublines = [line];
+		}
+
+		for(var j = 0; j &lt; sublines.length; j++)
+		{
+			if(this.fillStyle !== null)
+			{
+				context.fillStyle = this.fillStyle;
+				context.fillText(sublines[j], this.position.x, this.position.y + offsetY);
+			}
+
+			if(this.strokeStyle !== null)
+			{
+				context.strokeStyle = this.strokeStyle;
+				context.strokeText(sublines[j], this.position.x, this.position.y + offsetY);
+			}
+
+			offsetY += lineHeight;
+		}
+	}
 };
 
-Line.prototype.draw = function(context, viewport, canvas)
-{
-	context.beginPath();
-	context.moveTo(this.from.x, this.from.y);
-	context.lineTo(this.to.x, this.to.y);
-	context.stroke();
-};
-
-export {Line};
+export {MultiLineText};
 </code></pre>
         </article>
     </section>

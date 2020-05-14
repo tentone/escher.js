@@ -26,18 +26,14 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>"use strict";
-
-import {Pointer} from "./input/Pointer.js";
+            <pre class="prettyprint source linenums"><code>import {Pointer} from "./input/Pointer.js";
 import {ViewportControls} from "./controls/ViewportControls.js";
 
 /**
- * The renderer is resposible for drawing the structure into the canvas element.
- *
- * Its also resposible for managing the canvas state.
+ * The renderer is responsible for drawing the objects structure into the canvas element and manage its rendering state.
  *
  * @class
- * @param {DOM} canvas Canvas to render the content.
+ * @param {Element} canvas Canvas to render the content.
  * @param {Object} options Renderer canvas options.
  */
 function Renderer(canvas, options)
@@ -68,7 +64,9 @@ function Renderer(canvas, options)
 	this.pointer = new Pointer(window, canvas);
 
 	/**
-	 * Indicates if the canvas should be automatically cleared on each new frame.
+	 * Indicates if the canvas should be automatically cleared before new frame is drawn.
+	 *
+	 * If set to false the user should clear the frame before drawing.
 	 */
 	this.autoClear = true;
 }
@@ -78,14 +76,13 @@ function Renderer(canvas, options)
  *
  * The render loop cannot be destroyed, and it automatically creates a viewport controls object.
  *
- * @param {Object2D} group Group to be rendererd.
+ * @param {Object2D} group Group to be rendered.
  * @param {Viewport} viewport Viewport into the objects.
  * @param {Function} onUpdate Function called before rendering the frame.
  */
 Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 {
 	var self = this;
-	
 	var controls = new ViewportControls(viewport);
 
 	function loop()
@@ -104,9 +101,9 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 };
 
 /**
- * Update the renderer state, update the input handlers, calculate the object and viewport transformation matrices.
+ * Renders a object using a user defined viewport into a canvas element.
  *
- * Render the object using the viewport into a canvas element.
+ * Before rendering automatically updates the input handlers and calculates the objects/viewport transformation matrices.
  *
  * The canvas state is saved and restored for each individual object, ensuring that the code of one object does not affect another one.
  *
@@ -118,7 +115,9 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 Renderer.prototype.update = function(object, viewport)
 {
 	// Get objects to be rendered
-	var objects = []
+	var objects = [];
+
+	// Traverse object and get all objects into a list.
 	object.traverse(function(child)
 	{
 		if(child.visible)
@@ -154,13 +153,14 @@ Renderer.prototype.update = function(object, viewport)
 	{
 		var child = objects[i];
 		
-		//Process the
+		//Process the object pointer events
 		if(child.pointerEvents)
 		{
-			var childPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
+			// Calculate the pointer position in the object coordinates
+			var localPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
 
 			// Check if the pointer pointer is inside
-			if(child.isInside(childPoint))
+			if(child.isInside(localPoint))
 			{
 				// Pointer enter
 				if(!child.pointerInside &amp;&amp; child.onPointerEnter !== null)
@@ -204,6 +204,10 @@ Renderer.prototype.update = function(object, viewport)
 					if(child.draggable)
 					{
 						child.beingDragged = true;
+						if(child.onPointerDragStart !== null)
+						{
+							child.onPointerDragStart(pointer, viewport);
+						}
 						break;
 					}
 				}
@@ -226,6 +230,11 @@ Renderer.prototype.update = function(object, viewport)
 			{	
 				if(child.draggable)
 				{
+					// On drag end callback
+					if(child.beingDragged === true &amp;&amp; child.onPointerDragEnd !== null)
+					{
+						child.onPointerDragEnd(pointer, viewport);
+					}
 					child.beingDragged = false;
 				}
 			}
@@ -239,19 +248,21 @@ Renderer.prototype.update = function(object, viewport)
 
 		// Pointer drag event
 		if(child.beingDragged)
-		{	
-			var lastPosition = pointer.position.clone();
-			lastPosition.sub(pointer.delta);
-
-			var positionWorld = viewport.inverseMatrix.transformPoint(pointer.position);
-			var lastWorld = viewport.inverseMatrix.transformPoint(lastPosition);
-
-			// Mouse delta in world coordinates
-			positionWorld.sub(lastWorld);
-
+		{
 			if(child.onPointerDrag !== null)
 			{
-				child.onPointerDrag(pointer, viewport, positionWorld);
+				var lastPosition = pointer.position.clone();
+				lastPosition.sub(pointer.delta);
+
+				// Get position and last position in world space to calculate world pointer movement
+				var positionWorld = viewport.inverseMatrix.transformPoint(pointer.position);
+				var lastWorld = viewport.inverseMatrix.transformPoint(lastPosition);
+
+				// Pointer movement delta in world coordinates
+				var delta = positionWorld.clone();
+				delta.sub(lastWorld);
+
+				child.onPointerDrag(pointer, viewport, delta, positionWorld);
 			}
 		}
 
@@ -314,7 +325,18 @@ Renderer.prototype.update = function(object, viewport)
 
 		// Apply the object transform to the canvas context
 		objects[i].transform(this.context, viewport, this.canvas);
-		objects[i].draw(this.context, viewport, this.canvas);
+
+		// Style the canvas context
+		if(objects[i].style !== null)
+		{
+			objects[i].style(this.context, viewport, this.canvas);
+		}
+
+		// Draw content into the canvas.
+		if(objects[i].draw !== null)
+		{
+			objects[i].draw(this.context, viewport, this.canvas);
+		}
 
 		if(objects[i].restoreContextState)
 		{
@@ -334,13 +356,13 @@ export {Renderer};
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#connector">connector</a></li><li><a href="global.html#direction">direction</a></li><li><a href="global.html#inputs">inputs</a></li><li><a href="global.html#inputSocket">inputSocket</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#node">node</a></li><li><a href="global.html#outputs">outputs</a></li><li><a href="global.html#outputSocket">outputSocket</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#type">type</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue Jun 25 2019 14:27:21 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 14 2020 18:02:06 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
