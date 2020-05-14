@@ -41,7 +41,7 @@ NodeGraph.prototype.addNode = function(node)
 	}
 
 	// Create and add new node
-	node.position.set(x + 300, y / 2.0);
+	node.position.set(x + 200, y / 2.0);
 	this.add(node);
 
 	if(node.registerSockets !== null)

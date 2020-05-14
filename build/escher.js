@@ -3839,13 +3839,13 @@
 	NodeSocket.prototype = Object.create(Circle.prototype);
 
 	/**
-	 * Get value stored or calculated in node socket. For output values it should be the calculated value from node logic, node inputs etc.
+	 * Get value stored or calculated in node socket, it should be the calculated from node logic, node inputs, user input, etc.
 	 *
 	 * For input nodes the value should be fetched trough the connector object that is connected to an output node elsewhere.
 	 *
-	 * By default it the socket is an INPUT it gets the value trough the connector if available, if the socket is an OUTPUT or there is no connection the method returns null.
+	 * By default it the socket is an INPUT it gets the value trough the connector if available. Inputs will recursively propagate the method trough the graph to get their value.
 	 *
-	 * The method should be extended by implementations of this class to process data. The node object can be access to get information from other sockets.
+	 * If the socket is an OUTPUT or there is no connection the method returns null by default, in this case the method should be extended by implementations of this class to process data.
 	 *
 	 * @return {Object} Return data calculated from the node.
 	 */
@@ -4165,7 +4165,7 @@
 		}
 
 		// Create and add new node
-		node.position.set(x + 300, y / 2.0);
+		node.position.set(x + 200, y / 2.0);
 		this.add(node);
 
 		if(node.registerSockets !== null)

@@ -61,9 +61,8 @@
 
 				this.text = new Escher.Text();
 				this.text.text = operation;
-				this.text.font = "35px Arial";
+				this.text.font = "30px Arial";
 				this.text.layer = 2;
-
 				this.add(this.text);
 			}
 
@@ -71,8 +70,8 @@
 			{
 				this.a = this.addInput("number", "a");
 				this.b = this.addInput("number", "b");
-				this.r = this.addOutput("number", "r");
 
+				this.r = this.addOutput("number", "r");
 				this.r.getValue = () =>
 				{
 					return "(" + this.a.getValue() + this.operation +  this.b.getValue() + ")";

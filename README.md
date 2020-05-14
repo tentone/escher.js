@@ -2,11 +2,11 @@
 [![npm version](https://badge.fury.io/js/escher.js.svg)](https://badge.fury.io/js/escher.js)
 
  - Web based 2D graph building framework.
- - Entity based diagram build system, entities are stores as a tree. Parent elements transformations affect the children transforms.
- - Boxes, circle, custom shapes, lines, customizable elements.
- - Support for DOM elements using CSS transforms (useful for text input, or more complex user interaction).
- - Built in viewport controls with drag, zoom and move functions.
- - Supports mobile web browsers.
+ - Entity based diagram build system, entities are stores as a tree. Compose complex animated canvas objects using parent-children transforms.
+ - Extensible using already existing canvas based visualization libs. 
+ - Base objects boxes, circle, custom shapes, lines, that can be used to compose more complex objects.
+ - Support for DOM elements using CSS transforms (Useful for text input and more complex user interaction).
+ - Built in viewport controls with drag, zoom and move functions. Supports mobile web browsers.
 
 ![graph](<https://tentone.github.io/escher.js/readme/example.png>)
 
@@ -63,6 +63,17 @@ canvas.height = window.innerHeight;
 - The viewport is the object that indicates how the user will view the objects, the viewport can be used to change the position of the elements, zoom in and out, or even rotate the entire canvas.
 - Some object might ignore the viewport transformations by setting the `ignoreViewport` flag to false, this will indicate that renderer to reset the viewport transform just for that object.
 - Its possible to use viewport controller objects that define a default control behavior for the viewport object (mouse interaction).
+
+
+
+### Node Graph
+
+- Node graph can be used to create node diagrams, node have inputs and outputs sockets that can be connected using node connectors.
+- Data flows between the nodes, each node class has to implement how its data is processed using the `getValue()` method of its sockets.
+- The node value propagates trough the node connections from outputs to inputs.
+- Its possible to integrate user input elements using the DOM wrapper object.
+
+![graph](<https://tentone.github.io/escher.js/readme/nodes.png>)
 
 
 
