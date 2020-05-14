@@ -19,6 +19,7 @@
   - [PDF & TIFF (External libraries)](https://tentone.github.io/escher.js/examples/pdftiff)
   - [Masks](https://tentone.github.io/escher.js/examples/mask)
   - [Snake Game](https://tentone.github.io/escher.js/examples/snake)
+  - [Node Graph](https://tentone.github.io/escher.js/examples/node)
   - [Stress test](https://tentone.github.io/escher.js/examples/stress)
 - There is also available API documentation containing implementation details about all the internal components of the framework and detailed functionality descriptions.
   - [API Documentation](https://tentone.github.io/escher.js/docs/)

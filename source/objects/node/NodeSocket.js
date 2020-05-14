@@ -32,6 +32,8 @@ function NodeSocket(node, direction, type, name)
 	/**
 	 * Type of data available from this socket, only hooks of the same type can be connected.
 	 *
+	 * Should directly store data type as text
+	 *
 	 * @type {string}
 	 */
 	this.type = type !== undefined ? type : "";
@@ -155,6 +157,15 @@ NodeSocket.prototype.isCompatible = function(socket)
 	return this.direction !== socket.direction && this.type === socket.type;
 };
 
+NodeSocket.prototype.destroy = function()
+{
+	Circle.prototype.destroy.call(this);
+
+	if(this.connector !== null)
+	{
+		this.connector.destroy();
+	}
+};
 
 NodeSocket.prototype.onPointerDragStart = function(pointer, viewport)
 {

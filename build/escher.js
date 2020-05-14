@@ -3672,6 +3672,8 @@
 
 	NodeConnector.prototype.destroy = function()
 	{
+		BezierCurve.prototype.destroy.call(this);
+
 		if(this.outputSocket !== null)
 		{
 			this.outputSocket.connector = null;
@@ -3681,8 +3683,6 @@
 		{
 			this.inputSocket.connector = null;
 		}
-
-		BezierCurve.prototype.destroy.call(this);
 	};
 
 	NodeConnector.prototype.onUpdate = function()
@@ -3750,6 +3750,8 @@
 
 		/**
 		 * Type of data available from this socket, only hooks of the same type can be connected.
+		 *
+		 * Should directly store data type as text
 		 *
 		 * @type {string}
 		 */
@@ -3874,6 +3876,15 @@
 		return this.direction !== socket.direction && this.type === socket.type;
 	};
 
+	NodeSocket.prototype.destroy = function()
+	{
+		Circle.prototype.destroy.call(this);
+
+		if(this.connector !== null)
+		{
+			this.connector.destroy();
+		}
+	};
 
 	NodeSocket.prototype.onPointerDragStart = function(pointer, viewport)
 	{
@@ -3959,6 +3970,13 @@
 	Node.prototype = Object.create(RoundedBox.prototype);
 
 	/**
+	 * This method should be used for the node to register their socket inputs/outputs.
+	 *
+	 * It is called automatically after the node is added to the node graph to create sockets.
+	 */
+	Node.prototype.registerSockets = null;
+
+	/**
 	 * Add input to this node, can be connected to other nodes to receive data.
 	 *
 	 * @param {string} type Data type of the node socket.
@@ -3986,6 +4004,21 @@
 		this.outputs.push(socket);
 		this.parent.add(socket);
 		return socket;
+	};
+
+	Node.prototype.destroy = function()
+	{
+		RoundedBox.prototype.destroy.call(this);
+
+		for(var i = 0; i < this.inputs.length; i++)
+		{
+			this.inputs[i].destroy();
+		}
+
+		for(var i = 0; i < this.outputs.length; i++)
+		{
+			this.outputs[i].destroy();
+		}
 	};
 
 	Node.prototype.onUpdate = function()
@@ -4023,8 +4056,6 @@
 	function NodeGraph()
 	{
 		Object2D.call(this);
-
-		// TODO <ADD CODE HERE>
 	}
 
 	NodeGraph.prototype = Object.create(Object2D.prototype);
@@ -4034,10 +4065,10 @@
 	 *
 	 * Automatically finds an empty space as close as possible to other nodes to add this new node.
 	 *
-	 * @param {Function} NodeConstructor Constructor of the node type to be created.
+	 * @param {Node} node Node object to be added.
 	 * @return {Node} Node created (already added to the graph).
 	 */
-	NodeGraph.prototype.createNode = function(NodeConstructor)
+	NodeGraph.prototype.addNode = function(node)
 	{
 		// Check available position on screen.
 		var x = 0, y = 0;
@@ -4054,9 +4085,13 @@
 		}
 
 		// Create and add new node
-		var node = new NodeConstructor();
 		node.position.set(x + 300, y / 2.0);
 		this.add(node);
+
+		if(node.registerSockets !== null)
+		{
+			node.registerSockets();
+		}
 
 		return node;
 	};

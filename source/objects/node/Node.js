@@ -1,4 +1,3 @@
-import {Box} from "../Box";
 import {NodeSocket} from "./NodeSocket";
 import {RoundedBox} from "../RoundedBox";
 
@@ -35,6 +34,13 @@ function Node()
 Node.prototype = Object.create(RoundedBox.prototype);
 
 /**
+ * This method should be used for the node to register their socket inputs/outputs.
+ *
+ * It is called automatically after the node is added to the node graph to create sockets.
+ */
+Node.prototype.registerSockets = null;
+
+/**
  * Add input to this node, can be connected to other nodes to receive data.
  *
  * @param {string} type Data type of the node socket.
@@ -62,6 +68,21 @@ Node.prototype.addOutput = function(type, name)
 	this.outputs.push(socket);
 	this.parent.add(socket);
 	return socket;
+};
+
+Node.prototype.destroy = function()
+{
+	RoundedBox.prototype.destroy.call(this);
+
+	for(var i = 0; i < this.inputs.length; i++)
+	{
+		this.inputs[i].destroy();
+	}
+
+	for(var i = 0; i < this.outputs.length; i++)
+	{
+		this.outputs[i].destroy();
+	}
 };
 
 Node.prototype.onUpdate = function()

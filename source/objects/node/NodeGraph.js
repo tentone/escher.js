@@ -12,8 +12,6 @@ import {Object2D} from "../../Object2D";
 function NodeGraph()
 {
 	Object2D.call(this);
-
-	// TODO <ADD CODE HERE>
 }
 
 NodeGraph.prototype = Object.create(Object2D.prototype);
@@ -23,10 +21,10 @@ NodeGraph.prototype = Object.create(Object2D.prototype);
  *
  * Automatically finds an empty space as close as possible to other nodes to add this new node.
  *
- * @param {Function} NodeConstructor Constructor of the node type to be created.
+ * @param {Node} node Node object to be added.
  * @return {Node} Node created (already added to the graph).
  */
-NodeGraph.prototype.createNode = function(NodeConstructor)
+NodeGraph.prototype.addNode = function(node)
 {
 	// Check available position on screen.
 	var x = 0, y = 0;
@@ -43,9 +41,13 @@ NodeGraph.prototype.createNode = function(NodeConstructor)
 	}
 
 	// Create and add new node
-	var node = new NodeConstructor();
 	node.position.set(x + 300, y / 2.0);
 	this.add(node);
+
+	if(node.registerSockets !== null)
+	{
+		node.registerSockets();
+	}
 
 	return node;
 };

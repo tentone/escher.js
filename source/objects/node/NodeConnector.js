@@ -32,6 +32,8 @@ NodeConnector.prototype = Object.create(BezierCurve.prototype);
 
 NodeConnector.prototype.destroy = function()
 {
+	BezierCurve.prototype.destroy.call(this);
+
 	if(this.outputSocket !== null)
 	{
 		this.outputSocket.connector = null;
@@ -41,8 +43,6 @@ NodeConnector.prototype.destroy = function()
 	{
 		this.inputSocket.connector = null;
 	}
-
-	BezierCurve.prototype.destroy.call(this);
 };
 
 NodeConnector.prototype.onUpdate = function()
