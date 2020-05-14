@@ -1,70 +1,4 @@
 /**
- * EventManager is used to manager DOM events creationg and destruction in a single function call.
- *
- * It is used by objects to make it easier to add and remove events from global DOM objects.
- *
- * @class
- */
-function EventManager()
-{
-	/**
-	 * Stores all events in the manager, their target and callback.
-	 * 
-	 * Format [target, event, callback, active]
-	 * 
-	 * @type {Array}
-	 */
-	this.events = [];
-}
-
-/**
- * Add new event to the manager.
- *
- * @param {DOM} target Event target element.
- * @param {String} event Event name.
- * @param {Function} callback Callback function.
- */
-EventManager.prototype.add = function(target, event, callback)
-{
-	this.events.push([target, event, callback, false]);
-};
-
-/**
- * Destroys this manager and remove all events.
- */
-EventManager.prototype.clear = function()
-{
-	this.destroy();
-	this.events = [];
-};
-
-/**
- * Creates all events in this manager.
- */
-EventManager.prototype.create = function()
-{
-	for(var i = 0; i < this.events.length; i++)
-	{
-		var event = this.events[i];
-		event[0].addEventListener(event[1], event[2]);
-		event[3] = true;
-	}
-};
-
-/**
- * Removes all events in this manager.
- */
-EventManager.prototype.destroy = function()
-{
-	for(var i = 0; i < this.events.length; i++)
-	{
-		var event = this.events[i];
-		event[0].removeEventListener(event[1], event[2]);
-		event[3] = false;
-	}
-};
-
-/** 
  * Class representing a 2D vector. A 2D vector is an ordered pair of numbers (labeled x and y), which can be used to represent points in space, directions, etc.
  *
  * @class
@@ -211,7 +145,7 @@ Vector2.prototype.multiply = function(v)
 /**
  * Multiply a scalar value by booth vector components.
  *
- * @param {number} s
+ * @param {number} scalar
  */
 Vector2.prototype.multiplyScalar = function(scalar)
 {
@@ -504,12 +438,12 @@ Vector2.prototype.rotateAround = function(center, angle)
 };
 
 /**
- * 2D 3x2 transformation matrix, applied to the canvas elements.
+ * 2D 3x2 transformation matrix, used to represent linear geometric transformations over objects.
  *
- * The values of the matrix are stored in a numeric array.
+ * The values of the matrix are stored in a numeric array and can be applied to the canvas or DOM elements.
  *
  * @class
- * @param {array} [values]
+ * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values.
  */
 function Matrix(values)
 {
@@ -526,7 +460,7 @@ function Matrix(values)
 /**
  * Copy the content of another matrix and store in this one.
  *
- * @param {Matrix} mat
+ * @param {Matrix} mat Matrix to copy values from.
  */
 Matrix.prototype.copy = function(mat)
 {
@@ -535,6 +469,8 @@ Matrix.prototype.copy = function(mat)
 
 /**
  * Create a new matrix object with a copy of the content of this one.
+ *
+ * @return {Matrix} Copy of this matrix.
  */
 Matrix.prototype.clone = function()
 {
@@ -542,7 +478,7 @@ Matrix.prototype.clone = function()
 };
 
 /**
- * Reset this matrix to indentity.
+ * Reset this matrix to identity.
  */
 Matrix.prototype.identity = function()
 {
@@ -619,6 +555,8 @@ Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, a)
 /**
  * Apply translation to this matrix.
  *
+ * Adds position over the transformation already stored in the matrix.
+ *
  * @param {number} x
  * @param {number} y
  */
@@ -631,7 +569,7 @@ Matrix.prototype.translate = function(x, y)
 /**
  * Apply rotation to this matrix.
  *
- * @param {number} angle Angle in radians.
+ * @param {number} rad Angle to rotate the matrix in radians.
  */
 Matrix.prototype.rotate = function(rad)
 {
@@ -676,7 +614,7 @@ Matrix.prototype.setPosition = function(x, y)
 };
 
 /**
- * Get the scale from the transformation matrix.
+ * Extract the scale from the transformation matrix.
  *
  * @return {Vector2} Scale of the matrix transformation.
  */
@@ -686,7 +624,7 @@ Matrix.prototype.getScale = function()
 };
 
 /**
- * Get the position from the transformation matrix.
+ * Extract the position from the transformation matrix.
  *
  * @return {Vector2} Position of the matrix transformation.
  */
@@ -705,6 +643,8 @@ Matrix.prototype.skew = function(radianX, radianY)
 
 /**
  * Get the matrix determinant.
+ *
+ * @return {number} Determinant of this matrix.
  */
 Matrix.prototype.determinant = function()
 {
@@ -713,6 +653,8 @@ Matrix.prototype.determinant = function()
 
 /**
  * Get the inverse matrix.
+ *
+ * @return {Matrix} New matrix instance containing the inverse matrix.
  */
 Matrix.prototype.getInverse = function()
 {
@@ -723,6 +665,9 @@ Matrix.prototype.getInverse = function()
 
 /**
  * Transform a point using this matrix.
+ *
+ * @param {Vector2} p Point to be transformed.
+ * @return {Vector2} Transformed point.
  */
 Matrix.prototype.transformPoint = function(p)
 {
@@ -734,6 +679,8 @@ Matrix.prototype.transformPoint = function(p)
 
 /**
  * Set a canvas context to use this transformation.
+ *
+ * @param {CanvasRenderingContext2D} context Canvas context to apply this matrix transform.
  */
 Matrix.prototype.setContextTransform = function(context)
 {
@@ -742,12 +689,19 @@ Matrix.prototype.setContextTransform = function(context)
 
 /**
  * Transform on top of the current context transformation.
+ *
+ * @param {CanvasRenderingContext2D} context Canvas context to apply this matrix transform.
  */
 Matrix.prototype.tranformContext = function(context)
 {
 	context.transform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
 };
 
+/**
+ * Generate a CSS transform string that can be applied to the transform style of any DOM element.
+ *
+ * @returns {string} CSS transform matrix.
+ */
 Matrix.prototype.cssTransform = function()
 {
 	return "matrix(" + this.m[0] + "," + this.m[1] + "," + this.m[2] + "," + this.m[3] + "," + this.m[4] + "," + this.m[5] + ")";
@@ -761,16 +715,14 @@ Matrix.prototype.cssTransform = function()
 function UUID(){}
 
 /**
- * Generate new random UUID v4 as string.
- *
- * http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
+ * Generates a new random UUID v4 as string.
  *
  * @static
+ * @return {string} UUID generated as string.
  */
 UUID.generate = (function ()
 {
 	var lut = [];
-
 	for(var i = 0; i < 256; i++)
 	{
 		lut[i] = (i < 16 ? "0" : "") + (i).toString(16);
@@ -793,11 +745,11 @@ UUID.generate = (function ()
 })();
 
 /**
- * Base object class, implements all the object positioning and scalling features.
+ * Base object class, implements all the object positioning and scaling features.
  *
  * Stores all the base properties shared between all objects as the position, transformation properties, children etc.
  *
- * Object2D should be used as a group to store all the other objects drawn.
+ * Object2D object can be used as a group to the other objects drawn.
  *
  * @class
  */
@@ -805,60 +757,88 @@ function Object2D()
 {	
 	/**
 	 * UUID of the object.
+	 *
+	 * @type {string}
 	 */
 	this.uuid = UUID.generate(); 
 
 	/**
 	 * List of children objects attached to the object.
+	 *
+	 * @type {Object2D[]}
 	 */
 	this.children = [];
 
 	/**
 	 * Parent object, the object position is affected by its parent position.
+	 *
+	 * @type {Object2D}
 	 */
 	this.parent = null;
 
 	/**
 	 * Depth level in the object tree, objects with higher depth are drawn on top.
 	 *
-	 * The layer value is considered first. 
+	 * The layer value is considered first.
+	 *
+	 * @type {number}
 	 */
 	this.level = 0;
 
 	/**
 	 * Position of the object.
+	 *
+	 * The world position of the object is affected by its parent transform.
+	 *
+	 * @type {Vector2}
 	 */
 	this.position = new Vector2(0, 0);
 
 	/**
 	 * Origin of the object used as point of rotation.
+	 *
+	 * @type {Vector2}
 	 */
 	this.origin = new Vector2(0, 0);
 
 	/**
 	 * Scale of the object.
+	 *
+	 * The world scale of the object is affected by the parent transform.
+	 *
+	 * @type {Vector2}
 	 */
 	this.scale = new Vector2(1, 1);
 
 	/**
 	 * Rotation of the object relative to its center.
+	 *
+	 * The world rotation of the object is affected by the parent transform.
+	 *
+	 * @type {number}
 	 */
 	this.rotation = 0.0;
 
 	/**
 	 * Indicates if the object is visible.
+	 *
+	 * @type {boolean}
 	 */
 	this.visible = true;
 
 	/**
 	 * Layer of this object, objects are sorted by layer value.
 	 *
-	 * Lower layer value is draw first.
+	 * Lower layer value is draw first, higher layer value is drawn on top.
+	 *
+	 * @type {number}
 	 */
 	this.layer = 0;
 
 	/**
-	 * Local transformation matrix applied to the object. 
+	 * Local transformation matrix applied to the object.
+	 *
+	 * @type {Matrix}
 	 */
 	this.matrix = new Matrix();
 
@@ -866,54 +846,83 @@ function Object2D()
 	 * Global transformation matrix multiplied by the parent matrix.
 	 *
 	 * Used to transform the object before projecting into screen coordinates.
+	 *
+	 * @type {Matrix}
 	 */
 	this.globalMatrix = new Matrix();
 
 	/**
-	 * Inverse of the global matrix.
+	 * Inverse of the global (world) transform matrix.
 	 *
-	 * Used to convert pointer input points into object coordinates.
+	 * Used to convert pointer input points (viewport space) into object coordinates.
+	 *
+	 * @type {Matrix}
 	 */
 	this.inverseGlobalMatrix = new Matrix();
 
 	/**
-	 * Masks being applied to this object.
+	 * Mask objects being applied to this object. Used to mask/subtract portions of this object when rendering.
 	 *
-	 * Multiple masks can be used simultaneously.
+	 * Multiple masks can be used simultaneously. Same mask might be reused for multiple objects.
+	 *
+	 * @type {Mask[]}
 	 */
 	this.masks = [];
 
 	/**
-	 * If true the matrix is updated before rendering the object.
+	 * Indicates if the transform matrix should be automatically updated every frame.
+	 *
+	 * Set this false for better performance. But if you do so dont forget to set matrixNeedsUpdate every time that a transform attribute is changed.
+	 *
+	 * @type {boolean}
+	 */
+	this.matrixAutoUpdate = true;
+
+	/**
+	 * Indicates if the matrix needs to be updated, should be set true after changes to the object position, scale or rotation.
+	 *
+	 * The matrix is updated before rendering the object, after the matrix is updated this attribute is automatically reset to false.
+	 *
+	 * @type {boolean}
 	 */
 	this.matrixNeedsUpdate = true;
 
 	/**
-	 * Indicates if its possible to drag the object around.
+	 * Draggable controls if its possible to drag the object around. Set this true to enable dragging events on this object.
 	 *
-	 * If true the onPointerDrag callback is used to update the state of the object.
+	 * The onPointerDrag callback is used to update the state of the object while being dragged, by default it just updates the object position.
+	 *
+	 * @type {boolean}
 	 */
 	this.draggable = false;
 
 	/**
 	 * Indicates if this object uses pointer events.
 	 *
-	 * Can be set false to skip the pointer interaction events.
+	 * Can be set false to skip the pointer interaction events, better performance if pointer events are not required.
+	 *
+	 * @type {boolean}
 	 */
 	this.pointerEvents = true;
 
 	/**
-	 * Flag to indicate wheter this objet ignores the viewport transformation.
+	 * Flag to indicate whether this object ignores the viewport transformation.
+	 *
+	 * @type {boolean}
 	 */
 	this.ignoreViewport = false;
 
 	/**
 	 * Flag to indicate if the context of canvas should be saved before render.
+	 *
+	 * @type {boolean}
 	 */
 	this.saveContextState = true;
 
 	/**
 	 * Flag to indicate if the context of canvas should be restored after render.
+	 *
+	 * @type {boolean}
 	 */
 	this.restoreContextState = true;
 
@@ -921,14 +930,91 @@ function Object2D()
 	 * Flag indicating if the pointer is inside of the element.
 	 *
 	 * Used to control object event.
+	 *
+	 * @type {boolean}
 	 */
 	this.pointerInside = false;
 
 	/**
 	 * Flag to indicate if the object is currently being dragged.
+	 *
+	 * @type {boolean}
 	 */
 	this.beingDragged = false;
 }
+
+/**
+ * Check if a point in world coordinates intersects this object or its children and get a list of the objects intersected.
+ *
+ * @param {Vector2} point Point in world coordinates.
+ * @param {Object2D[]} list List of objects intersected passed to children objects recursively.
+ * @return {Object2D[]} List of object intersected by this point.
+ */
+Object2D.prototype.getWorldPointIntersections = function(point, list)
+{
+	if(list === undefined)
+	{
+		list = [];
+	}
+
+	// Calculate the pointer position in the object coordinates
+	var localPoint = this.inverseGlobalMatrix.transformPoint(point);
+	if(this.isInside(localPoint))
+	{
+		list.push(this);
+	}
+
+	// Iterate trough the children
+	for(var i = 0; i < this.children.length; i++)
+	{
+		this.children[i].getWorldPointIntersections(point, list);
+	}
+
+	return list;
+};
+
+/**
+ * Check if a point in world coordinates intersects this object or some of its children.
+ *
+ * @param {Vector2} point Point in world coordinates.
+ * @param {boolean} recursive If set to true it will also check intersections with the object children.
+ * @return {boolean} Returns true if the point in inside of the object.
+ */
+Object2D.prototype.isWorldPointInside = function(point, recursive)
+{
+	// Calculate the pointer position in the object coordinates
+	var localPoint = this.inverseGlobalMatrix.transformPoint(point);
+	if(this.isInside(localPoint))
+	{
+		return true;
+	}
+
+	// Iterate trough the children
+	if(recursive)
+	{
+		for(var i = 0; i < this.children.length; i++)
+		{
+			if(this.children[i].isWorldPointInside(point, true))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+};
+
+
+/**
+ * Destroy the object, removes it from the parent object.
+ */
+Object2D.prototype.destroy = function()
+{
+	if(this.parent !== null)
+	{
+		this.parent.remove(this);
+	}
+};
 
 /**
  * Traverse the object tree and run a function for all objects.
@@ -939,18 +1025,16 @@ Object2D.prototype.traverse = function(callback)
 {
 	callback(this);
 
-	var children = this.children;
-
-	for(var i = 0; i < children.length; i++)
+	for(var i = 0; i < this.children.length; i++)
 	{
-		children[i].traverse(callback);
+		this.children[i].traverse(callback);
 	}
 };
 
 /**
  * Get a object from its children list by its UUID.
  *
- * @param {String} uuid UUID of the object to get.
+ * @param {string} uuid UUID of the object to get.
  * @return {Object2D} The object that has the UUID specified, null if the object was not found.
  */
 Object2D.prototype.getChildByUUID = function(uuid)
@@ -994,11 +1078,11 @@ Object2D.prototype.add = function(object)
 /**
  * Remove object from the children list.
  *
- * @param {Object2D} object Object to be removed.
+ * @param {Object2D} children Object to be removed.
  */
-Object2D.prototype.remove = function(object)
+Object2D.prototype.remove = function(children)
 {
-	var index = this.children.indexOf(object);
+	var index = this.children.indexOf(children);
 	
 	if(index !== -1)
 	{
@@ -1019,10 +1103,13 @@ Object2D.prototype.remove = function(object)
 };
 
 /**
- * Check if a point is inside of the object.
+ * Check if a point is inside of the object. Used by the renderer check for pointer collision (required for the object to properly process pointer events).
  *
- * Used to update the point events attached to the object.
+ * Point should be in local object coordinates.
  *
+ * To check if a point in world coordinates intersects the object the inverseGlobalMatrix should be applied to that point before calling this method.
+ *
+ * @param {Vector2} point Point in local object coordinates.
  * @return {boolean} True if the point is inside of the object.
  */
 Object2D.prototype.isInside = function(point)
@@ -1033,11 +1120,11 @@ Object2D.prototype.isInside = function(point)
 /**
  * Update the transformation matrix of the object.
  *
- * @param {CanvasContext} context
+ * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  */
 Object2D.prototype.updateMatrix = function(context)
 {
-	if(this.matrixNeedsUpdate)
+	if(this.matrixAutoUpdate || this.matrixNeedsUpdate)
 	{
 		this.matrix.compose(this.position.x, this.position.y, this.scale.x, this.scale.y, this.origin.x, this.origin.y, this.rotation);
 		this.globalMatrix.copy(this.matrix);
@@ -1048,18 +1135,16 @@ Object2D.prototype.updateMatrix = function(context)
 		}
 
 		this.inverseGlobalMatrix = this.globalMatrix.getInverse();
-		//this.matrixNeedsUpdate = false;
+		this.matrixNeedsUpdate = false;
 	}
 };
 
 /**
- * Apply the transform to the rendering context.
+ * Apply the transform to the rendering context, it is assumed that the viewport transform is pre-applied to the context.
  *
- * It is assumed that the viewport transform is pre-applied to the context.
+ * This is called before style() and draw(). It can also be used for some pre-rendering logic.
  *
- * Can also be used for pre rendering logic.
- *
- * @param {CanvasContext} context Canvas 2d drawing context.
+ * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport applied to the canvas.
  */
 Object2D.prototype.transform = function(context, viewport)
@@ -1068,15 +1153,28 @@ Object2D.prototype.transform = function(context, viewport)
 };
 
 /**
- * Draw the object into the canvas.
+ * Style is called right before draw() it should not draw any content into the canvas, all context styling should be applied here (colors, fonts, etc).
  *
- * Has to be implemented by underlying classes.
+ * The draw() and style() methods can be  useful for objects that share the same styling attributes but are drawing differently.
  *
- * @param {CanvasContext} context Canvas 2d drawing context.
- * @param {Viewport} viewport Viewport applied to the canvas.
+ * Should be implemented by underlying classes.
+ *
+ * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
+ * @param {Viewport} viewport Viewport used to view the canvas content.
  * @param {DOM} canvas DOM canvas element where the content is being drawn.
  */
-Object2D.prototype.draw = function(context, viewport, canvas){};
+Object2D.prototype.style = null; // function(context, viewport, canvas){};
+
+/**
+ * Draw the object into the canvas, this is called transform() and style(), should be where the content is actually drawn into the canvas.
+ *
+ * Should be implemented by underlying classes.
+ *
+ * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
+ * @param {Viewport} viewport Viewport used to view the canvas content.
+ * @param {DOM} canvas DOM canvas element where the content is being drawn.
+ */
+Object2D.prototype.draw = null; // function(context, viewport, canvas){};
 
 /**
  * Callback method while the object is being dragged across the screen.
@@ -1085,16 +1183,33 @@ Object2D.prototype.draw = function(context, viewport, canvas){};
  *
  * Delta is the movement of the pointer already translated into local object coordinates.
  *
- * Receives (pointer, viewport, delta) as arguments.
+ * To detect when the object drag stops the onPointerDragEnd() method can be used.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
- * @param {Vector2} delta Pointer movement in world space.
+ * @param {Vector2} delta Pointer movement diff in world space since the last frame.
+ * @param {Vector2} positionWorld Position of the dragging pointer in world coordinates.
  */
-Object2D.prototype.onPointerDrag = function(pointer, viewport, delta)
+Object2D.prototype.onPointerDrag = function(pointer, viewport, delta, positionWorld)
 {
 	this.position.add(delta);
 };
+
+/**
+ * Callback method called when the pointer drag start after the button was pressed
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
+ */
+Object2D.prototype.onPointerDragStart = null;
+
+/**
+ * Callback method called when the pointer drag ends after the button has been released.
+ *
+ * @param {Pointer} pointer Pointer object that receives the user input.
+ * @param {Viewport} viewport Viewport where the object is drawn.
+ */
+Object2D.prototype.onPointerDragEnd = null;
 
 /**
  * Method called when the object its added to a parent.
@@ -1113,14 +1228,16 @@ Object2D.prototype.onRemove = null;
 /**
  * Callback method called every time before the object is draw into the canvas.
  *
- * Can be used to run preparation code, move the object, etc.
+ * Should be used to run object logic, any preparation code, move the object, etc.
+ *
+ * This method is called for every object before rendering.
  */
 Object2D.prototype.onUpdate = null;
 
 /**
  * Callback method called when the pointer enters the object.
  *
- * Receives (pointer, viewport) as arguments.
+ * It is not called while the pointer is inside of the object, just on the first time that the pointer enters the object for that use onPointerOver()
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -1128,9 +1245,7 @@ Object2D.prototype.onUpdate = null;
 Object2D.prototype.onPointerEnter = null;
 
 /**
- * Callback method called when the was inside of the object and leaves the object.
- *
- * Receives (pointer, viewport) as arguments.
+ * Method called when the was inside of the object and leaves the object.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -1138,9 +1253,7 @@ Object2D.prototype.onPointerEnter = null;
 Object2D.prototype.onPointerLeave = null;
 
 /**
- * Callback method while the pointer is over (inside) of the object.
- *
- * Receives (pointer, viewport) as arguments.
+ * Method while the pointer is over (inside) of the object.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -1148,9 +1261,7 @@ Object2D.prototype.onPointerLeave = null;
 Object2D.prototype.onPointerOver = null;
 
 /**
- * Callback method called while the pointer button is pressed.
- *
- * Receives (pointer, viewport) as arguments.
+ * Method called while the pointer button is pressed.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -1158,9 +1269,7 @@ Object2D.prototype.onPointerOver = null;
 Object2D.prototype.onButtonPressed = null;
 
 /**
- * Callback method called while the pointer button is double clicked.
- *
- * Receives (pointer, viewport) as arguments.
+ * Method called while the pointer button is double clicked.
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
@@ -1170,22 +1279,265 @@ Object2D.prototype.onDoubleClick = null;
 /**
  * Callback method called when the pointer button is pressed down (single time).
  *
- * Receives (pointer, viewport) as arguments.
- *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onButtonDown = null;
 
 /**
- * Callback method called when the pointer button is released (single time).
- *
- * Receives (pointer, viewport) as arguments.
+ * Method called when the pointer button is released (single time).
  *
  * @param {Pointer} pointer Pointer object that receives the user input.
  * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onButtonUp = null;
+
+/**
+ * Text element, used to draw single line text into the canvas.
+ *
+ * For multi line text with support for line break check {MultiLineText} object.
+ *
+ * @class
+ * @extends {Object2D}
+ */
+function Text()
+{
+	Object2D.call(this);
+
+	/**
+	 * Text value displayed by this element.
+	 *
+	 * @type {string}
+	 */
+	this.text = "";
+
+	/**
+	 * Font of the text.
+	 *
+	 * @type {string}
+	 */
+	this.font = "16px Arial";
+
+	/**
+	 * Style of the object border line. If set null it is ignored.
+	 *
+	 * @type {string}
+	 */
+	this.strokeStyle = null;
+
+	/**
+	 * Line width, only used if a valid strokeStyle is defined.
+	 *
+	 * @type {number}
+	 */
+	this.lineWidth = 1;
+
+	/**
+	 * CSS background color of the box. If set null it is ignored.
+	 *
+	 * @type {string}
+	 */
+	this.fillStyle = "#000000";
+
+	/**
+	 * Text align property. Same values as used for canvas text applies
+	 *
+	 * Check documentation at https://developer.mozilla.org/en-US/docs/Web/CSS/text-align for mode details about this property.
+	 *
+	 * @type {string}
+	 */
+	this.textAlign = "center";
+
+	/**
+	 * Text baseline defines the vertical position of the text relative to the imaginary line Y position. Same values as used for canvas text applies
+	 *
+	 * Check documentation at https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textBaseline for mode details about this property.
+	 *
+	 * @type {string}
+	 */
+	this.textBaseline = "middle";
+}
+
+Text.prototype = Object.create(Object2D.prototype);
+
+Text.prototype.draw = function(context, viewport, canvas)
+{
+	context.font = this.font;
+	context.textAlign = this.textAlign;
+	context.textBaseline = this.textBaseline ;
+	
+	if(this.fillStyle !== null)
+	{
+		context.fillStyle = this.fillStyle;
+		context.fillText(this.text, 0, 0);
+	}
+
+	if(this.strokeStyle !== null)
+	{
+		context.strokeStyle = this.strokeStyle;
+		context.strokeText(this.text, 0, 0);
+	}
+};
+
+/**
+ * Multiple line text drawing directly into the canvas.
+ *
+ * Has support for basic text indent and alignment.
+ *
+ * @class
+ * @extends {Text}
+ */
+function MultiLineText()
+{
+	Text.call(this);
+
+	/**
+	 * Maximum width of the text content. After text reaches the max width a line break is placed.
+	 *
+	 * Can be set to null to be ignored.
+	 *
+	 * @type {number}
+	 */
+	this.maxWidth = null;
+
+	/**
+	 * Height of each line of text, can be smaller or larger than the actual font size.
+	 *
+	 * Can be set to null to be ignored.
+	 *
+	 * @type {number}
+	 */
+	this.lineHeight = null;
+}
+
+MultiLineText.prototype = Object.create(Text.prototype);
+
+MultiLineText.prototype.draw = function(context, viewport, canvas)
+{
+	context.font = this.font;
+	context.textAlign = this.textAlign;
+	context.textBaseline = this.textBaseline;
+
+	var lineHeight = this.lineHeight || Number.parseFloat(this.font);
+	var lines = this.text.split("\n");
+	var offsetY = 0;
+
+	// Iterate trough all lines (breakpoints)
+	for(var i = 0; i < lines.length; i++)
+	{
+		var line = lines[i];
+		var size = context.measureText(line);
+		var sublines = [];
+
+		// Split into multiple sub-lines
+		if(this.maxWidth !== null && size.width > this.maxWidth)
+		{
+			while(line.length > 0)
+			{
+				var subline = "";
+				var subsize = context.measureText(subline + line[0]);
+
+				while(subsize.width < this.maxWidth && line.length > 0)
+				{
+					subline += line[0];
+					line = line.substr(1);
+					subsize = context.measureText(subline + line[0]);
+				}
+
+				sublines.push(subline);
+			}
+
+		}
+		// Fits into a single line
+		else
+		{
+			sublines = [line];
+		}
+
+		for(var j = 0; j < sublines.length; j++)
+		{
+			if(this.fillStyle !== null)
+			{
+				context.fillStyle = this.fillStyle;
+				context.fillText(sublines[j], this.position.x, this.position.y + offsetY);
+			}
+
+			if(this.strokeStyle !== null)
+			{
+				context.strokeStyle = this.strokeStyle;
+				context.strokeText(sublines[j], this.position.x, this.position.y + offsetY);
+			}
+
+			offsetY += lineHeight;
+		}
+	}
+};
+
+/**
+ * EventManager is used to manager DOM events creating and destruction in a single function call.
+ *
+ * It is used by objects to make it easier to add and remove events from global DOM objects.
+ *
+ * @class
+ */
+function EventManager()
+{
+	/**
+	 * Stores all events in the manager, their target and callback.
+	 * 
+	 * Format [target, event, callback, active]
+	 * 
+	 * @type {Array}
+	 */
+	this.events = [];
+}
+
+/**
+ * Add new event to the manager.
+ *
+ * @param {Element} target Event target element.
+ * @param {String} event Event name.
+ * @param {Function} callback Callback function.
+ */
+EventManager.prototype.add = function(target, event, callback)
+{
+	this.events.push([target, event, callback, false]);
+};
+
+/**
+ * Destroys this manager and remove all events.
+ */
+EventManager.prototype.clear = function()
+{
+	this.destroy();
+	this.events = [];
+};
+
+/**
+ * Creates all events in this manager.
+ */
+EventManager.prototype.create = function()
+{
+	for(var i = 0; i < this.events.length; i++)
+	{
+		var event = this.events[i];
+		event[0].addEventListener(event[1], event[2]);
+		event[3] = true;
+	}
+};
+
+/**
+ * Removes all events in this manager.
+ */
+EventManager.prototype.destroy = function()
+{
+	for(var i = 0; i < this.events.length; i++)
+	{
+		var event = this.events[i];
+		event[0].removeEventListener(event[1], event[2]);
+		event[3] = false;
+	}
+};
 
 /**
  * Key is used by Keyboard, Pointer, etc, to represent a key state.
@@ -1209,7 +1561,6 @@ function Key()
 	 */
 	this.justReleased = false;
 }
-
 
 Key.DOWN = -1;
 Key.UP = 1;
@@ -1269,13 +1620,13 @@ Key.prototype.reset = function()
 };
 
 /**
- * Pointer object is used to colled input from the user, works for booth mouse or touch screens.
+ * Pointer object is used to called input from the user, works for booth mouse or touch screens.
  *
- * It is responsible for syncronizing user input with the render of the graphics.
+ * It is responsible for synchronizing user input with the render of the graphics.
  * 
  * @class
- * @param {DOM} domElement DOM element to craete the pointer events.
- * @param {DOM} canvas Canvas DOM element where the content is being drawn.
+ * @param {Element} domElement DOM element to create the pointer events.
+ * @param {Element} canvas Canvas DOM element where the content is being drawn.
  */
 function Pointer(domElement, canvas)
 {
@@ -1667,10 +2018,12 @@ Pointer.dispose = function()
 };
 
 /**
- * Used to indicate how the user views the content inside of the canvas.
+ * Viewport defines the user view into the content being rendered, similar to a camera it defines the size of the content, rotation and position of the content.
+ *
+ * The viewport can be moved, rotated and scaled to navigate the virtual canvas.
  *
  * @class
- * @param {DOM} canvas Canvas DOM element where the viewport is being rendered.
+ * @param {Element} canvas Canvas DOM element where the viewport is being rendered.
  */
 function Viewport(canvas)
 {
@@ -1715,9 +2068,9 @@ function Viewport(canvas)
 	this.matrixNeedsUpdate = true;
 
 	/**
-	 * Flag to indicate if the viewport should move when scalling.
+	 * Flag to indicate if the viewport should move when scaling.
 	 *
-	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
+	 * For some application its easier to focus the target if the viewport moves to the pointer location while scaling.
 	 */
 	this.moveOnScale = false;
 
@@ -1763,7 +2116,7 @@ Viewport.prototype.updateMatrix = function()
  * The position of the object is used a central point, this method does not consider "box" attributes or other strucures in the object.
  *
  * @param {Object2D} object Object to be centered on the viewport.
- * @param {DOM} canvas Canvas element where the image is drawn.
+ * @param {Element} canvas Canvas element where the image is drawn.
  */
 Viewport.prototype.centerObject = function(object, canvas)
 {
@@ -1898,12 +2251,10 @@ ViewportControls.prototype.update = function(pointer)
 };
 
 /**
- * The renderer is resposible for drawing the structure into the canvas element.
- *
- * Its also resposible for managing the canvas state.
+ * The renderer is responsible for drawing the objects structure into the canvas element and manage its rendering state.
  *
  * @class
- * @param {DOM} canvas Canvas to render the content.
+ * @param {Element} canvas Canvas to render the content.
  * @param {Object} options Renderer canvas options.
  */
 function Renderer(canvas, options)
@@ -1934,7 +2285,9 @@ function Renderer(canvas, options)
 	this.pointer = new Pointer(window, canvas);
 
 	/**
-	 * Indicates if the canvas should be automatically cleared on each new frame.
+	 * Indicates if the canvas should be automatically cleared before new frame is drawn.
+	 *
+	 * If set to false the user should clear the frame before drawing.
 	 */
 	this.autoClear = true;
 }
@@ -1944,14 +2297,13 @@ function Renderer(canvas, options)
  *
  * The render loop cannot be destroyed, and it automatically creates a viewport controls object.
  *
- * @param {Object2D} group Group to be rendererd.
+ * @param {Object2D} group Group to be rendered.
  * @param {Viewport} viewport Viewport into the objects.
  * @param {Function} onUpdate Function called before rendering the frame.
  */
 Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 {
 	var self = this;
-	
 	var controls = new ViewportControls(viewport);
 
 	function loop()
@@ -1970,9 +2322,9 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 };
 
 /**
- * Update the renderer state, update the input handlers, calculate the object and viewport transformation matrices.
+ * Renders a object using a user defined viewport into a canvas element.
  *
- * Render the object using the viewport into a canvas element.
+ * Before rendering automatically updates the input handlers and calculates the objects/viewport transformation matrices.
  *
  * The canvas state is saved and restored for each individual object, ensuring that the code of one object does not affect another one.
  *
@@ -1985,6 +2337,8 @@ Renderer.prototype.update = function(object, viewport)
 {
 	// Get objects to be rendered
 	var objects = [];
+
+	// Traverse object and get all objects into a list.
 	object.traverse(function(child)
 	{
 		if(child.visible)
@@ -2020,13 +2374,14 @@ Renderer.prototype.update = function(object, viewport)
 	{
 		var child = objects[i];
 		
-		//Process the
+		//Process the object pointer events
 		if(child.pointerEvents)
 		{
-			var childPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
+			// Calculate the pointer position in the object coordinates
+			var localPoint = child.inverseGlobalMatrix.transformPoint(child.ignoreViewport ? point : viewportPoint);
 
 			// Check if the pointer pointer is inside
-			if(child.isInside(childPoint))
+			if(child.isInside(localPoint))
 			{
 				// Pointer enter
 				if(!child.pointerInside && child.onPointerEnter !== null)
@@ -2070,6 +2425,10 @@ Renderer.prototype.update = function(object, viewport)
 					if(child.draggable)
 					{
 						child.beingDragged = true;
+						if(child.onPointerDragStart !== null)
+						{
+							child.onPointerDragStart(pointer, viewport);
+						}
 						break;
 					}
 				}
@@ -2092,6 +2451,11 @@ Renderer.prototype.update = function(object, viewport)
 			{	
 				if(child.draggable)
 				{
+					// On drag end callback
+					if(child.beingDragged === true && child.onPointerDragEnd !== null)
+					{
+						child.onPointerDragEnd(pointer, viewport);
+					}
 					child.beingDragged = false;
 				}
 			}
@@ -2105,19 +2469,21 @@ Renderer.prototype.update = function(object, viewport)
 
 		// Pointer drag event
 		if(child.beingDragged)
-		{	
-			var lastPosition = pointer.position.clone();
-			lastPosition.sub(pointer.delta);
-
-			var positionWorld = viewport.inverseMatrix.transformPoint(pointer.position);
-			var lastWorld = viewport.inverseMatrix.transformPoint(lastPosition);
-
-			// Mouse delta in world coordinates
-			positionWorld.sub(lastWorld);
-
+		{
 			if(child.onPointerDrag !== null)
 			{
-				child.onPointerDrag(pointer, viewport, positionWorld);
+				var lastPosition = pointer.position.clone();
+				lastPosition.sub(pointer.delta);
+
+				// Get position and last position in world space to calculate world pointer movement
+				var positionWorld = viewport.inverseMatrix.transformPoint(pointer.position);
+				var lastWorld = viewport.inverseMatrix.transformPoint(lastPosition);
+
+				// Pointer movement delta in world coordinates
+				var delta = positionWorld.clone();
+				delta.sub(lastWorld);
+
+				child.onPointerDrag(pointer, viewport, delta, positionWorld);
 			}
 		}
 
@@ -2180,7 +2546,18 @@ Renderer.prototype.update = function(object, viewport)
 
 		// Apply the object transform to the canvas context
 		objects[i].transform(this.context, viewport, this.canvas);
-		objects[i].draw(this.context, viewport, this.canvas);
+
+		// Style the canvas context
+		if(objects[i].style !== null)
+		{
+			objects[i].style(this.context, viewport, this.canvas);
+		}
+
+		// Draw content into the canvas.
+		if(objects[i].draw !== null)
+		{
+			objects[i].draw(this.context, viewport, this.canvas);
+		}
 
 		if(objects[i].restoreContextState)
 		{
@@ -2370,7 +2747,7 @@ Box2.prototype.expandByScalar = function(scalar)
  */
 Box2.prototype.containsPoint = function(point)
 {
-	return point.x < this.min.x || point.x > this.max.x || point.y < this.min.y || point.y > this.max.y ? false : true;
+	return !(point.x < this.min.x || point.x > this.max.x || point.y < this.min.y || point.y > this.max.y);
 };
 
 /**
@@ -2394,7 +2771,7 @@ Box2.prototype.containsBox = function(box)
  */
 Box2.prototype.intersectsBox = function(box)
 {
-	return box.max.x < this.min.x || box.min.x > this.max.x || box.max.y < this.min.y || box.min.y > this.max.y ? false : true;
+	return !(box.max.x < this.min.x || box.min.x > this.max.x || box.max.y < this.min.y || box.min.y > this.max.y);
 };
 
 /**
@@ -2463,7 +2840,7 @@ Box2.prototype.equals = function(box)
  *
  * Masks are treated as objects their shape is used to filter other objects shape.
  *
- * Multiple mask objects can be active simulatenously, they have to be attached to the object mask list to filter the render region.
+ * Multiple mask objects can be active simultaneously, they have to be attached to the object mask list to filter the render region.
  *
  * A mask objects is draw using the context.clip() method.
  *
@@ -2482,7 +2859,7 @@ Mask.prototype.isMask = true;
 /**
  * Clip the canvas context, to ensure that next objects being drawn are cliped to the path stored here.
  *
- * @param {CanvasContext} context Canvas 2d drawing context.
+ * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport applied to the canvas.
  * @param {DOM} canvas DOM canvas element where the content is being drawn.
  */
@@ -2491,7 +2868,7 @@ Mask.prototype.clip = function(context, viewport, canvas){};
 /**
  * Box mask can be used to clear a box mask region.
  *
- * It will limit the drwaing region to this box.
+ * It will limit the drawing region to this box.
  *
  * @class
  * @extends {Mask}
@@ -2538,6 +2915,79 @@ BoxMask.prototype.clip = function(context, viewport, canvas)
 	}
 
 	context.clip();
+};
+
+/**
+ * Box object draw a rectangular object.
+ *
+ * Can be used as a base to implement other box objects, already implements collision for pointer events.
+ *
+ * @class
+ * @extends {Object2D}
+ */
+function Box()
+{
+	Object2D.call(this);
+
+	/**
+	 * Box object containing the size of the object.
+	 */
+	this.box = new Box2(new Vector2(-50, -50), new Vector2(50, 50));
+
+	/**
+	 * Style of the object border line.
+	 *
+	 * If set null it is ignored.
+	 */
+	this.strokeStyle = "#000000";
+
+	/**
+	 * Line width, only used if a valid strokeStyle is defined.
+	 */
+	this.lineWidth = 1;
+
+	/**
+	 * Background color of the box.
+	 *
+	 * If set null it is ignored.
+	 */
+	this.fillStyle = "#FFFFFF";
+}
+
+Box.prototype = Object.create(Object2D.prototype);
+
+Box.prototype.onPointerEnter = function(pointer, viewport)
+{
+	this.fillStyle = "#CCCCCC";
+};
+
+Box.prototype.onPointerLeave = function(pointer, viewport)
+{
+	this.fillStyle = "#FFFFFF";
+};
+
+Box.prototype.isInside = function(point)
+{
+	return this.box.containsPoint(point);
+};
+
+Box.prototype.draw = function(context, viewport, canvas)
+{
+	var width = this.box.max.x - this.box.min.x;
+	var height = this.box.max.y - this.box.min.y;
+
+	if(this.fillStyle !== null)
+	{	
+		context.fillStyle = this.fillStyle;
+		context.fillRect(this.box.min.x, this.box.min.y, width, height);
+	}
+
+	if(this.strokeStyle !== null)
+	{
+		context.lineWidth = this.lineWidth;
+		context.strokeStyle = this.strokeStyle;
+		context.strokeRect(this.box.min.x, this.box.min.y, width, height);
+	}
 };
 
 /**
@@ -2614,188 +3064,9 @@ Circle.prototype.draw = function(context, viewport, canvas)
 };
 
 /**
- * Class contains helper functions to create editing object tools.
+ * Line object draw a line from one point to another without any kind of interpolation.
  *
- * @class
- */
-function Helpers(){}
-
-/**
- * Create a rotation tool helper.
- *
- * When the object is dragged is changes the parent object rotation.
- *
- * @static
- */
-Helpers.rotateTool = function(object)
-{
-	var tool = new Circle();
-	tool.radius = 4;
-	tool.layer = object.layer + 1;
-	tool.onPointerDrag = function(pointer, viewport, delta)
-	{
-		object.rotation += delta.x * 1e-3;
-	};
-	object.add(tool);
-};
-
-/**
- * Create a box resize helper and attach it to an object to change the size of the object box.
- *
- * Each helper is positioned on one corner of the box, and the value of the corner is copied to the boxes as they are dragged.
- *
- * This method required to object to have a box property.
- *
- * @static
- */
-Helpers.boxResizeTool = function(object)
-{
-	if(object.box === undefined)
-	{
-		console.warn("escher.js: Helpers.boxResizeTool(), object box property missing.");
-		return;
-	}
-
-	function updateHelpers()
-	{
-		topRight.position.copy(object.box.min);
-		bottomLeft.position.copy(object.box.max);
-		topLeft.position.set(object.box.max.x, object.box.min.y);
-		bottomRight.position.set(object.box.min.x, object.box.max.y);
-	}
-
-	var topRight = new Circle();
-	topRight.radius = 4;
-	topRight.layer = object.layer + 1;
-	topRight.draggable = true;
-	topRight.onPointerDrag = function(pointer, viewport, delta)
-	{
-		Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
-
-		object.box.min.copy(topRight.position);
-		updateHelpers();
-	};
-	object.add(topRight);
-
-	var topLeft = new Circle();
-	topLeft.radius = 4;
-	topLeft.layer = object.layer + 1;
-	topLeft.draggable = true;
-	topLeft.onPointerDrag = function(pointer, viewport, delta)
-	{
-		Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
-
-		object.box.max.x = topLeft.position.x;
-		object.box.min.y = topLeft.position.y;
-		updateHelpers();
-	};
-	object.add(topLeft);
-
-	var bottomLeft = new Circle();
-	bottomLeft.radius = 4;
-	bottomLeft.layer = object.layer + 1;
-	bottomLeft.draggable = true;
-	bottomLeft.onPointerDrag = function(pointer, viewport, delta)
-	{
-		Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
-
-		object.box.max.copy(bottomLeft.position);
-		updateHelpers();
-	};
-	object.add(bottomLeft);
-
-	var bottomRight = new Circle();
-	bottomRight.radius = 4;
-	bottomRight.layer = object.layer + 1;
-	bottomRight.draggable = true;
-	bottomRight.onPointerDrag = function(pointer, viewport, delta)
-	{
-		Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
-
-		object.box.min.x = bottomRight.position.x;
-		object.box.max.y = bottomRight.position.y;
-		updateHelpers();
-	};
-	object.add(bottomRight);
-
-	updateHelpers();
-};
-
-/**
- * Box object draw a rectangular object.
- *
- * Can be used as a base to implement other box objects, already implements collision for pointer events.
- *
- * @class
- * @extends {Object2D}
- */
-function Box()
-{
-	Object2D.call(this);
-
-	/**
-	 * Box object containing the size of the object.
-	 */
-	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
-
-	/**
-	 * Style of the object border line.
-	 *
-	 * If set null it is ignored.
-	 */
-	this.strokeStyle = "#000000";
-
-	/**
-	 * Line width, only used if a valid strokeStyle is defined.
-	 */
-	this.lineWidth = 1;
-
-	/**
-	 * Background color of the box.
-	 *
-	 * If set null it is ignored.
-	 */
-	this.fillStyle = "#FFFFFF";
-}
-
-Box.prototype = Object.create(Object2D.prototype);
-
-Box.prototype.onPointerEnter = function(pointer, viewport)
-{
-	this.fillStyle = "#CCCCCC";
-};
-
-Box.prototype.onPointerLeave = function(pointer, viewport)
-{
-	this.fillStyle = "#FFFFFF";
-};
-
-Box.prototype.isInside = function(point)
-{
-	return this.box.containsPoint(point);
-};
-
-Box.prototype.draw = function(context, viewport, canvas)
-{
-	var width = this.box.max.x - this.box.min.x;
-	var height = this.box.max.y - this.box.min.y;
-
-	if(this.fillStyle !== null)
-	{	
-		context.fillStyle = this.fillStyle;
-		context.fillRect(this.box.min.x, this.box.min.y, width, height);
-	}
-
-	if(this.strokeStyle !== null)
-	{
-		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
-		context.strokeRect(this.box.min.x, this.box.min.y, width, height);
-	}
-};
-
-/**
- * Line object draw a line from one point to another.
+ * For drawing lines with interpolation check {BezierCurve}
  *
  * @class
  * @extends {Object2D}
@@ -2807,23 +3078,23 @@ function Line()
 	/**
 	 * Initial point of the line.
 	 *
-	 * Can be equal to the position object of another object. (Making it automatically follow that object.)
+	 * Can be equal to the position object of another object. Making it automatically follow that object.
 	 */
 	this.from = new Vector2();
 
 	/**
 	 * Final point of the line.
 	 *
-	 * Can be equal to the position object of another object. (Making it automatically follow that object.)
+	 * Can be equal to the position object of another object. Making it automatically follow that object.
 	 */
 	this.to = new Vector2();
 
 	/**
 	 * Dash line pattern to be used, if empty draws a solid line.
 	 *
-	 * Dash parttern is defined as the size of dashes as pairs of space with no line and with line.
+	 * Dash pattern is defined as the size of dashes as pairs of space with no line and with line.
 	 *
-	 * E.g if the daspattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
+	 * E.g if the dash pattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
 	 */
 	this.dashPattern = [5, 5];
 
@@ -2840,12 +3111,15 @@ function Line()
 
 Line.prototype = Object.create(Object2D.prototype);
 
-Line.prototype.draw = function(context, viewport, canvas)
+Line.prototype.style = function(context, viewport, canvas)
 {
 	context.lineWidth = this.lineWidth;
 	context.strokeStyle = this.strokeStyle;
 	context.setLineDash(this.dashPattern);
-	
+};
+
+Line.prototype.draw = function(context, viewport, canvas)
+{
 	context.beginPath();
 	context.moveTo(this.from.x, this.from.y);
 	context.lineTo(this.to.x, this.to.y);
@@ -2853,76 +3127,10 @@ Line.prototype.draw = function(context, viewport, canvas)
 };
 
 /**
- * Text element, used to draw text into the canvas.
- *
- * @class
- * @extends {Object2D}
- */
-function Text()
-{
-	Object2D.call(this);
-
-	/**
-	 * Text value.
-	 */
-	this.text = "";
-
-	/**
-	 * Font of the text.
-	 */
-	this.font = "16px Arial";
-
-	/**
-	 * Style of the object border line.
-	 *
-	 * If set null it is ignored.
-	 */
-	this.strokeStyle = null;
-
-	/**
-	 * Line width, only used if a valid strokeStyle is defined.
-	 */
-	this.lineWidth = 1;
-
-	/**
-	 * Background color of the box.
-	 *
-	 * If set null it is ignored.
-	 */
-	this.fillStyle = "#000000";
-
-	/**
-	 * Text align property.
-	 */
-	this.textAlign = "center";
-}
-
-Text.prototype = Object.create(Object2D.prototype);
-
-Text.prototype.draw = function(context, viewport, canvas)
-{
-	context.font = this.font;
-	context.textAlign = this.textAlign;
-	context.textBaseline = "middle";
-	
-	if(this.fillStyle !== null)
-	{
-		context.fillStyle = this.fillStyle;
-		context.fillText(this.text, 0, 0);
-	}
-
-	if(this.strokeStyle !== null)
-	{
-		context.strokeStyle = this.strokeStyle;
-		context.strokeText(this.text, 0, 0);
-	}
-};
-
-/**
  * Image object is used to draw an image from URL.
  *
  * @class
- * @param {string} [src] Source URL of the image.
+ * @param {string} src Source URL of the image.
  * @extends {Object2D}
  */
 function Image(src)
@@ -2980,15 +3188,15 @@ Image.prototype.draw = function(context, viewport, canvas)
 };
 
 /**
- * A DOM object transformed using CSS3D to ver included in the graph.
+ * A DOM object transformed using CSS3D to be included in the scene.
  *
- * DOM objects always stay on top of everything else, mouse events are not supported for these.
+ * DOM objects always stay on top of everything else, it is not possible to layer these object with regular canvas objects.
  *
- * Use the normal DOM events for interaction.
+ * By default mouse events are not supported for these objects (it does not implement pointer collision checking). Use the DOM events for interaction with these types of objects.
  *
  * @class
- * @param parentDOM Parent DOM element that contains the drawing canvas.
- * @param type Type of the DOM element (e.g. "div", "p", ...)
+ * @param {Element} parentDOM Parent DOM element that contains the drawing canvas.
+ * @param {string} type Type of the DOM element (e.g. "div", "p", ...)
  * @extends {Object2D}
  */
 function DOM(parentDOM, type)
@@ -2997,15 +3205,19 @@ function DOM(parentDOM, type)
 
 	/**
 	 * Parent element that contains this DOM div.
+	 *
+	 * @type {Element}
 	 */
 	this.parentDOM = parentDOM;
 
 	/**
 	 * DOM element contained by this object.
 	 *
-	 * Bye default it has the pointerEvents style set to none.
+	 * By default it has the pointerEvents style set to none. In order to use any DOM event with this object first you have to set the element.style.pointerEvents to "auto".
+	 *
+	 * @type {Element}
 	 */
-	this.element = document.createElement("div");
+	this.element = document.createElement(type || "div");
 	this.element.style.transformStyle = "preserve-3d";
 	this.element.style.position = "absolute";
 	this.element.style.top = "0px";
@@ -3022,11 +3234,17 @@ function DOM(parentDOM, type)
 
 DOM.prototype = Object.create(Object2D.prototype);
 
+/**
+ * DOM object implements onAdd() method to automatically attach the DOM object to the DOM tree.
+ */
 DOM.prototype.onAdd = function()
 {
 	this.parentDOM.appendChild(this.element);
 };
 
+/**
+ * DOM object implements onAdd() method to automatically remove the DOM object to the DOM tree.
+ */
 DOM.prototype.onRemove = function()
 {
 	this.parentDOM.removeChild(this.element);
@@ -3057,10 +3275,11 @@ DOM.prototype.transform = function(context, viewport, canvas)
 /**
  * Pattern object draw a image repeated as a pattern.
  *
- * Its similar to the Image class but the image can be repeat infinitly.
+ * Its similar to the Image class but the image can be repeat infinitely.
  *
  * @class
  * @extends {Object2D}
+ * @param {string} src Source image URL.
  */
 function Pattern(src)
 {
@@ -3219,64 +3438,39 @@ Graph.prototype.draw = function(context, viewport, canvas)
 };
 
 /**
- * BezierCurve object draw as bezier curve between two points.
+ * Bezier curve object draw as bezier curve between two points.
  *
  * @class
+ * @extends {Line}
  */
 function BezierCurve()
 {
-	Object2D.call(this);
+	Line.call(this);
 
 	/**
-	 * Initial point of the curve.
+	 * Initial position control point, indicates the tangent of the bezier curve on the first point.
 	 *
-	 * Can be equal to the position object of another object. (Making it automatically follow that object.)
-	 */
-	this.from = new Vector2();
-
-	/**
-	 * Intial position control point, indicates the tangent of the bezier curve on the first point.
+	 * @type {Vector2}
 	 */
 	this.fromCp = new Vector2();
 
 	/**
-	 * Final point of the curve.
-	 *
-	 * Can be equal to the position object of another object. (Making it automatically follow that object.)
-	 */
-	this.to = new Vector2();
-
-	/**
 	 * Final position control point, indicates the tangent of the bezier curve on the last point.
+	 *
+	 * @type {Vector2}
 	 */
 	this.toCp = new Vector2();
-
-	/**
-	 * Dash line pattern to be used, if empty draws a solid line.
-	 *
-	 * Dash parttern is defined as the size of dashes as pairs of space with no line and with line.
-	 *
-	 * E.g if the daspattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
-	 */
-	this.dashPattern = [5, 5];
-
-	/**
-	 * Style of the object line.
-	 */
-	this.strokeStyle = "#000000";
-
-	/**
-	 * Line width of the line.
-	 */
-	this.lineWidth = 1;
 }
 
-BezierCurve.prototype = Object.create(Object2D.prototype);
+BezierCurve.prototype = Object.create(Line.prototype);
 
 /**
  * Create a bezier curve helper, to edit the bezier curve anchor points.
  *
+ * Helper objects are added to the parent of the curve object.
+ *
  * @static
+ * @param {BezierCurve} object Object to create the helper for.
  */
 BezierCurve.curveHelper = function(object)
 {
@@ -3315,14 +3509,773 @@ BezierCurve.curveHelper = function(object)
 
 BezierCurve.prototype.draw = function(context, viewport, canvas)
 {
-	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
-	context.setLineDash(this.dashPattern);
-	
 	context.beginPath();
 	context.moveTo(this.from.x, this.from.y);
 	context.bezierCurveTo(this.fromCp.x, this.fromCp.y, this.toCp.x, this.toCp.y, this.to.x, this.to.y);
 	context.stroke();
 };
 
-export { BezierCurve, Box, Box2, BoxMask, Circle, DOM, EventManager, Graph, Helpers, Image, Key, Line, Mask, Matrix, Object2D, Pattern, Pointer, Renderer, Text, UUID, Vector2, Viewport, ViewportControls };
+/**
+ * Bezier curve object draw as bezier curve between two points.
+ *
+ * @class
+ * @extends {Object2D}
+ */
+function QuadraticCurve()
+{
+	Line.call(this);
+
+	/**
+	 * Control point of the quadratic curve used to control the curvature of the line between the from and to point.
+	 *
+	 * The curve is interpolated in the direction of the control point it defined the path of the curve.
+	 *
+	 * @type {Vector2}
+	 */
+	this.controlPoint = new Vector2();
+}
+
+QuadraticCurve.prototype = Object.create(Line.prototype);
+
+/**
+ * Create a quadratic curve helper, to edit the curve control point.
+ *
+ * Helper objects are added to the parent of the curve object.
+ *
+ * @static
+ * @param {QuadraticCurve} object Object to create the helper for.
+ */
+QuadraticCurve.curveHelper = function(object)
+{
+	var fromLine = new Line();
+	fromLine.from = object.from;
+	fromLine.to = object.controlPoint;
+	object.parent.add(fromLine);
+
+	var controlPoint = new Circle();
+	controlPoint.radius = 3;
+	controlPoint.layer = object.layer + 1;
+	controlPoint.draggable = true;
+	controlPoint.position = object.controlPoint;
+	controlPoint.onPointerDrag = function(pointer, viewport, delta)
+	{
+		Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+		object.controlPoint.copy(controlPoint.position);
+	};
+	object.parent.add(controlPoint);
+
+	var toLine = new Line();
+	toLine.from = object.to;
+	toLine.to = object.controlPoint;
+	object.parent.add(toLine);
+};
+
+QuadraticCurve.prototype.draw = function(context, viewport, canvas)
+{
+	context.beginPath();
+	context.moveTo(this.from.x, this.from.y);
+	context.quadraticCurveTo(this.controlPoint.x, this.controlPoint.y, this.to.x, this.to.y);
+	context.stroke();
+};
+
+/**
+ * Rounded box object draw a rectangular object with rounded corners.
+ *
+ * @class
+ * @extends {Box}
+ */
+function RoundedBox()
+{
+	Box.call(this);
+
+	/**
+	 * Radius of the circular section that makes up the box corners.
+	 *
+	 * @type {number}
+	 */
+	this.radius = 5;
+}
+
+RoundedBox.prototype = Object.create(Box.prototype);
+
+/**
+ * Draw a rounded rectangle into the canvas context using path to draw the rounded rectangle.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {number} x The top left x coordinate
+ * @param {number} y The top left y coordinate
+ * @param {number} width The width of the rectangle
+ * @param {number} height The height of the rectangle
+ * @param {number} radius Radius of the rectangle corners.
+ */
+RoundedBox.roundRect = function(context, x, y, width, height, radius)
+{
+	context.beginPath();
+	context.moveTo(x + radius, y);
+	context.lineTo(x + width - radius, y);
+	context.quadraticCurveTo(x + width, y, x + width, y + radius);
+	context.lineTo(x + width, y + height - radius);
+	context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+	context.lineTo(x + radius, y + height);
+	context.quadraticCurveTo(x, y + height, x, y + height - radius);
+	context.lineTo(x, y + radius);
+	context.quadraticCurveTo(x, y, x + radius, y);
+	context.closePath();
+};
+
+RoundedBox.prototype.draw = function(context, viewport, canvas)
+{
+	var width = this.box.max.x - this.box.min.x;
+	var height = this.box.max.y - this.box.min.y;
+
+	if(this.fillStyle !== null)
+	{	
+		context.fillStyle = this.fillStyle;
+		RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
+		context.fill();
+	}
+
+	if(this.strokeStyle !== null)
+	{
+		context.lineWidth = this.lineWidth;
+		context.strokeStyle = this.strokeStyle;
+		RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
+		context.stroke();
+	}
+};
+
+/**
+ * Node connector is used to connect a output of a node to a input of another node.
+ *
+ * Some nodes outputs might support multiple connections having an output connected to multiple inputs.
+ *
+ * Data always goes from the output node to a input node.
+ *
+ * @class NodeConnector
+ */
+function NodeConnector()
+{
+	BezierCurve.call(this);
+
+	this.lineWidth = 2;
+
+	/**
+	 * Origin output socket that is attached to a node.
+	 *
+	 * @type {NodeSocket}
+	 */
+	this.outputSocket = null;
+
+	/**
+	 * Destination input socket that is attached to a node.
+	 *
+	 * @type {NodeSocket}
+	 */
+	this.inputSocket = null;
+}
+
+NodeConnector.prototype = Object.create(BezierCurve.prototype);
+
+NodeConnector.prototype.destroy = function()
+{
+	BezierCurve.prototype.destroy.call(this);
+
+	if(this.outputSocket !== null)
+	{
+		this.outputSocket.connector = null;
+	}
+
+	if(this.inputSocket !== null)
+	{
+		this.inputSocket.connector = null;
+	}
+};
+
+NodeConnector.prototype.onUpdate = function()
+{
+	if(this.outputSocket !== null)
+	{
+		this.from.copy(this.outputSocket.position);
+	}
+
+	if(this.inputSocket !== null)
+	{
+		this.to.copy(this.inputSocket.position);
+	}
+
+	// Center control points
+	this.fromCp.copy(this.from);
+	this.fromCp.add(this.to);
+	this.fromCp.multiplyScalar(0.5);
+	this.toCp.copy(this.fromCp);
+
+	var curvature = 0.5;
+
+	// Check vertical/horizontal distances
+	var yDistance = this.to.y - this.from.y;
+	var xDistance = this.to.x - this.from.x;
+
+	// Apply a offset to the control points
+	if(Math.abs(xDistance) > Math.abs(yDistance))
+	{
+		this.toCp.x += xDistance * curvature;
+		this.fromCp.x -= xDistance * curvature;
+	}
+	else
+	{
+		this.toCp.y += yDistance * curvature;
+		this.fromCp.y -= yDistance * curvature;
+	}
+};
+
+/**
+ * Represents a node hook point. Is attached to the node element and represented visually.
+ *
+ * Can be used as a node input, output or as a bidirectional connection.
+ *
+ * @class NodeSocket
+ * @param {Node} node Node of this hook.
+ * @param {number} direction Direction of the hook.
+ * @param {string} type Data type of the node socket.
+ * @param {string} name Name of the node socket.
+ */
+function NodeSocket(node, direction, type, name)
+{
+	Circle.call(this);
+
+	this.draggable = true;
+	this.radius = 6;
+	this.layer = 1;
+
+	/**
+	 * Name of the socket presented to the user.
+	 *
+	 * @type {string}
+	 */
+	this.name = name !== undefined ? name : "";
+
+	/**
+	 * Type of data available from this socket. Only sockets of the same type can be connected.
+	 *
+	 * Should directly store the data type name (e.g. "string", "number", "Object", etc).
+	 *
+	 * @type {string}
+	 */
+	this.type = type !== undefined ? type : "";
+
+	/**
+	 * Direction of the node hook, indicates the data flow of the socket.
+	 *
+	 * Can be INPUT or OUTPUT.
+	 *
+	 * @type {number}
+	 */
+	this.direction = direction;
+
+	/**
+	 * Node where this socket is attached to.
+	 *
+	 * Should be used to get data from node GUI and from other sockets.
+	 *
+	 * @type {Node}
+	 */
+	this.node = node;
+
+	/**
+	 * Node connector used to connect this socket to another node socket.
+	 *
+	 * Can be used to access the adjacent node.
+	 *
+	 * @type {NodeConnector}
+	 */
+	this.connector = null;
+
+	/**
+	 * Text object used to present the name of the socket.
+	 *
+	 * Depending on the socket direction the text is aligned to the left or to the right.
+	 *
+	 * @type {Text}
+	 */
+	this.text = new Text();
+	this.text.text = this.name;
+	if(this.direction === NodeSocket.INPUT)
+	{
+		this.text.position.x -= 10;
+		this.text.textAlign = "right";
+	}
+	else if(this.direction === NodeSocket.OUTPUT)
+	{
+		this.text.position.x += 10;
+		this.text.textAlign = "left";
+	}
+	this.add(this.text);
+}
+
+/**
+ * Input hook can only be connected to an output.
+ *
+ * Is used to read data from the output.
+ *
+ * @type {number}
+ */
+NodeSocket.INPUT = 1;
+
+/**
+ * Output hook can only be connected to an input.
+ *
+ * Writes data to the output.
+ *
+ * @type {number}
+ */
+NodeSocket.OUTPUT = 2;
+
+NodeSocket.prototype = Object.create(Circle.prototype);
+
+/**
+ * Get value stored or calculated in node socket, it should be the calculated from node logic, node inputs, user input, etc.
+ *
+ * For input nodes the value should be fetched trough the connector object that is connected to an output node elsewhere.
+ *
+ * By default it the socket is an INPUT it gets the value trough the connector if available. Inputs will recursively propagate the method trough the graph to get their value.
+ *
+ * If the socket is an OUTPUT or there is no connection the method returns null by default, in this case the method should be extended by implementations of this class to process data.
+ *
+ * @return {Object} Return data calculated from the node.
+ */
+NodeSocket.prototype.getValue = function()
+{
+	if(this.direction === NodeSocket.INPUT && this.connector !== null && this.connector.outputSocket !== null)
+	{
+		return this.connector.outputSocket.getValue();
+	}
+
+	return null;
+};
+
+/**
+ * Connect this node socket to another socket.
+ *
+ * Sockets have to be compatible otherwise the connection cannot be made and an error will be thrown.
+ *
+ * @param {NodeSocket} socket Socket to be connected with this
+ * @return {NodeConnector} Node connector created.
+ */
+NodeSocket.prototype.connectTo = function(socket)
+{
+	if(!this.isCompatible(socket))
+	{
+		throw new Error("Sockets are not compatible they cannot be connected.");
+	}
+
+	var connector = new NodeConnector();
+	this.attachConnector(connector);
+	socket.attachConnector(connector);
+	return connector;
+};
+
+/**
+ * Attach a node connector to this socket. Sets the correct input/output attributes on the socket and the connector.
+ *
+ * Automatically adds the connector to the same parent and the node socket if no parent defined for the connector.
+ *
+ * @param {NodeConnector} connector Connector to be attached to this socket.
+ */
+NodeSocket.prototype.attachConnector = function(connector)
+{
+	if(this.direction === NodeSocket.INPUT)
+	{
+		connector.inputSocket = this;
+	}
+	else if(this.direction === NodeSocket.OUTPUT)
+	{
+		connector.outputSocket = this;
+	}
+
+	this.connector = connector;
+	if(connector.parent === null)
+	{
+		this.parent.add(connector);
+	}
+};
+
+/**
+ * Check if this socket can be connected (is compatible) with another socket.
+ *
+ * For two sockets to be compatible the data flow should be correct (one input and a output) and they should carry the same data type.
+ *
+ * @param {NodeSocket} socket Socket to verify compatibility with.
+ * @return {boolean} Returns true if the two sockets are compatible.
+ */
+NodeSocket.prototype.isCompatible = function(socket)
+{
+	return this.direction !== socket.direction && this.type === socket.type;
+};
+
+NodeSocket.prototype.destroy = function()
+{
+	Circle.prototype.destroy.call(this);
+
+	if(this.connector !== null)
+	{
+		this.connector.destroy();
+	}
+};
+
+NodeSocket.prototype.onPointerDragStart = function(pointer, viewport)
+{
+	if(this.connector === null)
+	{
+		this.attachConnector(new NodeConnector());
+	}
+};
+
+NodeSocket.prototype.onPointerDrag = function(pointer, viewport, delta, position)
+{
+	if(this.connector !== null)
+	{
+		if(this.direction === NodeSocket.INPUT)
+		{
+			this.connector.from.copy(position);
+		}
+		else if(this.direction === NodeSocket.OUTPUT)
+		{
+			this.connector.to.copy(position);
+		}
+	}
+};
+
+NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
+{
+	if(this.connector !== null)
+	{
+		var position = viewport.inverseMatrix.transformPoint(pointer.position);
+		var objects = this.parent.getWorldPointIntersections(position);
+		var found = false;
+
+		for(var i = 0; i < objects.length; i++)
+		{
+			if(objects[i] instanceof NodeSocket)
+			{
+				if(this.isCompatible(objects[i]))
+				{
+					objects[i].attachConnector(this.connector);
+					found = true;
+					break;
+				}
+			}
+		}
+
+		if(!found)
+		{
+			this.connector.destroy();
+		}
+	}
+};
+
+/**
+ * Node objects can be connected between them to create graphs.
+ *
+ * Each node contains inputs, outputs and a set of attributes containing their state. Inputs can be connected to outputs of other nodes, and vice-versa.
+ *
+ * This class implements node basic functionality, the logic to connect node and define inputs/outputs of the nodes.
+ *
+ * @class Node
+ */
+function Node()
+{
+	RoundedBox.call(this);
+
+	this.draggable = true;
+
+	/**
+	 * List of inputs of the node.
+	 *
+	 * @type {NodeSocket[]}
+	 */
+	this.inputs = [];
+
+	/**
+	 * List of outputs of the node.
+	 *
+	 * @type {NodeSocket[]}
+	 */
+	this.outputs = [];
+}
+
+Node.prototype = Object.create(RoundedBox.prototype);
+
+/**
+ * This method should be used for the node to register their socket inputs/outputs.
+ *
+ * It is called automatically after the node is added to the node graph to create sockets.
+ */
+Node.prototype.registerSockets = null;
+
+/**
+ * Add input to this node, can be connected to other nodes to receive data.
+ *
+ * @param {string} type Data type of the node socket.
+ * @param {string} name Name of the node socket.
+ * @return {NodeSocket} Node socket created for this node.
+ */
+Node.prototype.addInput = function(type, name)
+{
+	var socket = new NodeSocket(this, NodeSocket.INPUT, type, name);
+	this.inputs.push(socket);
+	this.parent.add(socket);
+	return socket;
+};
+
+/**
+ * Add output socket to this node, can be connected to other nodes to send data.
+ *
+ * @param {string} type Data type of the node socket.
+ * @param {string} name Name of the node socket.
+ * @return {NodeSocket} Node socket created for this node.
+ */
+Node.prototype.addOutput = function(type, name)
+{
+	var socket = new NodeSocket(this, NodeSocket.OUTPUT, type, name);
+	this.outputs.push(socket);
+	this.parent.add(socket);
+	return socket;
+};
+
+/**
+ * Get a output socket by its name. If there are multiple sockets with the same name only the first one found is returned.
+ *
+ * @param {string} name Name of the node socket to get.
+ * @return {NodeSocket} Node socket if it was found, null otherwise.
+ */
+Node.prototype.getOutput = function(name)
+{
+	for(var i = 0; i < this.outputs.length; i++)
+	{
+		if(this.outputs[i].name === name)
+		{
+			return this.outputs[i];
+		}
+	}
+
+	return null;
+};
+
+/**
+ * Get a input socket by its name. If there are multiple sockets with the same name only the first one found is returned.
+ *
+ * @param {string} name Name of the node socket to get.
+ * @return {NodeSocket} Node socket if it was found, null otherwise.
+ */
+Node.prototype.getInput = function(name)
+{
+	for(var i = 0; i < this.inputs.length; i++)
+	{
+		if(this.inputs[i].name === name)
+		{
+			return this.inputs[i];
+		}
+	}
+
+	return null;
+};
+
+Node.prototype.destroy = function()
+{
+	RoundedBox.prototype.destroy.call(this);
+
+	for(var i = 0; i < this.inputs.length; i++)
+	{
+		this.inputs[i].destroy();
+	}
+
+	for(var i = 0; i < this.outputs.length; i++)
+	{
+		this.outputs[i].destroy();
+	}
+};
+
+Node.prototype.onUpdate = function()
+{
+	var height = this.box.max.y - this.box.min.y;
+
+	// Input hooks position
+	var step = height / (this.inputs.length + 1);
+	var start = this.box.min.y + step;
+
+	for(var i = 0; i < this.inputs.length; i++)
+	{
+		this.inputs[i].position.set(this.position.x + this.box.min.x, this.position.y + (start + step * i));
+	}
+
+	// Output hooks position
+	step = height / (this.outputs.length + 1);
+	start = this.box.min.y + step;
+
+	for(var i = 0; i < this.outputs.length; i++)
+	{
+		this.outputs[i].position.set(this.position.x + this.box.max.x, this.position.y + (start + step * i));
+	}
+};
+
+/**
+ * Node graph object should be used as a container for node elements.
+ *
+ * The node graph object specifies how the nodes are processed, each individual node can store and process data, the node graph specified how this information is processed.
+ *
+ * All node elements are stored as children of the node graph.
+ *
+ * @class NodeGraph
+ */
+function NodeGraph()
+{
+	Object2D.call(this);
+}
+
+NodeGraph.prototype = Object.create(Object2D.prototype);
+
+/**
+ * Create and add a new node of specific node type to the graph.
+ *
+ * Automatically finds an empty space as close as possible to other nodes to add this new node.
+ *
+ * @param {Node} node Node object to be added.
+ * @return {Node} Node created (already added to the graph).
+ */
+NodeGraph.prototype.addNode = function(node)
+{
+	// Check available position on screen.
+	var x = 0, y = 0;
+	for(var i = 0; i < this.children.length; i++)
+	{
+		if(this.children[i].position.x > x)
+		{
+			x = this.children[i].position.x;
+		}
+		if(this.children[i].position.y > y)
+		{
+			y = this.children[i].position.y;
+		}
+	}
+
+	// Create and add new node
+	node.position.set(x + 200, y / 2.0);
+	this.add(node);
+
+	if(node.registerSockets !== null)
+	{
+		node.registerSockets();
+	}
+
+	return node;
+};
+
+/**
+ * Class contains helper functions to create editing object tools.
+ *
+ * @class
+ */
+function Helpers(){}
+
+/**
+ * Create a rotation tool helper.
+ *
+ * When the object is dragged is changes the parent object rotation.
+ *
+ * @static
+ */
+Helpers.rotateTool = function(object)
+{
+	var tool = new Circle();
+	tool.radius = 4;
+	tool.layer = object.layer + 1;
+	tool.onPointerDrag = function(pointer, viewport, delta)
+	{
+		object.rotation += delta.x * 1e-3;
+	};
+	object.add(tool);
+};
+
+/**
+ * Create a box resize helper and attach it to an object to change the size of the object box.
+ *
+ * Each helper is positioned on one corner of the box, and the value of the corner is copied to the boxes as they are dragged.
+ *
+ * This method required to object to have a box property.
+ *
+ * @static
+ */
+Helpers.boxResizeTool = function(object)
+{
+	if(object.box === undefined)
+	{
+		console.warn("escher.js: Helpers.boxResizeTool(), object box property missing.");
+		return;
+	}
+
+	function updateHelpers()
+	{
+		topRight.position.copy(object.box.min);
+		bottomLeft.position.copy(object.box.max);
+		topLeft.position.set(object.box.max.x, object.box.min.y);
+		bottomRight.position.set(object.box.min.x, object.box.max.y);
+	}
+
+	var topRight = new Circle();
+	topRight.radius = 4;
+	topRight.layer = object.layer + 1;
+	topRight.draggable = true;
+	topRight.onPointerDrag = function(pointer, viewport, delta)
+	{
+		Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+
+		object.box.min.copy(topRight.position);
+		updateHelpers();
+	};
+	object.add(topRight);
+
+	var topLeft = new Circle();
+	topLeft.radius = 4;
+	topLeft.layer = object.layer + 1;
+	topLeft.draggable = true;
+	topLeft.onPointerDrag = function(pointer, viewport, delta)
+	{
+		Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+
+		object.box.max.x = topLeft.position.x;
+		object.box.min.y = topLeft.position.y;
+		updateHelpers();
+	};
+	object.add(topLeft);
+
+	var bottomLeft = new Circle();
+	bottomLeft.radius = 4;
+	bottomLeft.layer = object.layer + 1;
+	bottomLeft.draggable = true;
+	bottomLeft.onPointerDrag = function(pointer, viewport, delta)
+	{
+		Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+
+		object.box.max.copy(bottomLeft.position);
+		updateHelpers();
+	};
+	object.add(bottomLeft);
+
+	var bottomRight = new Circle();
+	bottomRight.radius = 4;
+	bottomRight.layer = object.layer + 1;
+	bottomRight.draggable = true;
+	bottomRight.onPointerDrag = function(pointer, viewport, delta)
+	{
+		Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+
+		object.box.min.x = bottomRight.position.x;
+		object.box.max.y = bottomRight.position.y;
+		updateHelpers();
+	};
+	object.add(bottomRight);
+
+	updateHelpers();
+};
+
+export { BezierCurve, Box, Box2, BoxMask, Circle, DOM, EventManager, Graph, Helpers, Image, Key, Line, Mask, Matrix, MultiLineText, Node, NodeConnector, NodeGraph, NodeSocket, Object2D, Pattern, Pointer, QuadraticCurve, Renderer, RoundedBox, Text, UUID, Vector2, Viewport, ViewportControls };

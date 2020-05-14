@@ -68,13 +68,13 @@
 
 			registerSockets()
 			{
-				this.a = this.addInput("number", "a");
-				this.b = this.addInput("number", "b");
+				this.a = this.addInput("string", "a");
+				this.b = this.addInput("string", "b");
 
-				this.r = this.addOutput("number", "r");
+				this.r = this.addOutput("string", "r");
 				this.r.getValue = () =>
 				{
-					return "(" + this.a.getValue() + this.operation +  this.b.getValue() + ")";
+					return "(" + this.a.getValue() + this.operation + this.b.getValue() + ")";
 				};
 			}
 		}
@@ -97,7 +97,7 @@
 
 			registerSockets()
 			{
-				this.out = this.addOutput("number", "v");
+				this.out = this.addOutput("string", "v");
 				this.out.getValue = () =>
 				{
 					return this.div.element.value;
@@ -122,7 +122,7 @@
 
 			registerSockets()
 			{
-				this.r = this.addInput("number", "r");
+				this.r = this.addInput("string", "r");
 			}
 
 			onUpdate()
