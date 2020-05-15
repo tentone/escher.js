@@ -1,5 +1,4 @@
 import {Object2D} from "../Object2D.js";
-import {Box} from "./Box";
 
 /**
  * Circle object draw a circular object, into the canvas.

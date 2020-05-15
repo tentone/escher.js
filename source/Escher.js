@@ -36,3 +36,4 @@ export {NodeGraph} from "./objects/node/NodeGraph.js";
 export {ViewportControls} from "./controls/ViewportControls.js";
 
 export {Helpers} from "./utils/Helpers.js";
+export {FileUtils} from "./utils/FileUtils.js";

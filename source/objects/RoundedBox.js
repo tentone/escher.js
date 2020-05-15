@@ -84,5 +84,4 @@ RoundedBox.prototype.parse = function(data)
 	this.radius = data.radius;
 };
 
-
 export {RoundedBox};

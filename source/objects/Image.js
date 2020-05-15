@@ -1,6 +1,5 @@
 import {Object2D} from "../Object2D.js";
 import {Box2} from "../math/Box2.js";
-import {Graph} from "./Graph";
 
 /**
  * Image object is used to draw an image from URL.
@@ -63,6 +62,24 @@ Image.prototype.draw = function(context, viewport, canvas)
 	{
 		context.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
 	}
+};
+
+Image.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.box = this.box.toArray();
+	data.image = this.image.src;
+
+	return data;
+};
+
+Image.prototype.parse = function(data)
+{
+	Object2D.prototype.parse.call(this, data);
+
+	this.box.fromArray(data.box);
+	this.image.src = data.image;
 };
 
 export {Image};

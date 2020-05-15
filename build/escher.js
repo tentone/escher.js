@@ -1833,101 +1833,6 @@
 	};
 
 	/**
-	 * Graph object is used to draw simple graph data into the canvas.
-	 *
-	 * Graph data is composed of X, Y values.
-	 *
-	 * @class
-	 * @extends {Object2D}
-	 */
-	function Graph()
-	{
-		Object2D.call(this);
-
-		/**
-		 * Graph object containing the size of the object.
-		 */
-		this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
-
-		/**
-		 * Color of the box border line.
-		 */
-		this.strokeStyle = "rgb(0, 153, 255)";
-
-		/**
-		 * Line width.
-		 */
-		this.lineWidth = 1;
-
-		/**
-		 * Background color of the box.
-		 */
-		this.fillStyle = "rgba(0, 153, 255, 0.3)";
-
-		/**
-		 * Minimum value of the graph.
-		 */
-		this.min = 0;
-
-		/**
-		 * Maximum value of the graph.
-		 */
-		this.max = 10;
-
-		/**
-		 * Data to be presented in the graph.
-		 *
-		 * The array should store numeric values.
-		 */
-		this.data = [];
-	}
-
-	Graph.prototype = Object.create(Object2D.prototype);
-	Graph.prototype.constructor = Graph;
-	Graph.prototype.type = "Graph";
-
-	Graph.prototype.isInside = function(point)
-	{
-		return this.box.containsPoint(point);
-	};
-
-	Graph.prototype.draw = function(context, viewport, canvas)
-	{
-		if(this.data.length === 0)
-		{
-			return;
-		}
-		
-		var width = this.box.max.x - this.box.min.x;
-		var height = this.box.max.y - this.box.min.y;
-
-		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
-		context.beginPath();
-			
-		var step = width / (this.data.length - 1);
-		var gamma = this.max - this.min;
-
-		context.moveTo(this.box.min.x, this.box.max.y - ((this.data[0] - this.min) / gamma) * height);
-		
-		for(var i = 1, s = step; i < this.data.length; s += step, i++)
-		{
-			context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
-		}
-
-		context.stroke();
-
-		if(this.fillStyle !== null)
-		{
-			context.fillStyle = this.fillStyle;
-
-			context.lineTo(this.box.max.x, this.box.max.y);
-			context.lineTo(this.box.min.x, this.box.max.y);
-			context.fill();
-		}
-	};
-
-	/**
 	 * Image object is used to draw an image from URL.
 	 *
 	 * @class
@@ -1988,6 +1893,24 @@
 		{
 			context.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
 		}
+	};
+
+	Image.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		data.box = this.box.toArray();
+		data.image = this.image.src;
+
+		return data;
+	};
+
+	Image.prototype.parse = function(data)
+	{
+		Object2D.prototype.parse.call(this, data);
+
+		this.box.fromArray(data.box);
+		this.image.src = data.image;
 	};
 
 	/**
@@ -4005,7 +3928,9 @@
 		this.box = new Box2();
 
 		/**
-		 * Image source DOM element.
+		 * Image source DOM element. Used as a source for the pattern image.
+		 *
+		 * This element can be replaced by one of other type (e.g canvas, video).
 		 *
 		 * @type {Element}
 		 */
@@ -4013,6 +3938,10 @@
 
 		/**
 		 * Repetition indicates how the pattern image should be repeated.
+		 *
+		 * Possible values are "repeat", "repeat-x", "repeat-y" or "no-repeat".
+		 *
+		 * More information about this attribute here https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern.
 		 *
 		 * @type {string}
 		 */
@@ -4064,6 +3993,149 @@
 			context.fillStyle = pattern;
 			context.fillRect(this.box.min.x, this.box.min.y, width, height);
 		}
+	};
+
+	Image.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		data.box = this.box.toArray();
+		data.image = this.image.src;
+		data.repetition = this.repetition;
+
+		return data;
+	};
+
+	Image.prototype.parse = function(data)
+	{
+		Object2D.prototype.parse.call(this, data);
+
+		this.box.fromArray(data.box);
+		this.image.src = data.image;
+		this.repetition = data.repetition;
+	};
+
+	/**
+	 * Graph object is used to draw simple graph data into the canvas.
+	 *
+	 * Graph data is composed of X, Y values.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function Graph()
+	{
+		Object2D.call(this);
+
+		/**
+		 * Graph object containing the size of the object.
+		 */
+		this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
+
+		/**
+		 * Color of the box border line.
+		 */
+		this.strokeStyle = "rgb(0, 153, 255)";
+
+		/**
+		 * Line width.
+		 */
+		this.lineWidth = 1;
+
+		/**
+		 * Background color of the box.
+		 */
+		this.fillStyle = "rgba(0, 153, 255, 0.3)";
+
+		/**
+		 * Minimum value of the graph.
+		 */
+		this.min = 0;
+
+		/**
+		 * Maximum value of the graph.
+		 */
+		this.max = 10;
+
+		/**
+		 * Data to be presented in the graph.
+		 *
+		 * The array should store numeric values.
+		 */
+		this.data = [];
+	}
+
+	Graph.prototype = Object.create(Object2D.prototype);
+	Graph.prototype.constructor = Graph;
+	Graph.prototype.type = "Graph";
+
+	Graph.prototype.isInside = function(point)
+	{
+		return this.box.containsPoint(point);
+	};
+
+	Graph.prototype.draw = function(context, viewport, canvas)
+	{
+		if(this.data.length === 0)
+		{
+			return;
+		}
+		
+		var width = this.box.max.x - this.box.min.x;
+		var height = this.box.max.y - this.box.min.y;
+
+		context.lineWidth = this.lineWidth;
+		context.strokeStyle = this.strokeStyle;
+		context.beginPath();
+			
+		var step = width / (this.data.length - 1);
+		var gamma = this.max - this.min;
+
+		context.moveTo(this.box.min.x, this.box.max.y - ((this.data[0] - this.min) / gamma) * height);
+		
+		for(var i = 1, s = step; i < this.data.length; s += step, i++)
+		{
+			context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
+		}
+
+		context.stroke();
+
+		if(this.fillStyle !== null)
+		{
+			context.fillStyle = this.fillStyle;
+
+			context.lineTo(this.box.max.x, this.box.max.y);
+			context.lineTo(this.box.min.x, this.box.max.y);
+			context.fill();
+		}
+	};
+
+	Graph.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		data.box = this.box.toArray();
+		data.strokeStyle = this.strokeStyle;
+		data.lineWidth = this.lineWidth;
+		data.fillStyle = this.fillStyle;
+		data.min = this.min;
+		data.max = this.max;
+		data.data = this.data;
+
+		return data;
+	};
+
+	Graph.prototype.parse = function(data)
+	{
+		Object2D.prototype.parse.call(this, data);
+
+		this.box.fromArray(data.box);
+		this.strokeStyle = data.strokeStyle;
+		this.lineWidth = data.lineWidth;
+		this.fillStyle = data.fillStyle;
+		this.min = data.min;
+		this.max = data.max;
+		this.data = data.data;
 	};
 
 	/**
@@ -4710,6 +4782,66 @@
 		updateHelpers();
 	};
 
+	/**
+	 * File utils is used to read and write files.
+	 *
+	 * Can be used alongside with object serialization to store and load objects from file.
+	 *
+	 * @class
+	 * @static
+	 */
+	function FileUtils(){}
+
+	/**
+	 * Read a local or remote file as text data.
+	 *
+	 * @param {string} fname Path or URL of the file being read.
+	 * @param {Function} onLoad onLoad callback receives the read data as parameter.
+	 * @param {Function} onError onError call is called when a error occurs while reading the file.
+	 */
+	FileUtils.read = function(fname, onLoad, onError)
+	{
+		var file = new XMLHttpRequest();
+		file.overrideMimeType("text/plain");
+		file.open("GET", fname, true);
+		if(onLoad !== undefined)
+		{
+			file.onload = function()
+			{
+				onLoad(file.response);
+			};
+		}
+
+		if(onError !== undefined)
+		{
+			file.onerror = onError;
+		}
+
+		file.send(null);
+	};
+
+	/**
+	 * Write text to a file and automatically download it from blob storage.
+	 *
+	 * @method writeFile
+	 * @param {string} fname Path of the file to write.
+	 * @param {string} data Text data to be written to the file.
+	 */
+	FileUtils.write = function(fname, data)
+	{
+		var blob = new Blob([data], {type:"octet/stream"});
+		var download = document.createElement("a");
+		download.download = fname;
+		download.href = window.URL.createObjectURL(blob);
+		download.style.display = "none";
+		download.onclick = function()
+		{
+			document.body.removeChild(this);
+		};
+		document.body.appendChild(download);
+		download.click();
+	};
+
 	exports.BezierCurve = BezierCurve;
 	exports.Box = Box;
 	exports.Box2 = Box2;
@@ -4717,6 +4849,7 @@
 	exports.Circle = Circle;
 	exports.DOM = DOM;
 	exports.EventManager = EventManager;
+	exports.FileUtils = FileUtils;
 	exports.Graph = Graph;
 	exports.Helpers = Helpers;
 	exports.Image = Image;

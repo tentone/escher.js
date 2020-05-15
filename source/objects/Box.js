@@ -1,8 +1,6 @@
 import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 import {Box2} from "../math/Box2.js";
-import {BezierCurve} from "./BezierCurve";
-import {Text} from "./Text";
 
 /**
  * Box object draw a rectangular object.

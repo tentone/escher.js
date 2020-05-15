@@ -1,5 +1,4 @@
 import {Object2D} from "../../Object2D.js";
-import {BoxMask} from "./BoxMask";
 
 /**
  * A mask can be used to set the drawing region.
@@ -24,7 +23,11 @@ Mask.prototype.type = "Mask";
 Mask.prototype.isMask = true;
 
 /**
- * Clip the canvas context, to ensure that next objects being drawn are cliped to the path stored here.
+ * Clip the canvas context. Define a clipping path and set the clip using the context.clip() method.
+ *
+ * Ensures that next objects being drawn are clipped to the path stored here.
+ *
+ * More information about canvas clipping https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip.
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport applied to the canvas.

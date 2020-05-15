@@ -1,5 +1,6 @@
 import {Object2D} from "../Object2D.js";
 import {Box2} from "../math/Box2.js";
+import {Image} from "./Image";
 
 /**
  * Pattern object draw a image repeated as a pattern.
@@ -22,7 +23,9 @@ function Pattern(src)
 	this.box = new Box2();
 
 	/**
-	 * Image source DOM element.
+	 * Image source DOM element. Used as a source for the pattern image.
+	 *
+	 * This element can be replaced by one of other type (e.g canvas, video).
 	 *
 	 * @type {Element}
 	 */
@@ -30,6 +33,10 @@ function Pattern(src)
 
 	/**
 	 * Repetition indicates how the pattern image should be repeated.
+	 *
+	 * Possible values are "repeat", "repeat-x", "repeat-y" or "no-repeat".
+	 *
+	 * More information about this attribute here https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern.
 	 *
 	 * @type {string}
 	 */
@@ -81,6 +88,26 @@ Pattern.prototype.draw = function(context, viewport, canvas)
 		context.fillStyle = pattern;
 		context.fillRect(this.box.min.x, this.box.min.y, width, height);
 	}
+};
+
+Pattern.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.box = this.box.toArray();
+	data.image = this.image.src;
+	data.repetition = this.repetition;
+
+	return data;
+};
+
+Pattern.prototype.parse = function(data)
+{
+	Object2D.prototype.parse.call(this, data);
+
+	this.box.fromArray(data.box);
+	this.image.src = data.image;
+	this.repetition = data.repetition;
 };
 
 export {Pattern};

@@ -1,5 +1,4 @@
 import {Object2D} from "../Object2D.js";
-import {RoundedBox} from "./RoundedBox";
 
 /**
  * Text element, used to draw single line text into the canvas.

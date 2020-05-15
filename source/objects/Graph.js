@@ -97,4 +97,33 @@ Graph.prototype.draw = function(context, viewport, canvas)
 	}
 };
 
+Graph.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.box = this.box.toArray();
+	data.strokeStyle = this.strokeStyle;
+	data.lineWidth = this.lineWidth;
+	data.fillStyle = this.fillStyle;
+	data.min = this.min;
+	data.max = this.max;
+	data.data = this.data;
+
+	return data;
+};
+
+Graph.prototype.parse = function(data)
+{
+	Object2D.prototype.parse.call(this, data);
+
+	this.box.fromArray(data.box);
+	this.strokeStyle = data.strokeStyle;
+	this.lineWidth = data.lineWidth;
+	this.fillStyle = data.fillStyle;
+	this.min = data.min;
+	this.max = data.max;
+	this.data = data.data;
+};
+
+
 export {Graph};

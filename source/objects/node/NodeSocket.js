@@ -2,7 +2,6 @@ import {Circle} from "../Circle";
 import {Node} from "./Node";
 import {NodeConnector} from "./NodeConnector";
 import {Text} from "../Text";
-import {NodeGraph} from "./NodeGraph";
 
 /**
  * Represents a node hook point. Is attached to the node element and represented visually.
