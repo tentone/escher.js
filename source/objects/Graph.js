@@ -1,7 +1,6 @@
 import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 import {Box2} from "../math/Box2.js";
-import {DOM} from "./DOM";
 
 /**
  * Graph object is used to draw simple graph data into the canvas.
@@ -55,6 +54,7 @@ function Graph()
 
 Graph.prototype = Object.create(Object2D.prototype);
 Graph.prototype.constructor = Graph;
+Graph.prototype.type = "Graph";
 
 Graph.prototype.isInside = function(point)
 {

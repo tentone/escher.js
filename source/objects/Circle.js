@@ -40,6 +40,7 @@ function Circle()
 
 Circle.prototype = Object.create(Object2D.prototype);
 Circle.prototype.constructor = Circle;
+Circle.prototype.type = "Circle";
 
 Circle.prototype.isInside = function(point)
 {
@@ -73,6 +74,28 @@ Circle.prototype.draw = function(context, viewport, canvas)
 		context.strokeStyle = this.strokeStyle;
 		context.stroke();
 	}
+};
+
+Circle.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.radius = this.radius;
+	data.strokeStyle = this.strokeStyle;
+	data.lineWidth = this.lineWidth;
+	data.fillStyle = this.fillStyle;
+
+	return data;
+};
+
+Circle.prototype.parse = function(data)
+{
+	Object2D.prototype.parse.call(this, data);
+
+	this.radius = data.radius;
+	this.strokeStyle = data.strokeStyle;
+	this.lineWidth = data.lineWidth;
+	this.fillStyle = data.fillStyle;
 };
 
 export {Circle};

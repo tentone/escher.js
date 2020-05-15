@@ -1,29 +1,29 @@
 import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
-import {Circle} from "./Circle";
 
 /**
  * A DOM object transformed using CSS3D to be included in the scene.
  *
- * DOM objects always stay on top of everything else, it is not possible to layer these object with regular canvas objects.
+ * DOM objects always stay on top or bellow (depending on the DOM parent placement) of everything else. It is not possible to layer these object with regular canvas objects.
  *
  * By default mouse events are not supported for these objects (it does not implement pointer collision checking). Use the DOM events for interaction with these types of objects.
  *
  * @class
- * @param {Element} parentDOM Parent DOM element that contains the drawing canvas.
  * @param {string} type Type of the DOM element (e.g. "div", "p", ...)
  * @extends {Object2D}
  */
-function DOM(parentDOM, type)
+function DOM(type)
 {
 	Object2D.call(this);
 
 	/**
-	 * Parent element that contains this DOM div.
+	 * Parent element that contains this DOM object.
+	 *
+	 * The DOM parent element if not set manually is automatically set to the parent of the drawing canvas.
 	 *
 	 * @type {Element}
 	 */
-	this.parentDOM = parentDOM;
+	this.parentElement = null;
 
 	/**
 	 * DOM element contained by this object.
@@ -49,25 +49,39 @@ function DOM(parentDOM, type)
 
 DOM.prototype = Object.create(Object2D.prototype);
 DOM.prototype.constructor = DOM;
+DOM.prototype.type = "DOM";
 
 /**
  * DOM object implements onAdd() method to automatically attach the DOM object to the DOM tree.
  */
 DOM.prototype.onAdd = function()
 {
-	this.parentDOM.appendChild(this.element);
+	if(this.parentElement !== null)
+	{
+		this.parentElement.appendChild(this.element);
+	}
 };
 
 /**
- * DOM object implements onAdd() method to automatically remove the DOM object to the DOM tree.
+ * DOM object implements onRemove() method to automatically remove the DOM object to the DOM tree.
  */
 DOM.prototype.onRemove = function()
 {
-	this.parentDOM.removeChild(this.element);
+	if(this.parentElement !== null)
+	{
+		this.parentElement.removeChild(this.element);
+	}
 };
 
 DOM.prototype.transform = function(context, viewport, canvas)
 {
+	// Check if the DOM element parent is null
+	if(this.parentElement === null)
+	{
+		this.parentElement = canvas.parentElement;
+		this.parentElement.appendChild(this.element);
+	}
+
 	// CSS transformation matrix
 	if(this.ignoreViewport)
 	{
@@ -87,5 +101,27 @@ DOM.prototype.transform = function(context, viewport, canvas)
 	// Visibility
 	this.element.style.display = this.visible ? "block" : "none"; 
 };
+
+DOM.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.size = this.size.toArray();
+	data.element = this.element.outerHTML;
+
+	return data;
+};
+
+DOM.prototype.parse = function(data)
+{
+	Object2D.prototype.parse.call(this, data);
+
+	this.size.fromArray(data.size);
+
+	var parser = new DOMParser();
+	var doc = parser.parseFromString(this.element.outerHTML, 'text/html');
+	this.element = doc.body.children[0];
+};
+
 
 export {DOM};

@@ -13,10 +13,10 @@ import {NodeGraph} from "./NodeGraph";
  * @extends {Circle}
  * @param {Node} node Node of this hook.
  * @param {number} direction Direction of the hook.
- * @param {string} type Data type of the node socket.
+ * @param {string} category Data category of the node socket.
  * @param {string} name Name of the node socket.
  */
-function NodeSocket(node, direction, type, name)
+function NodeSocket(node, direction, category, name)
 {
 	Circle.call(this);
 
@@ -32,13 +32,13 @@ function NodeSocket(node, direction, type, name)
 	this.name = name !== undefined ? name : "";
 
 	/**
-	 * Type of data available from this socket. Only sockets of the same type can be connected.
+	 * Category of data available from this socket. Only sockets of the same category can be connected.
 	 *
 	 * Should directly store the data type name (e.g. "string", "number", "Object", etc).
 	 *
 	 * @type {string}
 	 */
-	this.type = type !== undefined ? type : "";
+	this.category = category !== undefined ? category : "";
 
 	/**
 	 * Direction of the node hook, indicates the data flow of the socket.
@@ -91,6 +91,7 @@ function NodeSocket(node, direction, type, name)
 
 NodeSocket.prototype = Object.create(Circle.prototype);
 NodeSocket.prototype.constructor = NodeSocket;
+NodeSocket.prototype.type = "NodeSocket";
 
 /**
  * Input hook can only be connected to an output.
@@ -187,7 +188,7 @@ NodeSocket.prototype.attachConnector = function(connector)
  */
 NodeSocket.prototype.isCompatible = function(socket)
 {
-	return this.direction !== socket.direction && this.type === socket.type;
+	return this.direction !== socket.direction && this.category === socket.category;
 };
 
 NodeSocket.prototype.destroy = function()

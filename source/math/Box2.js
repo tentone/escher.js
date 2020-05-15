@@ -269,4 +269,25 @@ Box2.prototype.equals = function(box)
 	return box.min.equals(this.min) && box.max.equals(this.max);
 };
 
+/**
+ * Store the box data into a numeric array.
+ *
+ * @return {number[]} Numeric array with box data min and max.
+ */
+Box2.prototype.toArray = function()
+{
+	return [this.box.min.x, this.box.min.y, this.box.max.x, this.box.max.y];
+};
+
+/**
+ * Set box data min and max from numeric array.
+ *
+ * @param {number[]} array Numeric array with box data min and max.
+ */
+Box2.prototype.fromArray = function(array)
+{
+	this.box.min.set(array[0], array[1]);
+	this.box.max.set(array[2], array[3]);
+};
+
 export {Box2};

@@ -204,6 +204,29 @@ function Object2D()
 Object2D.prototype.constructor = Object2D;
 
 /**
+ * Type of the object, used for data serialization and/or checking the object type.
+ *
+ * The name used should match the object constructor name. But it is not required.
+ *
+ * If this type is from an external library you can add the library name to the object type name to prevent collisions.
+ *
+ * @type {string}
+ */
+Object2D.prototype.type = "Object2D";
+
+/**
+ * List of available object types known by the application. Stores the object constructor by object type.
+ *
+ * Newly created types should be introduced in this map for data serialization support.
+ *
+ * New object types should be added using the Object2D.register() method.
+ *
+ * @static
+ * @type {Map<string, Function>}
+ */
+Object2D.types = new Map([]);
+
+/**
  * Check if a point in world coordinates intersects this object or its children and get a list of the objects intersected.
  *
  * @param {Vector2} point Point in world coordinates.
@@ -406,8 +429,9 @@ Object2D.prototype.updateMatrix = function(context)
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport applied to the canvas.
+ * @param {Element} canvas DOM canvas element where the content is being drawn.
  */
-Object2D.prototype.transform = function(context, viewport)
+Object2D.prototype.transform = function(context, viewport, canvas)
 {
 	this.globalMatrix.tranformContext(context);
 };
@@ -421,7 +445,7 @@ Object2D.prototype.transform = function(context, viewport)
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport used to view the canvas content.
- * @param {DOM} canvas DOM canvas element where the content is being drawn.
+ * @param {Element} canvas DOM canvas element where the content is being drawn.
  */
 Object2D.prototype.style = null; // function(context, viewport, canvas){};
 
@@ -432,7 +456,7 @@ Object2D.prototype.style = null; // function(context, viewport, canvas){};
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport used to view the canvas content.
- * @param {DOM} canvas DOM canvas element where the content is being drawn.
+ * @param {Element} canvas DOM canvas element where the content is being drawn.
  */
 Object2D.prototype.draw = null; // function(context, viewport, canvas){};
 
@@ -551,5 +575,119 @@ Object2D.prototype.onButtonDown = null;
  * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onButtonUp = null;
+
+/**
+ * Serialize the object data into a JSON object. That can be written into a file, sent using HTTP request etc.
+ *
+ * All required attributes to recreate the object in its current state should be stored. Relations between children should be stored by their UUID only.
+ *
+ * Data has to be parsed back into a usable object.
+ *
+ * @param {boolean} recursive If set false the children list is not serialized, otherwise all children are serialized.
+ * @return {Object} Serialized object data.
+ */
+Object2D.prototype.serialize = function(recursive)
+{
+	var data = {
+		uuid: this.uuid,
+		type: this.type,
+		position: this.position.toArray(),
+		origin: this.origin.toArray(),
+		scale: this.scale.toArray(),
+		rotation: this.rotation,
+		visible: this.visible,
+		layer: this.layer,
+		matrix: this.matrix.m,
+		globalMatrix: this.globalMatrix.m,
+		inverseGlobalMatrix: this.inverseGlobalMatrix.m,
+		matrixAutoUpdate: this.matrixAutoUpdate,
+		draggable: this.draggable,
+		pointerEvents: this.pointerEvents,
+		ignoreViewport: this.ignoreViewport,
+		saveContextState: this.saveContextState,
+		restoreContextState: this.restoreContextState,
+		pointerInside: this.pointerInside,
+		beingDragged: this.beingDragged,
+		children: [],
+		masks: []
+	};
+
+	if(recursive !== false)
+	{
+		for(var i = 0; i < this.children.length; i++)
+		{
+			data.children.push(this.children[i].serialize());
+		}
+	}
+
+	for(var i = 0; i < this.masks.length; i++)
+	{
+		data.masks.push(this.masks[i].uuid);
+	}
+
+	return data;
+};
+
+/**
+ * Parse serialized object data and fill the object attributes.
+ *
+ * Implementations of this method should only load the attributes added to the structure, the based method already loads common attributes.
+ *
+ * Dont forget to register object types using the Object2D.register() method.
+ *
+ * @param {Object} data Object data loaded from JSON.
+ */
+Object2D.prototype.parse = function(data)
+{
+	this.uuid = data.uuid;
+	this.position.fromArray(data.position);
+	this.origin.fromArray(data.origin);
+	this.scale.fromArray(data.scale);
+	this.rotation = data.rotation;
+	this.visible = data.visible;
+	this.layer = data.layer;
+	this.matrix = new Matrix(data.matrix);
+	this.globalMatrix = new Matrix(data.globalMatrix);
+	this.inverseGlobalMatrix = new Matrix(data.inverseGlobalMatrix);
+	this.matrixAutoUpdate = data.matrixAutoUpdate;
+	this.draggable = data.draggable;
+	this.pointerEvents = data.pointerEvents;
+	this.ignoreViewport = data.ignoreViewport;
+	this.saveContextState = data.saveContextState;
+	this.restoreContextState = data.restoreContextState;
+	this.pointerInside = data.pointerInside;
+	this.beingDragged = data.beingDragged;
+};
+
+/**
+ * Create objects from serialized object data into the proper data structures.
+ *
+ * All objects should implement serialization methods to serialize and load data properly.
+ *
+ * @static
+ * @param {Object} data Object data loaded from JSON.
+ * @return {Object2D} Parsed object data.
+ */
+Object2D.parse = function(data)
+{
+	var object = new Object2D.types.get(data.type)();
+	object.parse(data);
+
+	for(var i = 0; i < data.children.length; i++)
+	{
+		this.add(Object2D.parse(data.children[i]));
+	}
+
+
+	// TODO <ADD CODE HERE>
+	/*
+	for(var i = 0; i < this.masks.length; i++)
+	{
+		data.masks.push(this.masks[i].uuid);
+	}
+	*/
+
+	return object;
+};
 
 export {Object2D};

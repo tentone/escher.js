@@ -2,6 +2,7 @@ import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 import {Circle} from "./Circle.js";
 import {Line} from "./Line.js";
+import {QuadraticCurve} from "./QuadraticCurve";
 
 /**
  * Bezier curve object draw as bezier curve between two points.
@@ -30,6 +31,7 @@ function BezierCurve()
 
 BezierCurve.prototype = Object.create(Line.prototype);
 BezierCurve.prototype.constructor = BezierCurve;
+BezierCurve.prototype.type = "BezierCurve";
 
 /**
  * Create a bezier curve helper, to edit the bezier curve anchor points.
@@ -80,6 +82,24 @@ BezierCurve.prototype.draw = function(context, viewport, canvas)
 	context.moveTo(this.from.x, this.from.y);
 	context.bezierCurveTo(this.fromCp.x, this.fromCp.y, this.toCp.x, this.toCp.y, this.to.x, this.to.y);
 	context.stroke();
+};
+
+BezierCurve.prototype.serialize = function(recursive)
+{
+	var data = Line.prototype.serialize.call(this, recursive);
+
+	data.fromCp = this.fromCp.toArray();
+	data.toCp = this.toCp.toArray();
+
+	return data;
+};
+
+BezierCurve.prototype.parse = function(data)
+{
+	Line.prototype.parse.call(this, data);
+
+	this.fromCp.fromArray(data.fromCp);
+	this.toCp.fromArray(data.toCp);
 };
 
 export {BezierCurve};

@@ -3761,7 +3761,7 @@ function NodeSocket(node, direction, type, name)
 	 *
 	 * @type {string}
 	 */
-	this.type = type !== undefined ? type : "";
+	this.category = type !== undefined ? type : "";
 
 	/**
 	 * Direction of the node hook, indicates the data flow of the socket.
@@ -3909,7 +3909,7 @@ NodeSocket.prototype.attachConnector = function(connector)
  */
 NodeSocket.prototype.isCompatible = function(socket)
 {
-	return this.direction !== socket.direction && this.type === socket.type;
+	return this.direction !== socket.direction && this.category === socket.category;
 };
 
 NodeSocket.prototype.destroy = function()

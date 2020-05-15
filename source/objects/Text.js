@@ -69,6 +69,7 @@ function Text()
 
 Text.prototype = Object.create(Object2D.prototype);
 Text.prototype.constructor = Text;
+Text.prototype.type = "Text";
 
 Text.prototype.draw = function(context, viewport, canvas)
 {
@@ -87,6 +88,34 @@ Text.prototype.draw = function(context, viewport, canvas)
 		context.strokeStyle = this.strokeStyle;
 		context.strokeText(this.text, 0, 0);
 	}
+};
+
+Text.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.text = this.text;
+	data.font = this.font;
+	data.strokeStyle = this.strokeStyle;
+	data.lineWidth = this.lineWidth;
+	data.fillStyle = this.fillStyle;
+	data.textAlign = this.textAlign;
+	data.textBaseline = this.textBaseline;
+
+	return data;
+};
+
+Text.prototype.parse = function(data)
+{
+	Object2D.prototype.parse.call(this, data);
+
+	this.text = data.text;
+	this.font = data.font;
+	this.strokeStyle = data.strokeStyle;
+	this.lineWidth = data.lineWidth;
+	this.fillStyle = data.fillStyle;
+	this.textAlign = data.textAlign;
+	this.textBaseline = data.textBaseline;
 };
 
 export {Text};

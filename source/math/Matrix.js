@@ -3,7 +3,7 @@ import {Vector2} from "./Vector2.js";
 /**
  * 2D 3x2 transformation matrix, used to represent linear geometric transformations over objects.
  *
- * The values of the matrix are stored in a numeric array and can be applied to the canvas or DOM elements.
+ * The values of the matrix are stored as numeric array. The matrix can be applied to the canvas or DOM elements using CSS transforms.
  *
  * @class
  * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values.
@@ -12,6 +12,13 @@ function Matrix(values)
 {
 	if(values !== undefined)
 	{
+		/**
+		 * Array that contains the matrix data by row. This matrix should have 6 values.
+		 *
+		 * Matrix can be directly edited by accessing this attribute.
+		 *
+		 * @type {number[]}
+		 */
 		this.m = values;
 	}
 	else

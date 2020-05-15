@@ -158,7 +158,7 @@
 		Escher.Helpers.boxResizeTool(boxA);
 
 		// DOM
-		var div = new Escher.DOM(division);
+		var div = new Escher.DOM();
 		div.size.set(100, 50);
 		div.origin.set(50, 25);
 		boxA.add(div);
@@ -170,7 +170,7 @@
 		div.element.appendChild(text);
 
 		// DOM Fixed
-		var div = new Escher.DOM(division);
+		var div = new Escher.DOM();
 		div.size.set(100, 50);
 		div.origin.set(50, 25);
 		div.position.set(200, 200);
@@ -191,7 +191,7 @@
 		group.add(boxB);
 		
 		// DOM
-		var div = new Escher.DOM(division);
+		var div = new Escher.DOM();
 		div.size.set(100, 50);
 		div.origin.set(50, 25);
 		boxB.add(div);

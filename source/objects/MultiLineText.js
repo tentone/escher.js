@@ -1,5 +1,6 @@
 import {Text} from "./Text.js";
 import {Line} from "./Line";
+import {Object2D} from "../Object2D";
 
 /**
  * Multiple line text drawing directly into the canvas.
@@ -34,6 +35,7 @@ function MultiLineText()
 
 MultiLineText.prototype = Object.create(Text.prototype);
 MultiLineText.prototype.constructor = MultiLineText;
+MultiLineText.prototype.type = "MultiLineText";
 
 MultiLineText.prototype.draw = function(context, viewport, canvas)
 {
@@ -94,6 +96,24 @@ MultiLineText.prototype.draw = function(context, viewport, canvas)
 			offsetY += lineHeight;
 		}
 	}
+};
+
+MultiLineText.prototype.serialize = function(recursive)
+{
+	var data = Text.prototype.serialize.call(this, recursive);
+
+	data.maxWidth = this.maxWidth;
+	data.lineHeight = this.lineHeight;
+
+	return data;
+};
+
+MultiLineText.prototype.parse = function(data)
+{
+	Text.prototype.parse.call(this, data);
+
+	this.maxWidth = data.maxWidth;
+	this.lineHeight = data.lineHeight;
 };
 
 export {MultiLineText};

@@ -2,6 +2,7 @@ import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 import {Box2} from "../math/Box2.js";
 import {BezierCurve} from "./BezierCurve";
+import {Text} from "./Text";
 
 /**
  * Box object draw a rectangular object.
@@ -42,6 +43,7 @@ function Box()
 
 Box.prototype = Object.create(Object2D.prototype);
 Box.prototype.constructor = Box;
+Box.prototype.type = "Box";
 
 Box.prototype.onPointerEnter = function(pointer, viewport)
 {
@@ -75,6 +77,28 @@ Box.prototype.draw = function(context, viewport, canvas)
 		context.strokeStyle = this.strokeStyle;
 		context.strokeRect(this.box.min.x, this.box.min.y, width, height);
 	}
+};
+
+Box.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.box = this.box.toArray();
+	data.strokeStyle = this.strokeStyle;
+	data.lineWidth = this.lineWidth;
+	data.fillStyle = this.fillStyle;
+
+	return data;
+};
+
+Box.prototype.parse = function(data)
+{
+	Object2D.prototype.parse.call(this, data);
+
+	this.box.fromArray(data.box);
+	this.strokeStyle = data.strokeStyle;
+	this.lineWidth = data.lineWidth;
+	this.fillStyle = data.fillStyle;
 };
 
 export {Box};

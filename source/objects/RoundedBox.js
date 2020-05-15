@@ -1,5 +1,4 @@
 import {Box} from "./Box";
-import {QuadraticCurve} from "./QuadraticCurve";
 
 /**
  * Rounded box object draw a rectangular object with rounded corners.
@@ -21,6 +20,7 @@ function RoundedBox()
 
 RoundedBox.prototype = Object.create(Box.prototype);
 RoundedBox.prototype.constructor = RoundedBox;
+RoundedBox.prototype.type = "RoundedBox";
 
 /**
  * Draw a rounded rectangle into the canvas context using path to draw the rounded rectangle.
@@ -67,5 +67,22 @@ RoundedBox.prototype.draw = function(context, viewport, canvas)
 		context.stroke();
 	}
 };
+
+RoundedBox.prototype.serialize = function(recursive)
+{
+	var data = Box.prototype.serialize.call(this, recursive);
+
+	data.radius = this.radius;
+
+	return data;
+};
+
+RoundedBox.prototype.parse = function(data)
+{
+	Box.prototype.parse.call(this, data);
+
+	this.radius = data.radius;
+};
+
 
 export {RoundedBox};

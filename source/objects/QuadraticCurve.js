@@ -2,7 +2,6 @@ import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 import {Circle} from "./Circle.js";
 import {Line} from "./Line.js";
-import {Pattern} from "./Pattern";
 
 /**
  * Bezier curve object draw as bezier curve between two points.
@@ -26,6 +25,7 @@ function QuadraticCurve()
 
 QuadraticCurve.prototype = Object.create(Line.prototype);
 QuadraticCurve.prototype.constructor = QuadraticCurve;
+QuadraticCurve.prototype.type = "QuadraticCurve";
 
 /**
  * Create a quadratic curve helper, to edit the curve control point.
@@ -66,6 +66,22 @@ QuadraticCurve.prototype.draw = function(context, viewport, canvas)
 	context.moveTo(this.from.x, this.from.y);
 	context.quadraticCurveTo(this.controlPoint.x, this.controlPoint.y, this.to.x, this.to.y);
 	context.stroke();
+};
+
+QuadraticCurve.prototype.serialize = function(recursive)
+{
+	var data = Line.prototype.serialize.call(this, recursive);
+
+	data.controlPoint = this.controlPoint.toArray();
+
+	return data;
+};
+
+QuadraticCurve.prototype.parse = function(data)
+{
+	Line.prototype.parse.call(this, data);
+
+	this.controlPoint.fromArray(data.controlPoint);
 };
 
 export {QuadraticCurve};
