@@ -1,6 +1,6 @@
 {
 	"name": "escher.js",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"description": "escher.js is a web library for building interactive diagrams and graphs.",
 	"main": "build/escher.min.js",
 	"repository": {

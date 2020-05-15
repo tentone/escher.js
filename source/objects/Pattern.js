@@ -1,5 +1,6 @@
 import {Object2D} from "../Object2D.js";
 import {Box2} from "../math/Box2.js";
+import {MultiLineText} from "./MultiLineText";
 
 /**
  * Pattern object draw a image repeated as a pattern.
@@ -36,6 +37,7 @@ function Pattern(src)
 }
 
 Pattern.prototype = Object.create(Object2D.prototype);
+Pattern.prototype.constructor = Pattern;
 
 /**
  * Set the image of the object.

@@ -1,4 +1,5 @@
 import {Box} from "./Box";
+import {QuadraticCurve} from "./QuadraticCurve";
 
 /**
  * Rounded box object draw a rectangular object with rounded corners.
@@ -19,6 +20,7 @@ function RoundedBox()
 }
 
 RoundedBox.prototype = Object.create(Box.prototype);
+RoundedBox.prototype.constructor = RoundedBox;
 
 /**
  * Draw a rounded rectangle into the canvas context using path to draw the rounded rectangle.

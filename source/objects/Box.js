@@ -1,6 +1,7 @@
 import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 import {Box2} from "../math/Box2.js";
+import {BezierCurve} from "./BezierCurve";
 
 /**
  * Box object draw a rectangular object.
@@ -40,6 +41,7 @@ function Box()
 }
 
 Box.prototype = Object.create(Object2D.prototype);
+Box.prototype.constructor = Box;
 
 Box.prototype.onPointerEnter = function(pointer, viewport)
 {

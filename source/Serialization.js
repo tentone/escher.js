@@ -22,7 +22,7 @@ function Serialization(){}
  */
 Serialization.serialize = function(object)
 {
-
+	// TODO <ADD CODE HERE>
 };
 
 /**
@@ -34,7 +34,7 @@ Serialization.serialize = function(object)
  */
 Serialization.parse = function(data)
 {
-
+	// TODO <ADD CODE HERE>
 };
 
 export {Serialization};

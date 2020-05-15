@@ -1,5 +1,6 @@
 import {Object2D} from "../Object2D.js";
 import {Box2} from "../math/Box2.js";
+import {Graph} from "./Graph";
 
 /**
  * Image object is used to draw an image from URL.
@@ -29,6 +30,7 @@ function Image(src)
 }
 
 Image.prototype = Object.create(Object2D.prototype);
+Image.prototype.constructor = Image;
 
 /**
  * Set the image of the object.

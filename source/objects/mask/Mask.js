@@ -1,4 +1,5 @@
 import {Object2D} from "../../Object2D.js";
+import {BoxMask} from "./BoxMask";
 
 /**
  * A mask can be used to set the drawing region.
@@ -18,7 +19,7 @@ function Mask()
 }
 
 Mask.prototype = Object.create(Object2D.prototype);
-
+Mask.prototype.constructor = Mask;
 Mask.prototype.isMask = true;
 
 /**

@@ -2,6 +2,7 @@ import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 import {Circle} from "./Circle.js";
 import {Line} from "./Line.js";
+import {Pattern} from "./Pattern";
 
 /**
  * Bezier curve object draw as bezier curve between two points.
@@ -24,6 +25,7 @@ function QuadraticCurve()
 }
 
 QuadraticCurve.prototype = Object.create(Line.prototype);
+QuadraticCurve.prototype.constructor = QuadraticCurve;
 
 /**
  * Create a quadratic curve helper, to edit the curve control point.

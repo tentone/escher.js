@@ -201,6 +201,8 @@ function Object2D()
 	this.beingDragged = false;
 }
 
+Object2D.prototype.constructor = Object2D;
+
 /**
  * Check if a point in world coordinates intersects this object or its children and get a list of the objects intersected.
  *
@@ -549,9 +551,5 @@ Object2D.prototype.onButtonDown = null;
  * @param {Viewport} viewport Viewport where the object is drawn.
  */
 Object2D.prototype.onButtonUp = null;
-
-/**
- * Function used to serialize the data
- */
 
 export {Object2D};

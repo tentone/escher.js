@@ -1,4 +1,5 @@
 import {Text} from "./Text.js";
+import {Line} from "./Line";
 
 /**
  * Multiple line text drawing directly into the canvas.
@@ -32,6 +33,7 @@ function MultiLineText()
 }
 
 MultiLineText.prototype = Object.create(Text.prototype);
+MultiLineText.prototype.constructor = MultiLineText;
 
 MultiLineText.prototype.draw = function(context, viewport, canvas)
 {

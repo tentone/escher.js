@@ -2,6 +2,7 @@ import {Circle} from "../Circle";
 import {Node} from "./Node";
 import {NodeConnector} from "./NodeConnector";
 import {Text} from "../Text";
+import {NodeGraph} from "./NodeGraph";
 
 /**
  * Represents a node hook point. Is attached to the node element and represented visually.
@@ -88,6 +89,9 @@ function NodeSocket(node, direction, type, name)
 	this.add(this.text);
 }
 
+NodeSocket.prototype = Object.create(Circle.prototype);
+NodeSocket.prototype.constructor = NodeSocket;
+
 /**
  * Input hook can only be connected to an output.
  *
@@ -105,8 +109,6 @@ NodeSocket.INPUT = 1;
  * @type {number}
  */
 NodeSocket.OUTPUT = 2;
-
-NodeSocket.prototype = Object.create(Circle.prototype);
 
 /**
  * Get value stored or calculated in node socket, it should be the calculated from node logic, node inputs, user input, etc.

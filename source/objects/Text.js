@@ -1,4 +1,5 @@
 import {Object2D} from "../Object2D.js";
+import {RoundedBox} from "./RoundedBox";
 
 /**
  * Text element, used to draw single line text into the canvas.
@@ -67,6 +68,7 @@ function Text()
 }
 
 Text.prototype = Object.create(Object2D.prototype);
+Text.prototype.constructor = Text;
 
 Text.prototype.draw = function(context, viewport, canvas)
 {

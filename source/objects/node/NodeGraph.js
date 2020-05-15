@@ -1,4 +1,5 @@
 import {Object2D} from "../../Object2D";
+import {Node} from "./Node";
 
 /**
  * Node graph object should be used as a container for node elements.
@@ -16,6 +17,7 @@ function NodeGraph()
 }
 
 NodeGraph.prototype = Object.create(Object2D.prototype);
+NodeGraph.prototype.constructor = NodeGraph;
 
 /**
  * Create and add a new node of specific node type to the graph.

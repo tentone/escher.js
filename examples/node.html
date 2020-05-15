@@ -16,6 +16,9 @@
 		<div style="position:absolute; width:60px; height:50px; top:100px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperatorBlock('*');">x</div>
 		<div style="position:absolute; width:60px; height:50px; top:150px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperatorBlock('/');">/</div>
 		<div style="position:absolute; width:60px; height:50px; top:200px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addInputBlock();">Num</div>
+
+		<div style="position:absolute; width:60px; height:50px; bottom:50px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addInputBlock();">Load</div>
+		<div style="position:absolute; width:60px; height:50px; bottom:0px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addInputBlock();">Save</div>
 	</div>
 
 	<!-- Code -->
@@ -45,7 +48,6 @@
 			graph.addNode(new OperationNode(symbol));
 		};
 
-
 		window.addInputBlock = function(symbol)
 		{
 			graph.addNode(new NumberInputNode());
@@ -59,9 +61,11 @@
 
 				this.operation = operation;
 
+				this.box.set(new Escher.Vector2(-50, -40), new Escher.Vector2(50, 40));
+
 				this.text = new Escher.Text();
 				this.text.text = operation;
-				this.text.font = "30px Arial";
+				this.text.font = "25px Arial";
 				this.text.layer = 2;
 				this.add(this.text);
 			}
@@ -85,6 +89,8 @@
 			{
 				super();
 
+				this.box.set(new Escher.Vector2(-50, -30), new Escher.Vector2(50, 30));
+
 				this.div = new Escher.DOM(canvas.parentElement, "input");
 				this.div.size.set(70, 20);
 				this.div.origin.set(35, 10);
@@ -92,6 +98,10 @@
 				this.div.element.type = "number";
 				this.div.element.style.fontFamily = "Arial";
 				this.div.element.style.textAlign = "center";
+				this.div.element.style.border = "1px";
+				this.div.element.style.borderStyle = "solid";
+				this.div.element.style.borderColor = "#000000";
+				this.div.element.style.padding = "0px";
 				this.add(this.div);
 			}
 
@@ -111,7 +121,7 @@
 			{
 				super();
 
-				this.box.set(new Escher.Vector2(-80, -30), new Escher.Vector2(80, 30));
+				this.box.set(new Escher.Vector2(-100, -20), new Escher.Vector2(100, 20));
 
 				this.text = new Escher.Text();
 				this.text.text = "";
@@ -129,9 +139,15 @@
 			{
 				super.onUpdate();
 
-				var value = this.r.getValue();
-
-				this.text.text = value + " = " + eval(value);
+				try
+				{
+					var value = this.r.getValue();
+					this.text.text = value + " = " + eval(value);
+				}
+				catch(e)
+				{
+					this.text.text = "NaN";
+				}
 			}
 		}
 

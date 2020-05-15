@@ -1,5 +1,6 @@
 import {NodeSocket} from "./NodeSocket";
 import {RoundedBox} from "../RoundedBox";
+import {Mask} from "../mask/Mask";
 
 /**
  * Node objects can be connected between them to create graphs.
@@ -33,6 +34,7 @@ function Node()
 }
 
 Node.prototype = Object.create(RoundedBox.prototype);
+Node.prototype.constructor = Node;
 
 /**
  * This method should be used for the node to register their socket inputs/outputs.

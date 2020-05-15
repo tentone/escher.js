@@ -1,5 +1,6 @@
 import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
+import {Image} from "./Image";
 
 /**
  * Line object draw a line from one point to another without any kind of interpolation.
@@ -48,6 +49,7 @@ function Line()
 }
 
 Line.prototype = Object.create(Object2D.prototype);
+Line.prototype.constructor = Line;
 
 Line.prototype.style = function(context, viewport, canvas)
 {

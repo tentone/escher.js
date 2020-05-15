@@ -1,5 +1,6 @@
 import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
+import {Circle} from "./Circle";
 
 /**
  * A DOM object transformed using CSS3D to be included in the scene.
@@ -47,6 +48,7 @@ function DOM(parentDOM, type)
 }
 
 DOM.prototype = Object.create(Object2D.prototype);
+DOM.prototype.constructor = DOM;
 
 /**
  * DOM object implements onAdd() method to automatically attach the DOM object to the DOM tree.
