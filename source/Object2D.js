@@ -224,7 +224,20 @@ Object2D.prototype.type = "Object2D";
  * @static
  * @type {Map<string, Function>}
  */
-Object2D.types = new Map([]);
+Object2D.types = new Map([[Object2D.prototype.type, Object2D]]);
+
+/**
+ * Register a object type into the application. Associates the type string to the object constructor.
+ *
+ * Should be called for every new object class implemented if you want to be able to serialize and parse data.
+ *
+ * @param {Function} constructor Object constructor.
+ * @param {string} type Object type name.
+ */
+Object2D.register = function(constructor, type)
+{
+	Object2D.type.set(type, constructor);
+};
 
 /**
  * Check if a point in world coordinates intersects this object or its children and get a list of the objects intersected.
@@ -636,8 +649,9 @@ Object2D.prototype.serialize = function(recursive)
  * Dont forget to register object types using the Object2D.register() method.
  *
  * @param {Object} data Object data loaded from JSON.
+ * @param {Object2D} root Root object being loaded can be used to get references to other objects.
  */
-Object2D.prototype.parse = function(data)
+Object2D.prototype.parse = function(data, root)
 {
 	this.uuid = data.uuid;
 	this.position.fromArray(data.position);
@@ -670,7 +684,13 @@ Object2D.prototype.parse = function(data)
  */
 Object2D.parse = function(data)
 {
+	if(!Object2D.types.has(data.type))
+	{
+		throw new Error("Object type " + data.type + " unknown. Cannot parse data.");
+	}
+
 	var object = new Object2D.types.get(data.type)();
+
 	object.parse(data);
 
 	for(var i = 0; i < data.children.length; i++)
