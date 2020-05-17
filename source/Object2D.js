@@ -671,6 +671,11 @@ Object2D.prototype.parse = function(data, root)
 	this.restoreContextState = data.restoreContextState;
 	this.pointerInside = data.pointerInside;
 	this.beingDragged = data.beingDragged;
+
+	for(var i = 0; i < this.masks.length; i++)
+	{
+		data.masks.push(root.getChildByUUID(data.masks[i]));
+	}
 };
 
 /**
@@ -678,34 +683,40 @@ Object2D.prototype.parse = function(data, root)
  *
  * All objects should implement serialization methods to serialize and load data properly.
  *
+ * First all objects instances are created to ensure that object trying to get references to other object can have the data accessible, only then the parse method is called.
+ *
  * @static
  * @param {Object} data Object data loaded from JSON.
  * @return {Object2D} Parsed object data.
  */
 Object2D.parse = function(data)
 {
-	if(!Object2D.types.has(data.type))
-	{
-		throw new Error("Object type " + data.type + " unknown. Cannot parse data.");
+	var objects = [];
+
+	function createObjectInstances(data) {
+		if(!Object2D.types.has(data.type))
+		{
+			throw new Error("Object type " + data.type + " unknown. Cannot parse data.");
+		}
+
+		var object = new Object2D.types.get(data.type)();
+		for(var i = 0; i < data.children.length; i++)
+		{
+			object.add(createObjectInstances(data.children[i]));
+		}
+
+		objects.push({object: object, data: data});
+
+		return object;
 	}
 
-	var object = new Object2D.types.get(data.type)();
+	var object = createObjectInstances(data);
 
-	object.parse(data);
-
-	for(var i = 0; i < data.children.length; i++)
+	// Parse objects data
+	for(var i = 0; i < objects.length; i++)
 	{
-		this.add(Object2D.parse(data.children[i]));
+		objects[i].object.parse(objects[i].data, object);
 	}
-
-
-	// TODO <ADD CODE HERE>
-	/*
-	for(var i = 0; i < this.masks.length; i++)
-	{
-		data.masks.push(this.masks[i].uuid);
-	}
-	*/
 
 	return object;
 };

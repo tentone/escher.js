@@ -979,7 +979,20 @@
 	 * @static
 	 * @type {Map<string, Function>}
 	 */
-	Object2D.types = new Map([]);
+	Object2D.types = new Map([[Object2D.prototype.type, Object2D]]);
+
+	/**
+	 * Register a object type into the application. Associates the type string to the object constructor.
+	 *
+	 * Should be called for every new object class implemented if you want to be able to serialize and parse data.
+	 *
+	 * @param {Function} constructor Object constructor.
+	 * @param {string} type Object type name.
+	 */
+	Object2D.register = function(constructor, type)
+	{
+		Object2D.type.set(type, constructor);
+	};
 
 	/**
 	 * Check if a point in world coordinates intersects this object or its children and get a list of the objects intersected.
@@ -1391,8 +1404,9 @@
 	 * Dont forget to register object types using the Object2D.register() method.
 	 *
 	 * @param {Object} data Object data loaded from JSON.
+	 * @param {Object2D} root Root object being loaded can be used to get references to other objects.
 	 */
-	Object2D.prototype.parse = function(data)
+	Object2D.prototype.parse = function(data, root)
 	{
 		this.uuid = data.uuid;
 		this.position.fromArray(data.position);
@@ -1412,6 +1426,11 @@
 		this.restoreContextState = data.restoreContextState;
 		this.pointerInside = data.pointerInside;
 		this.beingDragged = data.beingDragged;
+
+		for(var i = 0; i < this.masks.length; i++)
+		{
+			data.masks.push(root.getChildByUUID(data.masks[i]));
+		}
 	};
 
 	/**
@@ -1419,957 +1438,42 @@
 	 *
 	 * All objects should implement serialization methods to serialize and load data properly.
 	 *
+	 * First all objects instances are created to ensure that object trying to get references to other object can have the data accessible, only then the parse method is called.
+	 *
 	 * @static
 	 * @param {Object} data Object data loaded from JSON.
 	 * @return {Object2D} Parsed object data.
 	 */
 	Object2D.parse = function(data)
 	{
-		var object = new Object2D.types.get(data.type)();
-		object.parse(data);
+		var objects = [];
 
-		for(var i = 0; i < data.children.length; i++)
-		{
-			this.add(Object2D.parse(data.children[i]));
+		function createObjectInstances(data) {
+			if(!Object2D.types.has(data.type))
+			{
+				throw new Error("Object type " + data.type + " unknown. Cannot parse data.");
+			}
+
+			var object = new Object2D.types.get(data.type)();
+			for(var i = 0; i < data.children.length; i++)
+			{
+				object.add(createObjectInstances(data.children[i]));
+			}
+
+			objects.push({object: object, data: data});
+
+			return object;
 		}
 
+		var object = createObjectInstances(data);
 
-		// TODO <ADD CODE HERE>
-		/*
-		for(var i = 0; i < this.masks.length; i++)
+		// Parse objects data
+		for(var i = 0; i < objects.length; i++)
 		{
-			data.masks.push(this.masks[i].uuid);
+			objects[i].object.parse(objects[i].data, object);
 		}
-		*/
 
 		return object;
-	};
-
-	/**
-	 * Box is described by a minimum and maximum points.
-	 *
-	 * Can be used for collision detection with points and other boxes.
-	 *
-	 * @class
-	 * @param {Vector2} min
-	 * @param {Vector2} max
-	 */
-	function Box2(min, max)
-	{
-		this.min = (min !== undefined) ? min : new Vector2();
-		this.max = (max !== undefined) ? max : new Vector2();
-	}
-
-	/**
-	 * Set the box values.
-	 *
-	 * @param {Vector2} min
-	 * @param {Vector2} max
-	 */
-	Box2.prototype.set = function(min, max)
-	{
-		this.min.copy(min);
-		this.max.copy(max);
-
-		return this;
-	};
-
-	/**
-	 * Set the box from a list of Vector2 points.
-	 *
-	 * @param {Array} points
-	 */
-	Box2.prototype.setFromPoints = function(points)
-	{
-		this.min = new Vector2(+Infinity, +Infinity);
-		this.max = new Vector2(-Infinity, -Infinity);
-
-		for(var i = 0, il = points.length; i < il; i++)
-		{
-			this.expandByPoint(points[i]);
-		}
-
-		return this;
-	};
-
-	/** 
-	 * Set the box minimum and maximum from center point and size.
-	 *
-	 * @param {Vector2} center
-	 * @param {Vector2} size
-	 */
-	Box2.prototype.setFromCenterAndSize = function(center, size)
-	{
-		var v1 = new Vector2();
-		var halfSize = v1.copy(size).multiplyScalar(0.5);
-		this.min.copy(center).sub(halfSize);
-		this.max.copy(center).add(halfSize);
-
-		return this;
-	};
-
-	/**
-	 * Clone the box into a new object.
-	 *
-	 * Should be used when it it necessary to make operations to this box.
-	 *
-	 * @return {Box2} New box object with the copy of this object.
-	 */
-	Box2.prototype.clone = function()
-	{
-		var box = new Box2();
-		box.copy(this);
-		return box;
-	};
-
-	/**
-	 * Copy the box value from another box.
-	 *
-	 * @param {Box2} point
-	 */
-	Box2.prototype.copy = function(box)
-	{
-		this.min.copy(box.min);
-		this.max.copy(box.max);
-	};
-
-	/**
-	 * Check if the box is empty (size equals zero or is negative).
-	 *
-	 * The box size is condireded valid on two negative axis.
-	 *
-	 * @return {boolean} True if the box is empty.
-	 */
-	Box2.prototype.isEmpty = function()
-	{
-		return (this.max.x < this.min.x) || (this.max.y < this.min.y);
-	};
-
-	/**
-	 * Calculate the center point of the box.
-	 *
-	 * @param {Vector2} [target] Vector to store the result.
-	 * @return {Vector2} Central point of the box.
-	 */
-	Box2.prototype.getCenter = function(target)
-	{
-		if(target === undefined)
-		{
-			target = new Vector2();
-		}
-
-		this.isEmpty() ? target.set(0, 0) : target.addVectors(this.min, this.max).multiplyScalar(0.5);
-
-		return target;
-	};
-
-	/**
-	 * Get the size of the box from its min and max points.
-	 *
-	 * @param {Vector2} [target] Vector to store the result.
-	 * @return {Vector2} Vector with the calculated size.
-	 */
-	Box2.prototype.getSize = function(target)
-	{
-		if(target === undefined)
-		{
-			target = new Vector2();
-		}
-
-		this.isEmpty() ? target.set(0, 0) : target.subVectors(this.max, this.min);
-
-		return target;
-	};
-
-	/**
-	 * Expand the box to contain a new point.
-	 *
-	 * @param {Vector2} point
-	 */
-	Box2.prototype.expandByPoint = function(point)
-	{
-		this.min.min(point);
-		this.max.max(point);
-
-		return this;
-	};
-
-	/**
-	 * Expand the box by adding a border with the vector size.
-	 *
-	 * Vector is subtracted from min and added to the max points.
-	 *
-	 * @param {Vector2} vector
-	 */
-	Box2.prototype.expandByVector = function(vector)
-	{
-		this.min.sub(vector);
-		this.max.add(vector);
-	};
-
-	/**
-	 * Expand the box by adding a border with the scalar value.
-	 *
-	 * @param {number} scalar
-	 */
-	Box2.prototype.expandByScalar = function(scalar)
-	{
-		this.min.addScalar(-scalar);
-		this.max.addScalar(scalar);
-	};
-
-	/**
-	 * Check if the box contains a point inside.
-	 *
-	 * @param {Vector2} point
-	 * @return {boolean} True if the box contains point.
-	 */
-	Box2.prototype.containsPoint = function(point)
-	{
-		return !(point.x < this.min.x || point.x > this.max.x || point.y < this.min.y || point.y > this.max.y);
-	};
-
-	/**
-	 * Check if the box fully contains another box inside (different from intersects box).
-	 *
-	 * Only returns true if the box is fully contained.
-	 *
-	 * @param {Box2} box
-	 * @return {boolean} True if the box contains box.
-	 */
-	Box2.prototype.containsBox = function(box)
-	{
-		return this.min.x <= box.min.x && box.max.x <= this.max.x && this.min.y <= box.min.y && box.max.y <= this.max.y;
-	};
-
-	/**
-	 * Check if two boxes intersect each other, using 4 splitting planes to rule out intersections.
-	 * 
-	 * @param {Box2} box
-	 * @return {boolean} True if the boxes intersect each other.
-	 */
-	Box2.prototype.intersectsBox = function(box)
-	{
-		return !(box.max.x < this.min.x || box.min.x > this.max.x || box.max.y < this.min.y || box.min.y > this.max.y);
-	};
-
-	/**
-	 * Calculate the distance to a point.
-	 *
-	 * @param {Vector2} point
-	 * @return {number} Distance to point calculated.
-	 */
-	Box2.prototype.distanceToPoint = function(point)
-	{
-		var v = new Vector2();
-		var clampedPoint = v.copy(point).clamp(this.min, this.max);
-		return clampedPoint.sub(point).length();
-	};
-
-	/**
-	 * Make a intersection between this box and another box.
-	 *
-	 * Store the result in this object.
-	 *
-	 * @param {Box2} box
-	 */
-	Box2.prototype.intersect = function(box)
-	{
-		this.min.max(box.min);
-		this.max.min(box.max);
-	};
-
-	/**
-	 * Make a union between this box and another box.
-	 *
-	 * Store the result in this object.
-	 *
-	 * @param {Box2} box
-	 */
-	Box2.prototype.union = function(box)
-	{
-		this.min.min(box.min);
-		this.max.max(box.max);
-	};
-
-	/**
-	 * Translate the box by a offset value, adds the offset to booth min and max.
-	 *
-	 * @param {Vector2} offset
-	 */
-	Box2.prototype.translate = function(offset)
-	{
-		this.min.add(offset);
-		this.max.add(offset);
-	};
-
-	/**
-	 * Checks if two boxes are equal.
-	 *
-	 * @param {Box2} box
-	 * @return {boolean} True if the two boxes are equal.
-	 */
-	Box2.prototype.equals = function(box)
-	{
-		return box.min.equals(this.min) && box.max.equals(this.max);
-	};
-
-	/**
-	 * Store the box data into a numeric array.
-	 *
-	 * @return {number[]} Numeric array with box data min and max.
-	 */
-	Box2.prototype.toArray = function()
-	{
-		return [this.box.min.x, this.box.min.y, this.box.max.x, this.box.max.y];
-	};
-
-	/**
-	 * Set box data min and max from numeric array.
-	 *
-	 * @param {number[]} array Numeric array with box data min and max.
-	 */
-	Box2.prototype.fromArray = function(array)
-	{
-		this.box.min.set(array[0], array[1]);
-		this.box.max.set(array[2], array[3]);
-	};
-
-	/**
-	 * Circle object draw a circular object, into the canvas.
-	 *
-	 * Can be used as a base to implement other circular objects, already implements the circle collision for pointer events.
-	 *
-	 * @class
-	 * @extends {Object2D}
-	 */
-	function Circle()
-	{
-		Object2D.call(this);
-
-		/**
-		 * Radius of the circle.
-		 */
-		this.radius = 10.0;
-
-		/**
-		 * Style of the object border line.
-		 *
-		 * If set null it is ignored.
-		 */
-		this.strokeStyle = "#000000";
-
-		/**
-		 * Line width, only used if a valid strokeStyle is defined.
-		 */
-		this.lineWidth = 1;
-
-		/**
-		 * Background color of the circle.
-		 *
-		 * If set null it is ignored.
-		 */
-		this.fillStyle = "#FFFFFF";
-	}
-
-	Circle.prototype = Object.create(Object2D.prototype);
-	Circle.prototype.constructor = Circle;
-	Circle.prototype.type = "Circle";
-
-	Circle.prototype.isInside = function(point)
-	{
-		return point.length() <= this.radius;
-	};
-
-	Circle.prototype.onPointerEnter = function(pointer, viewport)
-	{
-		this.fillStyle = "#CCCCCC";
-	};
-
-	Circle.prototype.onPointerLeave = function(pointer, viewport)
-	{
-		this.fillStyle = "#FFFFFF";
-	};
-
-	Circle.prototype.draw = function(context, viewport, canvas)
-	{
-		context.beginPath();
-		context.arc(0, 0, this.radius, 0, 2 * Math.PI);
-		
-		if(this.fillStyle !== null)
-		{	
-			context.fillStyle = this.fillStyle;
-			context.fill();
-		}
-
-		if(this.strokeStyle !== null)
-		{
-			context.lineWidth = this.lineWidth;
-			context.strokeStyle = this.strokeStyle;
-			context.stroke();
-		}
-	};
-
-	Circle.prototype.serialize = function(recursive)
-	{
-		var data = Object2D.prototype.serialize.call(this, recursive);
-
-		data.radius = this.radius;
-		data.strokeStyle = this.strokeStyle;
-		data.lineWidth = this.lineWidth;
-		data.fillStyle = this.fillStyle;
-
-		return data;
-	};
-
-	Circle.prototype.parse = function(data)
-	{
-		Object2D.prototype.parse.call(this, data);
-
-		this.radius = data.radius;
-		this.strokeStyle = data.strokeStyle;
-		this.lineWidth = data.lineWidth;
-		this.fillStyle = data.fillStyle;
-	};
-
-	/**
-	 * Image object is used to draw an image from URL.
-	 *
-	 * @class
-	 * @param {string} src Source URL of the image.
-	 * @extends {Object2D}
-	 */
-	function Image(src)
-	{
-		Object2D.call(this);
-		
-		/**
-		 * Box object containing the size of the object.
-		 */
-		this.box = new Box2();
-
-		/**
-		 * Image source DOM element.
-		 */
-		this.image = document.createElement("img");
-
-		if(src !== undefined)
-		{
-			this.setImage(src);
-		}
-	}
-
-	Image.prototype = Object.create(Object2D.prototype);
-	Image.prototype.constructor = Image;
-	Image.prototype.type = "Image";
-
-	/**
-	 * Set the image of the object.
-	 *
-	 * Automatically sets the box size to match the image.
-	 *
-	 * @param {string} src Source URL of the image.
-	 */
-	Image.prototype.setImage = function(src)
-	{
-		var self = this;
-
-		this.image.onload = function()
-		{
-			self.box.min.set(0, 0);
-			self.box.max.set(this.naturalWidth, this.naturalHeight);
-		};
-		this.image.src = src;
-	};
-
-	Image.prototype.isInside = function(point)
-	{
-		return this.box.containsPoint(point);
-	};
-
-	Image.prototype.draw = function(context, viewport, canvas)
-	{
-		if(this.image.src.length > 0)
-		{
-			context.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
-		}
-	};
-
-	Image.prototype.serialize = function(recursive)
-	{
-		var data = Object2D.prototype.serialize.call(this, recursive);
-
-		data.box = this.box.toArray();
-		data.image = this.image.src;
-
-		return data;
-	};
-
-	Image.prototype.parse = function(data)
-	{
-		Object2D.prototype.parse.call(this, data);
-
-		this.box.fromArray(data.box);
-		this.image.src = data.image;
-	};
-
-	/**
-	 * Line object draw a line from one point to another without any kind of interpolation.
-	 *
-	 * For drawing lines with interpolation check {BezierCurve}
-	 *
-	 * @class
-	 * @extends {Object2D}
-	 */
-	function Line()
-	{
-		Object2D.call(this);
-
-		/**
-		 * Initial point of the line.
-		 *
-		 * Can be equal to the position object of another object. Making it automatically follow that object.
-		 *
-		 * @type {Vector2}
-		 */
-		this.from = new Vector2();
-
-		/**
-		 * Final point of the line.
-		 *
-		 * Can be equal to the position object of another object. Making it automatically follow that object.
-		 *
-		 * @type {Vector2}
-		 */
-		this.to = new Vector2();
-
-		/**
-		 * Dash line pattern to be used, if empty draws a solid line.
-		 *
-		 * Dash pattern is defined as the size of dashes as pairs of space with no line and with line.
-		 *
-		 * E.g if the dash pattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
-		 *
-		 * @type {number[]}
-		 */
-		this.dashPattern = [5, 5];
-
-		/**
-		 * Style of the object line.
-		 *
-		 * @type {string}
-		 */
-		this.strokeStyle = "#000000";
-
-		/**
-		 * Line width of the line.
-		 *
-		 * @type {number}
-		 */
-		this.lineWidth = 1;
-	}
-
-	Line.prototype = Object.create(Object2D.prototype);
-	Line.prototype.constructor = Line;
-	Line.prototype.type = "Line";
-
-	Line.prototype.style = function(context, viewport, canvas)
-	{
-		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
-		context.setLineDash(this.dashPattern);
-	};
-
-	Line.prototype.draw = function(context, viewport, canvas)
-	{
-		context.beginPath();
-		context.moveTo(this.from.x, this.from.y);
-		context.lineTo(this.to.x, this.to.y);
-		context.stroke();
-	};
-
-	Line.prototype.serialize = function(recursive)
-	{
-		var data = Object2D.prototype.serialize.call(this, recursive);
-
-		data.from = this.from.toArray();
-		data.to = this.to.toArray();
-		data.dashPattern = this.dashPattern;
-		data.strokeStyle = this.strokeStyle;
-		data.lineWidth = this.lineWidth;
-
-		return data;
-	};
-
-	Line.prototype.parse = function(data)
-	{
-		Object2D.prototype.parse.call(this, data);
-
-		this.to.fromArray(data.to);
-		this.from.fromArray(data.from);
-		this.dashPattern = data.dashPattern;
-		this.strokeStyle = data.strokeStyle;
-		this.lineWidth = data.lineWidth;
-	};
-
-	/**
-	 * Bezier curve object draw as bezier curve between two points.
-	 *
-	 * @class
-	 * @extends {Object2D}
-	 */
-	function QuadraticCurve()
-	{
-		Line.call(this);
-
-		/**
-		 * Control point of the quadratic curve used to control the curvature of the line between the from and to point.
-		 *
-		 * The curve is interpolated in the direction of the control point it defined the path of the curve.
-		 *
-		 * @type {Vector2}
-		 */
-		this.controlPoint = new Vector2();
-	}
-
-	QuadraticCurve.prototype = Object.create(Line.prototype);
-	QuadraticCurve.prototype.constructor = QuadraticCurve;
-	QuadraticCurve.prototype.type = "QuadraticCurve";
-
-	/**
-	 * Create a quadratic curve helper, to edit the curve control point.
-	 *
-	 * Helper objects are added to the parent of the curve object.
-	 *
-	 * @static
-	 * @param {QuadraticCurve} object Object to create the helper for.
-	 */
-	QuadraticCurve.curveHelper = function(object)
-	{
-		var fromLine = new Line();
-		fromLine.from = object.from;
-		fromLine.to = object.controlPoint;
-		object.parent.add(fromLine);
-
-		var controlPoint = new Circle();
-		controlPoint.radius = 3;
-		controlPoint.layer = object.layer + 1;
-		controlPoint.draggable = true;
-		controlPoint.position = object.controlPoint;
-		controlPoint.onPointerDrag = function(pointer, viewport, delta)
-		{
-			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
-			object.controlPoint.copy(controlPoint.position);
-		};
-		object.parent.add(controlPoint);
-
-		var toLine = new Line();
-		toLine.from = object.to;
-		toLine.to = object.controlPoint;
-		object.parent.add(toLine);
-	};
-
-	QuadraticCurve.prototype.draw = function(context, viewport, canvas)
-	{
-		context.beginPath();
-		context.moveTo(this.from.x, this.from.y);
-		context.quadraticCurveTo(this.controlPoint.x, this.controlPoint.y, this.to.x, this.to.y);
-		context.stroke();
-	};
-
-	QuadraticCurve.prototype.serialize = function(recursive)
-	{
-		var data = Line.prototype.serialize.call(this, recursive);
-
-		data.controlPoint = this.controlPoint.toArray();
-
-		return data;
-	};
-
-	QuadraticCurve.prototype.parse = function(data)
-	{
-		Line.prototype.parse.call(this, data);
-
-		this.controlPoint.fromArray(data.controlPoint);
-	};
-
-	/**
-	 * Bezier curve object draw as bezier curve between two points.
-	 *
-	 * @class
-	 * @extends {Line}
-	 */
-	function BezierCurve()
-	{
-		Line.call(this);
-
-		/**
-		 * Initial position control point, indicates the tangent of the bezier curve on the first point.
-		 *
-		 * @type {Vector2}
-		 */
-		this.fromCp = new Vector2();
-
-		/**
-		 * Final position control point, indicates the tangent of the bezier curve on the last point.
-		 *
-		 * @type {Vector2}
-		 */
-		this.toCp = new Vector2();
-	}
-
-	BezierCurve.prototype = Object.create(Line.prototype);
-	BezierCurve.prototype.constructor = BezierCurve;
-	BezierCurve.prototype.type = "BezierCurve";
-
-	/**
-	 * Create a bezier curve helper, to edit the bezier curve anchor points.
-	 *
-	 * Helper objects are added to the parent of the curve object.
-	 *
-	 * @static
-	 * @param {BezierCurve} object Object to create the helper for.
-	 */
-	BezierCurve.curveHelper = function(object)
-	{
-		var fromCp = new Circle();
-		fromCp.radius = 3;
-		fromCp.layer = object.layer + 1;
-		fromCp.draggable = true;
-		fromCp.onPointerDrag = function(pointer, viewport, delta)
-		{
-			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
-			object.fromCp.copy(fromCp.position);
-		};
-		object.parent.add(fromCp);
-
-		var fromLine = new Line();
-		fromLine.from = object.from;
-		fromLine.to = object.fromCp;
-		object.parent.add(fromLine);
-
-		var toCp = new Circle();
-		toCp.radius = 3;
-		toCp.layer = object.layer + 1;
-		toCp.draggable = true;
-		toCp.onPointerDrag = function(pointer, viewport, delta)
-		{
-			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
-			object.toCp.copy(toCp.position);
-		};
-		object.parent.add(toCp);
-
-		var toLine = new Line();
-		toLine.from = object.to;
-		toLine.to = object.toCp;
-		object.parent.add(toLine);
-	};
-
-	BezierCurve.prototype.draw = function(context, viewport, canvas)
-	{
-		context.beginPath();
-		context.moveTo(this.from.x, this.from.y);
-		context.bezierCurveTo(this.fromCp.x, this.fromCp.y, this.toCp.x, this.toCp.y, this.to.x, this.to.y);
-		context.stroke();
-	};
-
-	BezierCurve.prototype.serialize = function(recursive)
-	{
-		var data = Line.prototype.serialize.call(this, recursive);
-
-		data.fromCp = this.fromCp.toArray();
-		data.toCp = this.toCp.toArray();
-
-		return data;
-	};
-
-	BezierCurve.prototype.parse = function(data)
-	{
-		Line.prototype.parse.call(this, data);
-
-		this.fromCp.fromArray(data.fromCp);
-		this.toCp.fromArray(data.toCp);
-	};
-
-	/**
-	 * Box object draw a rectangular object.
-	 *
-	 * Can be used as a base to implement other box objects, already implements collision for pointer events.
-	 *
-	 * @class
-	 * @extends {Object2D}
-	 */
-	function Box()
-	{
-		Object2D.call(this);
-
-		/**
-		 * Box object containing the size of the object.
-		 */
-		this.box = new Box2(new Vector2(-50, -50), new Vector2(50, 50));
-
-		/**
-		 * Style of the object border line.
-		 *
-		 * If set null it is ignored.
-		 */
-		this.strokeStyle = "#000000";
-
-		/**
-		 * Line width, only used if a valid strokeStyle is defined.
-		 */
-		this.lineWidth = 1;
-
-		/**
-		 * Background color of the box.
-		 *
-		 * If set null it is ignored.
-		 */
-		this.fillStyle = "#FFFFFF";
-	}
-
-	Box.prototype = Object.create(Object2D.prototype);
-	Box.prototype.constructor = Box;
-	Box.prototype.type = "Box";
-
-	Box.prototype.onPointerEnter = function(pointer, viewport)
-	{
-		this.fillStyle = "#CCCCCC";
-	};
-
-	Box.prototype.onPointerLeave = function(pointer, viewport)
-	{
-		this.fillStyle = "#FFFFFF";
-	};
-
-	Box.prototype.isInside = function(point)
-	{
-		return this.box.containsPoint(point);
-	};
-
-	Box.prototype.draw = function(context, viewport, canvas)
-	{
-		var width = this.box.max.x - this.box.min.x;
-		var height = this.box.max.y - this.box.min.y;
-
-		if(this.fillStyle !== null)
-		{	
-			context.fillStyle = this.fillStyle;
-			context.fillRect(this.box.min.x, this.box.min.y, width, height);
-		}
-
-		if(this.strokeStyle !== null)
-		{
-			context.lineWidth = this.lineWidth;
-			context.strokeStyle = this.strokeStyle;
-			context.strokeRect(this.box.min.x, this.box.min.y, width, height);
-		}
-	};
-
-	Box.prototype.serialize = function(recursive)
-	{
-		var data = Object2D.prototype.serialize.call(this, recursive);
-
-		data.box = this.box.toArray();
-		data.strokeStyle = this.strokeStyle;
-		data.lineWidth = this.lineWidth;
-		data.fillStyle = this.fillStyle;
-
-		return data;
-	};
-
-	Box.prototype.parse = function(data)
-	{
-		Object2D.prototype.parse.call(this, data);
-
-		this.box.fromArray(data.box);
-		this.strokeStyle = data.strokeStyle;
-		this.lineWidth = data.lineWidth;
-		this.fillStyle = data.fillStyle;
-	};
-
-	/**
-	 * Rounded box object draw a rectangular object with rounded corners.
-	 *
-	 * @class
-	 * @extends {Box}
-	 */
-	function RoundedBox()
-	{
-		Box.call(this);
-
-		/**
-		 * Radius of the circular section that makes up the box corners.
-		 *
-		 * @type {number}
-		 */
-		this.radius = 5;
-	}
-
-	RoundedBox.prototype = Object.create(Box.prototype);
-	RoundedBox.prototype.constructor = RoundedBox;
-	RoundedBox.prototype.type = "RoundedBox";
-
-	/**
-	 * Draw a rounded rectangle into the canvas context using path to draw the rounded rectangle.
-	 *
-	 * @param {CanvasRenderingContext2D} context
-	 * @param {number} x The top left x coordinate
-	 * @param {number} y The top left y coordinate
-	 * @param {number} width The width of the rectangle
-	 * @param {number} height The height of the rectangle
-	 * @param {number} radius Radius of the rectangle corners.
-	 */
-	RoundedBox.roundRect = function(context, x, y, width, height, radius)
-	{
-		context.beginPath();
-		context.moveTo(x + radius, y);
-		context.lineTo(x + width - radius, y);
-		context.quadraticCurveTo(x + width, y, x + width, y + radius);
-		context.lineTo(x + width, y + height - radius);
-		context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-		context.lineTo(x + radius, y + height);
-		context.quadraticCurveTo(x, y + height, x, y + height - radius);
-		context.lineTo(x, y + radius);
-		context.quadraticCurveTo(x, y, x + radius, y);
-		context.closePath();
-	};
-
-	RoundedBox.prototype.draw = function(context, viewport, canvas)
-	{
-		var width = this.box.max.x - this.box.min.x;
-		var height = this.box.max.y - this.box.min.y;
-
-		if(this.fillStyle !== null)
-		{	
-			context.fillStyle = this.fillStyle;
-			RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
-			context.fill();
-		}
-
-		if(this.strokeStyle !== null)
-		{
-			context.lineWidth = this.lineWidth;
-			context.strokeStyle = this.strokeStyle;
-			RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
-			context.stroke();
-		}
-	};
-
-	RoundedBox.prototype.serialize = function(recursive)
-	{
-		var data = Box.prototype.serialize.call(this, recursive);
-
-		data.radius = this.radius;
-
-		return data;
-	};
-
-	RoundedBox.prototype.parse = function(data)
-	{
-		Box.prototype.parse.call(this, data);
-
-		this.radius = data.radius;
 	};
 
 	/**
@@ -3697,6 +2801,331 @@
 	};
 
 	/**
+	 * Box is described by a minimum and maximum points.
+	 *
+	 * Can be used for collision detection with points and other boxes.
+	 *
+	 * @class
+	 * @param {Vector2} min
+	 * @param {Vector2} max
+	 */
+	function Box2(min, max)
+	{
+		this.min = (min !== undefined) ? min : new Vector2();
+		this.max = (max !== undefined) ? max : new Vector2();
+	}
+
+	/**
+	 * Set the box values.
+	 *
+	 * @param {Vector2} min
+	 * @param {Vector2} max
+	 */
+	Box2.prototype.set = function(min, max)
+	{
+		this.min.copy(min);
+		this.max.copy(max);
+
+		return this;
+	};
+
+	/**
+	 * Set the box from a list of Vector2 points.
+	 *
+	 * @param {Array} points
+	 */
+	Box2.prototype.setFromPoints = function(points)
+	{
+		this.min = new Vector2(+Infinity, +Infinity);
+		this.max = new Vector2(-Infinity, -Infinity);
+
+		for(var i = 0, il = points.length; i < il; i++)
+		{
+			this.expandByPoint(points[i]);
+		}
+
+		return this;
+	};
+
+	/** 
+	 * Set the box minimum and maximum from center point and size.
+	 *
+	 * @param {Vector2} center
+	 * @param {Vector2} size
+	 */
+	Box2.prototype.setFromCenterAndSize = function(center, size)
+	{
+		var v1 = new Vector2();
+		var halfSize = v1.copy(size).multiplyScalar(0.5);
+		this.min.copy(center).sub(halfSize);
+		this.max.copy(center).add(halfSize);
+
+		return this;
+	};
+
+	/**
+	 * Clone the box into a new object.
+	 *
+	 * Should be used when it it necessary to make operations to this box.
+	 *
+	 * @return {Box2} New box object with the copy of this object.
+	 */
+	Box2.prototype.clone = function()
+	{
+		var box = new Box2();
+		box.copy(this);
+		return box;
+	};
+
+	/**
+	 * Copy the box value from another box.
+	 *
+	 * @param {Box2} point
+	 */
+	Box2.prototype.copy = function(box)
+	{
+		this.min.copy(box.min);
+		this.max.copy(box.max);
+	};
+
+	/**
+	 * Check if the box is empty (size equals zero or is negative).
+	 *
+	 * The box size is condireded valid on two negative axis.
+	 *
+	 * @return {boolean} True if the box is empty.
+	 */
+	Box2.prototype.isEmpty = function()
+	{
+		return (this.max.x < this.min.x) || (this.max.y < this.min.y);
+	};
+
+	/**
+	 * Calculate the center point of the box.
+	 *
+	 * @param {Vector2} [target] Vector to store the result.
+	 * @return {Vector2} Central point of the box.
+	 */
+	Box2.prototype.getCenter = function(target)
+	{
+		if(target === undefined)
+		{
+			target = new Vector2();
+		}
+
+		this.isEmpty() ? target.set(0, 0) : target.addVectors(this.min, this.max).multiplyScalar(0.5);
+
+		return target;
+	};
+
+	/**
+	 * Get the size of the box from its min and max points.
+	 *
+	 * @param {Vector2} [target] Vector to store the result.
+	 * @return {Vector2} Vector with the calculated size.
+	 */
+	Box2.prototype.getSize = function(target)
+	{
+		if(target === undefined)
+		{
+			target = new Vector2();
+		}
+
+		this.isEmpty() ? target.set(0, 0) : target.subVectors(this.max, this.min);
+
+		return target;
+	};
+
+	/**
+	 * Expand the box to contain a new point.
+	 *
+	 * @param {Vector2} point
+	 */
+	Box2.prototype.expandByPoint = function(point)
+	{
+		this.min.min(point);
+		this.max.max(point);
+
+		return this;
+	};
+
+	/**
+	 * Expand the box by adding a border with the vector size.
+	 *
+	 * Vector is subtracted from min and added to the max points.
+	 *
+	 * @param {Vector2} vector
+	 */
+	Box2.prototype.expandByVector = function(vector)
+	{
+		this.min.sub(vector);
+		this.max.add(vector);
+	};
+
+	/**
+	 * Expand the box by adding a border with the scalar value.
+	 *
+	 * @param {number} scalar
+	 */
+	Box2.prototype.expandByScalar = function(scalar)
+	{
+		this.min.addScalar(-scalar);
+		this.max.addScalar(scalar);
+	};
+
+	/**
+	 * Check if the box contains a point inside.
+	 *
+	 * @param {Vector2} point
+	 * @return {boolean} True if the box contains point.
+	 */
+	Box2.prototype.containsPoint = function(point)
+	{
+		return !(point.x < this.min.x || point.x > this.max.x || point.y < this.min.y || point.y > this.max.y);
+	};
+
+	/**
+	 * Check if the box fully contains another box inside (different from intersects box).
+	 *
+	 * Only returns true if the box is fully contained.
+	 *
+	 * @param {Box2} box
+	 * @return {boolean} True if the box contains box.
+	 */
+	Box2.prototype.containsBox = function(box)
+	{
+		return this.min.x <= box.min.x && box.max.x <= this.max.x && this.min.y <= box.min.y && box.max.y <= this.max.y;
+	};
+
+	/**
+	 * Check if two boxes intersect each other, using 4 splitting planes to rule out intersections.
+	 * 
+	 * @param {Box2} box
+	 * @return {boolean} True if the boxes intersect each other.
+	 */
+	Box2.prototype.intersectsBox = function(box)
+	{
+		return !(box.max.x < this.min.x || box.min.x > this.max.x || box.max.y < this.min.y || box.min.y > this.max.y);
+	};
+
+	/**
+	 * Calculate the distance to a point.
+	 *
+	 * @param {Vector2} point
+	 * @return {number} Distance to point calculated.
+	 */
+	Box2.prototype.distanceToPoint = function(point)
+	{
+		var v = new Vector2();
+		var clampedPoint = v.copy(point).clamp(this.min, this.max);
+		return clampedPoint.sub(point).length();
+	};
+
+	/**
+	 * Make a intersection between this box and another box.
+	 *
+	 * Store the result in this object.
+	 *
+	 * @param {Box2} box
+	 */
+	Box2.prototype.intersect = function(box)
+	{
+		this.min.max(box.min);
+		this.max.min(box.max);
+	};
+
+	/**
+	 * Make a union between this box and another box.
+	 *
+	 * Store the result in this object.
+	 *
+	 * @param {Box2} box
+	 */
+	Box2.prototype.union = function(box)
+	{
+		this.min.min(box.min);
+		this.max.max(box.max);
+	};
+
+	/**
+	 * Translate the box by a offset value, adds the offset to booth min and max.
+	 *
+	 * @param {Vector2} offset
+	 */
+	Box2.prototype.translate = function(offset)
+	{
+		this.min.add(offset);
+		this.max.add(offset);
+	};
+
+	/**
+	 * Checks if two boxes are equal.
+	 *
+	 * @param {Box2} box
+	 * @return {boolean} True if the two boxes are equal.
+	 */
+	Box2.prototype.equals = function(box)
+	{
+		return box.min.equals(this.min) && box.max.equals(this.max);
+	};
+
+	/**
+	 * Store the box data into a numeric array.
+	 *
+	 * @return {number[]} Numeric array with box data min and max.
+	 */
+	Box2.prototype.toArray = function()
+	{
+		return [this.box.min.x, this.box.min.y, this.box.max.x, this.box.max.y];
+	};
+
+	/**
+	 * Set box data min and max from numeric array.
+	 *
+	 * @param {number[]} array Numeric array with box data min and max.
+	 */
+	Box2.prototype.fromArray = function(array)
+	{
+		this.box.min.set(array[0], array[1]);
+		this.box.max.set(array[2], array[3]);
+	};
+
+	/**
+	 * A mask can be used to set the drawing region.
+	 *
+	 * Masks are treated as objects their shape is used to filter other objects shape.
+	 *
+	 * Multiple mask objects can be active simultaneously, they have to be attached to the object mask list to filter the render region.
+	 *
+	 * A mask objects is draw using the context.clip() method.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function Mask()
+	{
+		Object2D.call(this);
+	}
+
+	Mask.prototype = Object.create(Object2D.prototype);
+	Mask.prototype.constructor = Mask;
+	Mask.prototype.type = "Mask";
+	Mask.prototype.isMask = true;
+
+	/**
+	 * Clip the canvas context. Define a clipping path and set the clip using the context.clip() method.
+	 *
+	 * Ensures that next objects being drawn are clipped to the path stored here.
+	 *
+	 * More information about canvas clipping https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip.
+	 *
+	 * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
+	 * @param {Viewport} viewport Viewport applied to the canvas.
+	 * @param {DOM} canvas DOM canvas element where the content is being drawn.
+	 */
+	Mask.prototype.clip = function(context, viewport, canvas){};
+
+	/**
 	 * Box mask can be used to clear a box mask region.
 	 *
 	 * It will limit the drawing region to this box.
@@ -3755,35 +3184,378 @@
 	};
 
 	/**
-	 * A mask can be used to set the drawing region.
+	 * Box object draw a rectangular object.
 	 *
-	 * Masks are treated as objects their shape is used to filter other objects shape.
-	 *
-	 * Multiple mask objects can be active simultaneously, they have to be attached to the object mask list to filter the render region.
-	 *
-	 * A mask objects is draw using the context.clip() method.
+	 * Can be used as a base to implement other box objects, already implements collision for pointer events.
 	 *
 	 * @class
 	 * @extends {Object2D}
 	 */
-	function Mask()
+	function Box()
 	{
 		Object2D.call(this);
+
+		/**
+		 * Box object containing the size of the object.
+		 */
+		this.box = new Box2(new Vector2(-50, -50), new Vector2(50, 50));
+
+		/**
+		 * Style of the object border line.
+		 *
+		 * If set null it is ignored.
+		 */
+		this.strokeStyle = "#000000";
+
+		/**
+		 * Line width, only used if a valid strokeStyle is defined.
+		 */
+		this.lineWidth = 1;
+
+		/**
+		 * Background color of the box.
+		 *
+		 * If set null it is ignored.
+		 */
+		this.fillStyle = "#FFFFFF";
 	}
 
-	Mask.prototype = Object.create(Object2D.prototype);
-	Mask.prototype.constructor = Mask;
-	Mask.prototype.type = "Mask";
-	Mask.prototype.isMask = true;
+	Box.prototype = Object.create(Object2D.prototype);
+	Box.prototype.constructor = Box;
+	Box.prototype.type = "Box";
+
+	Box.prototype.onPointerEnter = function(pointer, viewport)
+	{
+		this.fillStyle = "#CCCCCC";
+	};
+
+	Box.prototype.onPointerLeave = function(pointer, viewport)
+	{
+		this.fillStyle = "#FFFFFF";
+	};
+
+	Box.prototype.isInside = function(point)
+	{
+		return this.box.containsPoint(point);
+	};
+
+	Box.prototype.draw = function(context, viewport, canvas)
+	{
+		var width = this.box.max.x - this.box.min.x;
+		var height = this.box.max.y - this.box.min.y;
+
+		if(this.fillStyle !== null)
+		{	
+			context.fillStyle = this.fillStyle;
+			context.fillRect(this.box.min.x, this.box.min.y, width, height);
+		}
+
+		if(this.strokeStyle !== null)
+		{
+			context.lineWidth = this.lineWidth;
+			context.strokeStyle = this.strokeStyle;
+			context.strokeRect(this.box.min.x, this.box.min.y, width, height);
+		}
+	};
+
+	Box.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		data.box = this.box.toArray();
+		data.strokeStyle = this.strokeStyle;
+		data.lineWidth = this.lineWidth;
+		data.fillStyle = this.fillStyle;
+
+		return data;
+	};
+
+	Box.prototype.parse = function(data)
+	{
+		Object2D.prototype.parse.call(this, data);
+
+		this.box.fromArray(data.box);
+		this.strokeStyle = data.strokeStyle;
+		this.lineWidth = data.lineWidth;
+		this.fillStyle = data.fillStyle;
+	};
 
 	/**
-	 * Clip the canvas context, to ensure that next objects being drawn are cliped to the path stored here.
+	 * Circle object draw a circular object, into the canvas.
 	 *
-	 * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
-	 * @param {Viewport} viewport Viewport applied to the canvas.
-	 * @param {DOM} canvas DOM canvas element where the content is being drawn.
+	 * Can be used as a base to implement other circular objects, already implements the circle collision for pointer events.
+	 *
+	 * @class
+	 * @extends {Object2D}
 	 */
-	Mask.prototype.clip = function(context, viewport, canvas){};
+	function Circle()
+	{
+		Object2D.call(this);
+
+		/**
+		 * Radius of the circle.
+		 */
+		this.radius = 10.0;
+
+		/**
+		 * Style of the object border line.
+		 *
+		 * If set null it is ignored.
+		 */
+		this.strokeStyle = "#000000";
+
+		/**
+		 * Line width, only used if a valid strokeStyle is defined.
+		 */
+		this.lineWidth = 1;
+
+		/**
+		 * Background color of the circle.
+		 *
+		 * If set null it is ignored.
+		 */
+		this.fillStyle = "#FFFFFF";
+	}
+
+	Circle.prototype = Object.create(Object2D.prototype);
+	Circle.prototype.constructor = Circle;
+	Circle.prototype.type = "Circle";
+
+	Circle.prototype.isInside = function(point)
+	{
+		return point.length() <= this.radius;
+	};
+
+	Circle.prototype.onPointerEnter = function(pointer, viewport)
+	{
+		this.fillStyle = "#CCCCCC";
+	};
+
+	Circle.prototype.onPointerLeave = function(pointer, viewport)
+	{
+		this.fillStyle = "#FFFFFF";
+	};
+
+	Circle.prototype.draw = function(context, viewport, canvas)
+	{
+		context.beginPath();
+		context.arc(0, 0, this.radius, 0, 2 * Math.PI);
+		
+		if(this.fillStyle !== null)
+		{	
+			context.fillStyle = this.fillStyle;
+			context.fill();
+		}
+
+		if(this.strokeStyle !== null)
+		{
+			context.lineWidth = this.lineWidth;
+			context.strokeStyle = this.strokeStyle;
+			context.stroke();
+		}
+	};
+
+	Circle.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		data.radius = this.radius;
+		data.strokeStyle = this.strokeStyle;
+		data.lineWidth = this.lineWidth;
+		data.fillStyle = this.fillStyle;
+
+		return data;
+	};
+
+	Circle.prototype.parse = function(data)
+	{
+		Object2D.prototype.parse.call(this, data);
+
+		this.radius = data.radius;
+		this.strokeStyle = data.strokeStyle;
+		this.lineWidth = data.lineWidth;
+		this.fillStyle = data.fillStyle;
+	};
+
+	/**
+	 * Image object is used to draw an image from URL.
+	 *
+	 * @class
+	 * @param {string} src Source URL of the image.
+	 * @extends {Object2D}
+	 */
+	function Image(src)
+	{
+		Object2D.call(this);
+		
+		/**
+		 * Box object containing the size of the object.
+		 */
+		this.box = new Box2();
+
+		/**
+		 * Image source DOM element.
+		 */
+		this.image = document.createElement("img");
+
+		if(src !== undefined)
+		{
+			this.setImage(src);
+		}
+	}
+
+	Image.prototype = Object.create(Object2D.prototype);
+	Image.prototype.constructor = Image;
+	Image.prototype.type = "Image";
+
+	/**
+	 * Set the image of the object.
+	 *
+	 * Automatically sets the box size to match the image.
+	 *
+	 * @param {string} src Source URL of the image.
+	 */
+	Image.prototype.setImage = function(src)
+	{
+		var self = this;
+
+		this.image.onload = function()
+		{
+			self.box.min.set(0, 0);
+			self.box.max.set(this.naturalWidth, this.naturalHeight);
+		};
+		this.image.src = src;
+	};
+
+	Image.prototype.isInside = function(point)
+	{
+		return this.box.containsPoint(point);
+	};
+
+	Image.prototype.draw = function(context, viewport, canvas)
+	{
+		if(this.image.src.length > 0)
+		{
+			context.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
+		}
+	};
+
+	Image.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		data.box = this.box.toArray();
+		data.image = this.image.src;
+
+		return data;
+	};
+
+	Image.prototype.parse = function(data)
+	{
+		Object2D.prototype.parse.call(this, data);
+
+		this.box.fromArray(data.box);
+		this.image.src = data.image;
+	};
+
+	/**
+	 * Line object draw a line from one point to another without any kind of interpolation.
+	 *
+	 * For drawing lines with interpolation check {BezierCurve}
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function Line()
+	{
+		Object2D.call(this);
+
+		/**
+		 * Initial point of the line.
+		 *
+		 * Can be equal to the position object of another object. Making it automatically follow that object.
+		 *
+		 * @type {Vector2}
+		 */
+		this.from = new Vector2();
+
+		/**
+		 * Final point of the line.
+		 *
+		 * Can be equal to the position object of another object. Making it automatically follow that object.
+		 *
+		 * @type {Vector2}
+		 */
+		this.to = new Vector2();
+
+		/**
+		 * Dash line pattern to be used, if empty draws a solid line.
+		 *
+		 * Dash pattern is defined as the size of dashes as pairs of space with no line and with line.
+		 *
+		 * E.g if the dash pattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
+		 *
+		 * @type {number[]}
+		 */
+		this.dashPattern = [5, 5];
+
+		/**
+		 * Style of the object line.
+		 *
+		 * @type {string}
+		 */
+		this.strokeStyle = "#000000";
+
+		/**
+		 * Line width of the line.
+		 *
+		 * @type {number}
+		 */
+		this.lineWidth = 1;
+	}
+
+	Line.prototype = Object.create(Object2D.prototype);
+	Line.prototype.constructor = Line;
+	Line.prototype.type = "Line";
+
+	Line.prototype.style = function(context, viewport, canvas)
+	{
+		context.lineWidth = this.lineWidth;
+		context.strokeStyle = this.strokeStyle;
+		context.setLineDash(this.dashPattern);
+	};
+
+	Line.prototype.draw = function(context, viewport, canvas)
+	{
+		context.beginPath();
+		context.moveTo(this.from.x, this.from.y);
+		context.lineTo(this.to.x, this.to.y);
+		context.stroke();
+	};
+
+	Line.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		data.from = this.from.toArray();
+		data.to = this.to.toArray();
+		data.dashPattern = this.dashPattern;
+		data.strokeStyle = this.strokeStyle;
+		data.lineWidth = this.lineWidth;
+
+		return data;
+	};
+
+	Line.prototype.parse = function(data)
+	{
+		Object2D.prototype.parse.call(this, data);
+
+		this.to.fromArray(data.to);
+		this.from.fromArray(data.from);
+		this.dashPattern = data.dashPattern;
+		this.strokeStyle = data.strokeStyle;
+		this.lineWidth = data.lineWidth;
+	};
 
 	/**
 	 * A DOM object transformed using CSS3D to be included in the scene.
@@ -3995,7 +3767,7 @@
 		}
 	};
 
-	Image.prototype.serialize = function(recursive)
+	Pattern.prototype.serialize = function(recursive)
 	{
 		var data = Object2D.prototype.serialize.call(this, recursive);
 
@@ -4006,7 +3778,7 @@
 		return data;
 	};
 
-	Image.prototype.parse = function(data)
+	Pattern.prototype.parse = function(data)
 	{
 		Object2D.prototype.parse.call(this, data);
 
@@ -4139,6 +3911,269 @@
 	};
 
 	/**
+	 * Bezier curve object draw as bezier curve between two points.
+	 *
+	 * @class
+	 * @extends {Line}
+	 */
+	function BezierCurve()
+	{
+		Line.call(this);
+
+		/**
+		 * Initial position control point, indicates the tangent of the bezier curve on the first point.
+		 *
+		 * @type {Vector2}
+		 */
+		this.fromCp = new Vector2();
+
+		/**
+		 * Final position control point, indicates the tangent of the bezier curve on the last point.
+		 *
+		 * @type {Vector2}
+		 */
+		this.toCp = new Vector2();
+	}
+
+	BezierCurve.prototype = Object.create(Line.prototype);
+	BezierCurve.prototype.constructor = BezierCurve;
+	BezierCurve.prototype.type = "BezierCurve";
+
+	/**
+	 * Create a bezier curve helper, to edit the bezier curve anchor points.
+	 *
+	 * Helper objects are added to the parent of the curve object.
+	 *
+	 * @static
+	 * @param {BezierCurve} object Object to create the helper for.
+	 */
+	BezierCurve.curveHelper = function(object)
+	{
+		var fromCp = new Circle();
+		fromCp.radius = 3;
+		fromCp.layer = object.layer + 1;
+		fromCp.draggable = true;
+		fromCp.onPointerDrag = function(pointer, viewport, delta)
+		{
+			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+			object.fromCp.copy(fromCp.position);
+		};
+		object.parent.add(fromCp);
+
+		var fromLine = new Line();
+		fromLine.from = object.from;
+		fromLine.to = object.fromCp;
+		object.parent.add(fromLine);
+
+		var toCp = new Circle();
+		toCp.radius = 3;
+		toCp.layer = object.layer + 1;
+		toCp.draggable = true;
+		toCp.onPointerDrag = function(pointer, viewport, delta)
+		{
+			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+			object.toCp.copy(toCp.position);
+		};
+		object.parent.add(toCp);
+
+		var toLine = new Line();
+		toLine.from = object.to;
+		toLine.to = object.toCp;
+		object.parent.add(toLine);
+	};
+
+	BezierCurve.prototype.draw = function(context, viewport, canvas)
+	{
+		context.beginPath();
+		context.moveTo(this.from.x, this.from.y);
+		context.bezierCurveTo(this.fromCp.x, this.fromCp.y, this.toCp.x, this.toCp.y, this.to.x, this.to.y);
+		context.stroke();
+	};
+
+	BezierCurve.prototype.serialize = function(recursive)
+	{
+		var data = Line.prototype.serialize.call(this, recursive);
+
+		data.fromCp = this.fromCp.toArray();
+		data.toCp = this.toCp.toArray();
+
+		return data;
+	};
+
+	BezierCurve.prototype.parse = function(data)
+	{
+		Line.prototype.parse.call(this, data);
+
+		this.fromCp.fromArray(data.fromCp);
+		this.toCp.fromArray(data.toCp);
+	};
+
+	/**
+	 * Bezier curve object draw as bezier curve between two points.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function QuadraticCurve()
+	{
+		Line.call(this);
+
+		/**
+		 * Control point of the quadratic curve used to control the curvature of the line between the from and to point.
+		 *
+		 * The curve is interpolated in the direction of the control point it defined the path of the curve.
+		 *
+		 * @type {Vector2}
+		 */
+		this.controlPoint = new Vector2();
+	}
+
+	QuadraticCurve.prototype = Object.create(Line.prototype);
+	QuadraticCurve.prototype.constructor = QuadraticCurve;
+	QuadraticCurve.prototype.type = "QuadraticCurve";
+
+	/**
+	 * Create a quadratic curve helper, to edit the curve control point.
+	 *
+	 * Helper objects are added to the parent of the curve object.
+	 *
+	 * @static
+	 * @param {QuadraticCurve} object Object to create the helper for.
+	 */
+	QuadraticCurve.curveHelper = function(object)
+	{
+		var fromLine = new Line();
+		fromLine.from = object.from;
+		fromLine.to = object.controlPoint;
+		object.parent.add(fromLine);
+
+		var controlPoint = new Circle();
+		controlPoint.radius = 3;
+		controlPoint.layer = object.layer + 1;
+		controlPoint.draggable = true;
+		controlPoint.position = object.controlPoint;
+		controlPoint.onPointerDrag = function(pointer, viewport, delta)
+		{
+			Object2D.prototype.onPointerDrag.call(this, pointer, viewport, delta);
+			object.controlPoint.copy(controlPoint.position);
+		};
+		object.parent.add(controlPoint);
+
+		var toLine = new Line();
+		toLine.from = object.to;
+		toLine.to = object.controlPoint;
+		object.parent.add(toLine);
+	};
+
+	QuadraticCurve.prototype.draw = function(context, viewport, canvas)
+	{
+		context.beginPath();
+		context.moveTo(this.from.x, this.from.y);
+		context.quadraticCurveTo(this.controlPoint.x, this.controlPoint.y, this.to.x, this.to.y);
+		context.stroke();
+	};
+
+	QuadraticCurve.prototype.serialize = function(recursive)
+	{
+		var data = Line.prototype.serialize.call(this, recursive);
+
+		data.controlPoint = this.controlPoint.toArray();
+
+		return data;
+	};
+
+	QuadraticCurve.prototype.parse = function(data)
+	{
+		Line.prototype.parse.call(this, data);
+
+		this.controlPoint.fromArray(data.controlPoint);
+	};
+
+	/**
+	 * Rounded box object draw a rectangular object with rounded corners.
+	 *
+	 * @class
+	 * @extends {Box}
+	 */
+	function RoundedBox()
+	{
+		Box.call(this);
+
+		/**
+		 * Radius of the circular section that makes up the box corners.
+		 *
+		 * @type {number}
+		 */
+		this.radius = 5;
+	}
+
+	RoundedBox.prototype = Object.create(Box.prototype);
+	RoundedBox.prototype.constructor = RoundedBox;
+	RoundedBox.prototype.type = "RoundedBox";
+
+	/**
+	 * Draw a rounded rectangle into the canvas context using path to draw the rounded rectangle.
+	 *
+	 * @param {CanvasRenderingContext2D} context
+	 * @param {number} x The top left x coordinate
+	 * @param {number} y The top left y coordinate
+	 * @param {number} width The width of the rectangle
+	 * @param {number} height The height of the rectangle
+	 * @param {number} radius Radius of the rectangle corners.
+	 */
+	RoundedBox.roundRect = function(context, x, y, width, height, radius)
+	{
+		context.beginPath();
+		context.moveTo(x + radius, y);
+		context.lineTo(x + width - radius, y);
+		context.quadraticCurveTo(x + width, y, x + width, y + radius);
+		context.lineTo(x + width, y + height - radius);
+		context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+		context.lineTo(x + radius, y + height);
+		context.quadraticCurveTo(x, y + height, x, y + height - radius);
+		context.lineTo(x, y + radius);
+		context.quadraticCurveTo(x, y, x + radius, y);
+		context.closePath();
+	};
+
+	RoundedBox.prototype.draw = function(context, viewport, canvas)
+	{
+		var width = this.box.max.x - this.box.min.x;
+		var height = this.box.max.y - this.box.min.y;
+
+		if(this.fillStyle !== null)
+		{	
+			context.fillStyle = this.fillStyle;
+			RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
+			context.fill();
+		}
+
+		if(this.strokeStyle !== null)
+		{
+			context.lineWidth = this.lineWidth;
+			context.strokeStyle = this.strokeStyle;
+			RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
+			context.stroke();
+		}
+	};
+
+	RoundedBox.prototype.serialize = function(recursive)
+	{
+		var data = Box.prototype.serialize.call(this, recursive);
+
+		data.radius = this.radius;
+
+		return data;
+	};
+
+	RoundedBox.prototype.parse = function(data)
+	{
+		Box.prototype.parse.call(this, data);
+
+		this.radius = data.radius;
+	};
+
+	/**
 	 * Node connector is used to connect a output of a node to a input of another node.
 	 *
 	 * Some nodes outputs might support multiple connections having an output connected to multiple inputs.
@@ -4221,61 +4256,6 @@
 			this.toCp.y += yDistance * curvature;
 			this.fromCp.y -= yDistance * curvature;
 		}
-	};
-
-	/**
-	 * Node graph object should be used as a container for node elements.
-	 *
-	 * The node graph object specifies how the nodes are processed, each individual node can store and process data, the node graph specified how this information is processed.
-	 *
-	 * All node elements are stored as children of the node graph.
-	 *
-	 * @class
-	 * @extends {Object2D}
-	 */
-	function NodeGraph()
-	{
-		Object2D.call(this);
-	}
-
-	NodeGraph.prototype = Object.create(Object2D.prototype);
-	NodeGraph.prototype.constructor = NodeGraph;
-	NodeGraph.prototype.type = "NodeGraph";
-
-	/**
-	 * Create and add a new node of specific node type to the graph.
-	 *
-	 * Automatically finds an empty space as close as possible to other nodes to add this new node.
-	 *
-	 * @param {Node} node Node object to be added.
-	 * @return {Node} Node created (already added to the graph).
-	 */
-	NodeGraph.prototype.addNode = function(node)
-	{
-		// Check available position on screen.
-		var x = 0, y = 0;
-		for(var i = 0; i < this.children.length; i++)
-		{
-			if(this.children[i].position.x > x)
-			{
-				x = this.children[i].position.x;
-			}
-			if(this.children[i].position.y > y)
-			{
-				y = this.children[i].position.y;
-			}
-		}
-
-		// Create and add new node
-		node.position.set(x + 200, y / 2.0);
-		this.add(node);
-
-		if(node.registerSockets !== null)
-		{
-			node.registerSockets();
-		}
-
-		return node;
 	};
 
 	/**
@@ -4672,6 +4652,61 @@
 		{
 			this.outputs[i].position.set(this.position.x + this.box.max.x, this.position.y + (start + step * i));
 		}
+	};
+
+	/**
+	 * Node graph object should be used as a container for node elements.
+	 *
+	 * The node graph object specifies how the nodes are processed, each individual node can store and process data, the node graph specified how this information is processed.
+	 *
+	 * All node elements are stored as children of the node graph.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function NodeGraph()
+	{
+		Object2D.call(this);
+	}
+
+	NodeGraph.prototype = Object.create(Object2D.prototype);
+	NodeGraph.prototype.constructor = NodeGraph;
+	NodeGraph.prototype.type = "NodeGraph";
+
+	/**
+	 * Create and add a new node of specific node type to the graph.
+	 *
+	 * Automatically finds an empty space as close as possible to other nodes to add this new node.
+	 *
+	 * @param {Node} node Node object to be added.
+	 * @return {Node} Node created (already added to the graph).
+	 */
+	NodeGraph.prototype.addNode = function(node)
+	{
+		// Check available position on screen.
+		var x = 0, y = 0;
+		for(var i = 0; i < this.children.length; i++)
+		{
+			if(this.children[i].position.x > x)
+			{
+				x = this.children[i].position.x;
+			}
+			if(this.children[i].position.y > y)
+			{
+				y = this.children[i].position.y;
+			}
+		}
+
+		// Create and add new node
+		node.position.set(x + 200, y / 2.0);
+		this.add(node);
+
+		if(node.registerSockets !== null)
+		{
+			node.registerSockets();
+		}
+
+		return node;
 	};
 
 	/**
