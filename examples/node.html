@@ -17,8 +17,8 @@
 		<div style="position:absolute; width:60px; height:50px; top:150px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addOperatorBlock('/');">/</div>
 		<div style="position:absolute; width:60px; height:50px; top:200px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addInputBlock();">Num</div>
 
-		<div style="position:absolute; width:60px; height:50px; bottom:50px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addInputBlock();">Load</div>
-		<div style="position:absolute; width:60px; height:50px; bottom:0px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.addInputBlock();">Save</div>
+		<div style="position:absolute; width:60px; height:50px; bottom:50px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.loadFile();">Load</div>
+		<div style="position:absolute; width:60px; height:50px; bottom:0px; left:10px; text-align:center; z-index:10; cursor: pointer;" onclick="window.saveFile();">Save</div>
 	</div>
 
 	<!-- Code -->
@@ -53,13 +53,29 @@
 			graph.addNode(new NumberInputNode());
 		};
 
-		window.loadFile = function(symbol)
+		window.loadFile = function()
 		{
-			graph.addNode(new NumberInputNode());
+			Escher.FileUtils.select(function(files)
+			{
+				if(files.length > 0)
+				{
+					var reader = new FileReader();
+					reader.onload = function()
+					{
+						var text = reader.result;
+						var data = JSON.parse(text);
+						graph = Escher.Object2D.parse(data);
+					};
+					reader.readAsText(files[0]);
+				}
+			}, ".json");
 		};
-		window.addInputBlock = function(symbol)
+
+		window.saveFile = function()
 		{
-			graph.addNode(new NumberInputNode());
+			var data = graph.serialize();
+			var text = JSON.stringify(data, null, "\t");
+			Escher.FileUtils.write(text);
 		};
 
 		class OperationNode extends Escher.Node
