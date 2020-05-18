@@ -1,4 +1,5 @@
 import {Text} from "./Text.js";
+import {Object2D} from "../Object2D";
 
 /**
  * Multiple line text drawing directly into the canvas.

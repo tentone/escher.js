@@ -1,6 +1,5 @@
 import {Object2D} from "../Object2D.js";
 import {Box2} from "../math/Box2.js";
-import {Image} from "./Image";
 
 /**
  * Pattern object draw a image repeated as a pattern.

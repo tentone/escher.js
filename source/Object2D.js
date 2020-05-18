@@ -236,7 +236,7 @@ Object2D.types = new Map([[Object2D.prototype.type, Object2D]]);
  */
 Object2D.register = function(constructor, type)
 {
-	Object2D.type.set(type, constructor);
+	Object2D.types.set(type, constructor);
 };
 
 /**

@@ -1,4 +1,5 @@
 import {Box} from "./Box";
+import {Object2D} from "../Object2D";
 
 /**
  * Rounded box object draw a rectangular object with rounded corners.

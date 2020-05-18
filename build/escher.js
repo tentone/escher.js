@@ -991,7 +991,7 @@
 	 */
 	Object2D.register = function(constructor, type)
 	{
-		Object2D.type.set(type, constructor);
+		Object2D.types.set(type, constructor);
 	};
 
 	/**
@@ -1545,6 +1545,7 @@
 	Text.prototype = Object.create(Object2D.prototype);
 	Text.prototype.constructor = Text;
 	Text.prototype.type = "Text";
+	Object2D.register(Text, "Text");
 
 	Text.prototype.draw = function(context, viewport, canvas)
 	{
@@ -1627,6 +1628,7 @@
 	MultiLineText.prototype = Object.create(Text.prototype);
 	MultiLineText.prototype.constructor = MultiLineText;
 	MultiLineText.prototype.type = "MultiLineText";
+	Object2D.register(MultiLineText, "MultiLineText");
 
 	MultiLineText.prototype.draw = function(context, viewport, canvas)
 	{
@@ -3110,6 +3112,7 @@
 	Mask.prototype = Object.create(Object2D.prototype);
 	Mask.prototype.constructor = Mask;
 	Mask.prototype.type = "Mask";
+	Object2D.register(Mask, "Mask");
 	Mask.prototype.isMask = true;
 
 	/**
@@ -3155,6 +3158,7 @@
 	BoxMask.prototype = Object.create(Mask.prototype);
 	BoxMask.prototype.constructor = BoxMask;
 	BoxMask.prototype.type = "BoxMask";
+	Object2D.register(BoxMask, "BoxMask");
 
 	BoxMask.prototype.isInside = function(point)
 	{
@@ -3223,6 +3227,7 @@
 	Box.prototype = Object.create(Object2D.prototype);
 	Box.prototype.constructor = Box;
 	Box.prototype.type = "Box";
+	Object2D.register(Box, "Box");
 
 	Box.prototype.onPointerEnter = function(pointer, viewport)
 	{
@@ -3320,6 +3325,7 @@
 	Circle.prototype = Object.create(Object2D.prototype);
 	Circle.prototype.constructor = Circle;
 	Circle.prototype.type = "Circle";
+	Object2D.register(Circle, "Circle");
 
 	Circle.prototype.isInside = function(point)
 	{
@@ -3375,87 +3381,6 @@
 		this.strokeStyle = data.strokeStyle;
 		this.lineWidth = data.lineWidth;
 		this.fillStyle = data.fillStyle;
-	};
-
-	/**
-	 * Image object is used to draw an image from URL.
-	 *
-	 * @class
-	 * @param {string} src Source URL of the image.
-	 * @extends {Object2D}
-	 */
-	function Image(src)
-	{
-		Object2D.call(this);
-		
-		/**
-		 * Box object containing the size of the object.
-		 */
-		this.box = new Box2();
-
-		/**
-		 * Image source DOM element.
-		 */
-		this.image = document.createElement("img");
-
-		if(src !== undefined)
-		{
-			this.setImage(src);
-		}
-	}
-
-	Image.prototype = Object.create(Object2D.prototype);
-	Image.prototype.constructor = Image;
-	Image.prototype.type = "Image";
-
-	/**
-	 * Set the image of the object.
-	 *
-	 * Automatically sets the box size to match the image.
-	 *
-	 * @param {string} src Source URL of the image.
-	 */
-	Image.prototype.setImage = function(src)
-	{
-		var self = this;
-
-		this.image.onload = function()
-		{
-			self.box.min.set(0, 0);
-			self.box.max.set(this.naturalWidth, this.naturalHeight);
-		};
-		this.image.src = src;
-	};
-
-	Image.prototype.isInside = function(point)
-	{
-		return this.box.containsPoint(point);
-	};
-
-	Image.prototype.draw = function(context, viewport, canvas)
-	{
-		if(this.image.src.length > 0)
-		{
-			context.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
-		}
-	};
-
-	Image.prototype.serialize = function(recursive)
-	{
-		var data = Object2D.prototype.serialize.call(this, recursive);
-
-		data.box = this.box.toArray();
-		data.image = this.image.src;
-
-		return data;
-	};
-
-	Image.prototype.parse = function(data)
-	{
-		Object2D.prototype.parse.call(this, data);
-
-		this.box.fromArray(data.box);
-		this.image.src = data.image;
 	};
 
 	/**
@@ -3517,6 +3442,7 @@
 	Line.prototype = Object.create(Object2D.prototype);
 	Line.prototype.constructor = Line;
 	Line.prototype.type = "Line";
+	Object2D.register(Line, "Line");
 
 	Line.prototype.style = function(context, viewport, canvas)
 	{
@@ -3555,6 +3481,88 @@
 		this.dashPattern = data.dashPattern;
 		this.strokeStyle = data.strokeStyle;
 		this.lineWidth = data.lineWidth;
+	};
+
+	/**
+	 * Image object is used to draw an image from URL.
+	 *
+	 * @class
+	 * @param {string} src Source URL of the image.
+	 * @extends {Object2D}
+	 */
+	function Image(src)
+	{
+		Object2D.call(this);
+		
+		/**
+		 * Box object containing the size of the object.
+		 */
+		this.box = new Box2();
+
+		/**
+		 * Image source DOM element.
+		 */
+		this.image = document.createElement("img");
+
+		if(src !== undefined)
+		{
+			this.setImage(src);
+		}
+	}
+
+	Image.prototype = Object.create(Object2D.prototype);
+	Image.prototype.constructor = Image;
+	Image.prototype.type = "Image";
+	Object2D.register(Image, "Image");
+
+	/**
+	 * Set the image of the object.
+	 *
+	 * Automatically sets the box size to match the image.
+	 *
+	 * @param {string} src Source URL of the image.
+	 */
+	Image.prototype.setImage = function(src)
+	{
+		var self = this;
+
+		this.image.onload = function()
+		{
+			self.box.min.set(0, 0);
+			self.box.max.set(this.naturalWidth, this.naturalHeight);
+		};
+		this.image.src = src;
+	};
+
+	Image.prototype.isInside = function(point)
+	{
+		return this.box.containsPoint(point);
+	};
+
+	Image.prototype.draw = function(context, viewport, canvas)
+	{
+		if(this.image.src.length > 0)
+		{
+			context.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.box.min.x, this.box.min.y, this.box.max.x - this.box.min.x, this.box.max.y - this.box.min.y);
+		}
+	};
+
+	Image.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		data.box = this.box.toArray();
+		data.image = this.image.src;
+
+		return data;
+	};
+
+	Image.prototype.parse = function(data)
+	{
+		Object2D.prototype.parse.call(this, data);
+
+		this.box.fromArray(data.box);
+		this.image.src = data.image;
 	};
 
 	/**
@@ -3606,6 +3614,7 @@
 	DOM.prototype = Object.create(Object2D.prototype);
 	DOM.prototype.constructor = DOM;
 	DOM.prototype.type = "DOM";
+	Object2D.register(DOM, "DOM");
 
 	/**
 	 * DOM object implements onAdd() method to automatically attach the DOM object to the DOM tree.
@@ -3728,6 +3737,7 @@
 	Pattern.prototype = Object.create(Object2D.prototype);
 	Pattern.prototype.constructor = Pattern;
 	Pattern.prototype.type = "Pattern";
+	Object2D.register(Pattern, "Pattern");
 
 	/**
 	 * Set the image source of the object. Can be anything accepted by the src field of an img element.
@@ -3840,6 +3850,7 @@
 	Graph.prototype = Object.create(Object2D.prototype);
 	Graph.prototype.constructor = Graph;
 	Graph.prototype.type = "Graph";
+	Object2D.register(Graph, "Graph");
 
 	Graph.prototype.isInside = function(point)
 	{
@@ -3938,6 +3949,7 @@
 	BezierCurve.prototype = Object.create(Line.prototype);
 	BezierCurve.prototype.constructor = BezierCurve;
 	BezierCurve.prototype.type = "BezierCurve";
+	Object2D.register(BezierCurve, "BezierCurve");
 
 	/**
 	 * Create a bezier curve helper, to edit the bezier curve anchor points.
@@ -4031,6 +4043,7 @@
 	QuadraticCurve.prototype = Object.create(Line.prototype);
 	QuadraticCurve.prototype.constructor = QuadraticCurve;
 	QuadraticCurve.prototype.type = "QuadraticCurve";
+	Object2D.register(QuadraticCurve, "QuadraticCurve");
 
 	/**
 	 * Create a quadratic curve helper, to edit the curve control point.
@@ -4110,6 +4123,7 @@
 	RoundedBox.prototype = Object.create(Box.prototype);
 	RoundedBox.prototype.constructor = RoundedBox;
 	RoundedBox.prototype.type = "RoundedBox";
+	Object2D.register(RoundedBox, "RoundedBox");
 
 	/**
 	 * Draw a rounded rectangle into the canvas context using path to draw the rounded rectangle.
@@ -4382,6 +4396,7 @@
 	NodeSocket.prototype = Object.create(Circle.prototype);
 	NodeSocket.prototype.constructor = NodeSocket;
 	NodeSocket.prototype.type = "NodeSocket";
+	Object2D.register(NodeSocket, "NodeSocket");
 
 	/**
 	 * Input hook can only be connected to an output.
@@ -4669,6 +4684,7 @@
 	Node.prototype = Object.create(RoundedBox.prototype);
 	Node.prototype.constructor = Node;
 	Node.prototype.type = "Node";
+	Object2D.register(Node, "Node");
 
 	/**
 	 * This method should be used for the node to register their socket inputs/outputs.
@@ -4835,6 +4851,7 @@
 	NodeGraph.prototype = Object.create(Object2D.prototype);
 	NodeGraph.prototype.constructor = NodeGraph;
 	NodeGraph.prototype.type = "NodeGraph";
+	Object2D.register(NodeGraph, "NodeGraph");
 
 	/**
 	 * Create and add a new node of specific node type to the graph.
