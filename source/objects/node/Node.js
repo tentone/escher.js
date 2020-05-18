@@ -153,7 +153,7 @@ Node.prototype.onUpdate = function()
 
 Node.prototype.serialize = function(recursive)
 {
-	var data = Object2D.prototype.serialize.call(this, recursive);
+	var data = RoundedBox.prototype.serialize.call(this, recursive);
 
 	data.inputs = [];
 	for(var i = 0; i < this.inputs.length; i++)
@@ -172,7 +172,7 @@ Node.prototype.serialize = function(recursive)
 
 Node.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data, root);
+	RoundedBox.prototype.parse.call(this, data, root);
 
 	for(var i = 0; i < data.inputs.length; i++)
 	{

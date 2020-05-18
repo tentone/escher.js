@@ -1,5 +1,6 @@
 import {BezierCurve} from "../BezierCurve";
 import {Object2D} from "../../Object2D";
+import {NodeGraph} from "./NodeGraph";
 
 /**
  * Node connector is used to connect a output of a node to a input of another node.
@@ -33,6 +34,9 @@ function NodeConnector()
 }
 
 NodeConnector.prototype = Object.create(BezierCurve.prototype);
+NodeConnector.prototype.constructor = NodeConnector;
+NodeConnector.prototype.type = "NodeConnector";
+Object2D.register(NodeConnector, "NodeConnector");
 
 NodeConnector.prototype.destroy = function()
 {
@@ -90,7 +94,7 @@ NodeConnector.prototype.onUpdate = function()
 
 NodeConnector.prototype.serialize = function(recursive)
 {
-	var data = Object2D.prototype.serialize.call(this, recursive);
+	var data = BezierCurve.prototype.serialize.call(this, recursive);
 
 	data.outputSocket = this.outputSocket !== null ? this.outputSocket.uuid : null;
 	data.inputSocket = this.inputSocket !== null ? this.inputSocket.uuid : null;
@@ -100,7 +104,7 @@ NodeConnector.prototype.serialize = function(recursive)
 
 NodeConnector.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data, root);
+	BezierCurve.prototype.parse.call(this, data, root);
 
 	if(data.outputSocket !== null)
 	{

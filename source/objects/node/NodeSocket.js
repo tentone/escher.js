@@ -326,7 +326,7 @@ NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
 
 NodeSocket.prototype.serialize = function(recursive)
 {
-	var data = Object2D.prototype.serialize.call(this, recursive);
+	var data = Circle.prototype.serialize.call(this, recursive);
 
 	data.name = this.name;
 	data.category = this.category;
@@ -345,7 +345,7 @@ NodeSocket.prototype.serialize = function(recursive)
 
 NodeSocket.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data, root);
+	Circle.prototype.parse.call(this, data, root);
 
 	this.name = data.name;
 	this.category = data.category;

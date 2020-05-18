@@ -1583,9 +1583,9 @@
 		return data;
 	};
 
-	Text.prototype.parse = function(data)
+	Text.prototype.parse = function(data, root)
 	{
-		Object2D.prototype.parse.call(this, data);
+		Object2D.prototype.parse.call(this, data, root);
 
 		this.text = data.text;
 		this.font = data.font;
@@ -1703,9 +1703,9 @@
 		return data;
 	};
 
-	MultiLineText.prototype.parse = function(data)
+	MultiLineText.prototype.parse = function(data, root)
 	{
-		Text.prototype.parse.call(this, data);
+		Text.prototype.parse.call(this, data, root);
 
 		this.maxWidth = data.maxWidth;
 		this.lineHeight = data.lineHeight;
@@ -3277,9 +3277,9 @@
 		return data;
 	};
 
-	Box.prototype.parse = function(data)
+	Box.prototype.parse = function(data, root)
 	{
-		Object2D.prototype.parse.call(this, data);
+		Object2D.prototype.parse.call(this, data, root);
 
 		this.box.fromArray(data.box);
 		this.strokeStyle = data.strokeStyle;
@@ -3375,9 +3375,9 @@
 		return data;
 	};
 
-	Circle.prototype.parse = function(data)
+	Circle.prototype.parse = function(data, root)
 	{
-		Object2D.prototype.parse.call(this, data);
+		Object2D.prototype.parse.call(this, data, root);
 
 		this.radius = data.radius;
 		this.strokeStyle = data.strokeStyle;
@@ -3474,9 +3474,9 @@
 		return data;
 	};
 
-	Line.prototype.parse = function(data)
+	Line.prototype.parse = function(data, root)
 	{
-		Object2D.prototype.parse.call(this, data);
+		Object2D.prototype.parse.call(this, data, root);
 
 		this.to.fromArray(data.to);
 		this.from.fromArray(data.from);
@@ -3559,9 +3559,9 @@
 		return data;
 	};
 
-	Image.prototype.parse = function(data)
+	Image.prototype.parse = function(data, root)
 	{
-		Object2D.prototype.parse.call(this, data);
+		Object2D.prototype.parse.call(this, data, root);
 
 		this.box.fromArray(data.box);
 		this.image.src = data.image;
@@ -3679,9 +3679,9 @@
 		return data;
 	};
 
-	DOM.prototype.parse = function(data)
+	DOM.prototype.parse = function(data, root)
 	{
-		Object2D.prototype.parse.call(this, data);
+		Object2D.prototype.parse.call(this, data, root);
 
 		this.size.fromArray(data.size);
 
@@ -3790,9 +3790,9 @@
 		return data;
 	};
 
-	Pattern.prototype.parse = function(data)
+	Pattern.prototype.parse = function(data, root)
 	{
-		Object2D.prototype.parse.call(this, data);
+		Object2D.prototype.parse.call(this, data, root);
 
 		this.box.fromArray(data.box);
 		this.image.src = data.image;
@@ -3910,9 +3910,9 @@
 		return data;
 	};
 
-	Graph.prototype.parse = function(data)
+	Graph.prototype.parse = function(data, root)
 	{
-		Object2D.prototype.parse.call(this, data);
+		Object2D.prototype.parse.call(this, data, root);
 
 		this.box.fromArray(data.box);
 		this.strokeStyle = data.strokeStyle;
@@ -4014,9 +4014,9 @@
 		return data;
 	};
 
-	BezierCurve.prototype.parse = function(data)
+	BezierCurve.prototype.parse = function(data, root)
 	{
-		Line.prototype.parse.call(this, data);
+		Line.prototype.parse.call(this, data, root);
 
 		this.fromCp.fromArray(data.fromCp);
 		this.toCp.fromArray(data.toCp);
@@ -4097,9 +4097,9 @@
 		return data;
 	};
 
-	QuadraticCurve.prototype.parse = function(data)
+	QuadraticCurve.prototype.parse = function(data, root)
 	{
-		Line.prototype.parse.call(this, data);
+		Line.prototype.parse.call(this, data, root);
 
 		this.controlPoint.fromArray(data.controlPoint);
 	};
@@ -4182,11 +4182,67 @@
 		return data;
 	};
 
-	RoundedBox.prototype.parse = function(data)
+	RoundedBox.prototype.parse = function(data, root)
 	{
-		Box.prototype.parse.call(this, data);
+		Box.prototype.parse.call(this, data, root);
 
 		this.radius = data.radius;
+	};
+
+	/**
+	 * Node graph object should be used as a container for node elements.
+	 *
+	 * The node graph object specifies how the nodes are processed, each individual node can store and process data, the node graph specified how this information is processed.
+	 *
+	 * All node elements are stored as children of the node graph.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function NodeGraph()
+	{
+		Object2D.call(this);
+	}
+
+	NodeGraph.prototype = Object.create(Object2D.prototype);
+	NodeGraph.prototype.constructor = NodeGraph;
+	NodeGraph.prototype.type = "NodeGraph";
+	Object2D.register(NodeGraph, "NodeGraph");
+
+	/**
+	 * Create and add a new node of specific node type to the graph.
+	 *
+	 * Automatically finds an empty space as close as possible to other nodes to add this new node.
+	 *
+	 * @param {Node} node Node object to be added.
+	 * @return {Node} Node created (already added to the graph).
+	 */
+	NodeGraph.prototype.addNode = function(node)
+	{
+		// Check available position on screen.
+		var x = 0, y = 0;
+		for(var i = 0; i < this.children.length; i++)
+		{
+			if(this.children[i].position.x > x)
+			{
+				x = this.children[i].position.x;
+			}
+			if(this.children[i].position.y > y)
+			{
+				y = this.children[i].position.y;
+			}
+		}
+
+		// Create and add new node
+		node.position.set(x + 200, y / 2.0);
+		this.add(node);
+
+		if(node.registerSockets !== null)
+		{
+			node.registerSockets();
+		}
+
+		return node;
 	};
 
 	/**
@@ -4221,6 +4277,9 @@
 	}
 
 	NodeConnector.prototype = Object.create(BezierCurve.prototype);
+	NodeConnector.prototype.constructor = NodeConnector;
+	NodeConnector.prototype.type = "NodeConnector";
+	Object2D.register(NodeConnector, "NodeConnector");
 
 	NodeConnector.prototype.destroy = function()
 	{
@@ -4278,7 +4337,7 @@
 
 	NodeConnector.prototype.serialize = function(recursive)
 	{
-		var data = Object2D.prototype.serialize.call(this, recursive);
+		var data = BezierCurve.prototype.serialize.call(this, recursive);
 
 		data.outputSocket = this.outputSocket !== null ? this.outputSocket.uuid : null;
 		data.inputSocket = this.inputSocket !== null ? this.inputSocket.uuid : null;
@@ -4288,7 +4347,7 @@
 
 	NodeConnector.prototype.parse = function(data, root)
 	{
-		Object2D.prototype.parse.call(this, data);
+		BezierCurve.prototype.parse.call(this, data, root);
 
 		if(data.outputSocket !== null)
 		{
@@ -4623,7 +4682,7 @@
 
 	NodeSocket.prototype.serialize = function(recursive)
 	{
-		var data = Object2D.prototype.serialize.call(this, recursive);
+		var data = Circle.prototype.serialize.call(this, recursive);
 
 		data.name = this.name;
 		data.category = this.category;
@@ -4642,7 +4701,7 @@
 
 	NodeSocket.prototype.parse = function(data, root)
 	{
-		Object2D.prototype.parse.call(this, data);
+		Circle.prototype.parse.call(this, data, root);
 
 		this.name = data.name;
 		this.category = data.category;
@@ -4807,7 +4866,7 @@
 
 	Node.prototype.serialize = function(recursive)
 	{
-		var data = Object2D.prototype.serialize.call(this, recursive);
+		var data = RoundedBox.prototype.serialize.call(this, recursive);
 
 		data.inputs = [];
 		for(var i = 0; i < this.inputs.length; i++)
@@ -4826,7 +4885,7 @@
 
 	Node.prototype.parse = function(data, root)
 	{
-		Object2D.prototype.parse.call(this, data);
+		RoundedBox.prototype.parse.call(this, data, root);
 
 		for(var i = 0; i < data.inputs.length; i++)
 		{
@@ -4837,62 +4896,6 @@
 		{
 			this.outputs.push(root.getChildByUUID(data.outputs[i]));
 		}
-	};
-
-	/**
-	 * Node graph object should be used as a container for node elements.
-	 *
-	 * The node graph object specifies how the nodes are processed, each individual node can store and process data, the node graph specified how this information is processed.
-	 *
-	 * All node elements are stored as children of the node graph.
-	 *
-	 * @class
-	 * @extends {Object2D}
-	 */
-	function NodeGraph()
-	{
-		Object2D.call(this);
-	}
-
-	NodeGraph.prototype = Object.create(Object2D.prototype);
-	NodeGraph.prototype.constructor = NodeGraph;
-	NodeGraph.prototype.type = "NodeGraph";
-	Object2D.register(NodeGraph, "NodeGraph");
-
-	/**
-	 * Create and add a new node of specific node type to the graph.
-	 *
-	 * Automatically finds an empty space as close as possible to other nodes to add this new node.
-	 *
-	 * @param {Node} node Node object to be added.
-	 * @return {Node} Node created (already added to the graph).
-	 */
-	NodeGraph.prototype.addNode = function(node)
-	{
-		// Check available position on screen.
-		var x = 0, y = 0;
-		for(var i = 0; i < this.children.length; i++)
-		{
-			if(this.children[i].position.x > x)
-			{
-				x = this.children[i].position.x;
-			}
-			if(this.children[i].position.y > y)
-			{
-				y = this.children[i].position.y;
-			}
-		}
-
-		// Create and add new node
-		node.position.set(x + 200, y / 2.0);
-		this.add(node);
-
-		if(node.registerSockets !== null)
-		{
-			node.registerSockets();
-		}
-
-		return node;
 	};
 
 	/**
