@@ -102,6 +102,44 @@ object.draw = function(context, viewport, canvas)
 
 
 
+### Data Serialization
+
+- The library includes a per-object serialization extensible API. Every base object implements a serialize() and parse() methods that indicate how that specific object type should be serialized and loaded.
+- The parse() method receives json data and access to the loaded root object that can be used to get refences to other objects.
+  - All references to other objects should be done by storing the object UUID and later on getting the object directly from the root.
+- For custom objects it is possible to implement these serialization methods easily. It is necessary to register the new object type for the loader to know the data type and create a type attribute in the object.
+- If your custom object is just composed of base objects, they should be automatically serializable without any additional code.
+
+```javascript
+class CustomObject extends Escher.Node
+{
+	constructor(operation)
+	{
+		super();
+
+		this.type = "CustomObject";
+		this.something = 2;
+	}
+
+	serialize(recursive)
+	{
+		var data = super.serialize(recursive);
+        data.something = this.something;
+        return data;
+	}
+    
+	parse(data, root)
+	{
+        super.parse(data, root);
+		this.something = data.something;
+	}
+}
+
+Escher.Object2D.register(CustomObject, "CustomObject");
+```
+
+
+
 ### Pointer events
 
 - The system supports multiple pointer events that can be used to control the objects and interact with the users.

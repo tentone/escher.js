@@ -84,6 +84,8 @@
 			{
 				super();
 
+				this.type = "OperationNode";
+
 				this.operation = operation;
 
 				this.box.set(new Escher.Vector2(-50, -40), new Escher.Vector2(50, 40));
@@ -106,7 +108,22 @@
 					return "(" + this.a.getValue() + this.operation + this.b.getValue() + ")";
 				};
 			}
+
+			serialize(recursive)
+			{
+				var data = super.serialize(recursive);
+				data.operation = this.operation;
+				return data;
+			}
+
+			parse(data, root)
+			{
+				super.parse(data, root);
+				this.operation = data.operation;
+			}
 		}
+
+		Escher.Object2D.register(OperationNode, "OperationNode");
 
 		class NumberInputNode extends Escher.Node
 		{
