@@ -345,9 +345,6 @@ Object2D.prototype.getChildByUUID = function(uuid)
 		}
 	});
 
-	// TODO <REMOVE THIS CODE>
-	console.log("getChildByUUID()", uuid, this, object);
-
 	return object;
 };
 
