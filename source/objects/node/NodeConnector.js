@@ -1,4 +1,5 @@
 import {BezierCurve} from "../BezierCurve";
+import {Object2D} from "../../Object2D";
 
 /**
  * Node connector is used to connect a output of a node to a input of another node.
@@ -39,12 +40,14 @@ NodeConnector.prototype.destroy = function()
 
 	if(this.outputSocket !== null)
 	{
-		this.outputSocket.connector = null;
+		this.outputSocket.removeConnector(this);
+		this.outputSocket = null;
 	}
 
 	if(this.inputSocket !== null)
 	{
-		this.inputSocket.connector = null;
+		this.inputSocket.removeConnector(this);
+		this.inputSocket = null;
 	}
 };
 
@@ -84,6 +87,25 @@ NodeConnector.prototype.onUpdate = function()
 		this.fromCp.y -= yDistance * curvature;
 	}
 };
+
+NodeConnector.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.outputSocket = this.outputSocket.uuid;
+	data.inputSocket = this.inputSocket.uuid;
+
+	return data;
+};
+
+NodeConnector.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data);
+
+	this.outputSocket = root.getChildByUUID(data.outputSocket);
+	this.inputSocket = root.getChildByUUID(data.inputSocket);
+};
+
 
 
 export {NodeConnector};

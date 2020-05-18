@@ -1,6 +1,6 @@
 import {NodeSocket} from "./NodeSocket";
 import {RoundedBox} from "../RoundedBox";
-import {Mask} from "../mask/Mask";
+import {Object2D} from "../../Object2D";
 
 /**
  * Node objects can be connected between them to create graphs.
@@ -147,6 +147,40 @@ Node.prototype.onUpdate = function()
 	for(var i = 0; i < this.outputs.length; i++)
 	{
 		this.outputs[i].position.set(this.position.x + this.box.max.x, this.position.y + (start + step * i));
+	}
+};
+
+Node.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.inputs = [];
+	for(var i = 0; i < this.inputs.length; i++)
+	{
+		data.inputs.push(this.inputs[i].uuid);
+	}
+
+	data.outputs = [];
+	for(var i = 0; i < this.outputs.length; i++)
+	{
+		data.outputs.push(this.outputs[i].uuid);
+	}
+
+	return data;
+};
+
+Node.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data);
+
+	for(var i = 0; i < data.inputs.length; i++)
+	{
+		this.inputs.push(root.getChildByUUID(data.inputs[i]));
+	}
+
+	for(var i = 0; i < data.outputs.length; i++)
+	{
+		this.outputs.push(root.getChildByUUID(data.outputs[i]));
 	}
 };
 

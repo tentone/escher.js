@@ -4212,12 +4212,14 @@
 
 		if(this.outputSocket !== null)
 		{
-			this.outputSocket.connector = null;
+			this.outputSocket.removeConnector(this);
+			this.outputSocket = null;
 		}
 
 		if(this.inputSocket !== null)
 		{
-			this.inputSocket.connector = null;
+			this.inputSocket.removeConnector(this);
+			this.inputSocket = null;
 		}
 	};
 
@@ -4258,6 +4260,24 @@
 		}
 	};
 
+	NodeConnector.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		data.outputSocket = this.outputSocket.uuid;
+		data.inputSocket = this.inputSocket.uuid;
+
+		return data;
+	};
+
+	NodeConnector.prototype.parse = function(data, root)
+	{
+		Object2D.prototype.parse.call(this, data);
+
+		this.outputSocket = root.getChildByUUID(data.outputSocket);
+		this.inputSocket = root.getChildByUUID(data.inputSocket);
+	};
+
 	/**
 	 * Represents a node hook point. Is attached to the node element and represented visually.
 	 *
@@ -4295,6 +4315,15 @@
 		this.category = category !== undefined ? category : "";
 
 		/**
+		 * Allow to connect a OUTPUT node to multiple INPUT sockets.
+		 *
+		 * A INPUT socket can only take one connection, this value is ignored for INPUT sockets.
+		 *
+		 * @type {boolean}
+		 */
+		this.multiple = true;
+
+		/**
 		 * Direction of the node hook, indicates the data flow of the socket.
 		 *
 		 * Can be INPUT or OUTPUT.
@@ -4315,11 +4344,18 @@
 		/**
 		 * Node connector used to connect this socket to another node socket.
 		 *
-		 * Can be used to access the adjacent node.
+		 * Can be used to access the adjacent node. If the socket allows for multiple connections this array can have multiple elements.
 		 *
-		 * @type {NodeConnector}
+		 * @type {NodeConnector[]}
 		 */
-		this.connector = null;
+		this.connectors = [];
+
+		/**
+		 * Indicates if the user is currently creating a new connection from this node socket.
+		 *
+		 * @type {boolean}
+		 */
+		this.creatingConnection = false;
 
 		/**
 		 * Text object used to present the name of the socket.
@@ -4378,9 +4414,10 @@
 	 */
 	NodeSocket.prototype.getValue = function()
 	{
-		if(this.direction === NodeSocket.INPUT && this.connector !== null && this.connector.outputSocket !== null)
+		// If the node is an input get its value from the output socket of the connection.
+		if(this.direction === NodeSocket.INPUT && this.connectors.length > 0 && this.connectors[0].outputSocket !== null)
 		{
-			return this.connector.outputSocket.getValue();
+			return this.connectors[0].outputSocket.getValue();
 		}
 
 		return null;
@@ -4416,6 +4453,13 @@
 	 */
 	NodeSocket.prototype.attachConnector = function(connector)
 	{
+		// If there is no space for a new connector delete the already existing connectors.
+		if(!this.canAddConnector())
+		{
+			this.destroyConnectors();
+		}
+
+		// Attach the socket to the correct direction of the connector
 		if(this.direction === NodeSocket.INPUT)
 		{
 			connector.inputSocket = this;
@@ -4425,7 +4469,8 @@
 			connector.outputSocket = this;
 		}
 
-		this.connector = connector;
+		// Add to the list connectors
+		this.connectors.push(connector);
 		if(connector.parent === null)
 		{
 			this.parent.add(connector);
@@ -4433,7 +4478,7 @@
 	};
 
 	/**
-	 * Check if this socket can be connected (is compatible) with another socket.
+	 * Check if this socket is compatible (type and direction) with another socket.
 	 *
 	 * For two sockets to be compatible the data flow should be correct (one input and a output) and they should carry the same data type.
 	 *
@@ -4445,42 +4490,89 @@
 		return this.direction !== socket.direction && this.category === socket.category;
 	};
 
+	/**
+	 * Check if this node socket can have a new connector attached to it.
+	 *
+	 * Otherwise it might be necessary to destroy old connectors before adding a new connector.
+	 *
+	 * @return {boolean} True if its possible to add a new connector to the socket, false otherwise.
+	 */
+	NodeSocket.prototype.canAddConnector = function()
+	{
+		return !(this.connectors.length > 0 && ((this.direction === NodeSocket.INPUT) || (this.direction === NodeSocket.OUTPUT && !this.multiple)));
+	};
+
+	/**
+	 * Check if this socket can be connected with another socket, they have to be compatible and have space for a new connector.
+	 *
+	 * @param {NodeSocket} socket Socket to verify connectivity with.
+	 * @return {boolean} Returns true if the two sockets can be connected.
+	 */
+	NodeSocket.prototype.canConnect = function(socket)
+	{
+		return this.isCompatible(socket) && this.canAddConnector();
+	};
+
+	/**
+	 * Destroy a connector attached to this socket, calls the destroy() method of the connection.
+	 */
+	NodeSocket.prototype.removeConnector = function(connector)
+	{
+		var index = this.connectors.indexOf(connector);
+		if(index !== -1)
+		{
+			this.connectors.splice(index, 1);
+			connector.destroy();
+		}
+	};
+
+	/**
+	 * Destroy all connectors attached to this socket.
+	 *
+	 * Should be called when destroying the object or to clean up the object.
+	 */
+	NodeSocket.prototype.destroyConnectors = function()
+	{
+		for(var i = 0; i < this.connectors.length; i++)
+		{
+			this.connectors[i].destroy();
+		}
+	};
+
 	NodeSocket.prototype.destroy = function()
 	{
 		Circle.prototype.destroy.call(this);
 
-		if(this.connector !== null)
-		{
-			this.connector.destroy();
-		}
+		this.destroyConnectors();
 	};
 
 	NodeSocket.prototype.onPointerDragStart = function(pointer, viewport)
 	{
-		if(this.connector === null)
+		if(this.connectors.length === 0)
 		{
+			this.creatingConnection = true;
 			this.attachConnector(new NodeConnector());
 		}
 	};
 
 	NodeSocket.prototype.onPointerDrag = function(pointer, viewport, delta, position)
 	{
-		if(this.connector !== null)
+		if(this.creatingConnection)
 		{
 			if(this.direction === NodeSocket.INPUT)
 			{
-				this.connector.from.copy(position);
+				this.connectors[this.connectors.length - 1].from.copy(position);
 			}
 			else if(this.direction === NodeSocket.OUTPUT)
 			{
-				this.connector.to.copy(position);
+				this.connectors[this.connectors.length - 1].to.copy(position);
 			}
 		}
 	};
 
 	NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
 	{
-		if(this.connector !== null)
+		if(this.creatingConnection)
 		{
 			var position = viewport.inverseMatrix.transformPoint(pointer.position);
 			var objects = this.parent.getWorldPointIntersections(position);
@@ -4492,7 +4584,7 @@
 				{
 					if(this.isCompatible(objects[i]))
 					{
-						objects[i].attachConnector(this.connector);
+						objects[i].attachConnector(this.connectors[this.connectors.length - 1]);
 						found = true;
 						break;
 					}
@@ -4501,8 +4593,45 @@
 
 			if(!found)
 			{
-				this.connector.destroy();
+				this.connectors[this.connectors.length - 1].destroy();
 			}
+		}
+
+		this.creatingConnection = false;
+	};
+
+	NodeSocket.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		data.name = this.name;
+		data.category = this.category;
+		data.multiple = this.multiple;
+		data.direction = this.direction;
+		data.node = this.node.uuid;
+
+		data.connectors = [];
+		for(var i = 0; i < this.connectors.length; i++)
+		{
+			data.connectors.push(this.connectors[i].uuid);
+		}
+
+		return data;
+	};
+
+	NodeSocket.prototype.parse = function(data, root)
+	{
+		Object2D.prototype.parse.call(this, data);
+
+		this.name = data.name;
+		this.category = data.category;
+		this.multiple = data.multiple;
+		this.direction = data.direction;
+
+		this.node = root.getChildByUUID(data.node);
+		for(var i = 0; i < data.connectors.length; i++)
+		{
+			this.connectors.push(root.getChildByUUID(data.connectors[i]));
 		}
 	};
 
@@ -4651,6 +4780,40 @@
 		for(var i = 0; i < this.outputs.length; i++)
 		{
 			this.outputs[i].position.set(this.position.x + this.box.max.x, this.position.y + (start + step * i));
+		}
+	};
+
+	Node.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		data.inputs = [];
+		for(var i = 0; i < this.inputs.length; i++)
+		{
+			data.inputs.push(this.inputs[i].uuid);
+		}
+
+		data.outputs = [];
+		for(var i = 0; i < this.outputs.length; i++)
+		{
+			data.outputs.push(this.outputs[i].uuid);
+		}
+
+		return data;
+	};
+
+	Node.prototype.parse = function(data, root)
+	{
+		Object2D.prototype.parse.call(this, data);
+
+		for(var i = 0; i < data.inputs.length; i++)
+		{
+			this.inputs.push(root.getChildByUUID(data.inputs[i]));
+		}
+
+		for(var i = 0; i < data.outputs.length; i++)
+		{
+			this.outputs.push(root.getChildByUUID(data.outputs[i]));
 		}
 	};
 
@@ -4875,6 +5038,39 @@
 		};
 		document.body.appendChild(download);
 		download.click();
+	};
+
+	/**
+	 * Open file chooser dialog window for the user to select files stored in the system.
+	 *
+	 * The files selected are retrieved using the onLoad callback that receives a array of File objects.
+	 *
+	 * @param {Function} onLoad onLoad callback that receives array of files as parameter.
+	 * @param {string} filter File type filter (e.g. ".zip,.rar, etc)
+	 */
+	FileUtils.select = function(onLoad, filter)
+	{
+		var chooser = document.createElement("input");
+		chooser.type = "file";
+		chooser.style.display = "none";
+		document.body.appendChild(chooser);
+
+		if(filter !== undefined)
+		{
+			chooser.accept = filter;
+		}
+
+		chooser.onchange = function(event)
+		{
+			if(onLoad !== undefined)
+			{
+				onLoad(chooser.files);
+			}
+
+			document.body.removeChild(chooser);
+		};
+
+		chooser.click();
 	};
 
 	exports.BezierCurve = BezierCurve;

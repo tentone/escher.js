@@ -123,5 +123,4 @@ DOM.prototype.parse = function(data)
 	this.element = doc.body.children[0];
 };
 
-
 export {DOM};

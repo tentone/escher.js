@@ -58,4 +58,38 @@ FileUtils.write = function(fname, data)
 	download.click();
 };
 
+/**
+ * Open file chooser dialog window for the user to select files stored in the system.
+ *
+ * The files selected are retrieved using the onLoad callback that receives a array of File objects.
+ *
+ * @param {Function} onLoad onLoad callback that receives array of files as parameter.
+ * @param {string} filter File type filter (e.g. ".zip,.rar, etc)
+ */
+FileUtils.select = function(onLoad, filter)
+{
+	var chooser = document.createElement("input");
+	chooser.type = "file";
+	chooser.style.display = "none";
+	document.body.appendChild(chooser);
+
+	if(filter !== undefined)
+	{
+		chooser.accept = filter;
+	}
+
+	chooser.onchange = function(event)
+	{
+		if(onLoad !== undefined)
+		{
+			onLoad(chooser.files);
+		}
+
+		document.body.removeChild(chooser);
+	};
+
+	chooser.click();
+};
+
+
 export {FileUtils};
