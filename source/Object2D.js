@@ -199,6 +199,16 @@ function Object2D()
 	 * @type {boolean}
 	 */
 	this.beingDragged = false;
+
+	/**
+	 * Indicates if the object should be serialized or not as a child of another object.
+	 *
+	 * Used to prevent duplicate serialization data on custom objects.
+	 *
+	 * @type {boolean}
+	 */
+	// TODO <ADD CODE HERE>
+	this.serializable = false;
 }
 
 Object2D.prototype.constructor = Object2D;

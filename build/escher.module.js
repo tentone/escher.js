@@ -3071,7 +3071,7 @@ Box2.prototype.equals = function(box)
  */
 Box2.prototype.toArray = function()
 {
-	return [this.box.min.x, this.box.min.y, this.box.max.x, this.box.max.y];
+	return [this.min.x, this.min.y, this.max.x, this.max.y];
 };
 
 /**
@@ -3081,8 +3081,8 @@ Box2.prototype.toArray = function()
  */
 Box2.prototype.fromArray = function(array)
 {
-	this.box.min.set(array[0], array[1]);
-	this.box.max.set(array[2], array[3]);
+	this.min.set(array[0], array[1]);
+	this.max.set(array[2], array[3]);
 };
 
 /**
