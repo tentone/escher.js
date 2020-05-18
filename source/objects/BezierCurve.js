@@ -94,9 +94,9 @@ BezierCurve.prototype.serialize = function(recursive)
 	return data;
 };
 
-BezierCurve.prototype.parse = function(data)
+BezierCurve.prototype.parse = function(data, root)
 {
-	Line.prototype.parse.call(this, data);
+	Line.prototype.parse.call(this, data, root);
 
 	this.fromCp.fromArray(data.fromCp);
 	this.toCp.fromArray(data.toCp);

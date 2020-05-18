@@ -79,9 +79,9 @@ RoundedBox.prototype.serialize = function(recursive)
 	return data;
 };
 
-RoundedBox.prototype.parse = function(data)
+RoundedBox.prototype.parse = function(data, root)
 {
-	Box.prototype.parse.call(this, data);
+	Box.prototype.parse.call(this, data, root);
 
 	this.radius = data.radius;
 };

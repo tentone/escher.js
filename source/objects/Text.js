@@ -105,9 +105,9 @@ Text.prototype.serialize = function(recursive)
 	return data;
 };
 
-Text.prototype.parse = function(data)
+Text.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data);
+	Object2D.prototype.parse.call(this, data, root);
 
 	this.text = data.text;
 	this.font = data.font;

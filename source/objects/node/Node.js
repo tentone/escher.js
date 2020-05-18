@@ -172,7 +172,7 @@ Node.prototype.serialize = function(recursive)
 
 Node.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data);
+	Object2D.prototype.parse.call(this, data, root);
 
 	for(var i = 0; i < data.inputs.length; i++)
 	{

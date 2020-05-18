@@ -113,9 +113,9 @@ Graph.prototype.serialize = function(recursive)
 	return data;
 };
 
-Graph.prototype.parse = function(data)
+Graph.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data);
+	Object2D.prototype.parse.call(this, data, root);
 
 	this.box.fromArray(data.box);
 	this.strokeStyle = data.strokeStyle;

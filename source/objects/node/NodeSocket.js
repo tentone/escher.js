@@ -275,11 +275,8 @@ NodeSocket.prototype.destroy = function()
 
 NodeSocket.prototype.onPointerDragStart = function(pointer, viewport)
 {
-	if(this.connectors.length === 0)
-	{
-		this.creatingConnection = true;
-		this.attachConnector(new NodeConnector());
-	}
+	this.creatingConnection = true;
+	this.attachConnector(new NodeConnector());
 };
 
 NodeSocket.prototype.onPointerDrag = function(pointer, viewport, delta, position)
@@ -348,7 +345,7 @@ NodeSocket.prototype.serialize = function(recursive)
 
 NodeSocket.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data);
+	Object2D.prototype.parse.call(this, data, root);
 
 	this.name = data.name;
 	this.category = data.category;

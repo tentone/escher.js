@@ -176,7 +176,7 @@
 			}
 		}
 
-		// Group to store other objects
+
 		var graph = new Escher.NodeGraph();
 
 		var result = new ResultNode();
@@ -187,7 +187,17 @@
 
 		// Renderer
 		var renderer = new Escher.Renderer(canvas);
-		renderer.createRenderLoop(graph, viewport);
+
+		// Render loop
+		var controls = new Escher.ViewportControls(viewport);
+		function loop()
+		{
+			controls.update(renderer.pointer);
+			renderer.update(graph, viewport);
+			requestAnimationFrame(loop);
+		}
+		loop();
+
 	</script>
 </body>
 </html>

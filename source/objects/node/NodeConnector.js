@@ -92,20 +92,25 @@ NodeConnector.prototype.serialize = function(recursive)
 {
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
-	data.outputSocket = this.outputSocket.uuid;
-	data.inputSocket = this.inputSocket.uuid;
+	data.outputSocket = this.outputSocket !== null ? this.outputSocket.uuid : null;
+	data.inputSocket = this.inputSocket !== null ? this.inputSocket.uuid : null;
 
 	return data;
 };
 
 NodeConnector.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data);
+	Object2D.prototype.parse.call(this, data, root);
 
-	this.outputSocket = root.getChildByUUID(data.outputSocket);
-	this.inputSocket = root.getChildByUUID(data.inputSocket);
+	if(data.outputSocket !== null)
+	{
+		this.outputSocket = root.getChildByUUID(data.outputSocket);
+	}
+
+	if(data.inputSocket !== null)
+	{
+		this.inputSocket = root.getChildByUUID(data.inputSocket);
+	}
 };
-
-
 
 export {NodeConnector};

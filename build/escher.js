@@ -395,34 +395,27 @@
 	};
 
 	/**
-	 * Set vector value from array with a offset.
+	 * Set vector value from array [x, y].
 	 *
-	 * @param {array} array
-	 * @param {number} [offset]
+	 * The vector can be converted to array using the toArray() method.
+	 *
+	 * @param {number[]} array
 	 */
-	Vector2.prototype.fromArray = function(array, offset)
+	Vector2.prototype.fromArray = function(array)
 	{
-		if(offset === undefined) offset = 0;
-
-		this.x = array[offset];
-		this.y = array[offset + 1];
+		this.set(array[0], array[1]);
 	};
 
 	/**
-	 * Convert this vector to an array.
+	 * Convert this vector to an array. Useful for serialization and storage.
 	 *
-	 * @param {array} array
-	 * @param {number} [offset]
+	 * Values stored as [x, y].
+	 *
+	 * @return {number[]} Array containing the values of the vector.
 	 */
-	Vector2.prototype.toArray = function(array, offset)
+	Vector2.prototype.toArray = function()
 	{
-		if(array === undefined) array = [];
-		if(offset === undefined) offset = 0;
-
-		array[offset] = this.x;
-		array[offset + 1] = this.y;
-
-		return array;
+		return [this.x, this.y];
 	};
 
 	/**
@@ -1100,6 +1093,9 @@
 			}
 		});
 
+		// TODO <REMOVE THIS CODE>
+		console.log("getChildByUUID()", uuid, this, object);
+
 		return object;
 	};
 
@@ -1446,34 +1442,40 @@
 	 */
 	Object2D.parse = function(data)
 	{
+		// List of objects created stored as pairs of object, data to be later parsed.
 		var objects = [];
 
-		function createObjectInstances(data) {
+		// Parse all objects from the data object recursively and create the correct instances.
+		function createObjectInstances(data)
+		{
 			if(!Object2D.types.has(data.type))
 			{
 				throw new Error("Object type " + data.type + " unknown. Cannot parse data.");
 			}
 
-			var object = new Object2D.types.get(data.type)();
+			var Constructor = Object2D.types.get(data.type);
+			var object = new Constructor();
+			object.uuid = data.uuid;
+
+			objects.push({object: object, data: data});
+
 			for(var i = 0; i < data.children.length; i++)
 			{
 				object.add(createObjectInstances(data.children[i]));
 			}
 
-			objects.push({object: object, data: data});
-
 			return object;
 		}
 
-		var object = createObjectInstances(data);
+		var root = createObjectInstances(data);
 
 		// Parse objects data
 		for(var i = 0; i < objects.length; i++)
 		{
-			objects[i].object.parse(objects[i].data, object);
+			objects[i].object.parse(objects[i].data, root);
 		}
 
-		return object;
+		return root;
 	};
 
 	/**
@@ -4278,8 +4280,8 @@
 	{
 		var data = Object2D.prototype.serialize.call(this, recursive);
 
-		data.outputSocket = this.outputSocket.uuid;
-		data.inputSocket = this.inputSocket.uuid;
+		data.outputSocket = this.outputSocket !== null ? this.outputSocket.uuid : null;
+		data.inputSocket = this.inputSocket !== null ? this.inputSocket.uuid : null;
 
 		return data;
 	};
@@ -4288,8 +4290,15 @@
 	{
 		Object2D.prototype.parse.call(this, data);
 
-		this.outputSocket = root.getChildByUUID(data.outputSocket);
-		this.inputSocket = root.getChildByUUID(data.inputSocket);
+		if(data.outputSocket !== null)
+		{
+			this.outputSocket = root.getChildByUUID(data.outputSocket);
+		}
+
+		if(data.inputSocket !== null)
+		{
+			this.inputSocket = root.getChildByUUID(data.inputSocket);
+		}
 	};
 
 	/**
@@ -4563,11 +4572,8 @@
 
 	NodeSocket.prototype.onPointerDragStart = function(pointer, viewport)
 	{
-		if(this.connectors.length === 0)
-		{
-			this.creatingConnection = true;
-			this.attachConnector(new NodeConnector());
-		}
+		this.creatingConnection = true;
+		this.attachConnector(new NodeConnector());
 	};
 
 	NodeSocket.prototype.onPointerDrag = function(pointer, viewport, delta, position)

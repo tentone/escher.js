@@ -88,9 +88,9 @@ Circle.prototype.serialize = function(recursive)
 	return data;
 };
 
-Circle.prototype.parse = function(data)
+Circle.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data);
+	Object2D.prototype.parse.call(this, data, root);
 
 	this.radius = data.radius;
 	this.strokeStyle = data.strokeStyle;

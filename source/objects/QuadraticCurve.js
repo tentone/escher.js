@@ -78,9 +78,9 @@ QuadraticCurve.prototype.serialize = function(recursive)
 	return data;
 };
 
-QuadraticCurve.prototype.parse = function(data)
+QuadraticCurve.prototype.parse = function(data, root)
 {
-	Line.prototype.parse.call(this, data);
+	Line.prototype.parse.call(this, data, root);
 
 	this.controlPoint.fromArray(data.controlPoint);
 };

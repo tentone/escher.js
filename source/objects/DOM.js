@@ -113,9 +113,9 @@ DOM.prototype.serialize = function(recursive)
 	return data;
 };
 
-DOM.prototype.parse = function(data)
+DOM.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data);
+	Object2D.prototype.parse.call(this, data, root);
 
 	this.size.fromArray(data.size);
 

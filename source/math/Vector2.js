@@ -389,34 +389,27 @@ Vector2.prototype.equals = function(v)
 };
 
 /**
- * Set vector value from array with a offset.
+ * Set vector value from array [x, y].
  *
- * @param {array} array
- * @param {number} [offset]
+ * The vector can be converted to array using the toArray() method.
+ *
+ * @param {number[]} array
  */
-Vector2.prototype.fromArray = function(array, offset)
+Vector2.prototype.fromArray = function(array)
 {
-	if(offset === undefined) offset = 0;
-
-	this.x = array[offset];
-	this.y = array[offset + 1];
+	this.set(array[0], array[1]);
 };
 
 /**
- * Convert this vector to an array.
+ * Convert this vector to an array. Useful for serialization and storage.
  *
- * @param {array} array
- * @param {number} [offset]
+ * Values stored as [x, y].
+ *
+ * @return {number[]} Array containing the values of the vector.
  */
-Vector2.prototype.toArray = function(array, offset)
+Vector2.prototype.toArray = function()
 {
-	if(array === undefined) array = [];
-	if(offset === undefined) offset = 0;
-
-	array[offset] = this.x;
-	array[offset + 1] = this.y;
-
-	return array;
+	return [this.x, this.y];
 };
 
 /**

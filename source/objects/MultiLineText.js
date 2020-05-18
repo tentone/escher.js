@@ -108,9 +108,9 @@ MultiLineText.prototype.serialize = function(recursive)
 	return data;
 };
 
-MultiLineText.prototype.parse = function(data)
+MultiLineText.prototype.parse = function(data, root)
 {
-	Text.prototype.parse.call(this, data);
+	Text.prototype.parse.call(this, data, root);
 
 	this.maxWidth = data.maxWidth;
 	this.lineHeight = data.lineHeight;

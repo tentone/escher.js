@@ -101,9 +101,9 @@ Pattern.prototype.serialize = function(recursive)
 	return data;
 };
 
-Pattern.prototype.parse = function(data)
+Pattern.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data);
+	Object2D.prototype.parse.call(this, data, root);
 
 	this.box.fromArray(data.box);
 	this.image.src = data.image;

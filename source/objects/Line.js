@@ -90,9 +90,9 @@ Line.prototype.serialize = function(recursive)
 	return data;
 };
 
-Line.prototype.parse = function(data)
+Line.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data);
+	Object2D.prototype.parse.call(this, data, root);
 
 	this.to.fromArray(data.to);
 	this.from.fromArray(data.from);

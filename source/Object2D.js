@@ -345,6 +345,9 @@ Object2D.prototype.getChildByUUID = function(uuid)
 		}
 	});
 
+	// TODO <REMOVE THIS CODE>
+	console.log("getChildByUUID()", uuid, this, object);
+
 	return object;
 };
 
@@ -691,34 +694,40 @@ Object2D.prototype.parse = function(data, root)
  */
 Object2D.parse = function(data)
 {
+	// List of objects created stored as pairs of object, data to be later parsed.
 	var objects = [];
 
-	function createObjectInstances(data) {
+	// Parse all objects from the data object recursively and create the correct instances.
+	function createObjectInstances(data)
+	{
 		if(!Object2D.types.has(data.type))
 		{
 			throw new Error("Object type " + data.type + " unknown. Cannot parse data.");
 		}
 
-		var object = new Object2D.types.get(data.type)();
+		var Constructor = Object2D.types.get(data.type);
+		var object = new Constructor();
+		object.uuid = data.uuid;
+
+		objects.push({object: object, data: data});
+
 		for(var i = 0; i < data.children.length; i++)
 		{
 			object.add(createObjectInstances(data.children[i]));
 		}
 
-		objects.push({object: object, data: data});
-
 		return object;
 	}
 
-	var object = createObjectInstances(data);
+	var root = createObjectInstances(data);
 
 	// Parse objects data
 	for(var i = 0; i < objects.length; i++)
 	{
-		objects[i].object.parse(objects[i].data, object);
+		objects[i].object.parse(objects[i].data, root);
 	}
 
-	return object;
+	return root;
 };
 
 export {Object2D};
