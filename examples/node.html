@@ -123,13 +123,15 @@
 			}
 		}
 
-		Escher.Object2D.register(OperationNode, "OperationNode");
+
 
 		class NumberInputNode extends Escher.Node
 		{
 			constructor()
 			{
 				super();
+
+				this.type = "NumberInputNode";
 
 				this.box.set(new Escher.Vector2(-50, -30), new Escher.Vector2(50, 30));
 
@@ -155,6 +157,19 @@
 					return this.div.element.value;
 				};
 			}
+
+			serialize(recursive)
+			{
+				var data = super.serialize(recursive);
+				data.value = this.div.element.value;
+				return data;
+			}
+
+			parse(data, root)
+			{
+				super.parse(data, root);
+				this.div.element.value = data.value;
+			}
 		}
 
 		class ResultNode extends Escher.Node
@@ -162,6 +177,8 @@
 			constructor()
 			{
 				super();
+
+				this.type = "ResultNode";
 
 				this.box.set(new Escher.Vector2(-100, -20), new Escher.Vector2(100, 20));
 
@@ -193,6 +210,9 @@
 			}
 		}
 
+		Escher.Object2D.register(OperationNode, "OperationNode");
+		Escher.Object2D.register(NumberInputNode, "NumberInputNode");
+		Escher.Object2D.register(ResultNode, "ResultNode");
 
 		var graph = new Escher.NodeGraph();
 
