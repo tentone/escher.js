@@ -108,6 +108,7 @@ function NodeSocket(node, direction, category, name)
 NodeSocket.prototype = Object.create(Circle.prototype);
 NodeSocket.prototype.constructor = NodeSocket;
 NodeSocket.prototype.type = "NodeSocket";
+Object2D.register(NodeSocket, "NodeSocket");
 
 /**
  * Input hook can only be connected to an output.

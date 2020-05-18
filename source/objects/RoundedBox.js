@@ -21,6 +21,7 @@ function RoundedBox()
 RoundedBox.prototype = Object.create(Box.prototype);
 RoundedBox.prototype.constructor = RoundedBox;
 RoundedBox.prototype.type = "RoundedBox";
+Object2D.register(RoundedBox, "RoundedBox");
 
 /**
  * Draw a rounded rectangle into the canvas context using path to draw the rounded rectangle.

@@ -51,6 +51,7 @@ function Pattern(src)
 Pattern.prototype = Object.create(Object2D.prototype);
 Pattern.prototype.constructor = Pattern;
 Pattern.prototype.type = "Pattern";
+Object2D.register(Pattern, "Pattern");
 
 /**
  * Set the image source of the object. Can be anything accepted by the src field of an img element.

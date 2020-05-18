@@ -50,6 +50,7 @@ function DOM(type)
 DOM.prototype = Object.create(Object2D.prototype);
 DOM.prototype.constructor = DOM;
 DOM.prototype.type = "DOM";
+Object2D.register(DOM, "DOM");
 
 /**
  * DOM object implements onAdd() method to automatically attach the DOM object to the DOM tree.

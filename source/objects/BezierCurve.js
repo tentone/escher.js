@@ -31,6 +31,7 @@ function BezierCurve()
 BezierCurve.prototype = Object.create(Line.prototype);
 BezierCurve.prototype.constructor = BezierCurve;
 BezierCurve.prototype.type = "BezierCurve";
+Object2D.register(BezierCurve, "BezierCurve");
 
 /**
  * Create a bezier curve helper, to edit the bezier curve anchor points.

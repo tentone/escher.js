@@ -73,9 +73,9 @@
 
 		window.saveFile = function()
 		{
-			var data = graph.serialize();
+			var data = graph.serialize(true);
 			var text = JSON.stringify(data, null, "\t");
-			Escher.FileUtils.write(text);
+			Escher.FileUtils.write("object.json", text);
 		};
 
 		class OperationNode extends Escher.Node

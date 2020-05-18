@@ -36,6 +36,7 @@ function Node()
 Node.prototype = Object.create(RoundedBox.prototype);
 Node.prototype.constructor = Node;
 Node.prototype.type = "Node";
+Object2D.register(Node, "Node");
 
 /**
  * This method should be used for the node to register their socket inputs/outputs.

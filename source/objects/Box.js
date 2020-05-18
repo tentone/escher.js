@@ -42,6 +42,7 @@ function Box()
 Box.prototype = Object.create(Object2D.prototype);
 Box.prototype.constructor = Box;
 Box.prototype.type = "Box";
+Object2D.register(Box, "Box");
 
 Box.prototype.onPointerEnter = function(pointer, viewport)
 {

@@ -32,6 +32,7 @@ function BoxMask()
 BoxMask.prototype = Object.create(Mask.prototype);
 BoxMask.prototype.constructor = BoxMask;
 BoxMask.prototype.type = "BoxMask";
+Object2D.register(BoxMask, "BoxMask");
 
 BoxMask.prototype.isInside = function(point)
 {

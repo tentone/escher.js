@@ -31,6 +31,7 @@ function Image(src)
 Image.prototype = Object.create(Object2D.prototype);
 Image.prototype.constructor = Image;
 Image.prototype.type = "Image";
+Object2D.register(Image, "Image");
 
 /**
  * Set the image of the object.

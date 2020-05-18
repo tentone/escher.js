@@ -69,6 +69,7 @@ function Text()
 Text.prototype = Object.create(Object2D.prototype);
 Text.prototype.constructor = Text;
 Text.prototype.type = "Text";
+Object2D.register(Text, "Text");
 
 Text.prototype.draw = function(context, viewport, canvas)
 {

@@ -34,6 +34,7 @@ function MultiLineText()
 MultiLineText.prototype = Object.create(Text.prototype);
 MultiLineText.prototype.constructor = MultiLineText;
 MultiLineText.prototype.type = "MultiLineText";
+Object2D.register(MultiLineText, "MultiLineText");
 
 MultiLineText.prototype.draw = function(context, viewport, canvas)
 {

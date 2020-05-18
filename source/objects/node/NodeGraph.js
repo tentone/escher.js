@@ -19,6 +19,7 @@ function NodeGraph()
 NodeGraph.prototype = Object.create(Object2D.prototype);
 NodeGraph.prototype.constructor = NodeGraph;
 NodeGraph.prototype.type = "NodeGraph";
+Object2D.register(NodeGraph, "NodeGraph");
 
 /**
  * Create and add a new node of specific node type to the graph.

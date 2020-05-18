@@ -62,6 +62,7 @@ function Line()
 Line.prototype = Object.create(Object2D.prototype);
 Line.prototype.constructor = Line;
 Line.prototype.type = "Line";
+Object2D.register(Line, "Line");
 
 Line.prototype.style = function(context, viewport, canvas)
 {

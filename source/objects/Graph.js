@@ -55,6 +55,7 @@ function Graph()
 Graph.prototype = Object.create(Object2D.prototype);
 Graph.prototype.constructor = Graph;
 Graph.prototype.type = "Graph";
+Object2D.register(Graph, "Graph");
 
 Graph.prototype.isInside = function(point)
 {

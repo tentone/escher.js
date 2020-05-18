@@ -20,6 +20,7 @@ function Mask()
 Mask.prototype = Object.create(Object2D.prototype);
 Mask.prototype.constructor = Mask;
 Mask.prototype.type = "Mask";
+Object2D.register(Mask, "Mask");
 Mask.prototype.isMask = true;
 
 /**

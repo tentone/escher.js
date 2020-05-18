@@ -40,6 +40,7 @@ function Circle()
 Circle.prototype = Object.create(Object2D.prototype);
 Circle.prototype.constructor = Circle;
 Circle.prototype.type = "Circle";
+Object2D.register(Circle, "Circle");
 
 Circle.prototype.isInside = function(point)
 {

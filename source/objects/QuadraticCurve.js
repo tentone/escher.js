@@ -26,6 +26,7 @@ function QuadraticCurve()
 QuadraticCurve.prototype = Object.create(Line.prototype);
 QuadraticCurve.prototype.constructor = QuadraticCurve;
 QuadraticCurve.prototype.type = "QuadraticCurve";
+Object2D.register(QuadraticCurve, "QuadraticCurve");
 
 /**
  * Create a quadratic curve helper, to edit the curve control point.
