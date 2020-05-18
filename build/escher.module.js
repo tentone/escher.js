@@ -389,34 +389,27 @@ Vector2.prototype.equals = function(v)
 };
 
 /**
- * Set vector value from array with a offset.
+ * Set vector value from array [x, y].
  *
- * @param {array} array
- * @param {number} [offset]
+ * The vector can be converted to array using the toArray() method.
+ *
+ * @param {number[]} array
  */
-Vector2.prototype.fromArray = function(array, offset)
+Vector2.prototype.fromArray = function(array)
 {
-	if(offset === undefined) offset = 0;
-
-	this.x = array[offset];
-	this.y = array[offset + 1];
+	this.set(array[0], array[1]);
 };
 
 /**
- * Convert this vector to an array.
+ * Convert this vector to an array. Useful for serialization and storage.
  *
- * @param {array} array
- * @param {number} [offset]
+ * Values stored as [x, y].
+ *
+ * @return {number[]} Array containing the values of the vector.
  */
-Vector2.prototype.toArray = function(array, offset)
+Vector2.prototype.toArray = function()
 {
-	if(array === undefined) array = [];
-	if(offset === undefined) offset = 0;
-
-	array[offset] = this.x;
-	array[offset + 1] = this.y;
-
-	return array;
+	return [this.x, this.y];
 };
 
 /**
@@ -440,7 +433,7 @@ Vector2.prototype.rotateAround = function(center, angle)
 /**
  * 2D 3x2 transformation matrix, used to represent linear geometric transformations over objects.
  *
- * The values of the matrix are stored in a numeric array and can be applied to the canvas or DOM elements.
+ * The values of the matrix are stored as numeric array. The matrix can be applied to the canvas or DOM elements using CSS transforms.
  *
  * @class
  * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values.
@@ -449,6 +442,13 @@ function Matrix(values)
 {
 	if(values !== undefined)
 	{
+		/**
+		 * Array that contains the matrix data by row. This matrix should have 6 values.
+		 *
+		 * Matrix can be directly edited by accessing this attribute.
+		 *
+		 * @type {number[]}
+		 */
 		this.m = values;
 	}
 	else
@@ -754,7 +754,7 @@ UUID.generate = (function ()
  * @class
  */
 function Object2D()
-{	
+{
 	/**
 	 * UUID of the object.
 	 *
@@ -942,6 +942,44 @@ function Object2D()
 	 */
 	this.beingDragged = false;
 }
+
+Object2D.prototype.constructor = Object2D;
+
+/**
+ * Type of the object, used for data serialization and/or checking the object type.
+ *
+ * The name used should match the object constructor name. But it is not required.
+ *
+ * If this type is from an external library you can add the library name to the object type name to prevent collisions.
+ *
+ * @type {string}
+ */
+Object2D.prototype.type = "Object2D";
+
+/**
+ * List of available object types known by the application. Stores the object constructor by object type.
+ *
+ * Newly created types should be introduced in this map for data serialization support.
+ *
+ * New object types should be added using the Object2D.register() method.
+ *
+ * @static
+ * @type {Map<string, Function>}
+ */
+Object2D.types = new Map([[Object2D.prototype.type, Object2D]]);
+
+/**
+ * Register a object type into the application. Associates the type string to the object constructor.
+ *
+ * Should be called for every new object class implemented if you want to be able to serialize and parse data.
+ *
+ * @param {Function} constructor Object constructor.
+ * @param {string} type Object type name.
+ */
+Object2D.register = function(constructor, type)
+{
+	Object2D.types.set(type, constructor);
+};
 
 /**
  * Check if a point in world coordinates intersects this object or its children and get a list of the objects intersected.
@@ -1146,8 +1184,9 @@ Object2D.prototype.updateMatrix = function(context)
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport applied to the canvas.
+ * @param {Element} canvas DOM canvas element where the content is being drawn.
  */
-Object2D.prototype.transform = function(context, viewport)
+Object2D.prototype.transform = function(context, viewport, canvas)
 {
 	this.globalMatrix.tranformContext(context);
 };
@@ -1161,7 +1200,7 @@ Object2D.prototype.transform = function(context, viewport)
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport used to view the canvas content.
- * @param {DOM} canvas DOM canvas element where the content is being drawn.
+ * @param {Element} canvas DOM canvas element where the content is being drawn.
  */
 Object2D.prototype.style = null; // function(context, viewport, canvas){};
 
@@ -1172,7 +1211,7 @@ Object2D.prototype.style = null; // function(context, viewport, canvas){};
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport used to view the canvas content.
- * @param {DOM} canvas DOM canvas element where the content is being drawn.
+ * @param {Element} canvas DOM canvas element where the content is being drawn.
  */
 Object2D.prototype.draw = null; // function(context, viewport, canvas){};
 
@@ -1293,6 +1332,144 @@ Object2D.prototype.onButtonDown = null;
 Object2D.prototype.onButtonUp = null;
 
 /**
+ * Serialize the object data into a JSON object. That can be written into a file, sent using HTTP request etc.
+ *
+ * All required attributes to recreate the object in its current state should be stored. Relations between children should be stored by their UUID only.
+ *
+ * Data has to be parsed back into a usable object.
+ *
+ * @param {boolean} recursive If set false the children list is not serialized, otherwise all children are serialized.
+ * @return {Object} Serialized object data.
+ */
+Object2D.prototype.serialize = function(recursive)
+{
+	var data = {
+		uuid: this.uuid,
+		type: this.type,
+		position: this.position.toArray(),
+		origin: this.origin.toArray(),
+		scale: this.scale.toArray(),
+		rotation: this.rotation,
+		visible: this.visible,
+		layer: this.layer,
+		matrix: this.matrix.m,
+		globalMatrix: this.globalMatrix.m,
+		inverseGlobalMatrix: this.inverseGlobalMatrix.m,
+		matrixAutoUpdate: this.matrixAutoUpdate,
+		draggable: this.draggable,
+		pointerEvents: this.pointerEvents,
+		ignoreViewport: this.ignoreViewport,
+		saveContextState: this.saveContextState,
+		restoreContextState: this.restoreContextState,
+		pointerInside: this.pointerInside,
+		beingDragged: this.beingDragged,
+		children: [],
+		masks: []
+	};
+
+	if(recursive !== false)
+	{
+		for(var i = 0; i < this.children.length; i++)
+		{
+			data.children.push(this.children[i].serialize());
+		}
+	}
+
+	for(var i = 0; i < this.masks.length; i++)
+	{
+		data.masks.push(this.masks[i].uuid);
+	}
+
+	return data;
+};
+
+/**
+ * Parse serialized object data and fill the object attributes.
+ *
+ * Implementations of this method should only load the attributes added to the structure, the based method already loads common attributes.
+ *
+ * Dont forget to register object types using the Object2D.register() method.
+ *
+ * @param {Object} data Object data loaded from JSON.
+ * @param {Object2D} root Root object being loaded can be used to get references to other objects.
+ */
+Object2D.prototype.parse = function(data, root)
+{
+	this.uuid = data.uuid;
+	this.position.fromArray(data.position);
+	this.origin.fromArray(data.origin);
+	this.scale.fromArray(data.scale);
+	this.rotation = data.rotation;
+	this.visible = data.visible;
+	this.layer = data.layer;
+	this.matrix = new Matrix(data.matrix);
+	this.globalMatrix = new Matrix(data.globalMatrix);
+	this.inverseGlobalMatrix = new Matrix(data.inverseGlobalMatrix);
+	this.matrixAutoUpdate = data.matrixAutoUpdate;
+	this.draggable = data.draggable;
+	this.pointerEvents = data.pointerEvents;
+	this.ignoreViewport = data.ignoreViewport;
+	this.saveContextState = data.saveContextState;
+	this.restoreContextState = data.restoreContextState;
+	this.pointerInside = data.pointerInside;
+	this.beingDragged = data.beingDragged;
+
+	for(var i = 0; i < this.masks.length; i++)
+	{
+		data.masks.push(root.getChildByUUID(data.masks[i]));
+	}
+};
+
+/**
+ * Create objects from serialized object data into the proper data structures.
+ *
+ * All objects should implement serialization methods to serialize and load data properly.
+ *
+ * First all objects instances are created to ensure that object trying to get references to other object can have the data accessible, only then the parse method is called.
+ *
+ * @static
+ * @param {Object} data Object data loaded from JSON.
+ * @return {Object2D} Parsed object data.
+ */
+Object2D.parse = function(data)
+{
+	// List of objects created stored as pairs of object, data to be later parsed.
+	var objects = [];
+
+	// Parse all objects from the data object recursively and create the correct instances.
+	function createObjectInstances(data)
+	{
+		if(!Object2D.types.has(data.type))
+		{
+			throw new Error("Object type " + data.type + " unknown. Cannot parse data.");
+		}
+
+		var Constructor = Object2D.types.get(data.type);
+		var object = new Constructor();
+		object.uuid = data.uuid;
+
+		objects.push({object: object, data: data});
+
+		for(var i = 0; i < data.children.length; i++)
+		{
+			object.add(createObjectInstances(data.children[i]));
+		}
+
+		return object;
+	}
+
+	var root = createObjectInstances(data);
+
+	// Parse objects data
+	for(var i = 0; i < objects.length; i++)
+	{
+		objects[i].object.parse(objects[i].data, root);
+	}
+
+	return root;
+};
+
+/**
  * Text element, used to draw single line text into the canvas.
  *
  * For multi line text with support for line break check {MultiLineText} object.
@@ -1359,6 +1536,9 @@ function Text()
 }
 
 Text.prototype = Object.create(Object2D.prototype);
+Text.prototype.constructor = Text;
+Text.prototype.type = "Text";
+Object2D.register(Text, "Text");
 
 Text.prototype.draw = function(context, viewport, canvas)
 {
@@ -1377,6 +1557,34 @@ Text.prototype.draw = function(context, viewport, canvas)
 		context.strokeStyle = this.strokeStyle;
 		context.strokeText(this.text, 0, 0);
 	}
+};
+
+Text.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.text = this.text;
+	data.font = this.font;
+	data.strokeStyle = this.strokeStyle;
+	data.lineWidth = this.lineWidth;
+	data.fillStyle = this.fillStyle;
+	data.textAlign = this.textAlign;
+	data.textBaseline = this.textBaseline;
+
+	return data;
+};
+
+Text.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.text = data.text;
+	this.font = data.font;
+	this.strokeStyle = data.strokeStyle;
+	this.lineWidth = data.lineWidth;
+	this.fillStyle = data.fillStyle;
+	this.textAlign = data.textAlign;
+	this.textBaseline = data.textBaseline;
 };
 
 /**
@@ -1411,6 +1619,9 @@ function MultiLineText()
 }
 
 MultiLineText.prototype = Object.create(Text.prototype);
+MultiLineText.prototype.constructor = MultiLineText;
+MultiLineText.prototype.type = "MultiLineText";
+Object2D.register(MultiLineText, "MultiLineText");
 
 MultiLineText.prototype.draw = function(context, viewport, canvas)
 {
@@ -1471,6 +1682,24 @@ MultiLineText.prototype.draw = function(context, viewport, canvas)
 			offsetY += lineHeight;
 		}
 	}
+};
+
+MultiLineText.prototype.serialize = function(recursive)
+{
+	var data = Text.prototype.serialize.call(this, recursive);
+
+	data.maxWidth = this.maxWidth;
+	data.lineHeight = this.lineHeight;
+
+	return data;
+};
+
+MultiLineText.prototype.parse = function(data, root)
+{
+	Text.prototype.parse.call(this, data, root);
+
+	this.maxWidth = data.maxWidth;
+	this.lineHeight = data.lineHeight;
 };
 
 /**
@@ -2836,6 +3065,27 @@ Box2.prototype.equals = function(box)
 };
 
 /**
+ * Store the box data into a numeric array.
+ *
+ * @return {number[]} Numeric array with box data min and max.
+ */
+Box2.prototype.toArray = function()
+{
+	return [this.box.min.x, this.box.min.y, this.box.max.x, this.box.max.y];
+};
+
+/**
+ * Set box data min and max from numeric array.
+ *
+ * @param {number[]} array Numeric array with box data min and max.
+ */
+Box2.prototype.fromArray = function(array)
+{
+	this.box.min.set(array[0], array[1]);
+	this.box.max.set(array[2], array[3]);
+};
+
+/**
  * A mask can be used to set the drawing region.
  *
  * Masks are treated as objects their shape is used to filter other objects shape.
@@ -2853,11 +3103,17 @@ function Mask()
 }
 
 Mask.prototype = Object.create(Object2D.prototype);
-
+Mask.prototype.constructor = Mask;
+Mask.prototype.type = "Mask";
+Object2D.register(Mask, "Mask");
 Mask.prototype.isMask = true;
 
 /**
- * Clip the canvas context, to ensure that next objects being drawn are cliped to the path stored here.
+ * Clip the canvas context. Define a clipping path and set the clip using the context.clip() method.
+ *
+ * Ensures that next objects being drawn are clipped to the path stored here.
+ *
+ * More information about canvas clipping https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clip.
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport applied to the canvas.
@@ -2879,16 +3135,23 @@ function BoxMask()
 
 	/**
 	 * Box object containing the size of the object.
+	 *
+	 * @type {Box2}
 	 */
 	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 	/**
 	 * If inverted the mask considers the outside of the box instead of the inside.
+	 *
+	 * @type {boolean}
 	 */
 	this.invert = false;
 }
 
 BoxMask.prototype = Object.create(Mask.prototype);
+BoxMask.prototype.constructor = BoxMask;
+BoxMask.prototype.type = "BoxMask";
+Object2D.register(BoxMask, "BoxMask");
 
 BoxMask.prototype.isInside = function(point)
 {
@@ -2955,6 +3218,9 @@ function Box()
 }
 
 Box.prototype = Object.create(Object2D.prototype);
+Box.prototype.constructor = Box;
+Box.prototype.type = "Box";
+Object2D.register(Box, "Box");
 
 Box.prototype.onPointerEnter = function(pointer, viewport)
 {
@@ -2988,6 +3254,28 @@ Box.prototype.draw = function(context, viewport, canvas)
 		context.strokeStyle = this.strokeStyle;
 		context.strokeRect(this.box.min.x, this.box.min.y, width, height);
 	}
+};
+
+Box.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.box = this.box.toArray();
+	data.strokeStyle = this.strokeStyle;
+	data.lineWidth = this.lineWidth;
+	data.fillStyle = this.fillStyle;
+
+	return data;
+};
+
+Box.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.box.fromArray(data.box);
+	this.strokeStyle = data.strokeStyle;
+	this.lineWidth = data.lineWidth;
+	this.fillStyle = data.fillStyle;
 };
 
 /**
@@ -3028,6 +3316,9 @@ function Circle()
 }
 
 Circle.prototype = Object.create(Object2D.prototype);
+Circle.prototype.constructor = Circle;
+Circle.prototype.type = "Circle";
+Object2D.register(Circle, "Circle");
 
 Circle.prototype.isInside = function(point)
 {
@@ -3063,6 +3354,28 @@ Circle.prototype.draw = function(context, viewport, canvas)
 	}
 };
 
+Circle.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.radius = this.radius;
+	data.strokeStyle = this.strokeStyle;
+	data.lineWidth = this.lineWidth;
+	data.fillStyle = this.fillStyle;
+
+	return data;
+};
+
+Circle.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.radius = data.radius;
+	this.strokeStyle = data.strokeStyle;
+	this.lineWidth = data.lineWidth;
+	this.fillStyle = data.fillStyle;
+};
+
 /**
  * Line object draw a line from one point to another without any kind of interpolation.
  *
@@ -3079,6 +3392,8 @@ function Line()
 	 * Initial point of the line.
 	 *
 	 * Can be equal to the position object of another object. Making it automatically follow that object.
+	 *
+	 * @type {Vector2}
 	 */
 	this.from = new Vector2();
 
@@ -3086,6 +3401,8 @@ function Line()
 	 * Final point of the line.
 	 *
 	 * Can be equal to the position object of another object. Making it automatically follow that object.
+	 *
+	 * @type {Vector2}
 	 */
 	this.to = new Vector2();
 
@@ -3095,21 +3412,30 @@ function Line()
 	 * Dash pattern is defined as the size of dashes as pairs of space with no line and with line.
 	 *
 	 * E.g if the dash pattern is [1, 2] we get 1 point with line, 2 without line repeat infinitelly.
+	 *
+	 * @type {number[]}
 	 */
 	this.dashPattern = [5, 5];
 
 	/**
 	 * Style of the object line.
+	 *
+	 * @type {string}
 	 */
 	this.strokeStyle = "#000000";
 
 	/**
 	 * Line width of the line.
+	 *
+	 * @type {number}
 	 */
 	this.lineWidth = 1;
 }
 
 Line.prototype = Object.create(Object2D.prototype);
+Line.prototype.constructor = Line;
+Line.prototype.type = "Line";
+Object2D.register(Line, "Line");
 
 Line.prototype.style = function(context, viewport, canvas)
 {
@@ -3124,6 +3450,30 @@ Line.prototype.draw = function(context, viewport, canvas)
 	context.moveTo(this.from.x, this.from.y);
 	context.lineTo(this.to.x, this.to.y);
 	context.stroke();
+};
+
+Line.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.from = this.from.toArray();
+	data.to = this.to.toArray();
+	data.dashPattern = this.dashPattern;
+	data.strokeStyle = this.strokeStyle;
+	data.lineWidth = this.lineWidth;
+
+	return data;
+};
+
+Line.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.to.fromArray(data.to);
+	this.from.fromArray(data.from);
+	this.dashPattern = data.dashPattern;
+	this.strokeStyle = data.strokeStyle;
+	this.lineWidth = data.lineWidth;
 };
 
 /**
@@ -3154,6 +3504,9 @@ function Image(src)
 }
 
 Image.prototype = Object.create(Object2D.prototype);
+Image.prototype.constructor = Image;
+Image.prototype.type = "Image";
+Object2D.register(Image, "Image");
 
 /**
  * Set the image of the object.
@@ -3187,28 +3540,47 @@ Image.prototype.draw = function(context, viewport, canvas)
 	}
 };
 
+Image.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.box = this.box.toArray();
+	data.image = this.image.src;
+
+	return data;
+};
+
+Image.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.box.fromArray(data.box);
+	this.image.src = data.image;
+};
+
 /**
  * A DOM object transformed using CSS3D to be included in the scene.
  *
- * DOM objects always stay on top of everything else, it is not possible to layer these object with regular canvas objects.
+ * DOM objects always stay on top or bellow (depending on the DOM parent placement) of everything else. It is not possible to layer these object with regular canvas objects.
  *
  * By default mouse events are not supported for these objects (it does not implement pointer collision checking). Use the DOM events for interaction with these types of objects.
  *
  * @class
- * @param {Element} parentDOM Parent DOM element that contains the drawing canvas.
  * @param {string} type Type of the DOM element (e.g. "div", "p", ...)
  * @extends {Object2D}
  */
-function DOM(parentDOM, type)
+function DOM(type)
 {
 	Object2D.call(this);
 
 	/**
-	 * Parent element that contains this DOM div.
+	 * Parent element that contains this DOM object.
+	 *
+	 * The DOM parent element if not set manually is automatically set to the parent of the drawing canvas.
 	 *
 	 * @type {Element}
 	 */
-	this.parentDOM = parentDOM;
+	this.parentElement = null;
 
 	/**
 	 * DOM element contained by this object.
@@ -3233,25 +3605,41 @@ function DOM(parentDOM, type)
 }
 
 DOM.prototype = Object.create(Object2D.prototype);
+DOM.prototype.constructor = DOM;
+DOM.prototype.type = "DOM";
+Object2D.register(DOM, "DOM");
 
 /**
  * DOM object implements onAdd() method to automatically attach the DOM object to the DOM tree.
  */
 DOM.prototype.onAdd = function()
 {
-	this.parentDOM.appendChild(this.element);
+	if(this.parentElement !== null)
+	{
+		this.parentElement.appendChild(this.element);
+	}
 };
 
 /**
- * DOM object implements onAdd() method to automatically remove the DOM object to the DOM tree.
+ * DOM object implements onRemove() method to automatically remove the DOM object to the DOM tree.
  */
 DOM.prototype.onRemove = function()
 {
-	this.parentDOM.removeChild(this.element);
+	if(this.parentElement !== null)
+	{
+		this.parentElement.removeChild(this.element);
+	}
 };
 
 DOM.prototype.transform = function(context, viewport, canvas)
 {
+	// Check if the DOM element parent is null
+	if(this.parentElement === null)
+	{
+		this.parentElement = canvas.parentElement;
+		this.parentElement.appendChild(this.element);
+	}
+
 	// CSS transformation matrix
 	if(this.ignoreViewport)
 	{
@@ -3272,6 +3660,27 @@ DOM.prototype.transform = function(context, viewport, canvas)
 	this.element.style.display = this.visible ? "block" : "none"; 
 };
 
+DOM.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.size = this.size.toArray();
+	data.element = this.element.outerHTML;
+
+	return data;
+};
+
+DOM.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.size.fromArray(data.size);
+
+	var parser = new DOMParser();
+	var doc = parser.parseFromString(this.element.outerHTML, 'text/html');
+	this.element = doc.body.children[0];
+};
+
 /**
  * Pattern object draw a image repeated as a pattern.
  *
@@ -3287,16 +3696,28 @@ function Pattern(src)
 
 	/**
 	 * Box object containing the size of the object.
+	 *
+	 * @type {Box2}
 	 */
 	this.box = new Box2();
 
 	/**
-	 * Image source DOM element.
+	 * Image source DOM element. Used as a source for the pattern image.
+	 *
+	 * This element can be replaced by one of other type (e.g canvas, video).
+	 *
+	 * @type {Element}
 	 */
 	this.image = document.createElement("img");
 
 	/**
-	 * A DOMString indicating how to repeat the pattern image.
+	 * Repetition indicates how the pattern image should be repeated.
+	 *
+	 * Possible values are "repeat", "repeat-x", "repeat-y" or "no-repeat".
+	 *
+	 * More information about this attribute here https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern.
+	 *
+	 * @type {string}
 	 */
 	this.repetition = "repeat";
 
@@ -3307,11 +3728,16 @@ function Pattern(src)
 }
 
 Pattern.prototype = Object.create(Object2D.prototype);
+Pattern.prototype.constructor = Pattern;
+Pattern.prototype.type = "Pattern";
+Object2D.register(Pattern, "Pattern");
 
 /**
- * Set the image of the object.
+ * Set the image source of the object. Can be anything accepted by the src field of an img element.
  *
  * Automatically sets the box size to match the image.
+ *
+ * @param {string} src Image source string.
  */
 Pattern.prototype.setImage = function(src)
 {
@@ -3342,6 +3768,26 @@ Pattern.prototype.draw = function(context, viewport, canvas)
 		context.fillStyle = pattern;
 		context.fillRect(this.box.min.x, this.box.min.y, width, height);
 	}
+};
+
+Pattern.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.box = this.box.toArray();
+	data.image = this.image.src;
+	data.repetition = this.repetition;
+
+	return data;
+};
+
+Pattern.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.box.fromArray(data.box);
+	this.image.src = data.image;
+	this.repetition = data.repetition;
 };
 
 /**
@@ -3395,6 +3841,9 @@ function Graph()
 }
 
 Graph.prototype = Object.create(Object2D.prototype);
+Graph.prototype.constructor = Graph;
+Graph.prototype.type = "Graph";
+Object2D.register(Graph, "Graph");
 
 Graph.prototype.isInside = function(point)
 {
@@ -3437,6 +3886,34 @@ Graph.prototype.draw = function(context, viewport, canvas)
 	}
 };
 
+Graph.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.box = this.box.toArray();
+	data.strokeStyle = this.strokeStyle;
+	data.lineWidth = this.lineWidth;
+	data.fillStyle = this.fillStyle;
+	data.min = this.min;
+	data.max = this.max;
+	data.data = this.data;
+
+	return data;
+};
+
+Graph.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.box.fromArray(data.box);
+	this.strokeStyle = data.strokeStyle;
+	this.lineWidth = data.lineWidth;
+	this.fillStyle = data.fillStyle;
+	this.min = data.min;
+	this.max = data.max;
+	this.data = data.data;
+};
+
 /**
  * Bezier curve object draw as bezier curve between two points.
  *
@@ -3463,6 +3940,9 @@ function BezierCurve()
 }
 
 BezierCurve.prototype = Object.create(Line.prototype);
+BezierCurve.prototype.constructor = BezierCurve;
+BezierCurve.prototype.type = "BezierCurve";
+Object2D.register(BezierCurve, "BezierCurve");
 
 /**
  * Create a bezier curve helper, to edit the bezier curve anchor points.
@@ -3515,6 +3995,24 @@ BezierCurve.prototype.draw = function(context, viewport, canvas)
 	context.stroke();
 };
 
+BezierCurve.prototype.serialize = function(recursive)
+{
+	var data = Line.prototype.serialize.call(this, recursive);
+
+	data.fromCp = this.fromCp.toArray();
+	data.toCp = this.toCp.toArray();
+
+	return data;
+};
+
+BezierCurve.prototype.parse = function(data, root)
+{
+	Line.prototype.parse.call(this, data, root);
+
+	this.fromCp.fromArray(data.fromCp);
+	this.toCp.fromArray(data.toCp);
+};
+
 /**
  * Bezier curve object draw as bezier curve between two points.
  *
@@ -3536,6 +4034,9 @@ function QuadraticCurve()
 }
 
 QuadraticCurve.prototype = Object.create(Line.prototype);
+QuadraticCurve.prototype.constructor = QuadraticCurve;
+QuadraticCurve.prototype.type = "QuadraticCurve";
+Object2D.register(QuadraticCurve, "QuadraticCurve");
 
 /**
  * Create a quadratic curve helper, to edit the curve control point.
@@ -3578,6 +4079,22 @@ QuadraticCurve.prototype.draw = function(context, viewport, canvas)
 	context.stroke();
 };
 
+QuadraticCurve.prototype.serialize = function(recursive)
+{
+	var data = Line.prototype.serialize.call(this, recursive);
+
+	data.controlPoint = this.controlPoint.toArray();
+
+	return data;
+};
+
+QuadraticCurve.prototype.parse = function(data, root)
+{
+	Line.prototype.parse.call(this, data, root);
+
+	this.controlPoint.fromArray(data.controlPoint);
+};
+
 /**
  * Rounded box object draw a rectangular object with rounded corners.
  *
@@ -3597,6 +4114,9 @@ function RoundedBox()
 }
 
 RoundedBox.prototype = Object.create(Box.prototype);
+RoundedBox.prototype.constructor = RoundedBox;
+RoundedBox.prototype.type = "RoundedBox";
+Object2D.register(RoundedBox, "RoundedBox");
 
 /**
  * Draw a rounded rectangle into the canvas context using path to draw the rounded rectangle.
@@ -3644,6 +4164,78 @@ RoundedBox.prototype.draw = function(context, viewport, canvas)
 	}
 };
 
+RoundedBox.prototype.serialize = function(recursive)
+{
+	var data = Box.prototype.serialize.call(this, recursive);
+
+	data.radius = this.radius;
+
+	return data;
+};
+
+RoundedBox.prototype.parse = function(data, root)
+{
+	Box.prototype.parse.call(this, data, root);
+
+	this.radius = data.radius;
+};
+
+/**
+ * Node graph object should be used as a container for node elements.
+ *
+ * The node graph object specifies how the nodes are processed, each individual node can store and process data, the node graph specified how this information is processed.
+ *
+ * All node elements are stored as children of the node graph.
+ *
+ * @class
+ * @extends {Object2D}
+ */
+function NodeGraph()
+{
+	Object2D.call(this);
+}
+
+NodeGraph.prototype = Object.create(Object2D.prototype);
+NodeGraph.prototype.constructor = NodeGraph;
+NodeGraph.prototype.type = "NodeGraph";
+Object2D.register(NodeGraph, "NodeGraph");
+
+/**
+ * Create and add a new node of specific node type to the graph.
+ *
+ * Automatically finds an empty space as close as possible to other nodes to add this new node.
+ *
+ * @param {Node} node Node object to be added.
+ * @return {Node} Node created (already added to the graph).
+ */
+NodeGraph.prototype.addNode = function(node)
+{
+	// Check available position on screen.
+	var x = 0, y = 0;
+	for(var i = 0; i < this.children.length; i++)
+	{
+		if(this.children[i].position.x > x)
+		{
+			x = this.children[i].position.x;
+		}
+		if(this.children[i].position.y > y)
+		{
+			y = this.children[i].position.y;
+		}
+	}
+
+	// Create and add new node
+	node.position.set(x + 200, y / 2.0);
+	this.add(node);
+
+	if(node.registerSockets !== null)
+	{
+		node.registerSockets();
+	}
+
+	return node;
+};
+
 /**
  * Node connector is used to connect a output of a node to a input of another node.
  *
@@ -3651,7 +4243,8 @@ RoundedBox.prototype.draw = function(context, viewport, canvas)
  *
  * Data always goes from the output node to a input node.
  *
- * @class NodeConnector
+ * @class
+ * @extends {BezierCurve}
  */
 function NodeConnector()
 {
@@ -3675,6 +4268,9 @@ function NodeConnector()
 }
 
 NodeConnector.prototype = Object.create(BezierCurve.prototype);
+NodeConnector.prototype.constructor = NodeConnector;
+NodeConnector.prototype.type = "NodeConnector";
+Object2D.register(NodeConnector, "NodeConnector");
 
 NodeConnector.prototype.destroy = function()
 {
@@ -3682,12 +4278,14 @@ NodeConnector.prototype.destroy = function()
 
 	if(this.outputSocket !== null)
 	{
-		this.outputSocket.connector = null;
+		this.outputSocket.removeConnector(this);
+		this.outputSocket = null;
 	}
 
 	if(this.inputSocket !== null)
 	{
-		this.inputSocket.connector = null;
+		this.inputSocket.removeConnector(this);
+		this.inputSocket = null;
 	}
 };
 
@@ -3728,18 +4326,44 @@ NodeConnector.prototype.onUpdate = function()
 	}
 };
 
+NodeConnector.prototype.serialize = function(recursive)
+{
+	var data = BezierCurve.prototype.serialize.call(this, recursive);
+
+	data.outputSocket = this.outputSocket !== null ? this.outputSocket.uuid : null;
+	data.inputSocket = this.inputSocket !== null ? this.inputSocket.uuid : null;
+
+	return data;
+};
+
+NodeConnector.prototype.parse = function(data, root)
+{
+	BezierCurve.prototype.parse.call(this, data, root);
+
+	if(data.outputSocket !== null)
+	{
+		this.outputSocket = root.getChildByUUID(data.outputSocket);
+	}
+
+	if(data.inputSocket !== null)
+	{
+		this.inputSocket = root.getChildByUUID(data.inputSocket);
+	}
+};
+
 /**
  * Represents a node hook point. Is attached to the node element and represented visually.
  *
  * Can be used as a node input, output or as a bidirectional connection.
  *
- * @class NodeSocket
+ * @class
+ * @extends {Circle}
  * @param {Node} node Node of this hook.
  * @param {number} direction Direction of the hook.
- * @param {string} type Data type of the node socket.
+ * @param {string} category Data category of the node socket.
  * @param {string} name Name of the node socket.
  */
-function NodeSocket(node, direction, type, name)
+function NodeSocket(node, direction, category, name)
 {
 	Circle.call(this);
 
@@ -3755,13 +4379,22 @@ function NodeSocket(node, direction, type, name)
 	this.name = name !== undefined ? name : "";
 
 	/**
-	 * Type of data available from this socket. Only sockets of the same type can be connected.
+	 * Category of data available from this socket. Only sockets of the same category can be connected.
 	 *
 	 * Should directly store the data type name (e.g. "string", "number", "Object", etc).
 	 *
 	 * @type {string}
 	 */
-	this.category = type !== undefined ? type : "";
+	this.category = category !== undefined ? category : "";
+
+	/**
+	 * Allow to connect a OUTPUT node to multiple INPUT sockets.
+	 *
+	 * A INPUT socket can only take one connection, this value is ignored for INPUT sockets.
+	 *
+	 * @type {boolean}
+	 */
+	this.multiple = true;
 
 	/**
 	 * Direction of the node hook, indicates the data flow of the socket.
@@ -3784,11 +4417,18 @@ function NodeSocket(node, direction, type, name)
 	/**
 	 * Node connector used to connect this socket to another node socket.
 	 *
-	 * Can be used to access the adjacent node.
+	 * Can be used to access the adjacent node. If the socket allows for multiple connections this array can have multiple elements.
 	 *
-	 * @type {NodeConnector}
+	 * @type {NodeConnector[]}
 	 */
-	this.connector = null;
+	this.connectors = [];
+
+	/**
+	 * Indicates if the user is currently creating a new connection from this node socket.
+	 *
+	 * @type {boolean}
+	 */
+	this.creatingConnection = false;
 
 	/**
 	 * Text object used to present the name of the socket.
@@ -3812,6 +4452,11 @@ function NodeSocket(node, direction, type, name)
 	this.add(this.text);
 }
 
+NodeSocket.prototype = Object.create(Circle.prototype);
+NodeSocket.prototype.constructor = NodeSocket;
+NodeSocket.prototype.type = "NodeSocket";
+Object2D.register(NodeSocket, "NodeSocket");
+
 /**
  * Input hook can only be connected to an output.
  *
@@ -3830,8 +4475,6 @@ NodeSocket.INPUT = 1;
  */
 NodeSocket.OUTPUT = 2;
 
-NodeSocket.prototype = Object.create(Circle.prototype);
-
 /**
  * Get value stored or calculated in node socket, it should be the calculated from node logic, node inputs, user input, etc.
  *
@@ -3845,9 +4488,10 @@ NodeSocket.prototype = Object.create(Circle.prototype);
  */
 NodeSocket.prototype.getValue = function()
 {
-	if(this.direction === NodeSocket.INPUT && this.connector !== null && this.connector.outputSocket !== null)
+	// If the node is an input get its value from the output socket of the connection.
+	if(this.direction === NodeSocket.INPUT && this.connectors.length > 0 && this.connectors[0].outputSocket !== null)
 	{
-		return this.connector.outputSocket.getValue();
+		return this.connectors[0].outputSocket.getValue();
 	}
 
 	return null;
@@ -3883,6 +4527,13 @@ NodeSocket.prototype.connectTo = function(socket)
  */
 NodeSocket.prototype.attachConnector = function(connector)
 {
+	// If there is no space for a new connector delete the already existing connectors.
+	if(!this.canAddConnector())
+	{
+		this.destroyConnectors();
+	}
+
+	// Attach the socket to the correct direction of the connector
 	if(this.direction === NodeSocket.INPUT)
 	{
 		connector.inputSocket = this;
@@ -3892,7 +4543,8 @@ NodeSocket.prototype.attachConnector = function(connector)
 		connector.outputSocket = this;
 	}
 
-	this.connector = connector;
+	// Add to the list connectors
+	this.connectors.push(connector);
 	if(connector.parent === null)
 	{
 		this.parent.add(connector);
@@ -3900,7 +4552,7 @@ NodeSocket.prototype.attachConnector = function(connector)
 };
 
 /**
- * Check if this socket can be connected (is compatible) with another socket.
+ * Check if this socket is compatible (type and direction) with another socket.
  *
  * For two sockets to be compatible the data flow should be correct (one input and a output) and they should carry the same data type.
  *
@@ -3912,42 +4564,86 @@ NodeSocket.prototype.isCompatible = function(socket)
 	return this.direction !== socket.direction && this.category === socket.category;
 };
 
+/**
+ * Check if this node socket can have a new connector attached to it.
+ *
+ * Otherwise it might be necessary to destroy old connectors before adding a new connector.
+ *
+ * @return {boolean} True if its possible to add a new connector to the socket, false otherwise.
+ */
+NodeSocket.prototype.canAddConnector = function()
+{
+	return !(this.connectors.length > 0 && ((this.direction === NodeSocket.INPUT) || (this.direction === NodeSocket.OUTPUT && !this.multiple)));
+};
+
+/**
+ * Check if this socket can be connected with another socket, they have to be compatible and have space for a new connector.
+ *
+ * @param {NodeSocket} socket Socket to verify connectivity with.
+ * @return {boolean} Returns true if the two sockets can be connected.
+ */
+NodeSocket.prototype.canConnect = function(socket)
+{
+	return this.isCompatible(socket) && this.canAddConnector();
+};
+
+/**
+ * Destroy a connector attached to this socket, calls the destroy() method of the connection.
+ */
+NodeSocket.prototype.removeConnector = function(connector)
+{
+	var index = this.connectors.indexOf(connector);
+	if(index !== -1)
+	{
+		this.connectors.splice(index, 1);
+		connector.destroy();
+	}
+};
+
+/**
+ * Destroy all connectors attached to this socket.
+ *
+ * Should be called when destroying the object or to clean up the object.
+ */
+NodeSocket.prototype.destroyConnectors = function()
+{
+	for(var i = 0; i < this.connectors.length; i++)
+	{
+		this.connectors[i].destroy();
+	}
+};
+
 NodeSocket.prototype.destroy = function()
 {
 	Circle.prototype.destroy.call(this);
 
-	if(this.connector !== null)
-	{
-		this.connector.destroy();
-	}
+	this.destroyConnectors();
 };
 
 NodeSocket.prototype.onPointerDragStart = function(pointer, viewport)
 {
-	if(this.connector === null)
-	{
-		this.attachConnector(new NodeConnector());
-	}
+	this.creatingConnection = true;
+	this.attachConnector(new NodeConnector());
 };
 
 NodeSocket.prototype.onPointerDrag = function(pointer, viewport, delta, position)
 {
-	if(this.connector !== null)
+	if(this.creatingConnection)
 	{
 		if(this.direction === NodeSocket.INPUT)
 		{
-			this.connector.from.copy(position);
+			this.connectors[this.connectors.length - 1].from.copy(position);
 		}
 		else if(this.direction === NodeSocket.OUTPUT)
 		{
-			this.connector.to.copy(position);
+			this.connectors[this.connectors.length - 1].to.copy(position);
 		}
 	}
 };
 
 NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
 {
-	if(this.connector !== null)
+	if(this.creatingConnection)
 	{
 		var position = viewport.inverseMatrix.transformPoint(pointer.position);
 		var objects = this.parent.getWorldPointIntersections(position);
@@ -3959,7 +4655,7 @@ NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
 			{
 				if(this.isCompatible(objects[i]))
 				{
-					objects[i].attachConnector(this.connector);
+					objects[i].attachConnector(this.connectors[this.connectors.length - 1]);
 					found = true;
 					break;
 				}
@@ -3968,8 +4664,45 @@ NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
 
 		if(!found)
 		{
-			this.connector.destroy();
+			this.connectors[this.connectors.length - 1].destroy();
 		}
+	}
+
+	this.creatingConnection = false;
+};
+
+NodeSocket.prototype.serialize = function(recursive)
+{
+	var data = Circle.prototype.serialize.call(this, recursive);
+
+	data.name = this.name;
+	data.category = this.category;
+	data.multiple = this.multiple;
+	data.direction = this.direction;
+	data.node = this.node.uuid;
+
+	data.connectors = [];
+	for(var i = 0; i < this.connectors.length; i++)
+	{
+		data.connectors.push(this.connectors[i].uuid);
+	}
+
+	return data;
+};
+
+NodeSocket.prototype.parse = function(data, root)
+{
+	Circle.prototype.parse.call(this, data, root);
+
+	this.name = data.name;
+	this.category = data.category;
+	this.multiple = data.multiple;
+	this.direction = data.direction;
+
+	this.node = root.getChildByUUID(data.node);
+	for(var i = 0; i < data.connectors.length; i++)
+	{
+		this.connectors.push(root.getChildByUUID(data.connectors[i]));
 	}
 };
 
@@ -3980,7 +4713,8 @@ NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
  *
  * This class implements node basic functionality, the logic to connect node and define inputs/outputs of the nodes.
  *
- * @class Node
+ * @class
+ * @extends {RoundedBox}
  */
 function Node()
 {
@@ -4004,6 +4738,9 @@ function Node()
 }
 
 Node.prototype = Object.create(RoundedBox.prototype);
+Node.prototype.constructor = Node;
+Node.prototype.type = "Node";
+Object2D.register(Node, "Node");
 
 /**
  * This method should be used for the node to register their socket inputs/outputs.
@@ -4118,56 +4855,38 @@ Node.prototype.onUpdate = function()
 	}
 };
 
-/**
- * Node graph object should be used as a container for node elements.
- *
- * The node graph object specifies how the nodes are processed, each individual node can store and process data, the node graph specified how this information is processed.
- *
- * All node elements are stored as children of the node graph.
- *
- * @class NodeGraph
- */
-function NodeGraph()
+Node.prototype.serialize = function(recursive)
 {
-	Object2D.call(this);
-}
+	var data = RoundedBox.prototype.serialize.call(this, recursive);
 
-NodeGraph.prototype = Object.create(Object2D.prototype);
-
-/**
- * Create and add a new node of specific node type to the graph.
- *
- * Automatically finds an empty space as close as possible to other nodes to add this new node.
- *
- * @param {Node} node Node object to be added.
- * @return {Node} Node created (already added to the graph).
- */
-NodeGraph.prototype.addNode = function(node)
-{
-	// Check available position on screen.
-	var x = 0, y = 0;
-	for(var i = 0; i < this.children.length; i++)
+	data.inputs = [];
+	for(var i = 0; i < this.inputs.length; i++)
 	{
-		if(this.children[i].position.x > x)
-		{
-			x = this.children[i].position.x;
-		}
-		if(this.children[i].position.y > y)
-		{
-			y = this.children[i].position.y;
-		}
+		data.inputs.push(this.inputs[i].uuid);
 	}
 
-	// Create and add new node
-	node.position.set(x + 200, y / 2.0);
-	this.add(node);
-
-	if(node.registerSockets !== null)
+	data.outputs = [];
+	for(var i = 0; i < this.outputs.length; i++)
 	{
-		node.registerSockets();
+		data.outputs.push(this.outputs[i].uuid);
 	}
 
-	return node;
+	return data;
+};
+
+Node.prototype.parse = function(data, root)
+{
+	RoundedBox.prototype.parse.call(this, data, root);
+
+	for(var i = 0; i < data.inputs.length; i++)
+	{
+		this.inputs.push(root.getChildByUUID(data.inputs[i]));
+	}
+
+	for(var i = 0; i < data.outputs.length; i++)
+	{
+		this.outputs.push(root.getChildByUUID(data.outputs[i]));
+	}
 };
 
 /**
@@ -4278,4 +4997,97 @@ Helpers.boxResizeTool = function(object)
 	updateHelpers();
 };
 
-export { BezierCurve, Box, Box2, BoxMask, Circle, DOM, EventManager, Graph, Helpers, Image, Key, Line, Mask, Matrix, MultiLineText, Node, NodeConnector, NodeGraph, NodeSocket, Object2D, Pattern, Pointer, QuadraticCurve, Renderer, RoundedBox, Text, UUID, Vector2, Viewport, ViewportControls };
+/**
+ * File utils is used to read and write files.
+ *
+ * Can be used alongside with object serialization to store and load objects from file.
+ *
+ * @class
+ * @static
+ */
+function FileUtils(){}
+
+/**
+ * Read a local or remote file as text data.
+ *
+ * @param {string} fname Path or URL of the file being read.
+ * @param {Function} onLoad onLoad callback receives the read data as parameter.
+ * @param {Function} onError onError call is called when a error occurs while reading the file.
+ */
+FileUtils.read = function(fname, onLoad, onError)
+{
+	var file = new XMLHttpRequest();
+	file.overrideMimeType("text/plain");
+	file.open("GET", fname, true);
+	if(onLoad !== undefined)
+	{
+		file.onload = function()
+		{
+			onLoad(file.response);
+		};
+	}
+
+	if(onError !== undefined)
+	{
+		file.onerror = onError;
+	}
+
+	file.send(null);
+};
+
+/**
+ * Write text to a file and automatically download it from blob storage.
+ *
+ * @method writeFile
+ * @param {string} fname Path of the file to write.
+ * @param {string} data Text data to be written to the file.
+ */
+FileUtils.write = function(fname, data)
+{
+	var blob = new Blob([data], {type:"octet/stream"});
+	var download = document.createElement("a");
+	download.download = fname;
+	download.href = window.URL.createObjectURL(blob);
+	download.style.display = "none";
+	download.onclick = function()
+	{
+		document.body.removeChild(this);
+	};
+	document.body.appendChild(download);
+	download.click();
+};
+
+/**
+ * Open file chooser dialog window for the user to select files stored in the system.
+ *
+ * The files selected are retrieved using the onLoad callback that receives a array of File objects.
+ *
+ * @param {Function} onLoad onLoad callback that receives array of files as parameter.
+ * @param {string} filter File type filter (e.g. ".zip,.rar, etc)
+ */
+FileUtils.select = function(onLoad, filter)
+{
+	var chooser = document.createElement("input");
+	chooser.type = "file";
+	chooser.style.display = "none";
+	document.body.appendChild(chooser);
+
+	if(filter !== undefined)
+	{
+		chooser.accept = filter;
+	}
+
+	chooser.onchange = function(event)
+	{
+		if(onLoad !== undefined)
+		{
+			onLoad(chooser.files);
+		}
+
+		document.body.removeChild(chooser);
+	};
+
+	chooser.click();
+};
+
+export { BezierCurve, Box, Box2, BoxMask, Circle, DOM, EventManager, FileUtils, Graph, Helpers, Image, Key, Line, Mask, Matrix, MultiLineText, Node, NodeConnector, NodeGraph, NodeSocket, Object2D, Pattern, Pointer, QuadraticCurve, Renderer, RoundedBox, Text, UUID, Vector2, Viewport, ViewportControls };

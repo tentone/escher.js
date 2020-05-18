@@ -51,7 +51,7 @@
 <div class="description">
     2D 3x2 transformation matrix, used to represent linear geometric transformations over objects.
 
-The values of the matrix are stored in a numeric array and can be applied to the canvas or DOM elements.
+The values of the matrix are stored as numeric array. The matrix can be applied to the canvas or DOM elements using CSS transforms.
 </div>
 
 
@@ -190,6 +190,84 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
 
     
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="m"><span class="type-signature"></span>m<span class="type-signature"> :Array.&lt;number></span></h4>
+
+
+
+
+<div class="description">
+    Array that contains the matrix data by row. This matrix should have 6 values.
+
+Matrix can be directly edited by accessing this attribute.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;number></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line22">line 22</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -252,7 +330,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line38">line 38</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line45">line 45</a>
     </li></ul></dd>
     
 
@@ -549,7 +627,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line96">line 96</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line103">line 103</a>
     </li></ul></dd>
     
 
@@ -686,7 +764,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line28">line 28</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line35">line 35</a>
     </li></ul></dd>
     
 
@@ -774,7 +852,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line268">line 268</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line275">line 275</a>
     </li></ul></dd>
     
 
@@ -884,7 +962,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line212">line 212</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line219">line 219</a>
     </li></ul></dd>
     
 
@@ -994,7 +1072,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line222">line 222</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line229">line 229</a>
     </li></ul></dd>
     
 
@@ -1104,7 +1182,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line194">line 194</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line201">line 201</a>
     </li></ul></dd>
     
 
@@ -1214,7 +1292,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line184">line 184</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line191">line 191</a>
     </li></ul></dd>
     
 
@@ -1324,7 +1402,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line46">line 46</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line53">line 53</a>
     </li></ul></dd>
     
 
@@ -1461,7 +1539,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line56">line 56</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line63">line 63</a>
     </li></ul></dd>
     
 
@@ -1598,7 +1676,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line73">line 73</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line80">line 80</a>
     </li></ul></dd>
     
 
@@ -1735,7 +1813,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line137">line 137</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line144">line 144</a>
     </li></ul></dd>
     
 
@@ -1895,7 +1973,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line159">line 159</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line166">line 166</a>
     </li></ul></dd>
     
 
@@ -2032,7 +2110,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line248">line 248</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line255">line 255</a>
     </li></ul></dd>
     
 
@@ -2192,7 +2270,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line173">line 173</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line180">line 180</a>
     </li></ul></dd>
     
 
@@ -2280,7 +2358,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line202">line 202</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line209">line 209</a>
     </li></ul></dd>
     
 
@@ -2417,7 +2495,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line258">line 258</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line265">line 265</a>
     </li></ul></dd>
     
 
@@ -2554,7 +2632,7 @@ The values of the matrix are stored in a numeric array and can be applied to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line235">line 235</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line242">line 242</a>
     </li></ul></dd>
     
 
@@ -2738,7 +2816,7 @@ Adds position over the transformation already stored in the matrix.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line126">line 126</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line133">line 133</a>
     </li></ul></dd>
     
 
@@ -2784,13 +2862,13 @@ Adds position over the transformation already stored in the matrix.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#connector">connector</a></li><li><a href="global.html#direction">direction</a></li><li><a href="global.html#inputs">inputs</a></li><li><a href="global.html#inputSocket">inputSocket</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#node">node</a></li><li><a href="global.html#outputs">outputs</a></li><li><a href="global.html#outputSocket">outputSocket</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#type">type</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 14 2020 18:22:31 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon May 18 2020 18:40:48 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

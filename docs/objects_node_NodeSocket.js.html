@@ -30,19 +30,21 @@
 import {Node} from "./Node";
 import {NodeConnector} from "./NodeConnector";
 import {Text} from "../Text";
+import {Object2D} from "../../Object2D";
 
 /**
  * Represents a node hook point. Is attached to the node element and represented visually.
  *
  * Can be used as a node input, output or as a bidirectional connection.
  *
- * @class NodeSocket
+ * @class
+ * @extends {Circle}
  * @param {Node} node Node of this hook.
  * @param {number} direction Direction of the hook.
- * @param {string} type Data type of the node socket.
+ * @param {string} category Data category of the node socket.
  * @param {string} name Name of the node socket.
  */
-function NodeSocket(node, direction, type, name)
+function NodeSocket(node, direction, category, name)
 {
 	Circle.call(this);
 
@@ -58,13 +60,22 @@ function NodeSocket(node, direction, type, name)
 	this.name = name !== undefined ? name : "";
 
 	/**
-	 * Type of data available from this socket. Only sockets of the same type can be connected.
+	 * Category of data available from this socket. Only sockets of the same category can be connected.
 	 *
 	 * Should directly store the data type name (e.g. "string", "number", "Object", etc).
 	 *
 	 * @type {string}
 	 */
-	this.type = type !== undefined ? type : "";
+	this.category = category !== undefined ? category : "";
+
+	/**
+	 * Allow to connect a OUTPUT node to multiple INPUT sockets.
+	 *
+	 * A INPUT socket can only take one connection, this value is ignored for INPUT sockets.
+	 *
+	 * @type {boolean}
+	 */
+	this.multiple = true;
 
 	/**
 	 * Direction of the node hook, indicates the data flow of the socket.
@@ -87,11 +98,18 @@ function NodeSocket(node, direction, type, name)
 	/**
 	 * Node connector used to connect this socket to another node socket.
 	 *
-	 * Can be used to access the adjacent node.
+	 * Can be used to access the adjacent node. If the socket allows for multiple connections this array can have multiple elements.
 	 *
-	 * @type {NodeConnector}
+	 * @type {NodeConnector[]}
 	 */
-	this.connector = null;
+	this.connectors = [];
+
+	/**
+	 * Indicates if the user is currently creating a new connection from this node socket.
+	 *
+	 * @type {boolean}
+	 */
+	this.creatingConnection = false;
 
 	/**
 	 * Text object used to present the name of the socket.
@@ -115,6 +133,11 @@ function NodeSocket(node, direction, type, name)
 	this.add(this.text);
 }
 
+NodeSocket.prototype = Object.create(Circle.prototype);
+NodeSocket.prototype.constructor = NodeSocket;
+NodeSocket.prototype.type = "NodeSocket";
+Object2D.register(NodeSocket, "NodeSocket");
+
 /**
  * Input hook can only be connected to an output.
  *
@@ -133,8 +156,6 @@ NodeSocket.INPUT = 1;
  */
 NodeSocket.OUTPUT = 2;
 
-NodeSocket.prototype = Object.create(Circle.prototype);
-
 /**
  * Get value stored or calculated in node socket, it should be the calculated from node logic, node inputs, user input, etc.
  *
@@ -148,9 +169,10 @@ NodeSocket.prototype = Object.create(Circle.prototype);
  */
 NodeSocket.prototype.getValue = function()
 {
-	if(this.direction === NodeSocket.INPUT &amp;&amp; this.connector !== null &amp;&amp; this.connector.outputSocket !== null)
+	// If the node is an input get its value from the output socket of the connection.
+	if(this.direction === NodeSocket.INPUT &amp;&amp; this.connectors.length > 0 &amp;&amp; this.connectors[0].outputSocket !== null)
 	{
-		return this.connector.outputSocket.getValue();
+		return this.connectors[0].outputSocket.getValue();
 	}
 
 	return null;
@@ -186,6 +208,13 @@ NodeSocket.prototype.connectTo = function(socket)
  */
 NodeSocket.prototype.attachConnector = function(connector)
 {
+	// If there is no space for a new connector delete the already existing connectors.
+	if(!this.canAddConnector())
+	{
+		this.destroyConnectors();
+	}
+
+	// Attach the socket to the correct direction of the connector
 	if(this.direction === NodeSocket.INPUT)
 	{
 		connector.inputSocket = this;
@@ -195,7 +224,8 @@ NodeSocket.prototype.attachConnector = function(connector)
 		connector.outputSocket = this;
 	}
 
-	this.connector = connector;
+	// Add to the list connectors
+	this.connectors.push(connector);
 	if(connector.parent === null)
 	{
 		this.parent.add(connector);
@@ -203,7 +233,7 @@ NodeSocket.prototype.attachConnector = function(connector)
 };
 
 /**
- * Check if this socket can be connected (is compatible) with another socket.
+ * Check if this socket is compatible (type and direction) with another socket.
  *
  * For two sockets to be compatible the data flow should be correct (one input and a output) and they should carry the same data type.
  *
@@ -212,45 +242,89 @@ NodeSocket.prototype.attachConnector = function(connector)
  */
 NodeSocket.prototype.isCompatible = function(socket)
 {
-	return this.direction !== socket.direction &amp;&amp; this.type === socket.type;
+	return this.direction !== socket.direction &amp;&amp; this.category === socket.category;
+};
+
+/**
+ * Check if this node socket can have a new connector attached to it.
+ *
+ * Otherwise it might be necessary to destroy old connectors before adding a new connector.
+ *
+ * @return {boolean} True if its possible to add a new connector to the socket, false otherwise.
+ */
+NodeSocket.prototype.canAddConnector = function()
+{
+	return !(this.connectors.length > 0 &amp;&amp; ((this.direction === NodeSocket.INPUT) || (this.direction === NodeSocket.OUTPUT &amp;&amp; !this.multiple)));
+};
+
+/**
+ * Check if this socket can be connected with another socket, they have to be compatible and have space for a new connector.
+ *
+ * @param {NodeSocket} socket Socket to verify connectivity with.
+ * @return {boolean} Returns true if the two sockets can be connected.
+ */
+NodeSocket.prototype.canConnect = function(socket)
+{
+	return this.isCompatible(socket) &amp;&amp; this.canAddConnector();
+};
+
+/**
+ * Destroy a connector attached to this socket, calls the destroy() method of the connection.
+ */
+NodeSocket.prototype.removeConnector = function(connector)
+{
+	var index = this.connectors.indexOf(connector);
+	if(index !== -1)
+	{
+		this.connectors.splice(index, 1);
+		connector.destroy();
+	}
+};
+
+/**
+ * Destroy all connectors attached to this socket.
+ *
+ * Should be called when destroying the object or to clean up the object.
+ */
+NodeSocket.prototype.destroyConnectors = function()
+{
+	for(var i = 0; i &lt; this.connectors.length; i++)
+	{
+		this.connectors[i].destroy();
+	}
 };
 
 NodeSocket.prototype.destroy = function()
 {
 	Circle.prototype.destroy.call(this);
 
-	if(this.connector !== null)
-	{
-		this.connector.destroy();
-	}
+	this.destroyConnectors();
 };
 
 NodeSocket.prototype.onPointerDragStart = function(pointer, viewport)
 {
-	if(this.connector === null)
-	{
-		this.attachConnector(new NodeConnector());
-	}
+	this.creatingConnection = true;
+	this.attachConnector(new NodeConnector());
 };
 
 NodeSocket.prototype.onPointerDrag = function(pointer, viewport, delta, position)
 {
-	if(this.connector !== null)
+	if(this.creatingConnection)
 	{
 		if(this.direction === NodeSocket.INPUT)
 		{
-			this.connector.from.copy(position);
+			this.connectors[this.connectors.length - 1].from.copy(position);
 		}
 		else if(this.direction === NodeSocket.OUTPUT)
 		{
-			this.connector.to.copy(position);
+			this.connectors[this.connectors.length - 1].to.copy(position);
 		}
 	}
 };
 
 NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
 {
-	if(this.connector !== null)
+	if(this.creatingConnection)
 	{
 		var position = viewport.inverseMatrix.transformPoint(pointer.position);
 		var objects = this.parent.getWorldPointIntersections(position);
@@ -262,7 +336,7 @@ NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
 			{
 				if(this.isCompatible(objects[i]))
 				{
-					objects[i].attachConnector(this.connector);
+					objects[i].attachConnector(this.connectors[this.connectors.length - 1]);
 					found = true;
 					break;
 				}
@@ -271,8 +345,45 @@ NodeSocket.prototype.onPointerDragEnd = function(pointer, viewport)
 
 		if(!found)
 		{
-			this.connector.destroy();
+			this.connectors[this.connectors.length - 1].destroy();
 		}
+	}
+
+	this.creatingConnection = false;
+};
+
+NodeSocket.prototype.serialize = function(recursive)
+{
+	var data = Circle.prototype.serialize.call(this, recursive);
+
+	data.name = this.name;
+	data.category = this.category;
+	data.multiple = this.multiple;
+	data.direction = this.direction;
+	data.node = this.node.uuid;
+
+	data.connectors = [];
+	for(var i = 0; i &lt; this.connectors.length; i++)
+	{
+		data.connectors.push(this.connectors[i].uuid);
+	}
+
+	return data;
+};
+
+NodeSocket.prototype.parse = function(data, root)
+{
+	Circle.prototype.parse.call(this, data, root);
+
+	this.name = data.name;
+	this.category = data.category;
+	this.multiple = data.multiple;
+	this.direction = data.direction;
+
+	this.node = root.getChildByUUID(data.node);
+	for(var i = 0; i &lt; data.connectors.length; i++)
+	{
+		this.connectors.push(root.getChildByUUID(data.connectors[i]));
 	}
 };
 
@@ -287,13 +398,13 @@ export {NodeSocket};
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#connector">connector</a></li><li><a href="global.html#direction">direction</a></li><li><a href="global.html#inputs">inputs</a></li><li><a href="global.html#inputSocket">inputSocket</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#node">node</a></li><li><a href="global.html#outputs">outputs</a></li><li><a href="global.html#outputSocket">outputSocket</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#type">type</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 14 2020 18:22:31 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon May 18 2020 18:40:48 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

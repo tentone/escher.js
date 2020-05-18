@@ -40,7 +40,7 @@ import {UUID} from "./math/UUID.js";
  * @class
  */
 function Object2D()
-{	
+{
 	/**
 	 * UUID of the object.
 	 *
@@ -228,6 +228,44 @@ function Object2D()
 	 */
 	this.beingDragged = false;
 }
+
+Object2D.prototype.constructor = Object2D;
+
+/**
+ * Type of the object, used for data serialization and/or checking the object type.
+ *
+ * The name used should match the object constructor name. But it is not required.
+ *
+ * If this type is from an external library you can add the library name to the object type name to prevent collisions.
+ *
+ * @type {string}
+ */
+Object2D.prototype.type = "Object2D";
+
+/**
+ * List of available object types known by the application. Stores the object constructor by object type.
+ *
+ * Newly created types should be introduced in this map for data serialization support.
+ *
+ * New object types should be added using the Object2D.register() method.
+ *
+ * @static
+ * @type {Map&lt;string, Function>}
+ */
+Object2D.types = new Map([[Object2D.prototype.type, Object2D]]);
+
+/**
+ * Register a object type into the application. Associates the type string to the object constructor.
+ *
+ * Should be called for every new object class implemented if you want to be able to serialize and parse data.
+ *
+ * @param {Function} constructor Object constructor.
+ * @param {string} type Object type name.
+ */
+Object2D.register = function(constructor, type)
+{
+	Object2D.types.set(type, constructor);
+};
 
 /**
  * Check if a point in world coordinates intersects this object or its children and get a list of the objects intersected.
@@ -432,8 +470,9 @@ Object2D.prototype.updateMatrix = function(context)
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport applied to the canvas.
+ * @param {Element} canvas DOM canvas element where the content is being drawn.
  */
-Object2D.prototype.transform = function(context, viewport)
+Object2D.prototype.transform = function(context, viewport, canvas)
 {
 	this.globalMatrix.tranformContext(context);
 };
@@ -447,7 +486,7 @@ Object2D.prototype.transform = function(context, viewport)
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport used to view the canvas content.
- * @param {DOM} canvas DOM canvas element where the content is being drawn.
+ * @param {Element} canvas DOM canvas element where the content is being drawn.
  */
 Object2D.prototype.style = null; // function(context, viewport, canvas){};
 
@@ -458,7 +497,7 @@ Object2D.prototype.style = null; // function(context, viewport, canvas){};
  *
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport used to view the canvas content.
- * @param {DOM} canvas DOM canvas element where the content is being drawn.
+ * @param {Element} canvas DOM canvas element where the content is being drawn.
  */
 Object2D.prototype.draw = null; // function(context, viewport, canvas){};
 
@@ -578,6 +617,144 @@ Object2D.prototype.onButtonDown = null;
  */
 Object2D.prototype.onButtonUp = null;
 
+/**
+ * Serialize the object data into a JSON object. That can be written into a file, sent using HTTP request etc.
+ *
+ * All required attributes to recreate the object in its current state should be stored. Relations between children should be stored by their UUID only.
+ *
+ * Data has to be parsed back into a usable object.
+ *
+ * @param {boolean} recursive If set false the children list is not serialized, otherwise all children are serialized.
+ * @return {Object} Serialized object data.
+ */
+Object2D.prototype.serialize = function(recursive)
+{
+	var data = {
+		uuid: this.uuid,
+		type: this.type,
+		position: this.position.toArray(),
+		origin: this.origin.toArray(),
+		scale: this.scale.toArray(),
+		rotation: this.rotation,
+		visible: this.visible,
+		layer: this.layer,
+		matrix: this.matrix.m,
+		globalMatrix: this.globalMatrix.m,
+		inverseGlobalMatrix: this.inverseGlobalMatrix.m,
+		matrixAutoUpdate: this.matrixAutoUpdate,
+		draggable: this.draggable,
+		pointerEvents: this.pointerEvents,
+		ignoreViewport: this.ignoreViewport,
+		saveContextState: this.saveContextState,
+		restoreContextState: this.restoreContextState,
+		pointerInside: this.pointerInside,
+		beingDragged: this.beingDragged,
+		children: [],
+		masks: []
+	};
+
+	if(recursive !== false)
+	{
+		for(var i = 0; i &lt; this.children.length; i++)
+		{
+			data.children.push(this.children[i].serialize());
+		}
+	}
+
+	for(var i = 0; i &lt; this.masks.length; i++)
+	{
+		data.masks.push(this.masks[i].uuid);
+	}
+
+	return data;
+};
+
+/**
+ * Parse serialized object data and fill the object attributes.
+ *
+ * Implementations of this method should only load the attributes added to the structure, the based method already loads common attributes.
+ *
+ * Dont forget to register object types using the Object2D.register() method.
+ *
+ * @param {Object} data Object data loaded from JSON.
+ * @param {Object2D} root Root object being loaded can be used to get references to other objects.
+ */
+Object2D.prototype.parse = function(data, root)
+{
+	this.uuid = data.uuid;
+	this.position.fromArray(data.position);
+	this.origin.fromArray(data.origin);
+	this.scale.fromArray(data.scale);
+	this.rotation = data.rotation;
+	this.visible = data.visible;
+	this.layer = data.layer;
+	this.matrix = new Matrix(data.matrix);
+	this.globalMatrix = new Matrix(data.globalMatrix);
+	this.inverseGlobalMatrix = new Matrix(data.inverseGlobalMatrix);
+	this.matrixAutoUpdate = data.matrixAutoUpdate;
+	this.draggable = data.draggable;
+	this.pointerEvents = data.pointerEvents;
+	this.ignoreViewport = data.ignoreViewport;
+	this.saveContextState = data.saveContextState;
+	this.restoreContextState = data.restoreContextState;
+	this.pointerInside = data.pointerInside;
+	this.beingDragged = data.beingDragged;
+
+	for(var i = 0; i &lt; this.masks.length; i++)
+	{
+		data.masks.push(root.getChildByUUID(data.masks[i]));
+	}
+};
+
+/**
+ * Create objects from serialized object data into the proper data structures.
+ *
+ * All objects should implement serialization methods to serialize and load data properly.
+ *
+ * First all objects instances are created to ensure that object trying to get references to other object can have the data accessible, only then the parse method is called.
+ *
+ * @static
+ * @param {Object} data Object data loaded from JSON.
+ * @return {Object2D} Parsed object data.
+ */
+Object2D.parse = function(data)
+{
+	// List of objects created stored as pairs of object, data to be later parsed.
+	var objects = [];
+
+	// Parse all objects from the data object recursively and create the correct instances.
+	function createObjectInstances(data)
+	{
+		if(!Object2D.types.has(data.type))
+		{
+			throw new Error("Object type " + data.type + " unknown. Cannot parse data.");
+		}
+
+		var Constructor = Object2D.types.get(data.type);
+		var object = new Constructor();
+		object.uuid = data.uuid;
+
+		objects.push({object: object, data: data});
+
+		for(var i = 0; i &lt; data.children.length; i++)
+		{
+			object.add(createObjectInstances(data.children[i]));
+		}
+
+		return object;
+	}
+
+	var root = createObjectInstances(data);
+
+	// Parse objects data
+	for(var i = 0; i &lt; objects.length; i++)
+	{
+		objects[i].object.parse(objects[i].data, root);
+	}
+
+	return root;
+};
+
 export {Object2D};
 </code></pre>
         </article>
@@ -589,13 +766,13 @@ export {Object2D};
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#connector">connector</a></li><li><a href="global.html#direction">direction</a></li><li><a href="global.html#inputs">inputs</a></li><li><a href="global.html#inputSocket">inputSocket</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#node">node</a></li><li><a href="global.html#outputs">outputs</a></li><li><a href="global.html#outputSocket">outputSocket</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#type">type</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 14 2020 18:22:31 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon May 18 2020 18:40:48 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

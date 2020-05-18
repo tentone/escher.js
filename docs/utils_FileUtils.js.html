@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: EventManager.js</title>
+    <title>JSDoc: Source: utils/FileUtils.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: EventManager.js</h1>
+    <h1 class="page-title">Source: utils/FileUtils.js</h1>
 
     
 
@@ -27,72 +27,100 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * EventManager is used to manager DOM events creating and destruction in a single function call.
+ * File utils is used to read and write files.
  *
- * It is used by objects to make it easier to add and remove events from global DOM objects.
+ * Can be used alongside with object serialization to store and load objects from file.
  *
  * @class
+ * @static
  */
-function EventManager()
-{
-	/**
-	 * Stores all events in the manager, their target and callback.
-	 * 
-	 * Format [target, event, callback, active]
-	 * 
-	 * @type {Array}
-	 */
-	this.events = [];
-}
+function FileUtils(){}
 
 /**
- * Add new event to the manager.
+ * Read a local or remote file as text data.
  *
- * @param {Element} target Event target element.
- * @param {String} event Event name.
- * @param {Function} callback Callback function.
+ * @param {string} fname Path or URL of the file being read.
+ * @param {Function} onLoad onLoad callback receives the read data as parameter.
+ * @param {Function} onError onError call is called when a error occurs while reading the file.
  */
-EventManager.prototype.add = function(target, event, callback)
+FileUtils.read = function(fname, onLoad, onError)
 {
-	this.events.push([target, event, callback, false]);
-};
-
-/**
- * Destroys this manager and remove all events.
- */
-EventManager.prototype.clear = function()
-{
-	this.destroy();
-	this.events = [];
-};
-
-/**
- * Creates all events in this manager.
- */
-EventManager.prototype.create = function()
-{
-	for(var i = 0; i &lt; this.events.length; i++)
+	var file = new XMLHttpRequest();
+	file.overrideMimeType("text/plain");
+	file.open("GET", fname, true);
+	if(onLoad !== undefined)
 	{
-		var event = this.events[i];
-		event[0].addEventListener(event[1], event[2]);
-		event[3] = true;
+		file.onload = function()
+		{
+			onLoad(file.response);
+		};
 	}
+
+	if(onError !== undefined)
+	{
+		file.onerror = onError;
+	}
+
+	file.send(null);
 };
 
 /**
- * Removes all events in this manager.
+ * Write text to a file and automatically download it from blob storage.
+ *
+ * @method writeFile
+ * @param {string} fname Path of the file to write.
+ * @param {string} data Text data to be written to the file.
  */
-EventManager.prototype.destroy = function()
+FileUtils.write = function(fname, data)
 {
-	for(var i = 0; i &lt; this.events.length; i++)
+	var blob = new Blob([data], {type:"octet/stream"});
+	var download = document.createElement("a");
+	download.download = fname;
+	download.href = window.URL.createObjectURL(blob);
+	download.style.display = "none";
+	download.onclick = function()
 	{
-		var event = this.events[i];
-		event[0].removeEventListener(event[1], event[2]);
-		event[3] = false;
-	}
+		document.body.removeChild(this);
+	};
+	document.body.appendChild(download);
+	download.click();
 };
 
-export {EventManager};
+/**
+ * Open file chooser dialog window for the user to select files stored in the system.
+ *
+ * The files selected are retrieved using the onLoad callback that receives a array of File objects.
+ *
+ * @param {Function} onLoad onLoad callback that receives array of files as parameter.
+ * @param {string} filter File type filter (e.g. ".zip,.rar, etc)
+ */
+FileUtils.select = function(onLoad, filter)
+{
+	var chooser = document.createElement("input");
+	chooser.type = "file";
+	chooser.style.display = "none";
+	document.body.appendChild(chooser);
+
+	if(filter !== undefined)
+	{
+		chooser.accept = filter;
+	}
+
+	chooser.onchange = function(event)
+	{
+		if(onLoad !== undefined)
+		{
+			onLoad(chooser.files);
+		}
+
+		document.body.removeChild(chooser);
+	};
+
+	chooser.click();
+};
+
+
+export {FileUtils};
 </code></pre>
         </article>
     </section>

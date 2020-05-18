@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Global</title>
+    <title>JSDoc: Class: FileUtils</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Global</h1>
+    <h1 class="page-title">Class: FileUtils</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>FileUtils<span class="signature">()</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -38,7 +38,30 @@
     
         
 
-        
+    
+
+    
+    <h4 class="name" id="FileUtils"><span class="type-signature"></span>new FileUtils<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    File utils is used to read and write files.Can be used alongside with object serialization to store and load objects from file.
+</div>
+
+
+
+
+
+
+
+
+
+
+
 
 
 <dl class="details">
@@ -68,6 +91,11 @@
     
 
     
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_FileUtils.js.html">utils/FileUtils.js</a>, <a href="utils_FileUtils.js.html#line9">line 9</a>
+    </li></ul></dd>
+    
 
     
 
@@ -77,7 +105,24 @@
 </dl>
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     </div>
 
@@ -104,7 +149,7 @@
     
 
     
-    <h4 class="name" id="writeFile"><span class="type-signature"></span>writeFile<span class="signature">(fname, data)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".read"><span class="type-signature">(static) </span>read<span class="signature">(fname, onLoad, onError)</span><span class="type-signature"></span></h4>
     
 
     
@@ -112,7 +157,7 @@
 
 
 <div class="description">
-    Write text to a file and automatically download it from blob storage.
+    Read a local or remote file as text data.
 </div>
 
 
@@ -164,20 +209,20 @@
 
             
 
-            <td class="description last">Path of the file to write.</td>
+            <td class="description last">Path or URL of the file being read.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>data</code></td>
+                <td class="name"><code>onLoad</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">function</span>
 
 
             
@@ -187,7 +232,30 @@
 
             
 
-            <td class="description last">Text data to be written to the file.</td>
+            <td class="description last">onLoad callback receives the read data as parameter.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onError</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">onError call is called when a error occurs while reading the file.</td>
         </tr>
 
     
@@ -228,7 +296,167 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_FileUtils.js.html">utils/FileUtils.js</a>, <a href="utils_FileUtils.js.html#line39">line 39</a>
+        <a href="utils_FileUtils.js.html">utils/FileUtils.js</a>, <a href="utils_FileUtils.js.html#line18">line 18</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".select"><span class="type-signature">(static) </span>select<span class="signature">(onLoad, filter)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Open file chooser dialog window for the user to select files stored in the system.The files selected are retrieved using the onLoad callback that receives a array of File objects.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>onLoad</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">onLoad callback that receives array of files as parameter.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>filter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">File type filter (e.g. ".zip,.rar, etc)</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_FileUtils.js.html">utils/FileUtils.js</a>, <a href="utils_FileUtils.js.html#line69">line 69</a>
     </li></ul></dd>
     
 

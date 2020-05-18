@@ -44,16 +44,28 @@ function Pattern(src)
 
 	/**
 	 * Box object containing the size of the object.
+	 *
+	 * @type {Box2}
 	 */
 	this.box = new Box2();
 
 	/**
-	 * Image source DOM element.
+	 * Image source DOM element. Used as a source for the pattern image.
+	 *
+	 * This element can be replaced by one of other type (e.g canvas, video).
+	 *
+	 * @type {Element}
 	 */
 	this.image = document.createElement("img");
 
 	/**
-	 * A DOMString indicating how to repeat the pattern image.
+	 * Repetition indicates how the pattern image should be repeated.
+	 *
+	 * Possible values are "repeat", "repeat-x", "repeat-y" or "no-repeat".
+	 *
+	 * More information about this attribute here https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern.
+	 *
+	 * @type {string}
 	 */
 	this.repetition = "repeat"
 
@@ -64,11 +76,16 @@ function Pattern(src)
 }
 
 Pattern.prototype = Object.create(Object2D.prototype);
+Pattern.prototype.constructor = Pattern;
+Pattern.prototype.type = "Pattern";
+Object2D.register(Pattern, "Pattern");
 
 /**
- * Set the image of the object.
+ * Set the image source of the object. Can be anything accepted by the src field of an img element.
  *
  * Automatically sets the box size to match the image.
+ *
+ * @param {string} src Image source string.
  */
 Pattern.prototype.setImage = function(src)
 {
@@ -101,6 +118,26 @@ Pattern.prototype.draw = function(context, viewport, canvas)
 	}
 };
 
+Pattern.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.box = this.box.toArray();
+	data.image = this.image.src;
+	data.repetition = this.repetition;
+
+	return data;
+};
+
+Pattern.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.box.fromArray(data.box);
+	this.image.src = data.image;
+	this.repetition = data.repetition;
+};
+
 export {Pattern};
 </code></pre>
         </article>
@@ -112,13 +149,13 @@ export {Pattern};
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#connector">connector</a></li><li><a href="global.html#direction">direction</a></li><li><a href="global.html#inputs">inputs</a></li><li><a href="global.html#inputSocket">inputSocket</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#node">node</a></li><li><a href="global.html#outputs">outputs</a></li><li><a href="global.html#outputSocket">outputSocket</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#type">type</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 14 2020 18:22:31 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon May 18 2020 18:40:48 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
