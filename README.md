@@ -12,9 +12,9 @@
 
 
 
-### Getting started
+### Examples / Documentation
 
-- There are a couple of example in the example folder, they can be used as base for your project.
+- Sometimes the best way to learn about something is to try it yourself, there are a couple of example in the example folder in the Git repository. They can be used as base for your project.
   - [Playground](https://tentone.github.io/escher.js/examples/playground)
   - [Physics](https://tentone.github.io/escher.js/examples/physics)
   - [PDF & TIFF (External libraries)](https://tentone.github.io/escher.js/examples/pdftiff)
@@ -27,7 +27,7 @@
 
 
 
-### Setup
+### Getting Started
 - Add the library to your project by using the precompiled file availabe on the repository or by downloading it from NPM.
 - Escher is based on web canvas, it requires a DOM canvas element to draw its content.
 - It is necessary for the canvas element width and height parameters to be properly configured since their values are used to process user input.
@@ -53,13 +53,43 @@ document.body.onresize = function()
 
 ![graph](<https://tentone.github.io/escher.js/readme/grid.png>)
 
-TODO <CREATE A BASE SCENE EXAMPLE>
+- We can now put together a simple application we can start by creating a `Object2D` object to serve as a container for all other objects. Objects can be added to the container using the `add()` method.
+- The `Viewport` object is used to define how the user views the objects, the window size, zoom and rotation.
+- Now all that is left is to create a `Renderer` that will take care of drawing the object to the screen for us. By using the `createRenderLoop()` method the renderer also creates a control object for user interaction with the viewport (dragging, zoom, rotate) using the mouse/touchscreen.
+
+```javascript
+var group = new Escher.Object2D();
+
+var text = new Escher.Text();
+text.position.set(0, -100);
+text.text = "Hello World!"
+group.add(text);
+
+var box = new Escher.Box();
+box.position.set(-100, 0);
+group.add(box);
+
+var circle = new Escher.Circle();
+circle.position.set(100, 0);
+circle.radius = 50;
+group.add(circle);
+
+var viewport = new Escher.Viewport(canvas);
+
+var renderer = new Escher.Renderer(canvas);
+renderer.createRenderLoop(group, viewport);
+```
+
+![graph](<https://tentone.github.io/escher.js/readme/hello.png>)
+
+
 
 ### Viewport
 
-- The viewport is the object that indicates how the user will view the objects, the viewport can be used to change the position of the elements, zoom in and out, or even rotate the entire canvas.
-- Some object might ignore the viewport transformations by setting the `ignoreViewport` flag to false, this will indicate that renderer to reset the viewport transform just for that object.
-- Its possible to use viewport controller objects that define a default control behavior for the viewport object (mouse interaction).
+- The `Viewport` is the object that indicates how the user will view the objects, the viewport can be used to change the position of the elements, zoom in and out, or even rotate the entire canvas.
+- Some object might ignore the viewport transformations by setting the `ignoreViewport` flag to false. This will indicate to the renderer to reset the viewport transform for that object so that the viewport does not affect it.
+- We can use the `ViewportController` (or implement new variants of this object) to allow the user control over the viewport.
+- 
 
 
 
