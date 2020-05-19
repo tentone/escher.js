@@ -91,6 +91,7 @@
 				this.box.set(new Escher.Vector2(-50, -40), new Escher.Vector2(50, 40));
 
 				this.text = new Escher.Text();
+				this.text.serializable = false;
 				this.text.text = operation;
 				this.text.font = "25px Arial";
 				this.text.layer = 2;
@@ -120,6 +121,7 @@
 			{
 				super.parse(data, root);
 				this.operation = data.operation;
+				this.text.text = data.operation;
 			}
 		}
 
@@ -136,6 +138,7 @@
 				this.box.set(new Escher.Vector2(-50, -30), new Escher.Vector2(50, 30));
 
 				this.div = new Escher.DOM("input");
+				this.div.serializable = false;
 				this.div.size.set(70, 20);
 				this.div.origin.set(35, 10);
 				this.div.element.style.pointerEvents = "auto";
@@ -183,6 +186,7 @@
 				this.box.set(new Escher.Vector2(-100, -20), new Escher.Vector2(100, 20));
 
 				this.text = new Escher.Text();
+				this.text.serializable = false;
 				this.text.text = "";
 				this.text.font = "12px Arial";
 				this.text.layer = 2;

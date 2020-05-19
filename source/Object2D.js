@@ -203,12 +203,11 @@ function Object2D()
 	/**
 	 * Indicates if the object should be serialized or not as a child of another object.
 	 *
-	 * Used to prevent duplicate serialization data on custom objects.
+	 * Used to prevent duplicate serialization data on custom objects. Should be set false for objects added on constructor.
 	 *
 	 * @type {boolean}
 	 */
-	// TODO <ADD CODE HERE>
-	this.serializable = false;
+	this.serializable = true;
 }
 
 Object2D.prototype.constructor = Object2D;
@@ -639,7 +638,10 @@ Object2D.prototype.serialize = function(recursive)
 	{
 		for(var i = 0; i < this.children.length; i++)
 		{
-			data.children.push(this.children[i].serialize());
+			if(this.children[i].serializable)
+			{
+				data.children.push(this.children[i].serialize());
+			}
 		}
 	}
 

@@ -138,6 +138,18 @@ class CustomObject extends Escher.Node
 Escher.Object2D.register(CustomObject, "CustomObject");
 ```
 
+- When creating custom objects that are composed of multiple base objects built on the constructor you will need to disable serialization for those objects (otherwise there will be duplicated instances on parse). This can be done by settings the `serializable` attribute to false.
+
+```javascript
+constructor()
+{
+	super();
+	this.text = new Escher.Text();
+	this.text.serializable = false;
+	this.add(this.text);
+}
+```
+
 
 
 ### Pointer events
@@ -197,9 +209,10 @@ dom.element.appendChild(text);
 
 ### Integrating external libraries
 
-- Its possible to integrate external canvas based libraries with this framework, just be sure that the library provides methods to directly draw to the canvas context without resetting its state.
-- Other easier but slower way to integrate libraries that works for libraries that do not support canvas as argument in their draw functions is to copy the content from their own self managed canvas into the object draw method.
-- Here is an example using the [tiff.js](https://github.com/seikichi/tiff.js) library to draw tiff images, it creates an internal canvas ands does not provide a draw into this context method.
+- Its possible to integrate external canvas based libraries with this framework.  The external library need to provide direct access to its drawing  canvas context without resetting its state.
+- Another solution to (easier but slower) to integrate libraries is to copy the content from their own self managed canvas into the object draw method.
+- Here is an example using the [tiff.js](https://github.com/seikichi/tiff.js) library to draw tiff images using the second method. It creates an internal canvas ands does not provide a draw into this context method.
+  - Here we are using the `context.drawImage()` method to copy the content from the internal canvas to the drawing object.
 
 ```javascript
 // Read the tiff data as arraybuffer from file
