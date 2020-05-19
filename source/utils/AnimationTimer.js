@@ -66,3 +66,5 @@ AnimationTimer.prototype.stop = function()
 	this.running = false;
 	cancelAnimationFrame(this.id);
 };
+
+export {AnimationTimer};

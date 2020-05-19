@@ -1,4 +1,4 @@
-export {EventManager} from "./EventManager.js";
+export {EventManager} from "./utils/EventManager.js";
 export {Object2D} from "./Object2D.js";
 export {Renderer} from "./Renderer.js";
 export {Viewport} from "./Viewport.js";
@@ -33,5 +33,6 @@ export {NodeGraph} from "./objects/node/NodeGraph.js";
 
 export {ViewportControls} from "./controls/ViewportControls.js";
 
+export {AnimationTimer} from "./utils/AnimationTimer.js";
 export {Helpers} from "./utils/Helpers.js";
 export {FileUtils} from "./utils/FileUtils.js";

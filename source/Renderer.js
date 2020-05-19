@@ -1,39 +1,54 @@
 import {Pointer} from "./input/Pointer.js";
 import {ViewportControls} from "./controls/ViewportControls.js";
+import {AnimationTimer} from "./utils/AnimationTimer";
 
 /**
  * The renderer is responsible for drawing the objects structure into the canvas element and manage its rendering state.
  *
+ * Object are updated by the renderer before drawing, the renderer sorts the objects by layer, checks for pointer events and draw the objects into the screen.
+ *
+ * Input handling is also performed by the renderer (it is also used for the event handling).
+ *
  * @class
- * @param {Element} canvas Canvas to render the content.
+ * @param {Element} canvas Canvas to render the content to.
  * @param {Object} options Renderer canvas options.
  */
 function Renderer(canvas, options)
 {
 	if(options === undefined)
 	{
-		options = 
+		options =
 		{
-			alpha: true
+			alpha: true,
+			imageSmoothingEnabled: true,
+			imageSmoothingQuality: "low",
+			globalCompositeOperation: "source-over"
 		};
 	}
 
 	/**
-	 * Canvas DOM element, has to be managed by the user.
+	 * Canvas DOM element, the user needs to manage the canvas state.
+	 *
+	 * The canvas size (width and height) should always match its actual display size (adjusted for the device pixel ratio).
 	 */
 	this.canvas = canvas;
 
 	/**
 	 * Canvas 2D rendering context used to draw content.
+	 *
+	 * The options passed thought the constructor are applied to the context created.
 	 */
-	this.context = canvas.getContext("2d", {alpha: options.alpha});
-	this.context.imageSmoothingEnabled = true;
-	this.context.globalCompositeOperation = "source-over";
+	this.context = this.canvas.getContext("2d", {alpha: options.alpha});
+	this.context.imageSmoothingEnabled = options.imageSmoothingEnabled;
+	this.context.imageSmoothingQuality = options.imageSmoothingQuality;
+	this.context.globalCompositeOperation = options.globalCompositeOperation;
 
 	/**
-	 * Pointer input handler object.
+	 * Pointer input handler object, automatically updated by the renderer.
+	 *
+	 * The pointer is attached to the DOM window and to the canvas provided by the user.
 	 */
-	this.pointer = new Pointer(window, canvas);
+	this.pointer = new Pointer(window, this.canvas);
 
 	/**
 	 * Indicates if the canvas should be automatically cleared before new frame is drawn.
@@ -46,18 +61,21 @@ function Renderer(canvas, options)
 /**
  * Creates a infinite render loop to render the group into a viewport each frame.
  *
- * The render loop cannot be destroyed, and it automatically creates a viewport controls object.
+ * Automatically creates a viewport controls object, used for the user to control the viewport.
  *
- * @param {Object2D} group Group to be rendered.
- * @param {Viewport} viewport Viewport into the objects.
- * @param {Function} onUpdate Function called before rendering the frame.
+ * The render loop can be accessed trough the animation timer returned. Should be stopped when no longer necessary to prevent memory/code leaks.
+ *
+ * @param {Object2D} group Object to be rendered, alongside with all its children. Object2D can be used as a container to group objects.
+ * @param {Viewport} viewport Viewport into the scene.
+ * @param {Function} onUpdate Function called before rendering the frame, can be used for additional logic code. Object logic should be directly written in the update method of objects.
+ * @return {AnimationTimer} Animation timer created for this render loop. Should be stopped when no longer necessary.
  */
 Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 {
 	var self = this;
-	var controls = new ViewportControls(viewport);
 
-	function loop()
+	var controls = new ViewportControls(viewport);
+	var timer = new AnimationTimer(function()
 	{
 		if(onUpdate !== undefined)
 		{
@@ -67,9 +85,20 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 		controls.update(self.pointer);
 		self.update(group, viewport);
 		requestAnimationFrame(loop);
-	}
+	});
+	timer.start();
 
-	loop();
+	return timer;
+};
+
+/**
+ * Dispose the renderer object, clears the pointer events attached to the window/canvas.
+ *
+ * Should be called if the renderer is no longer in use to prevent code/memory leaks.
+ */
+Renderer.prototype.dispose = function(group, viewport, onUpdate)
+{
+	this.pointer.dispose();
 };
 
 /**

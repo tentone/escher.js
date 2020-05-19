@@ -1,4 +1,4 @@
-import {EventManager} from "../EventManager.js";
+import {EventManager} from "../utils/EventManager.js";
 import {Vector2} from "../math/Vector2.js";
 import {Key} from "./Key.js";
 
