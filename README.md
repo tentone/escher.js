@@ -1,5 +1,5 @@
 # escher.js
-[![npm version](https://badge.fury.io/js/escher.js.svg)](https://badge.fury.io/js/escher.js)
+[![npm version](https://badge.fury.io/js/escher.js.svg)](https://badge.fury.io/js/escher.js)[![GitHub version](https://badge.fury.io/gh/tentone%2Fescher.js.svg)](https://badge.fury.io/gh/tentone%2Fescher.js)[![GitHub stars](https://img.shields.io/github/stars/tentone/escher.js.svg)](https://github.com/tentone/escher.js/stargazers)
 
  - Web based 2D graph building framework.
  - Entity based diagram build system, entities are stores as a tree. Compose complex animated canvas objects using parent-children transforms.
