@@ -2415,7 +2415,6 @@
 
 			controls.update(self.pointer);
 			self.update(group, viewport);
-			requestAnimationFrame(loop);
 		});
 		timer.start();
 

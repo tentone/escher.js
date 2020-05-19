@@ -84,7 +84,6 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 
 		controls.update(self.pointer);
 		self.update(group, viewport);
-		requestAnimationFrame(loop);
 	});
 	timer.start();
 
