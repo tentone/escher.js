@@ -32,23 +32,20 @@
 - Escher is based on web canvas, it requires a DOM canvas element to draw its content.
 - It is necessary for the canvas element width and height parameters to be properly configured since their values are used to process user input.
 - When using other DOM elements with the framework is also necessary to setup a DOM div to store these elements. (Booth the canvas and division should have the same position and size and should be aligned).
-- The code bellow shows how a canvas could be configured for a full screen setup.
+- The code bellow shows how a canvas could be configured for a full screen setup. The canvas is created in the HTML document, preferably encapsulated in some div (for DOM based objects).
+
+```html
+<div style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px">
+    <canvas id="canvas" style="width: 100%; height: 100%;"></canvas>
+</div>
+```
 
 ```javascript
-var canvas = document.createElement("canvas");
-canvas.style.width = "100%";
-canvas.style.height = "100%";
-canvas.style.top = "0px";
-canvas.style.left = "0px";
-canvas.style.position = "absolute";
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-document.body.appendChild(canvas);
-
+var canvas = document.getElementById(canvas);
 document.body.onresize = function()
 {
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
 };
 ```
 
@@ -56,7 +53,7 @@ canvas.height = window.innerHeight;
 
 ![graph](<https://tentone.github.io/escher.js/readme/grid.png>)
 
-
+TODO <CREATE A BASE SCENE EXAMPLE>
 
 ### Viewport
 
