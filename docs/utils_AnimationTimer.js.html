@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: math/UUID.js</title>
+    <title>JSDoc: Source: utils/AnimationTimer.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: math/UUID.js</h1>
+    <h1 class="page-title">Source: utils/AnimationTimer.js</h1>
 
     
 
@@ -27,43 +27,75 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * Class to implement UUID generation methods.
- *
+ * Animation timer should be used to run the update and render loops of the application.
+ * 
+ * Underneat it uses the requestAnimationFrame() method that calls the function with the same rate as the screen refresh rate.
+ * 
  * @class
+ * @param {Function} callback Timer callback function.
  */
-function UUID(){}
+function AnimationTimer(callback)
+{
+	/**
+	 * Task of the timer, executed at the timer defined rate.
+	 * 
+	 * @type {Function}
+	 */
+	this.callback = callback;
+
+	/**
+	 * Indicates if the timer is currently running, it is set to true on start and reset to false on stop.
+	 * 
+	 * @type {boolean}
+	 */
+	this.running = false;
+
+	/**
+	 * ID of the currently waiting timeout clock. Used to cancel the already request execution of the next clock tick.
+	 * 
+	 * @type {number}
+	 */
+	this.id = -1;
+}
 
 /**
- * Generates a new random UUID v4 as string.
- *
- * @static
- * @return {string} UUID generated as string.
+ * Start timer, is the timer is already running does not do anything.
  */
-UUID.generate = (function ()
+AnimationTimer.prototype.start = function()
 {
-	var lut = [];
-	for(var i = 0; i &lt; 256; i++)
+	if(this.running)
 	{
-		lut[i] = (i &lt; 16 ? "0" : "") + (i).toString(16);
+		return;
 	}
 
-	return function generateUUID()
+	this.running = true;
+
+	var self = this;
+	function loop()
 	{
-		var d0 = Math.random() * 0XFFFFFFFF | 0;
-		var d1 = Math.random() * 0XFFFFFFFF | 0;
-		var d2 = Math.random() * 0XFFFFFFFF | 0;
-		var d3 = Math.random() * 0XFFFFFFFF | 0;
+		self.callback();
 
-		var uuid = lut[d0 &amp; 0xff] + lut[d0 >> 8 &amp; 0xff] + lut[d0 >> 16 &amp; 0xff] + lut[d0 >> 24 &amp; 0xff] + "-" +
-			lut[d1 &amp; 0xff] + lut[d1 >> 8 &amp; 0xff] + "-" + lut[d1 >> 16 &amp; 0x0f | 0x40] + lut[d1 >> 24 &amp; 0xff] + "-" +
-			lut[d2 &amp; 0x3f | 0x80] + lut[d2 >> 8 &amp; 0xff] + "-" + lut[d2 >> 16 &amp; 0xff] + lut[d2 >> 24 &amp; 0xff] +
-			lut[d3 &amp; 0xff] + lut[d3 >> 8 &amp; 0xff] + lut[d3 >> 16 &amp; 0xff] + lut[d3 >> 24 &amp; 0xff];
+		if(self.running)
+		{
+			self.id = requestAnimationFrame(loop);
+		}
+	}
 
-		return uuid.toUpperCase();
-	};
-})();
+	loop();
+};
 
-export {UUID};
+/**
+ * Stop animation timer, should be called when the render loop is no longer in use to prevent code/memory leaks.
+ *
+ * If the timer is not stopped the loop will keep running using processing power and consuming memory.
+ */
+AnimationTimer.prototype.stop = function()
+{
+	this.running = false;
+	cancelAnimationFrame(this.id);
+};
+
+export {AnimationTimer};
 </code></pre>
         </article>
     </section>

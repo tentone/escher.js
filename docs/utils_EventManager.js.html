@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: math/UUID.js</title>
+    <title>JSDoc: Source: utils/EventManager.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: math/UUID.js</h1>
+    <h1 class="page-title">Source: utils/EventManager.js</h1>
 
     
 
@@ -27,43 +27,72 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * Class to implement UUID generation methods.
+ * EventManager is used to manager DOM events creating and destruction in a single function call.
+ *
+ * It is used by objects to make it easier to add and remove events from global DOM objects.
  *
  * @class
  */
-function UUID(){}
+function EventManager()
+{
+	/**
+	 * Stores all events in the manager, their target and callback.
+	 * 
+	 * Format [target, event, callback, active]
+	 * 
+	 * @type {Array}
+	 */
+	this.events = [];
+}
 
 /**
- * Generates a new random UUID v4 as string.
+ * Add new event to the manager.
  *
- * @static
- * @return {string} UUID generated as string.
+ * @param {Element} target Event target element.
+ * @param {String} event Event name.
+ * @param {Function} callback Callback function.
  */
-UUID.generate = (function ()
+EventManager.prototype.add = function(target, event, callback)
 {
-	var lut = [];
-	for(var i = 0; i &lt; 256; i++)
+	this.events.push([target, event, callback, false]);
+};
+
+/**
+ * Destroys this manager and remove all events.
+ */
+EventManager.prototype.clear = function()
+{
+	this.destroy();
+	this.events = [];
+};
+
+/**
+ * Creates all events in this manager.
+ */
+EventManager.prototype.create = function()
+{
+	for(var i = 0; i &lt; this.events.length; i++)
 	{
-		lut[i] = (i &lt; 16 ? "0" : "") + (i).toString(16);
+		var event = this.events[i];
+		event[0].addEventListener(event[1], event[2]);
+		event[3] = true;
 	}
+};
 
-	return function generateUUID()
+/**
+ * Removes all events in this manager.
+ */
+EventManager.prototype.destroy = function()
+{
+	for(var i = 0; i &lt; this.events.length; i++)
 	{
-		var d0 = Math.random() * 0XFFFFFFFF | 0;
-		var d1 = Math.random() * 0XFFFFFFFF | 0;
-		var d2 = Math.random() * 0XFFFFFFFF | 0;
-		var d3 = Math.random() * 0XFFFFFFFF | 0;
+		var event = this.events[i];
+		event[0].removeEventListener(event[1], event[2]);
+		event[3] = false;
+	}
+};
 
-		var uuid = lut[d0 &amp; 0xff] + lut[d0 >> 8 &amp; 0xff] + lut[d0 >> 16 &amp; 0xff] + lut[d0 >> 24 &amp; 0xff] + "-" +
-			lut[d1 &amp; 0xff] + lut[d1 >> 8 &amp; 0xff] + "-" + lut[d1 >> 16 &amp; 0x0f | 0x40] + lut[d1 >> 24 &amp; 0xff] + "-" +
-			lut[d2 &amp; 0x3f | 0x80] + lut[d2 >> 8 &amp; 0xff] + "-" + lut[d2 >> 16 &amp; 0xff] + lut[d2 >> 24 &amp; 0xff] +
-			lut[d3 &amp; 0xff] + lut[d3 >> 8 &amp; 0xff] + lut[d3 >> 16 &amp; 0xff] + lut[d3 >> 24 &amp; 0xff];
-
-		return uuid.toUpperCase();
-	};
-})();
-
-export {UUID};
+export {EventManager};
 </code></pre>
         </article>
     </section>

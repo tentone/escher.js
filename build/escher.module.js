@@ -1,4 +1,70 @@
 /**
+ * EventManager is used to manager DOM events creating and destruction in a single function call.
+ *
+ * It is used by objects to make it easier to add and remove events from global DOM objects.
+ *
+ * @class
+ */
+function EventManager()
+{
+	/**
+	 * Stores all events in the manager, their target and callback.
+	 * 
+	 * Format [target, event, callback, active]
+	 * 
+	 * @type {Array}
+	 */
+	this.events = [];
+}
+
+/**
+ * Add new event to the manager.
+ *
+ * @param {Element} target Event target element.
+ * @param {String} event Event name.
+ * @param {Function} callback Callback function.
+ */
+EventManager.prototype.add = function(target, event, callback)
+{
+	this.events.push([target, event, callback, false]);
+};
+
+/**
+ * Destroys this manager and remove all events.
+ */
+EventManager.prototype.clear = function()
+{
+	this.destroy();
+	this.events = [];
+};
+
+/**
+ * Creates all events in this manager.
+ */
+EventManager.prototype.create = function()
+{
+	for(var i = 0; i < this.events.length; i++)
+	{
+		var event = this.events[i];
+		event[0].addEventListener(event[1], event[2]);
+		event[3] = true;
+	}
+};
+
+/**
+ * Removes all events in this manager.
+ */
+EventManager.prototype.destroy = function()
+{
+	for(var i = 0; i < this.events.length; i++)
+	{
+		var event = this.events[i];
+		event[0].removeEventListener(event[1], event[2]);
+		event[3] = false;
+	}
+};
+
+/**
  * Class representing a 2D vector. A 2D vector is an ordered pair of numbers (labeled x and y), which can be used to represent points in space, directions, etc.
  *
  * @class
@@ -1482,305 +1548,6 @@ Object2D.parse = function(data)
 };
 
 /**
- * Text element, used to draw single line text into the canvas.
- *
- * For multi line text with support for line break check {MultiLineText} object.
- *
- * @class
- * @extends {Object2D}
- */
-function Text()
-{
-	Object2D.call(this);
-
-	/**
-	 * Text value displayed by this element.
-	 *
-	 * @type {string}
-	 */
-	this.text = "";
-
-	/**
-	 * Font of the text.
-	 *
-	 * @type {string}
-	 */
-	this.font = "16px Arial";
-
-	/**
-	 * Style of the object border line. If set null it is ignored.
-	 *
-	 * @type {string}
-	 */
-	this.strokeStyle = null;
-
-	/**
-	 * Line width, only used if a valid strokeStyle is defined.
-	 *
-	 * @type {number}
-	 */
-	this.lineWidth = 1;
-
-	/**
-	 * CSS background color of the box. If set null it is ignored.
-	 *
-	 * @type {string}
-	 */
-	this.fillStyle = "#000000";
-
-	/**
-	 * Text align property. Same values as used for canvas text applies
-	 *
-	 * Check documentation at https://developer.mozilla.org/en-US/docs/Web/CSS/text-align for mode details about this property.
-	 *
-	 * @type {string}
-	 */
-	this.textAlign = "center";
-
-	/**
-	 * Text baseline defines the vertical position of the text relative to the imaginary line Y position. Same values as used for canvas text applies
-	 *
-	 * Check documentation at https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textBaseline for mode details about this property.
-	 *
-	 * @type {string}
-	 */
-	this.textBaseline = "middle";
-}
-
-Text.prototype = Object.create(Object2D.prototype);
-Text.prototype.constructor = Text;
-Text.prototype.type = "Text";
-Object2D.register(Text, "Text");
-
-Text.prototype.draw = function(context, viewport, canvas)
-{
-	context.font = this.font;
-	context.textAlign = this.textAlign;
-	context.textBaseline = this.textBaseline ;
-	
-	if(this.fillStyle !== null)
-	{
-		context.fillStyle = this.fillStyle;
-		context.fillText(this.text, 0, 0);
-	}
-
-	if(this.strokeStyle !== null)
-	{
-		context.strokeStyle = this.strokeStyle;
-		context.strokeText(this.text, 0, 0);
-	}
-};
-
-Text.prototype.serialize = function(recursive)
-{
-	var data = Object2D.prototype.serialize.call(this, recursive);
-
-	data.text = this.text;
-	data.font = this.font;
-	data.strokeStyle = this.strokeStyle;
-	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle;
-	data.textAlign = this.textAlign;
-	data.textBaseline = this.textBaseline;
-
-	return data;
-};
-
-Text.prototype.parse = function(data, root)
-{
-	Object2D.prototype.parse.call(this, data, root);
-
-	this.text = data.text;
-	this.font = data.font;
-	this.strokeStyle = data.strokeStyle;
-	this.lineWidth = data.lineWidth;
-	this.fillStyle = data.fillStyle;
-	this.textAlign = data.textAlign;
-	this.textBaseline = data.textBaseline;
-};
-
-/**
- * Multiple line text drawing directly into the canvas.
- *
- * Has support for basic text indent and alignment.
- *
- * @class
- * @extends {Text}
- */
-function MultiLineText()
-{
-	Text.call(this);
-
-	/**
-	 * Maximum width of the text content. After text reaches the max width a line break is placed.
-	 *
-	 * Can be set to null to be ignored.
-	 *
-	 * @type {number}
-	 */
-	this.maxWidth = null;
-
-	/**
-	 * Height of each line of text, can be smaller or larger than the actual font size.
-	 *
-	 * Can be set to null to be ignored.
-	 *
-	 * @type {number}
-	 */
-	this.lineHeight = null;
-}
-
-MultiLineText.prototype = Object.create(Text.prototype);
-MultiLineText.prototype.constructor = MultiLineText;
-MultiLineText.prototype.type = "MultiLineText";
-Object2D.register(MultiLineText, "MultiLineText");
-
-MultiLineText.prototype.draw = function(context, viewport, canvas)
-{
-	context.font = this.font;
-	context.textAlign = this.textAlign;
-	context.textBaseline = this.textBaseline;
-
-	var lineHeight = this.lineHeight || Number.parseFloat(this.font);
-	var lines = this.text.split("\n");
-	var offsetY = 0;
-
-	// Iterate trough all lines (breakpoints)
-	for(var i = 0; i < lines.length; i++)
-	{
-		var line = lines[i];
-		var size = context.measureText(line);
-		var sublines = [];
-
-		// Split into multiple sub-lines
-		if(this.maxWidth !== null && size.width > this.maxWidth)
-		{
-			while(line.length > 0)
-			{
-				var subline = "";
-				var subsize = context.measureText(subline + line[0]);
-
-				while(subsize.width < this.maxWidth && line.length > 0)
-				{
-					subline += line[0];
-					line = line.substr(1);
-					subsize = context.measureText(subline + line[0]);
-				}
-
-				sublines.push(subline);
-			}
-
-		}
-		// Fits into a single line
-		else
-		{
-			sublines = [line];
-		}
-
-		for(var j = 0; j < sublines.length; j++)
-		{
-			if(this.fillStyle !== null)
-			{
-				context.fillStyle = this.fillStyle;
-				context.fillText(sublines[j], this.position.x, this.position.y + offsetY);
-			}
-
-			if(this.strokeStyle !== null)
-			{
-				context.strokeStyle = this.strokeStyle;
-				context.strokeText(sublines[j], this.position.x, this.position.y + offsetY);
-			}
-
-			offsetY += lineHeight;
-		}
-	}
-};
-
-MultiLineText.prototype.serialize = function(recursive)
-{
-	var data = Text.prototype.serialize.call(this, recursive);
-
-	data.maxWidth = this.maxWidth;
-	data.lineHeight = this.lineHeight;
-
-	return data;
-};
-
-MultiLineText.prototype.parse = function(data, root)
-{
-	Text.prototype.parse.call(this, data, root);
-
-	this.maxWidth = data.maxWidth;
-	this.lineHeight = data.lineHeight;
-};
-
-/**
- * EventManager is used to manager DOM events creating and destruction in a single function call.
- *
- * It is used by objects to make it easier to add and remove events from global DOM objects.
- *
- * @class
- */
-function EventManager()
-{
-	/**
-	 * Stores all events in the manager, their target and callback.
-	 * 
-	 * Format [target, event, callback, active]
-	 * 
-	 * @type {Array}
-	 */
-	this.events = [];
-}
-
-/**
- * Add new event to the manager.
- *
- * @param {Element} target Event target element.
- * @param {String} event Event name.
- * @param {Function} callback Callback function.
- */
-EventManager.prototype.add = function(target, event, callback)
-{
-	this.events.push([target, event, callback, false]);
-};
-
-/**
- * Destroys this manager and remove all events.
- */
-EventManager.prototype.clear = function()
-{
-	this.destroy();
-	this.events = [];
-};
-
-/**
- * Creates all events in this manager.
- */
-EventManager.prototype.create = function()
-{
-	for(var i = 0; i < this.events.length; i++)
-	{
-		var event = this.events[i];
-		event[0].addEventListener(event[1], event[2]);
-		event[3] = true;
-	}
-};
-
-/**
- * Removes all events in this manager.
- */
-EventManager.prototype.destroy = function()
-{
-	for(var i = 0; i < this.events.length; i++)
-	{
-		var event = this.events[i];
-		event[0].removeEventListener(event[1], event[2]);
-		event[3] = false;
-	}
-};
-
-/**
  * Key is used by Keyboard, Pointer, etc, to represent a key state.
  *
  * @class
@@ -2492,38 +2259,121 @@ ViewportControls.prototype.update = function(pointer)
 };
 
 /**
+ * Animation timer should be used to run the update and render loops of the application.
+ * 
+ * Underneat it uses the requestAnimationFrame() method that calls the function with the same rate as the screen refresh rate.
+ * 
+ * @class
+ * @param {Function} callback Timer callback function.
+ */
+function AnimationTimer(callback)
+{
+	/**
+	 * Task of the timer, executed at the timer defined rate.
+	 * 
+	 * @type {Function}
+	 */
+	this.callback = callback;
+
+	/**
+	 * Indicates if the timer is currently running, it is set to true on start and reset to false on stop.
+	 * 
+	 * @type {boolean}
+	 */
+	this.running = false;
+
+	/**
+	 * ID of the currently waiting timeout clock. Used to cancel the already request execution of the next clock tick.
+	 * 
+	 * @type {number}
+	 */
+	this.id = -1;
+}
+
+/**
+ * Start timer, is the timer is already running does not do anything.
+ */
+AnimationTimer.prototype.start = function()
+{
+	if(this.running)
+	{
+		return;
+	}
+
+	this.running = true;
+
+	var self = this;
+	function loop()
+	{
+		self.callback();
+
+		if(self.running)
+		{
+			self.id = requestAnimationFrame(loop);
+		}
+	}
+
+	loop();
+};
+
+/**
+ * Stop animation timer, should be called when the render loop is no longer in use to prevent code/memory leaks.
+ *
+ * If the timer is not stopped the loop will keep running using processing power and consuming memory.
+ */
+AnimationTimer.prototype.stop = function()
+{
+	this.running = false;
+	cancelAnimationFrame(this.id);
+};
+
+/**
  * The renderer is responsible for drawing the objects structure into the canvas element and manage its rendering state.
  *
+ * Object are updated by the renderer before drawing, the renderer sorts the objects by layer, checks for pointer events and draw the objects into the screen.
+ *
+ * Input handling is also performed by the renderer (it is also used for the event handling).
+ *
  * @class
- * @param {Element} canvas Canvas to render the content.
+ * @param {Element} canvas Canvas to render the content to.
  * @param {Object} options Renderer canvas options.
  */
 function Renderer(canvas, options)
 {
 	if(options === undefined)
 	{
-		options = 
+		options =
 		{
-			alpha: true
+			alpha: true,
+			imageSmoothingEnabled: true,
+			imageSmoothingQuality: "low",
+			globalCompositeOperation: "source-over"
 		};
 	}
 
 	/**
-	 * Canvas DOM element, has to be managed by the user.
+	 * Canvas DOM element, the user needs to manage the canvas state.
+	 *
+	 * The canvas size (width and height) should always match its actual display size (adjusted for the device pixel ratio).
 	 */
 	this.canvas = canvas;
 
 	/**
 	 * Canvas 2D rendering context used to draw content.
+	 *
+	 * The options passed thought the constructor are applied to the context created.
 	 */
-	this.context = canvas.getContext("2d", {alpha: options.alpha});
-	this.context.imageSmoothingEnabled = true;
-	this.context.globalCompositeOperation = "source-over";
+	this.context = this.canvas.getContext("2d", {alpha: options.alpha});
+	this.context.imageSmoothingEnabled = options.imageSmoothingEnabled;
+	this.context.imageSmoothingQuality = options.imageSmoothingQuality;
+	this.context.globalCompositeOperation = options.globalCompositeOperation;
 
 	/**
-	 * Pointer input handler object.
+	 * Pointer input handler object, automatically updated by the renderer.
+	 *
+	 * The pointer is attached to the DOM window and to the canvas provided by the user.
 	 */
-	this.pointer = new Pointer(window, canvas);
+	this.pointer = new Pointer(window, this.canvas);
 
 	/**
 	 * Indicates if the canvas should be automatically cleared before new frame is drawn.
@@ -2536,18 +2386,21 @@ function Renderer(canvas, options)
 /**
  * Creates a infinite render loop to render the group into a viewport each frame.
  *
- * The render loop cannot be destroyed, and it automatically creates a viewport controls object.
+ * Automatically creates a viewport controls object, used for the user to control the viewport.
  *
- * @param {Object2D} group Group to be rendered.
- * @param {Viewport} viewport Viewport into the objects.
- * @param {Function} onUpdate Function called before rendering the frame.
+ * The render loop can be accessed trough the animation timer returned. Should be stopped when no longer necessary to prevent memory/code leaks.
+ *
+ * @param {Object2D} group Object to be rendered, alongside with all its children. Object2D can be used as a container to group objects.
+ * @param {Viewport} viewport Viewport into the scene.
+ * @param {Function} onUpdate Function called before rendering the frame, can be used for additional logic code. Object logic should be directly written in the update method of objects.
+ * @return {AnimationTimer} Animation timer created for this render loop. Should be stopped when no longer necessary.
  */
 Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 {
 	var self = this;
-	var controls = new ViewportControls(viewport);
 
-	function loop()
+	var controls = new ViewportControls(viewport);
+	var timer = new AnimationTimer(function()
 	{
 		if(onUpdate !== undefined)
 		{
@@ -2557,9 +2410,20 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 		controls.update(self.pointer);
 		self.update(group, viewport);
 		requestAnimationFrame(loop);
-	}
+	});
+	timer.start();
 
-	loop();
+	return timer;
+};
+
+/**
+ * Dispose the renderer object, clears the pointer events attached to the window/canvas.
+ *
+ * Should be called if the renderer is no longer in use to prevent code/memory leaks.
+ */
+Renderer.prototype.dispose = function(group, viewport, onUpdate)
+{
+	this.pointer.dispose();
 };
 
 /**
@@ -3489,6 +3353,124 @@ Line.prototype.parse = function(data, root)
 };
 
 /**
+ * Text element, used to draw single line text into the canvas.
+ *
+ * For multi line text with support for line break check {MultiLineText} object.
+ *
+ * @class
+ * @extends {Object2D}
+ */
+function Text()
+{
+	Object2D.call(this);
+
+	/**
+	 * Text value displayed by this element.
+	 *
+	 * @type {string}
+	 */
+	this.text = "";
+
+	/**
+	 * Font of the text.
+	 *
+	 * @type {string}
+	 */
+	this.font = "16px Arial";
+
+	/**
+	 * Style of the object border line. If set null it is ignored.
+	 *
+	 * @type {string}
+	 */
+	this.strokeStyle = null;
+
+	/**
+	 * Line width, only used if a valid strokeStyle is defined.
+	 *
+	 * @type {number}
+	 */
+	this.lineWidth = 1;
+
+	/**
+	 * CSS background color of the box. If set null it is ignored.
+	 *
+	 * @type {string}
+	 */
+	this.fillStyle = "#000000";
+
+	/**
+	 * Text align property. Same values as used for canvas text applies
+	 *
+	 * Check documentation at https://developer.mozilla.org/en-US/docs/Web/CSS/text-align for mode details about this property.
+	 *
+	 * @type {string}
+	 */
+	this.textAlign = "center";
+
+	/**
+	 * Text baseline defines the vertical position of the text relative to the imaginary line Y position. Same values as used for canvas text applies
+	 *
+	 * Check documentation at https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textBaseline for mode details about this property.
+	 *
+	 * @type {string}
+	 */
+	this.textBaseline = "middle";
+}
+
+Text.prototype = Object.create(Object2D.prototype);
+Text.prototype.constructor = Text;
+Text.prototype.type = "Text";
+Object2D.register(Text, "Text");
+
+Text.prototype.draw = function(context, viewport, canvas)
+{
+	context.font = this.font;
+	context.textAlign = this.textAlign;
+	context.textBaseline = this.textBaseline ;
+	
+	if(this.fillStyle !== null)
+	{
+		context.fillStyle = this.fillStyle;
+		context.fillText(this.text, 0, 0);
+	}
+
+	if(this.strokeStyle !== null)
+	{
+		context.strokeStyle = this.strokeStyle;
+		context.strokeText(this.text, 0, 0);
+	}
+};
+
+Text.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.text = this.text;
+	data.font = this.font;
+	data.strokeStyle = this.strokeStyle;
+	data.lineWidth = this.lineWidth;
+	data.fillStyle = this.fillStyle;
+	data.textAlign = this.textAlign;
+	data.textBaseline = this.textBaseline;
+
+	return data;
+};
+
+Text.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.text = data.text;
+	this.font = data.font;
+	this.strokeStyle = data.strokeStyle;
+	this.lineWidth = data.lineWidth;
+	this.fillStyle = data.fillStyle;
+	this.textAlign = data.textAlign;
+	this.textBaseline = data.textBaseline;
+};
+
+/**
  * Image object is used to draw an image from URL.
  *
  * @class
@@ -3924,6 +3906,121 @@ Graph.prototype.parse = function(data, root)
 	this.min = data.min;
 	this.max = data.max;
 	this.data = data.data;
+};
+
+/**
+ * Multiple line text drawing directly into the canvas.
+ *
+ * Has support for basic text indent and alignment.
+ *
+ * @class
+ * @extends {Text}
+ */
+function MultiLineText()
+{
+	Text.call(this);
+
+	/**
+	 * Maximum width of the text content. After text reaches the max width a line break is placed.
+	 *
+	 * Can be set to null to be ignored.
+	 *
+	 * @type {number}
+	 */
+	this.maxWidth = null;
+
+	/**
+	 * Height of each line of text, can be smaller or larger than the actual font size.
+	 *
+	 * Can be set to null to be ignored.
+	 *
+	 * @type {number}
+	 */
+	this.lineHeight = null;
+}
+
+MultiLineText.prototype = Object.create(Text.prototype);
+MultiLineText.prototype.constructor = MultiLineText;
+MultiLineText.prototype.type = "MultiLineText";
+Object2D.register(MultiLineText, "MultiLineText");
+
+MultiLineText.prototype.draw = function(context, viewport, canvas)
+{
+	context.font = this.font;
+	context.textAlign = this.textAlign;
+	context.textBaseline = this.textBaseline;
+
+	var lineHeight = this.lineHeight || Number.parseFloat(this.font);
+	var lines = this.text.split("\n");
+	var offsetY = 0;
+
+	// Iterate trough all lines (breakpoints)
+	for(var i = 0; i < lines.length; i++)
+	{
+		var line = lines[i];
+		var size = context.measureText(line);
+		var sublines = [];
+
+		// Split into multiple sub-lines
+		if(this.maxWidth !== null && size.width > this.maxWidth)
+		{
+			while(line.length > 0)
+			{
+				var subline = "";
+				var subsize = context.measureText(subline + line[0]);
+
+				while(subsize.width < this.maxWidth && line.length > 0)
+				{
+					subline += line[0];
+					line = line.substr(1);
+					subsize = context.measureText(subline + line[0]);
+				}
+
+				sublines.push(subline);
+			}
+
+		}
+		// Fits into a single line
+		else
+		{
+			sublines = [line];
+		}
+
+		for(var j = 0; j < sublines.length; j++)
+		{
+			if(this.fillStyle !== null)
+			{
+				context.fillStyle = this.fillStyle;
+				context.fillText(sublines[j], this.position.x, this.position.y + offsetY);
+			}
+
+			if(this.strokeStyle !== null)
+			{
+				context.strokeStyle = this.strokeStyle;
+				context.strokeText(sublines[j], this.position.x, this.position.y + offsetY);
+			}
+
+			offsetY += lineHeight;
+		}
+	}
+};
+
+MultiLineText.prototype.serialize = function(recursive)
+{
+	var data = Text.prototype.serialize.call(this, recursive);
+
+	data.maxWidth = this.maxWidth;
+	data.lineHeight = this.lineHeight;
+
+	return data;
+};
+
+MultiLineText.prototype.parse = function(data, root)
+{
+	Text.prototype.parse.call(this, data, root);
+
+	this.maxWidth = data.maxWidth;
+	this.lineHeight = data.lineHeight;
 };
 
 /**
@@ -5102,4 +5199,4 @@ FileUtils.select = function(onLoad, filter)
 	chooser.click();
 };
 
-export { BezierCurve, Box, Box2, BoxMask, Circle, DOM, EventManager, FileUtils, Graph, Helpers, Image, Key, Line, Mask, Matrix, MultiLineText, Node, NodeConnector, NodeGraph, NodeSocket, Object2D, Pattern, Pointer, QuadraticCurve, Renderer, RoundedBox, Text, UUID, Vector2, Viewport, ViewportControls };
+export { AnimationTimer, BezierCurve, Box, Box2, BoxMask, Circle, DOM, EventManager, FileUtils, Graph, Helpers, Image, Key, Line, Mask, Matrix, MultiLineText, Node, NodeConnector, NodeGraph, NodeSocket, Object2D, Pattern, Pointer, QuadraticCurve, Renderer, RoundedBox, Text, UUID, Vector2, Viewport, ViewportControls };
