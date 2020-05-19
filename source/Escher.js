@@ -1,5 +1,3 @@
-import {MultiLineText} from "./objects/MultiLineText";
-
 export {EventManager} from "./EventManager.js";
 export {Object2D} from "./Object2D.js";
 export {Renderer} from "./Renderer.js";
