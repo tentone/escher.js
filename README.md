@@ -82,6 +82,24 @@ renderer.createRenderLoop(group, viewport);
 
 ![graph](<https://tentone.github.io/escher.js/readme/hello.png>)
 
+- If the application is not running a full screen canvas there might be some problems with the page scrolling around or showing context menu while interacting to prevent this we can disable/prevent these browser events.
+  - In the example we use the `EventManager` object to create and manage these events but we could also create these directly attached to the DOM elements.
+
+```javascript
+function preventDefault(event)
+{
+    event.preventDefault();
+    return false;
+}
+
+var event = new EventManager();
+event.add(canvas, 'DOMMouseScroll', preventDefault);
+event.add(canvas, 'wheel', preventDefault);
+event.add(canvas, 'mousewheel', preventDefault);
+event.add(canvas, 'contextmenu', preventDefault);
+event.create();
+```
+
 
 
 ### Viewport
@@ -89,7 +107,8 @@ renderer.createRenderLoop(group, viewport);
 - The `Viewport` is the object that indicates how the user will view the objects, the viewport can be used to change the position of the elements, zoom in and out, or even rotate the entire canvas.
 - Some object might ignore the viewport transformations by setting the `ignoreViewport` flag to false. This will indicate to the renderer to reset the viewport transform for that object so that the viewport does not affect it.
 - We can use the `ViewportController` (or implement new variants of this object) to allow the user control over the viewport.
-- 
+
+![graph](<https://tentone.github.io/escher.js/readme/viewport.png>)
 
 
 

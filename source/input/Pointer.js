@@ -212,7 +212,7 @@ Pointer.FORWARD = 4;
 /**
  * Element to be used for coordinates calculation relative to that canvas.
  * 
- * @param {DOM} canvas Canvas to be attached to the Pointer instance
+ * @param {DOM} element Canvas to be attached to the Pointer instance
  */
 Pointer.setCanvas = function(element)
 {
