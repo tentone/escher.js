@@ -115,7 +115,23 @@ event.create();
 ### Node Graph
 
 - Node graph can be used to create node diagrams, node have inputs and outputs sockets that can be connected using node connectors.
-- Data flows between the nodes, each node class has to implement how its data is processed using the `getValue()` method of its sockets.
+- Data flows between the nodes, each node class has to implement how its data is processed using the `getValue()` method of its sockets. This method is called across the nodes connected together to retrieve the result at any point.
+
+```javascript
+registerSockets()
+{
+	this.a = this.addInput("number", "a");
+	this.b = this.addInput("number", "b");
+    
+	this.r = this.addOutput("number", "r");
+	this.r.getValue = () =>
+	{
+        // Add input A and input B
+		return this.a.getValue() + this.b.getValue();
+	};
+}
+```
+
 - The node value propagates trough the node connections from outputs to inputs.
 - Its possible to integrate user input elements using the DOM wrapper object.
 
