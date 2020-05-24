@@ -20,7 +20,7 @@ export {Text} from "./objects/Text.js";
 export {Image} from "./objects/Image.js";
 export {DOM} from "./objects/DOM.js";
 export {Pattern} from "./objects/Pattern.js";
-export {Graph} from "./objects/Graph.js";
+export {Graph} from "./objects/chart/Graph.js";
 export {MultiLineText} from "./objects/MultiLineText.js";
 export {BezierCurve} from "./objects/BezierCurve.js";
 export {QuadraticCurve} from "./objects/QuadraticCurve.js";

@@ -628,8 +628,6 @@ Object2D.prototype.serialize = function(recursive)
 		ignoreViewport: this.ignoreViewport,
 		saveContextState: this.saveContextState,
 		restoreContextState: this.restoreContextState,
-		pointerInside: this.pointerInside,
-		beingDragged: this.beingDragged,
 		children: [],
 		masks: []
 	};
@@ -681,8 +679,6 @@ Object2D.prototype.parse = function(data, root)
 	this.ignoreViewport = data.ignoreViewport;
 	this.saveContextState = data.saveContextState;
 	this.restoreContextState = data.restoreContextState;
-	this.pointerInside = data.pointerInside;
-	this.beingDragged = data.beingDragged;
 
 	for(var i = 0; i < this.masks.length; i++)
 	{
