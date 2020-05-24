@@ -1266,8 +1266,9 @@
 	 * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
 	 * @param {Viewport} viewport Viewport applied to the canvas.
 	 * @param {Element} canvas DOM canvas element where the content is being drawn.
+	 * @param {Renderer} renderer Renderer object being used to draw the object into the canvas.
 	 */
-	Object2D.prototype.transform = function(context, viewport, canvas)
+	Object2D.prototype.transform = function(context, viewport, canvas, renderer)
 	{
 		this.globalMatrix.tranformContext(context);
 	};
@@ -1442,8 +1443,6 @@
 			ignoreViewport: this.ignoreViewport,
 			saveContextState: this.saveContextState,
 			restoreContextState: this.restoreContextState,
-			pointerInside: this.pointerInside,
-			beingDragged: this.beingDragged,
 			children: [],
 			masks: []
 		};
@@ -1495,8 +1494,6 @@
 		this.ignoreViewport = data.ignoreViewport;
 		this.saveContextState = data.saveContextState;
 		this.restoreContextState = data.restoreContextState;
-		this.pointerInside = data.pointerInside;
-		this.beingDragged = data.beingDragged;
 
 		for(var i = 0; i < this.masks.length; i++)
 		{
@@ -1562,16 +1559,22 @@
 	{
 		/**
 		 * Indicates if this key is currently pressed.
+		 *
+		 * @type {boolean}
 		 */
 		this.pressed = false;
 
 		/**
 		 * Indicates if this key was just pressed.
+		 *
+		 * @type {boolean}
 		 */
 		this.justPressed = false;
 		
 		/**
 		 * Indicates if this key was just released.
+		 *
+		 * @type {boolean}
 		 */
 		this.justReleased = false;
 	}
@@ -1584,6 +1587,8 @@
 
 	/**
 	 * Update Key status based on new key state.
+	 *
+	 * @param {number} action Key action that was performed.
 	 */
 	Key.prototype.update = function(action)
 	{
@@ -1655,36 +1660,54 @@
 
 		/**
 		 * Array with pointer buttons status.
+		 *
+		 * @type {number[]}
 		 */
 		this.keys = new Array(5);
 
 		/**
 		 * Pointer position inside of the window (coordinates in window space).
+		 *
+		 * This value is accumulated from multiple mouse triggered events between updated.
+		 *
+		 * @type {Vector2}
 		 */
 		this.position = new Vector2(0, 0);
 
 		/**
-		 * Pointer movement (coordinates in window space).
+		 * Pointer movement (coordinates in window space). Since the last update.
+		 *
+		 * This value is accumulated from multiple mouse triggered events between updated.
+		 *
+		 * @type {Vector2}
 		 */
 		this.delta = new Vector2(0, 0);
 
 		/**
-		 * Pointer scroll wheel movement.
+		 * Pointer scroll wheel movement, since the last update.
+		 *
+		 * @type {number}
 		 */
 		this.wheel = 0;
 		
 		/**
 		 * Indicates a button of the pointer was double clicked.
+		 *
+		 * @type {boolean}
 		 */
 		this.doubleClicked = new Array(5);
 
 		/**
 		 * DOM element where to attach the pointer events.
+		 *
+		 * @type {Element}
 		 */
 		this.domElement = (domElement !== undefined) ? domElement : window;
 
 		/**
 		 * Canvas attached to this pointer instance used to calculate position and delta in element space coordinates.
+		 *
+		 * @type {Element}
 		 */
 		this.canvas = null;
 		if(canvas !== undefined)
@@ -1695,9 +1718,11 @@
 		/**
 		 * Event manager responsible for updating the raw data variables.
 		 *
-		 * Diferent events are used depending on the host platform.
+		 * Different events are used depending on the host platform.
 		 *
 		 * When the update method is called the raw data is reset.
+		 *
+		 * @type {EventManager}
 		 */
 		this.events = new EventManager();
 
@@ -1817,33 +1842,48 @@
 
 	/**
 	 * Left pointer button.
+	 *
+	 * @static
+	 * @type {number}
 	 */
 	Pointer.LEFT = 0;
 
 	/**
 	 * Middle pointer button.
+	 *
+	 * @static
+	 * @type {number}
 	 */
 	Pointer.MIDDLE = 1;
 
 	/**
 	 * Right pointer button.
+	 *
+	 * @static
+	 * @type {number}
 	 */
 	Pointer.RIGHT = 2;
 
 	/**
 	 * Back pointer navigation button.
+	 *
+	 * @static
+	 * @type {number}
 	 */
 	Pointer.BACK = 3;
 
 	/**
 	 * Forward pointer navigation button.
+	 *
+	 * @static
+	 * @type {number}
 	 */
 	Pointer.FORWARD = 4;
 
 	/**
 	 * Element to be used for coordinates calculation relative to that canvas.
 	 * 
-	 * @param {DOM} canvas Canvas to be attached to the Pointer instance
+	 * @param {DOM} element Canvas to be attached to the Pointer instance
 	 */
 	Pointer.setCanvas = function(element)
 	{
@@ -1918,8 +1958,6 @@
 
 	/**
 	 * Update pointer position.
-	 *
-	 * Automatically called by the runtime.
 	 * 
 	 * @param {Number} x
 	 * @param {Number} y
@@ -1943,8 +1981,6 @@
 
 	/**
 	 * Update a pointer button.
-	 * 
-	 * Automatically called by the runtime.
 	 *
 	 * @param {Number} button
 	 * @param {Number} action
@@ -1959,6 +1995,8 @@
 
 	/**
 	 * Update pointer buttons state, position, wheel and delta synchronously.
+	 *
+	 * Should be called every frame on the update loop before reading any values from the pointer.
 	 */
 	Pointer.update = function()
 	{
@@ -2016,7 +2054,9 @@
 	};
 
 	/**
-	 * Create pointer events.
+	 * Create pointer events to collect input data.
+	 *
+	 * Should be called before using the pointer object.
 	 */
 	Pointer.create = function()
 	{
@@ -2024,7 +2064,9 @@
 	};
 
 	/**
-	 * Dispose pointer events.
+	 * Dispose pointer events, should be called after the objects is no longer required.
+	 *
+	 * If not called leaves the window events created leaving a memory/code leak.
 	 */
 	Pointer.dispose = function()
 	{
@@ -2153,6 +2195,8 @@
 	{
 		/**
 		 * Viewport being controlled by this object.
+		 *
+		 * @type {Viewport}
 		 */
 		this.viewport = viewport;
 
@@ -2160,6 +2204,8 @@
 		 * Button used to drag and viewport around.
 		 *
 		 * On touch enabled devices the touch event is represented as a LEFT button.
+		 *
+		 * @type {number}
 		 */
 		this.dragButton = Pointer.RIGHT;
 
@@ -2167,6 +2213,8 @@
 		 * Is set to true allow the viewport to be scalled.
 		 *
 		 * Scaling is performed using the pointer scroll.
+		 *
+		 * @type {boolean}
 		 */
 		this.allowScale = true;
 
@@ -2174,6 +2222,8 @@
 		 * Flag to indicate if the viewport should move when scalling.
 		 *
 		 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
+		 *
+		 * @type {boolean}
 		 */
 		this.moveOnScale = false;
 
@@ -2181,6 +2231,8 @@
 		 * If true allows the viewport to be rotated.
 		 *
 		 * Rotation is performed by holding the RIGHT and LEFT pointer buttons and rotating around the initial point.
+		 *
+		 * @type {boolean}
 		 */
 		this.allowRotation = true;
 
@@ -2188,11 +2240,15 @@
 		 * Value of the initial point of rotation if the viewport is being rotated.
 		 *
 		 * Is set to null when the viewport is not being rotated.
+		 *
+		 * @type {Vector2 | null}
 		 */
 		this.rotationPoint = null;
 
 		/**
 		 * Initial rotation of the viewport.
+		 *
+		 * @type {number}
 		 */
 		this.rotationInitial = 0;
 	}
@@ -2202,7 +2258,7 @@
 	 *
 	 * Should be called every frame before rendering.
 	 *
-	 * @param {Pointer} pointer
+	 * @param {Pointer} pointer Pointer used to control the viewport.
 	 */
 	ViewportControls.prototype.update = function(pointer)
 	{	
@@ -2244,9 +2300,9 @@
 			}
 			else
 			{
-				var pointer = pointer.position.clone();
-				pointer.sub(this.rotationPoint);
-				this.viewport.rotation = this.rotationInitial + pointer.angle();
+				var point = pointer.position.clone();
+				point.sub(this.rotationPoint);
+				this.viewport.rotation = this.rotationInitial + point.angle();
 				this.viewport.matrixNeedsUpdate = true;
 			}
 		}
@@ -2361,13 +2417,28 @@
 		 * Canvas DOM element, the user needs to manage the canvas state.
 		 *
 		 * The canvas size (width and height) should always match its actual display size (adjusted for the device pixel ratio).
+		 *
+		 * @type {Element}
 		 */
 		this.canvas = canvas;
+
+		/**
+		 * Division where DOM and SVG objects should be placed at. This division should be perfectly aligned whit the canvas element.
+		 *
+		 * If no division is defined the canvas parent element is used by default to place these objects.
+		 *
+		 * The DOM container to be used can be obtained using the getDomContainer() method.
+		 *
+		 * @type {Element}
+		 */
+		this.container = null;
 
 		/**
 		 * Canvas 2D rendering context used to draw content.
 		 *
 		 * The options passed thought the constructor are applied to the context created.
+		 *
+		 * @type {CanvasRenderingContext2D}
 		 */
 		this.context = this.canvas.getContext("2d", {alpha: options.alpha});
 		this.context.imageSmoothingEnabled = options.imageSmoothingEnabled;
@@ -2378,6 +2449,8 @@
 		 * Pointer input handler object, automatically updated by the renderer.
 		 *
 		 * The pointer is attached to the DOM window and to the canvas provided by the user.
+		 *
+		 * @type {Pointer}
 		 */
 		this.pointer = new Pointer(window, this.canvas);
 
@@ -2385,9 +2458,23 @@
 		 * Indicates if the canvas should be automatically cleared before new frame is drawn.
 		 *
 		 * If set to false the user should clear the frame before drawing.
+		 *
+		 * @type {boolean}
 		 */
 		this.autoClear = true;
 	}
+
+	/**
+	 * Get the DOM container to be used to store DOM and SVG objects.
+	 *
+	 * Can be set using the container attribute, by default the canvas parent element is used.
+	 *
+	 * @returns {Element} DOM element selected for objects.
+	 */
+	Renderer.prototype.getDomContainer = function()
+	{
+		return this.container !== null ? this.container : this.canvas.parentElement;
+	};
 
 	/**
 	 * Creates a infinite render loop to render the group into a viewport each frame.
@@ -2640,7 +2727,7 @@
 					viewport.matrix.setContextTransform(this.context);
 				}
 
-				masks[j].transform(this.context, viewport, this.canvas);
+				masks[j].transform(this.context, viewport, this.canvas, this);
 				masks[j].clip(this.context, viewport, this.canvas);
 			}
 
@@ -2655,7 +2742,7 @@
 			}
 
 			// Apply the object transform to the canvas context
-			objects[i].transform(this.context, viewport, this.canvas);
+			objects[i].transform(this.context, viewport, this.canvas, this);
 
 			// Style the canvas context
 			if(objects[i].style !== null)
@@ -3630,12 +3717,12 @@
 		}
 	};
 
-	DOM.prototype.transform = function(context, viewport, canvas)
+	DOM.prototype.transform = function(context, viewport, canvas, renderer)
 	{
 		// Check if the DOM element parent is null
 		if(this.parentElement === null)
 		{
-			this.parentElement = canvas.parentElement;
+			this.parentElement = renderer.getDomContainer();
 			this.parentElement.appendChild(this.element);
 		}
 

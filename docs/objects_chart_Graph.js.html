@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Box.js</title>
+    <title>JSDoc: Source: objects/chart/Graph.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Box.js</h1>
+    <h1 class="page-title">Source: objects/chart/Graph.js</h1>
 
     
 
@@ -26,87 +26,107 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import {Object2D} from "../Object2D.js";
-import {Vector2} from "../math/Vector2.js";
-import {Box2} from "../math/Box2.js";
+            <pre class="prettyprint source linenums"><code>import {Object2D} from "../../Object2D.js";
+import {Vector2} from "../../math/Vector2.js";
+import {Box2} from "../../math/Box2.js";
 
 /**
- * Box object draw a rectangular object.
+ * Graph object is used to draw simple graph data into the canvas.
  *
- * Can be used as a base to implement other box objects, already implements collision for pointer events.
+ * Graph data is composed of X, Y values.
  *
  * @class
  * @extends {Object2D}
  */
-function Box()
+function Graph()
 {
 	Object2D.call(this);
 
 	/**
-	 * Box object containing the size of the object.
+	 * Graph object containing the size of the object.
 	 */
-	this.box = new Box2(new Vector2(-50, -50), new Vector2(50, 50));
+	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 	/**
-	 * Style of the object border line.
-	 *
-	 * If set null it is ignored.
+	 * Color of the box border line.
 	 */
-	this.strokeStyle = "#000000";
+	this.strokeStyle = "rgb(0, 153, 255)";
 
 	/**
-	 * Line width, only used if a valid strokeStyle is defined.
+	 * Line width.
 	 */
 	this.lineWidth = 1;
 
 	/**
 	 * Background color of the box.
-	 *
-	 * If set null it is ignored.
 	 */
-	this.fillStyle = "#FFFFFF";
+	this.fillStyle = "rgba(0, 153, 255, 0.3)";
+
+	/**
+	 * Minimum value of the graph.
+	 */
+	this.min = 0;
+
+	/**
+	 * Maximum value of the graph.
+	 */
+	this.max = 10;
+
+	/**
+	 * Data to be presented in the graph.
+	 *
+	 * The array should store numeric values.
+	 */
+	this.data = [];
 }
 
-Box.prototype = Object.create(Object2D.prototype);
-Box.prototype.constructor = Box;
-Box.prototype.type = "Box";
-Object2D.register(Box, "Box");
+Graph.prototype = Object.create(Object2D.prototype);
+Graph.prototype.constructor = Graph;
+Graph.prototype.type = "Graph";
+Object2D.register(Graph, "Graph");
 
-Box.prototype.onPointerEnter = function(pointer, viewport)
-{
-	this.fillStyle = "#CCCCCC";
-};
-
-Box.prototype.onPointerLeave = function(pointer, viewport)
-{
-	this.fillStyle = "#FFFFFF";
-};
-
-Box.prototype.isInside = function(point)
+Graph.prototype.isInside = function(point)
 {
 	return this.box.containsPoint(point);
 };
 
-Box.prototype.draw = function(context, viewport, canvas)
+Graph.prototype.draw = function(context, viewport, canvas)
 {
+	if(this.data.length === 0)
+	{
+		return;
+	}
+	
 	var width = this.box.max.x - this.box.min.x;
 	var height = this.box.max.y - this.box.min.y;
 
-	if(this.fillStyle !== null)
-	{	
-		context.fillStyle = this.fillStyle;
-		context.fillRect(this.box.min.x, this.box.min.y, width, height);
+	context.lineWidth = this.lineWidth;
+	context.strokeStyle = this.strokeStyle;
+	context.beginPath();
+		
+	var step = width / (this.data.length - 1);
+	var gamma = this.max - this.min;
+
+	context.moveTo(this.box.min.x, this.box.max.y - ((this.data[0] - this.min) / gamma) * height);
+	
+	for(var i = 1, s = step; i &lt; this.data.length; s += step, i++)
+	{
+		context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
 	}
 
-	if(this.strokeStyle !== null)
+	context.stroke();
+
+	if(this.fillStyle !== null)
 	{
-		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
-		context.strokeRect(this.box.min.x, this.box.min.y, width, height);
+		context.fillStyle = this.fillStyle;
+
+		context.lineTo(this.box.max.x, this.box.max.y);
+		context.lineTo(this.box.min.x, this.box.max.y);
+		context.fill();
 	}
 };
 
-Box.prototype.serialize = function(recursive)
+Graph.prototype.serialize = function(recursive)
 {
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
@@ -114,11 +134,14 @@ Box.prototype.serialize = function(recursive)
 	data.strokeStyle = this.strokeStyle;
 	data.lineWidth = this.lineWidth;
 	data.fillStyle = this.fillStyle;
+	data.min = this.min;
+	data.max = this.max;
+	data.data = this.data;
 
 	return data;
 };
 
-Box.prototype.parse = function(data, root)
+Graph.prototype.parse = function(data, root)
 {
 	Object2D.prototype.parse.call(this, data, root);
 
@@ -126,9 +149,13 @@ Box.prototype.parse = function(data, root)
 	this.strokeStyle = data.strokeStyle;
 	this.lineWidth = data.lineWidth;
 	this.fillStyle = data.fillStyle;
+	this.min = data.min;
+	this.max = data.max;
+	this.data = data.data;
 };
 
-export {Box};
+
+export {Graph};
 </code></pre>
         </article>
     </section>
