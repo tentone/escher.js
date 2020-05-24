@@ -7,16 +7,22 @@ function Key()
 {
 	/**
 	 * Indicates if this key is currently pressed.
+	 *
+	 * @type {boolean}
 	 */
 	this.pressed = false;
 
 	/**
 	 * Indicates if this key was just pressed.
+	 *
+	 * @type {boolean}
 	 */
 	this.justPressed = false;
 	
 	/**
 	 * Indicates if this key was just released.
+	 *
+	 * @type {boolean}
 	 */
 	this.justReleased = false;
 }
@@ -29,6 +35,8 @@ Key.prototype.constructor = Key;
 
 /**
  * Update Key status based on new key state.
+ *
+ * @param {number} action Key action that was performed.
  */
 Key.prototype.update = function(action)
 {

@@ -74,12 +74,12 @@ DOM.prototype.onRemove = function()
 	}
 };
 
-DOM.prototype.transform = function(context, viewport, canvas)
+DOM.prototype.transform = function(context, viewport, canvas, renderer)
 {
 	// Check if the DOM element parent is null
 	if(this.parentElement === null)
 	{
-		this.parentElement = canvas.parentElement;
+		this.parentElement = renderer.getDomContainer();
 		this.parentElement.appendChild(this.element);
 	}
 

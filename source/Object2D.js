@@ -452,8 +452,9 @@ Object2D.prototype.updateMatrix = function(context)
  * @param {CanvasRenderingContext2D} context Canvas 2d drawing context.
  * @param {Viewport} viewport Viewport applied to the canvas.
  * @param {Element} canvas DOM canvas element where the content is being drawn.
+ * @param {Renderer} renderer Renderer object being used to draw the object into the canvas.
  */
-Object2D.prototype.transform = function(context, viewport, canvas)
+Object2D.prototype.transform = function(context, viewport, canvas, renderer)
 {
 	this.globalMatrix.tranformContext(context);
 };

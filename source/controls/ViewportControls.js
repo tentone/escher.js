@@ -12,6 +12,8 @@ function ViewportControls(viewport)
 {
 	/**
 	 * Viewport being controlled by this object.
+	 *
+	 * @type {Viewport}
 	 */
 	this.viewport = viewport;
 
@@ -19,6 +21,8 @@ function ViewportControls(viewport)
 	 * Button used to drag and viewport around.
 	 *
 	 * On touch enabled devices the touch event is represented as a LEFT button.
+	 *
+	 * @type {number}
 	 */
 	this.dragButton = Pointer.RIGHT;
 
@@ -26,6 +30,8 @@ function ViewportControls(viewport)
 	 * Is set to true allow the viewport to be scalled.
 	 *
 	 * Scaling is performed using the pointer scroll.
+	 *
+	 * @type {boolean}
 	 */
 	this.allowScale = true;
 
@@ -33,6 +39,8 @@ function ViewportControls(viewport)
 	 * Flag to indicate if the viewport should move when scalling.
 	 *
 	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
+	 *
+	 * @type {boolean}
 	 */
 	this.moveOnScale = false;
 
@@ -40,6 +48,8 @@ function ViewportControls(viewport)
 	 * If true allows the viewport to be rotated.
 	 *
 	 * Rotation is performed by holding the RIGHT and LEFT pointer buttons and rotating around the initial point.
+	 *
+	 * @type {boolean}
 	 */
 	this.allowRotation = true;
 
@@ -47,11 +57,15 @@ function ViewportControls(viewport)
 	 * Value of the initial point of rotation if the viewport is being rotated.
 	 *
 	 * Is set to null when the viewport is not being rotated.
+	 *
+	 * @type {Vector2 | null}
 	 */
 	this.rotationPoint = null;
 
 	/**
 	 * Initial rotation of the viewport.
+	 *
+	 * @type {number}
 	 */
 	this.rotationInitial = 0;
 }
@@ -61,7 +75,7 @@ function ViewportControls(viewport)
  *
  * Should be called every frame before rendering.
  *
- * @param {Pointer} pointer
+ * @param {Pointer} pointer Pointer used to control the viewport.
  */
 ViewportControls.prototype.update = function(pointer)
 {	
@@ -103,9 +117,9 @@ ViewportControls.prototype.update = function(pointer)
 		}
 		else
 		{
-			var pointer = pointer.position.clone();
-			pointer.sub(this.rotationPoint);
-			this.viewport.rotation = this.rotationInitial + pointer.angle();
+			var point = pointer.position.clone();
+			point.sub(this.rotationPoint);
+			this.viewport.rotation = this.rotationInitial + point.angle();
 			this.viewport.matrixNeedsUpdate = true;
 		}
 	}

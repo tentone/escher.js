@@ -30,13 +30,28 @@ function Renderer(canvas, options)
 	 * Canvas DOM element, the user needs to manage the canvas state.
 	 *
 	 * The canvas size (width and height) should always match its actual display size (adjusted for the device pixel ratio).
+	 *
+	 * @type {Element}
 	 */
 	this.canvas = canvas;
+
+	/**
+	 * Division where DOM and SVG objects should be placed at. This division should be perfectly aligned whit the canvas element.
+	 *
+	 * If no division is defined the canvas parent element is used by default to place these objects.
+	 *
+	 * The DOM container to be used can be obtained using the getDomContainer() method.
+	 *
+	 * @type {Element}
+	 */
+	this.container = null;
 
 	/**
 	 * Canvas 2D rendering context used to draw content.
 	 *
 	 * The options passed thought the constructor are applied to the context created.
+	 *
+	 * @type {CanvasRenderingContext2D}
 	 */
 	this.context = this.canvas.getContext("2d", {alpha: options.alpha});
 	this.context.imageSmoothingEnabled = options.imageSmoothingEnabled;
@@ -47,6 +62,8 @@ function Renderer(canvas, options)
 	 * Pointer input handler object, automatically updated by the renderer.
 	 *
 	 * The pointer is attached to the DOM window and to the canvas provided by the user.
+	 *
+	 * @type {Pointer}
 	 */
 	this.pointer = new Pointer(window, this.canvas);
 
@@ -54,9 +71,23 @@ function Renderer(canvas, options)
 	 * Indicates if the canvas should be automatically cleared before new frame is drawn.
 	 *
 	 * If set to false the user should clear the frame before drawing.
+	 *
+	 * @type {boolean}
 	 */
 	this.autoClear = true;
 }
+
+/**
+ * Get the DOM container to be used to store DOM and SVG objects.
+ *
+ * Can be set using the container attribute, by default the canvas parent element is used.
+ *
+ * @returns {Element} DOM element selected for objects.
+ */
+Renderer.prototype.getDomContainer = function()
+{
+	return this.container !== null ? this.container : this.canvas.parentElement;
+};
 
 /**
  * Creates a infinite render loop to render the group into a viewport each frame.
@@ -309,7 +340,7 @@ Renderer.prototype.update = function(object, viewport)
 				viewport.matrix.setContextTransform(this.context);
 			}
 
-			masks[j].transform(this.context, viewport, this.canvas);
+			masks[j].transform(this.context, viewport, this.canvas, this);
 			masks[j].clip(this.context, viewport, this.canvas);
 		}
 
@@ -324,7 +355,7 @@ Renderer.prototype.update = function(object, viewport)
 		}
 
 		// Apply the object transform to the canvas context
-		objects[i].transform(this.context, viewport, this.canvas);
+		objects[i].transform(this.context, viewport, this.canvas, this);
 
 		// Style the canvas context
 		if(objects[i].style !== null)

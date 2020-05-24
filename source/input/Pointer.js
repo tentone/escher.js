@@ -24,36 +24,54 @@ function Pointer(domElement, canvas)
 
 	/**
 	 * Array with pointer buttons status.
+	 *
+	 * @type {number[]}
 	 */
 	this.keys = new Array(5);
 
 	/**
 	 * Pointer position inside of the window (coordinates in window space).
+	 *
+	 * This value is accumulated from multiple mouse triggered events between updated.
+	 *
+	 * @type {Vector2}
 	 */
 	this.position = new Vector2(0, 0);
 
 	/**
-	 * Pointer movement (coordinates in window space).
+	 * Pointer movement (coordinates in window space). Since the last update.
+	 *
+	 * This value is accumulated from multiple mouse triggered events between updated.
+	 *
+	 * @type {Vector2}
 	 */
 	this.delta = new Vector2(0, 0);
 
 	/**
-	 * Pointer scroll wheel movement.
+	 * Pointer scroll wheel movement, since the last update.
+	 *
+	 * @type {number}
 	 */
 	this.wheel = 0;
 	
 	/**
 	 * Indicates a button of the pointer was double clicked.
+	 *
+	 * @type {boolean}
 	 */
 	this.doubleClicked = new Array(5);
 
 	/**
 	 * DOM element where to attach the pointer events.
+	 *
+	 * @type {Element}
 	 */
 	this.domElement = (domElement !== undefined) ? domElement : window;
 
 	/**
 	 * Canvas attached to this pointer instance used to calculate position and delta in element space coordinates.
+	 *
+	 * @type {Element}
 	 */
 	this.canvas = null;
 	if(canvas !== undefined)
@@ -64,9 +82,11 @@ function Pointer(domElement, canvas)
 	/**
 	 * Event manager responsible for updating the raw data variables.
 	 *
-	 * Diferent events are used depending on the host platform.
+	 * Different events are used depending on the host platform.
 	 *
 	 * When the update method is called the raw data is reset.
+	 *
+	 * @type {EventManager}
 	 */
 	this.events = new EventManager();
 
@@ -186,26 +206,41 @@ Pointer.prototype.constructor = Pointer;
 
 /**
  * Left pointer button.
+ *
+ * @static
+ * @type {number}
  */
 Pointer.LEFT = 0;
 
 /**
  * Middle pointer button.
+ *
+ * @static
+ * @type {number}
  */
 Pointer.MIDDLE = 1;
 
 /**
  * Right pointer button.
+ *
+ * @static
+ * @type {number}
  */
 Pointer.RIGHT = 2;
 
 /**
  * Back pointer navigation button.
+ *
+ * @static
+ * @type {number}
  */
 Pointer.BACK = 3;
 
 /**
  * Forward pointer navigation button.
+ *
+ * @static
+ * @type {number}
  */
 Pointer.FORWARD = 4;
 
@@ -287,8 +322,6 @@ Pointer.buttonJustReleased = function(button)
 
 /**
  * Update pointer position.
- *
- * Automatically called by the runtime.
  * 
  * @param {Number} x
  * @param {Number} y
@@ -312,8 +345,6 @@ Pointer.updatePosition = function(x, y, xDiff, yDiff)
 
 /**
  * Update a pointer button.
- * 
- * Automatically called by the runtime.
  *
  * @param {Number} button
  * @param {Number} action
@@ -328,6 +359,8 @@ Pointer.updateKey = function(button, action)
 
 /**
  * Update pointer buttons state, position, wheel and delta synchronously.
+ *
+ * Should be called every frame on the update loop before reading any values from the pointer.
  */
 Pointer.update = function()
 {
@@ -385,7 +418,9 @@ Pointer.update = function()
 };
 
 /**
- * Create pointer events.
+ * Create pointer events to collect input data.
+ *
+ * Should be called before using the pointer object.
  */
 Pointer.create = function()
 {
@@ -393,7 +428,9 @@ Pointer.create = function()
 };
 
 /**
- * Dispose pointer events.
+ * Dispose pointer events, should be called after the objects is no longer required.
+ *
+ * If not called leaves the window events created leaving a memory/code leak.
  */
 Pointer.dispose = function()
 {
