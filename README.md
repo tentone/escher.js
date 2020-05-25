@@ -186,13 +186,13 @@ class CustomObject extends Escher.Node
 	serialize(recursive)
 	{
 		var data = super.serialize(recursive);
-        data.something = this.something;
-        return data;
+		data.something = this.something;
+		return data;
 	}
     
 	parse(data, root)
 	{
-        super.parse(data, root);
+		super.parse(data, root);
 		this.something = data.something;
 	}
 }
@@ -209,6 +209,15 @@ constructor()
 	this.text = new Escher.Text();
 	this.text.serializable = false;
 	this.add(this.text);
+}
+```
+
+- Sometimes it might be necessary to access references to other objects in the group. It is recommended to store these relations by their UUID and rebuilding from the root object.
+
+```javascript
+parse(data, root)
+{
+	this.someObject = root.getChildByUUID(data.someObject);
 }
 ```
 
