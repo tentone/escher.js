@@ -3,7 +3,7 @@ import {Style} from "./Style";
 /**
  * Gradient style describes a gradient by its colors, directions origin, type (linear or radial, etc.
  *
- * The object returns a CanvasGradient https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient when generated.
+ * The get method returns a CanvasGradient https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient when generated.
  *
  * @class
  * @extends {Style}
@@ -12,7 +12,7 @@ function GradientStyle()
 {
     /**
      * Type of gradient can be LINEAR or RADIAL.
-     * 
+     *
      * @type {number}
      */
     this.type = GradientStyle.LINEAR;
@@ -51,7 +51,7 @@ GradientStyle.prototype.addColorStop = function(offset, color)
 
 };
 
-GradientStyle.prototype.generate = function(context)
+GradientStyle.prototype.get = function(context)
 {
     // context.createLinearGradient()
     // context.createRadialGradient()

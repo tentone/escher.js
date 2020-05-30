@@ -10,12 +10,12 @@ import {ColorStyle} from "./ColorStyle";
 function Style() {}
 
 /**
- * Generate style object from style data and the drawing context.
+ * Get generated style object from style data and the drawing context.
  *
  * @param {CanvasRenderingContext2D} context Context being used to draw the object.
  * @return {string | CanvasGradient | CanvasPattern} Return the canvas style object generated.
  */
-Style.prototype.generate = function(context) {};
+Style.prototype.get = function(context) {};
 
 Style.prototype.toJSON = function() {};
 

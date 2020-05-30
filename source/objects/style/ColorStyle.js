@@ -19,7 +19,7 @@ function ColorStyle(color)
 
 ColorStyle.prototype = Object.create(Style);
 
-ColorStyle.prototype.generate = function(context)
+ColorStyle.prototype.get = function(context)
 {
     return this.color;
 };
