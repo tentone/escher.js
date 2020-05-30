@@ -19,6 +19,9 @@ Style.prototype.generate = function(context) {};
 
 Style.prototype.toJSON = function() {};
 
-Style.fromJSON = function () {};
+Style.fromJSON = function ()
+{
+
+};
 
 export {Style};

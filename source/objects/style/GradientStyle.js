@@ -10,7 +10,12 @@ import {Style} from "./Style";
  */
 function GradientStyle()
 {
-
+    /**
+     * Type of gradient can be LINEAR or RADIAL.
+     * 
+     * @type {number}
+     */
+    this.type = GradientStyle.LINEAR;
 }
 
 GradientStyle.prototype = Object.create(Style);
@@ -20,7 +25,7 @@ GradientStyle.prototype = Object.create(Style);
  *
  * Behind the of the two points used the color is solid.
  *
- * @tpye {number}
+ * @type {number}
  */
 GradientStyle.LINEAR = 100;
 
@@ -29,7 +34,7 @@ GradientStyle.LINEAR = 100;
  *
  * Outside of the radius the color is solid.
  *
- * @tpye {number}
+ * @type {number}
  */
 GradientStyle.RADIAL = 101;
 
@@ -50,6 +55,13 @@ GradientStyle.prototype.generate = function(context)
 {
     // context.createLinearGradient()
     // context.createRadialGradient()
+};
+
+GradientStyle.prototype.toJSON = function ()
+{
+    return {
+        type: "Gradient"
+    };
 };
 
 export {GradientStyle};

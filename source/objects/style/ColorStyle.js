@@ -26,7 +26,10 @@ ColorStyle.prototype.generate = function(context)
 
 ColorStyle.prototype.toJSON = function()
 {
-
+    return {
+        type: "Color",
+        color: this.color
+    };
 };
 
 export {ColorStyle};
