@@ -3877,130 +3877,6 @@
 	};
 
 	/**
-	 * Graph object is used to draw simple graph data into the canvas.
-	 *
-	 * Graph data is composed of X, Y values.
-	 *
-	 * @class
-	 * @extends {Object2D}
-	 */
-	function Graph()
-	{
-		Object2D.call(this);
-
-		/**
-		 * Graph object containing the size of the object.
-		 */
-		this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
-
-		/**
-		 * Color of the box border line.
-		 */
-		this.strokeStyle = "rgb(0, 153, 255)";
-
-		/**
-		 * Line width.
-		 */
-		this.lineWidth = 1;
-
-		/**
-		 * Background color of the box.
-		 */
-		this.fillStyle = "rgba(0, 153, 255, 0.3)";
-
-		/**
-		 * Minimum value of the graph.
-		 */
-		this.min = 0;
-
-		/**
-		 * Maximum value of the graph.
-		 */
-		this.max = 10;
-
-		/**
-		 * Data to be presented in the graph.
-		 *
-		 * The array should store numeric values.
-		 */
-		this.data = [];
-	}
-
-	Graph.prototype = Object.create(Object2D.prototype);
-	Graph.prototype.constructor = Graph;
-	Graph.prototype.type = "Graph";
-	Object2D.register(Graph, "Graph");
-
-	Graph.prototype.isInside = function(point)
-	{
-		return this.box.containsPoint(point);
-	};
-
-	Graph.prototype.draw = function(context, viewport, canvas)
-	{
-		if(this.data.length === 0)
-		{
-			return;
-		}
-		
-		var width = this.box.max.x - this.box.min.x;
-		var height = this.box.max.y - this.box.min.y;
-
-		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
-		context.beginPath();
-			
-		var step = width / (this.data.length - 1);
-		var gamma = this.max - this.min;
-
-		context.moveTo(this.box.min.x, this.box.max.y - ((this.data[0] - this.min) / gamma) * height);
-		
-		for(var i = 1, s = step; i < this.data.length; s += step, i++)
-		{
-			context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
-		}
-
-		context.stroke();
-
-		if(this.fillStyle !== null)
-		{
-			context.fillStyle = this.fillStyle;
-
-			context.lineTo(this.box.max.x, this.box.max.y);
-			context.lineTo(this.box.min.x, this.box.max.y);
-			context.fill();
-		}
-	};
-
-	Graph.prototype.serialize = function(recursive)
-	{
-		var data = Object2D.prototype.serialize.call(this, recursive);
-
-		data.box = this.box.toArray();
-		data.strokeStyle = this.strokeStyle;
-		data.lineWidth = this.lineWidth;
-		data.fillStyle = this.fillStyle;
-		data.min = this.min;
-		data.max = this.max;
-		data.data = this.data;
-
-		return data;
-	};
-
-	Graph.prototype.parse = function(data, root)
-	{
-		Object2D.prototype.parse.call(this, data, root);
-
-		this.box.fromArray(data.box);
-		this.strokeStyle = data.strokeStyle;
-		this.lineWidth = data.lineWidth;
-		this.fillStyle = data.fillStyle;
-		this.min = data.min;
-		this.max = data.max;
-		this.data = data.data;
-	};
-
-	/**
 	 * Multiple line text drawing directly into the canvas.
 	 *
 	 * Has support for basic text indent and alignment.
@@ -4379,6 +4255,244 @@
 		Box.prototype.parse.call(this, data, root);
 
 		this.radius = data.radius;
+	};
+
+	/**
+	 * Graph object is used to draw simple graph data into the canvas.
+	 *
+	 * Graph data is composed of X, Y values.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function Graph()
+	{
+		Object2D.call(this);
+
+		/**
+		 * Graph object containing the size of the object.
+		 */
+		this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
+
+		/**
+		 * Color of the box border line.
+		 */
+		this.strokeStyle = "rgb(0, 153, 255)";
+
+		/**
+		 * Line width.
+		 */
+		this.lineWidth = 1;
+
+		/**
+		 * Background color of the box.
+		 */
+		this.fillStyle = "rgba(0, 153, 255, 0.3)";
+
+		/**
+		 * Minimum value of the graph.
+		 */
+		this.min = 0;
+
+		/**
+		 * Maximum value of the graph.
+		 */
+		this.max = 10;
+
+		/**
+		 * Data to be presented in the graph.
+		 *
+		 * The array should store numeric values.
+		 */
+		this.data = [];
+	}
+
+	Graph.prototype = Object.create(Object2D.prototype);
+	Graph.prototype.constructor = Graph;
+	Graph.prototype.type = "Graph";
+	Object2D.register(Graph, "Graph");
+
+	Graph.prototype.isInside = function(point)
+	{
+		return this.box.containsPoint(point);
+	};
+
+	Graph.prototype.draw = function(context, viewport, canvas)
+	{
+		if(this.data.length === 0)
+		{
+			return;
+		}
+		
+		var width = this.box.max.x - this.box.min.x;
+		var height = this.box.max.y - this.box.min.y;
+
+		context.lineWidth = this.lineWidth;
+		context.strokeStyle = this.strokeStyle;
+		context.beginPath();
+			
+		var step = width / (this.data.length - 1);
+		var gamma = this.max - this.min;
+
+		context.moveTo(this.box.min.x, this.box.max.y - ((this.data[0] - this.min) / gamma) * height);
+		
+		for(var i = 1, s = step; i < this.data.length; s += step, i++)
+		{
+			context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
+		}
+
+		context.stroke();
+
+		if(this.fillStyle !== null)
+		{
+			context.fillStyle = this.fillStyle;
+
+			context.lineTo(this.box.max.x, this.box.max.y);
+			context.lineTo(this.box.min.x, this.box.max.y);
+			context.fill();
+		}
+	};
+
+	Graph.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		data.box = this.box.toArray();
+		data.strokeStyle = this.strokeStyle;
+		data.lineWidth = this.lineWidth;
+		data.fillStyle = this.fillStyle;
+		data.min = this.min;
+		data.max = this.max;
+		data.data = this.data;
+
+		return data;
+	};
+
+	Graph.prototype.parse = function(data, root)
+	{
+		Object2D.prototype.parse.call(this, data, root);
+
+		this.box.fromArray(data.box);
+		this.strokeStyle = data.strokeStyle;
+		this.lineWidth = data.lineWidth;
+		this.fillStyle = data.fillStyle;
+		this.min = data.min;
+		this.max = data.max;
+		this.data = data.data;
+	};
+
+	/**
+	 * Gauge object is used to draw gauge like graphic.
+	 *
+	 * It has a defined range, start angle, end angle and style controls.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function Gauge()
+	{
+		Object2D.call(this);
+
+		this.value = 50;
+
+		this.min = 0;
+		this.max = 100;
+
+		/**
+		 * Radius of the gauge object.
+		 *
+		 * @type {number}
+		 */
+		this.radius = 80;
+
+		this.lineWidth = 10;
+
+		this.startAngle = Math.PI;
+		this.endAngle = 2 * Math.PI;
+
+
+		/**
+		 * If true draw a circular dial at the end of the gauge bar.
+		 *
+		 * @type {boolean}
+		 */
+		this.dial = false;
+
+		this.baseStyle = "#e9ecf1";
+	}
+
+	Gauge.prototype = Object.create(Object2D.prototype);
+	Gauge.prototype.constructor = Gauge;
+	Gauge.prototype.type = "Gauge";
+	Object2D.register(Gauge, "Gauge");
+
+	Gauge.prototype.isInside = function(point)
+	{
+		return point.length() <= this.radius;
+	};
+
+	Gauge.prototype.draw = function(context, viewport, canvas)
+	{
+		var percentage = this.value / (this.max - this.min);
+
+		var range = [this.startAngle, this.endAngle];
+		var diff = range[1] - range[0];
+		var angle = range[0] + diff * percentage;
+		var center = [0, 0];
+
+		//Back
+		context.lineWidth = this.lineWidth;
+		context.lineCap = "round";
+		context.strokeStyle = this.baseStyle;
+		context.beginPath();
+		context.arc(center[0], center[1], this.radius, range[0], range[1]);
+		context.stroke();
+
+		// Fill gradient
+		var gradient = context.createLinearGradient(0, 0, width, 0);
+		gradient.addColorStop(0, "#61ff50");
+		gradient.addColorStop(0.5, "#ffbb50");
+		gradient.addColorStop(1, "#ff3269");
+		context.strokeStyle = gradient;
+
+		context.lineWidth = this.lineWidth;
+		context.beginPath();
+		context.arc(center[0], center[1], this.radius, range[0], angle);
+		context.stroke();
+
+		if(this.dial)
+		{
+			var dialAngle = (this.startAngle - this.endAngle) * percentage;
+			var dialCenter = [Math.cos(dialAngle) * this.radius, Math.sin(dialAngle) * this.radius];
+			dialCenter[0] = dialCenter[0] - center[0];
+			dialCenter[1] = dialCenter[1] - center[1];
+
+			context.fillStyle = "#FFFFFF";
+			context.beginPath();
+			context.arc(dialCenter[0], dialCenter[1], this.lineWidth / 2, 0, 2 * Math.PI);
+			context.fill();
+
+			context.fillStyle = gradient;
+			context.beginPath();
+			context.arc(dialCenter[0], dialCenter[1], this.lineWidth / 3, 0, 2 * Math.PI);
+			context.fill();
+		}
+	};
+
+	Gauge.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		// TODO <ADD CODE HERE>
+
+		return data;
+	};
+
+	Gauge.prototype.parse = function(data, root)
+	{
+		Object2D.prototype.parse.call(this, data, root);
+
+		// TODO <ADD CODE HERE>
 	};
 
 	/**
@@ -5300,6 +5414,7 @@
 	exports.DOM = DOM;
 	exports.EventManager = EventManager;
 	exports.FileUtils = FileUtils;
+	exports.Gauge = Gauge;
 	exports.Graph = Graph;
 	exports.Helpers = Helpers;
 	exports.Image = Image;

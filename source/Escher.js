@@ -20,11 +20,12 @@ export {Text} from "./objects/Text.js";
 export {Image} from "./objects/Image.js";
 export {DOM} from "./objects/DOM.js";
 export {Pattern} from "./objects/Pattern.js";
-export {Graph} from "./objects/chart/Graph.js";
 export {MultiLineText} from "./objects/MultiLineText.js";
 export {BezierCurve} from "./objects/BezierCurve.js";
 export {QuadraticCurve} from "./objects/QuadraticCurve.js";
 export {RoundedBox} from "./objects/RoundedBox.js";
+export {Graph} from "./objects/chart/Graph.js";
+export {Gauge} from "./objects/chart/Gauge.js";
 
 export {Node} from "./objects/node/Node.js";
 export {NodeConnector} from "./objects/node/NodeConnector.js";

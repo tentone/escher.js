@@ -120,6 +120,12 @@
 		image.draggable = true;
 		group.add(image);
 
+		var gauge = new Escher.Gauge();
+		gauge.position.set(500, 700);
+		gauge.layer = 5;
+		gauge.draggable = true;
+		group.add(gauge);
+
 		var graph = new Escher.Graph();
 		graph.box.min.set(-500, -50);
 		graph.box.max.set(500, 50);
