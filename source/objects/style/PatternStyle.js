@@ -25,7 +25,7 @@ PatternStyle.prototype.setTransform = function(transform)
     // TODO <ADD CODE HERE>
 };
 
-PatternStyle.prototype.toJSON = function ()
+PatternStyle.prototype.serialize = function ()
 {
 
 };

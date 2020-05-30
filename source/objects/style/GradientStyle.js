@@ -57,7 +57,7 @@ GradientStyle.prototype.get = function(context)
     // context.createRadialGradient()
 };
 
-GradientStyle.prototype.toJSON = function ()
+GradientStyle.prototype.serialize = function ()
 {
     return {
         type: "Gradient"

@@ -24,12 +24,17 @@ ColorStyle.prototype.get = function(context)
     return this.color;
 };
 
-ColorStyle.prototype.toJSON = function()
+ColorStyle.prototype.serialize = function()
 {
     return {
         type: "Color",
         color: this.color
     };
+};
+
+ColorStyle.prototype.parse = function(data)
+{
+    this.color = data.color;
 };
 
 export {ColorStyle};
