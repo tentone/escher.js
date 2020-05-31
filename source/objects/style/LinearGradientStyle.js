@@ -1,4 +1,5 @@
 import {Style} from "./Style";
+import {ColorStyle} from "./ColorStyle";
 
 /**
  * Linear gradient style, represents a gradient of colors from a point to another interpolating in between.
@@ -15,7 +16,8 @@ function LinearGradientStyle()
     // TODO <ADD CODE HERE>
 }
 
-LinearGradientStyle.prototype = Object.create(Style);
+LinearGradientStyle.prototype = Object.create(Style.prototype);
+Style.register(LinearGradientStyle, "LinearGradient");
 
 /**
  * Add a new color stop defined by an offset and a color to the gradient.
@@ -41,6 +43,11 @@ LinearGradientStyle.prototype.serialize = function ()
     return {
         type: "LinearGradient"
     };
+};
+
+LinearGradientStyle.prototype.parse = function (data)
+{
+    // TODO <ADD CODE HERE>
 };
 
 export {LinearGradientStyle};

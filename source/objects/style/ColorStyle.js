@@ -17,7 +17,8 @@ function ColorStyle(color)
     this.color = color || "#000000";
 }
 
-ColorStyle.prototype = Object.create(Style);
+ColorStyle.prototype = Object.create(Style.prototype);
+Style.register(ColorStyle, "Color");
 
 ColorStyle.prototype.get = function(context)
 {

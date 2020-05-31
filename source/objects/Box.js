@@ -1,6 +1,8 @@
 import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
 import {Box2} from "../math/Box2.js";
+import {ColorStyle} from "./style/ColorStyle";
+import {Style} from "./style/Style";
 
 /**
  * Box object draw a rectangular object.
@@ -24,7 +26,7 @@ function Box()
 	 *
 	 * If set null it is ignored.
 	 */
-	this.strokeStyle = "#000000";
+	this.strokeStyle = new ColorStyle("#000000");
 
 	/**
 	 * Line width, only used if a valid strokeStyle is defined.
@@ -36,7 +38,7 @@ function Box()
 	 *
 	 * If set null it is ignored.
 	 */
-	this.fillStyle = "#FFFFFF";
+	this.fillStyle = new ColorStyle("#FFFFFF");
 }
 
 Box.prototype = Object.create(Object2D.prototype);
@@ -46,12 +48,12 @@ Object2D.register(Box, "Box");
 
 Box.prototype.onPointerEnter = function(pointer, viewport)
 {
-	this.fillStyle = "#CCCCCC";
+	this.fillStyle = new ColorStyle("#CCCCCC");
 };
 
 Box.prototype.onPointerLeave = function(pointer, viewport)
 {
-	this.fillStyle = "#FFFFFF";
+	this.fillStyle = new ColorStyle("#FFFFFF");
 };
 
 Box.prototype.isInside = function(point)
@@ -66,14 +68,14 @@ Box.prototype.draw = function(context, viewport, canvas)
 
 	if(this.fillStyle !== null)
 	{	
-		context.fillStyle = this.fillStyle;
+		context.fillStyle = this.fillStyle.get();
 		context.fillRect(this.box.min.x, this.box.min.y, width, height);
 	}
 
 	if(this.strokeStyle !== null)
 	{
 		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
+		context.strokeStyle = this.strokeStyle.get();
 		context.strokeRect(this.box.min.x, this.box.min.y, width, height);
 	}
 };
@@ -83,9 +85,9 @@ Box.prototype.serialize = function(recursive)
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
 	data.box = this.box.toArray();
-	data.strokeStyle = this.strokeStyle;
+	data.strokeStyle = this.strokeStyle.serialize();
 	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle;
+	data.fillStyle = this.fillStyle.serialize();
 
 	return data;
 };
@@ -95,9 +97,9 @@ Box.prototype.parse = function(data, root)
 	Object2D.prototype.parse.call(this, data, root);
 
 	this.box.fromArray(data.box);
-	this.strokeStyle = data.strokeStyle;
+	this.strokeStyle = Style.parse(data.strokeStyle);
 	this.lineWidth = data.lineWidth;
-	this.fillStyle = data.fillStyle;
+	this.fillStyle = Style.parse(data.fillStyle);
 };
 
 export {Box};

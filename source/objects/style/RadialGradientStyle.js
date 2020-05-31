@@ -1,4 +1,5 @@
 import {Style} from "./Style";
+import {PatternStyle} from "./PatternStyle";
 
 /**
  * Radial gradient interpolates colors from a point all around up to a radius value.
@@ -23,7 +24,8 @@ function RadialGradientStyle()
     // TODO <ADD CODE HERE>
 }
 
-RadialGradientStyle.prototype = Object.create(Style);
+RadialGradientStyle.prototype = Object.create(Style.prototype);
+Style.register(RadialGradientStyle, "RadialGradient");
 
 /**
  * Add a new color stop defined by an offset and a color to the gradient.
@@ -50,5 +52,11 @@ RadialGradientStyle.prototype.serialize = function ()
         type: "RadialGradient"
     };
 };
+
+RadialGradientStyle.prototype.parse = function (data)
+{
+    // TODO <ADD CODE HERE>
+};
+
 
 export {RadialGradientStyle};
