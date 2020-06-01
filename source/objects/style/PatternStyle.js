@@ -56,7 +56,11 @@ PatternStyle.prototype.setTransform = function(transform)
 
 PatternStyle.prototype.get = function(context)
 {
-    return context.createPattern(this.source, this.repetition);
+    var style = context.createPattern(this.source, this.repetition);
+
+    // style.setTransform(this.transform);
+
+    return style;
 };
 
 PatternStyle.prototype.serialize = function ()

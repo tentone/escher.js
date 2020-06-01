@@ -5,7 +5,24 @@
  *
  * @class
  */
-function Style() {}
+function Style()
+{
+    /**
+     * Cached style object pre-generated from previous calls. To avoid regenerating the same style object every cycle.
+     *
+     * @type {string | CanvasGradient | CanvasPattern}
+     */
+    this.cache = null;
+    // TODO <USE THIS>
+
+    /**
+     * Indicates if the style object needs to be updated, should be used after applying changed to the style in order to generate a new object.
+     *
+     * @type {boolean}
+     */
+    this.needsUpdate = true;
+    // TODO <USE THIS>
+}
 
 /**
  * Get generated style object from style data and the drawing context.

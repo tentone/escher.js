@@ -14,7 +14,20 @@ import {GradientStyle} from "./GradientStyle";
 function LinearGradientStyle()
 {
     GradientStyle.call(this);
-    // TODO <ADD CODE HERE>
+
+    /**
+     * The coordinates of the starting point of the gradient.
+     *
+     * @type {Vector2}
+     */
+    this.start = new Vector2(0, 0);
+
+    /**
+     * The coordinates of the ending point of the gradient.
+     *
+     * @type {Vector2}
+     */
+    this.end = new Vector2(0, 0);
 }
 
 LinearGradientStyle.prototype = Object.create(GradientStyle.prototype);
@@ -22,14 +35,15 @@ Style.register(LinearGradientStyle, "LinearGradient");
 
 LinearGradientStyle.prototype.get = function(context)
 {
-    // TODO <ADD CODE HERE>
-    // return context.createLinearGradient();
+    return context.createLinearGradient(this.start.x, this.start.y, this.end.x, this.end.y);
 };
 
 LinearGradientStyle.prototype.serialize = function ()
 {
     return {
-        type: "LinearGradient"
+        type: "LinearGradient",
+        start: this.start.toArray(),
+        end: this.end.toArray()
     };
 };
 
@@ -48,7 +62,8 @@ LinearGradientStyle.prototype.parse = function (data)
 {
     GradientStyle.prototype.parse.call(this, data);
 
-    // TODO <ADD CODE HERE>
+    this.start.fromArray(data.start);
+    this.end.fromArray(data.end);
 };
 
 export {LinearGradientStyle};
