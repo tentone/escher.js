@@ -1,4 +1,5 @@
 import {Style} from "./Style";
+import {RadialGradientStyle} from "./RadialGradientStyle";
 
 /**
  * Gradient style is used to represent any type of gradient based style.
@@ -60,5 +61,23 @@ GradientStyle.prototype.addColorStop = function(offset, color)
 {
     this.colors.push(new GradientColorStop(offset, color));
 };
+
+GradientStyle.prototype.serialize = function()
+{
+    return {
+        colors: this.colors
+    };
+};
+
+GradientStyle.prototype.parse = function(data)
+{
+    var colors = [];
+    for(var i = 0; i < data.colors.length; i++)
+    {
+        colors.push(new GradientColorStop(data.colors[i].offset, data.colors[i].color));
+    }
+    this.colors = colors;
+};
+
 
 export {GradientStyle, GradientColorStop};

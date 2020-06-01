@@ -33,8 +33,21 @@ LinearGradientStyle.prototype.serialize = function ()
     };
 };
 
+LinearGradientStyle.prototype.serialize = function ()
+{
+    var data = GradientStyle.prototype.serialize.call(this);
+
+    Object.assign(data, {
+        type: "LinearGradient"
+    });
+
+    return data;
+};
+
 LinearGradientStyle.prototype.parse = function (data)
 {
+    GradientStyle.prototype.parse.call(this, data);
+
     // TODO <ADD CODE HERE>
 };
 

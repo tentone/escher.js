@@ -54,15 +54,27 @@ RadialGradientStyle.prototype.get = function(context)
 
 RadialGradientStyle.prototype.serialize = function ()
 {
-    return {
-        type: "RadialGradient"
-    };
+    var data = GradientStyle.prototype.serialize.call(this);
+
+    Object.assign(data, {
+        type: "RadialGradient",
+        start: this.start.toArray(),
+        end: this.end.toArray(),
+        startRadius: this.startRadius,
+        endRadius: this.endRadius
+    });
+
+    return data;
 };
 
 RadialGradientStyle.prototype.parse = function (data)
 {
-    // TODO <ADD CODE HERE>
-};
+    GradientStyle.prototype.parse.call(this, data);
 
+    this.start.fromArray(data.start);
+    this.end.fromArray(data.end);
+    this.startRadius = data.startRadius;
+    this.endRadius = data.endRadius;
+};
 
 export {RadialGradientStyle};
