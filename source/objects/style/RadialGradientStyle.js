@@ -1,49 +1,55 @@
+import {GradientStyle} from "./GradientStyle";
 import {Style} from "./Style";
-import {PatternStyle} from "./PatternStyle";
 
 /**
- * Radial gradient interpolates colors from a point all around up to a radius value.
+ * Radial gradient interpolates colors from a point to another point around up to a starting and finishing radius value.
  *
- * Outside of the radius the color is solid.
+ * If the start and end point are the same it interpolates around the starting and ending radius forming a circle. Outside of the radius the color is solid.
  *
  * The get method returns a CanvasGradient https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient when generated.
  *
  * @class
- * @extends {Style}
+ * @extends {GradientStyle}
  */
 function RadialGradientStyle()
 {
+    GradientStyle.call(this);
+
+    /**
+     * The coordinates of the starting circle of the gradient.
+     *
+     * @type {Vector2}
+     */
     this.start = new Vector2(0, 0);
 
-    this.end = new Vector2(20, 20);
+    /**
+     * The radius of the starting circle.
+     *
+     * @type {number}
+     */
+    this.startRadius = 10;
 
-    this.radiusStart = 0;
+    /**
+     * The coordinates of the ending circle of the gradient.
+     *
+     * @type {Vector2}
+     */
+    this.end = new Vector2(0, 0);
 
-    this.radiusEnd = 10;
-
-    // TODO <ADD CODE HERE>
+    /**
+     * The radius of the ending circle.
+     *
+     * @type {number}
+     */
+    this.endRadius = 50;
 }
 
-RadialGradientStyle.prototype = Object.create(Style.prototype);
+RadialGradientStyle.prototype = Object.create(GradientStyle.prototype);
 Style.register(RadialGradientStyle, "RadialGradient");
-
-/**
- * Add a new color stop defined by an offset and a color to the gradient.
- *
- * If the offset is not between 0 and 1 inclusive, or if color can't be parsed as a CSS color, an error is raised.
- *
- * @param {number} offset Offset of the color stop between 0 and 1 inclusive.
- * @param {string} color CSS color value.
- */
-RadialGradientStyle.prototype.addColorStop = function(offset, color)
-{
-    // TODO <ADD CODE HERE>
-};
 
 RadialGradientStyle.prototype.get = function(context)
 {
-    // TODO <ADD CODE HERE>
-    // return context.createRadialGradient();
+    return context.createRadialGradient(this.start.x, this.start.y, this.startRadius, this.end.x, this.end.y, this.endRadius);
 };
 
 RadialGradientStyle.prototype.serialize = function ()

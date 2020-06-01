@@ -1,5 +1,5 @@
 import {Style} from "./Style";
-import {ColorStyle} from "./ColorStyle";
+import {GradientStyle} from "./GradientStyle";
 
 /**
  * Linear gradient style, represents a gradient of colors from a point to another interpolating in between.
@@ -9,28 +9,16 @@ import {ColorStyle} from "./ColorStyle";
  * The get method returns a CanvasGradient https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient when generated.
  *
  * @class
- * @extends {Style}
+ * @extends {GradientStyle}
  */
 function LinearGradientStyle()
 {
+    GradientStyle.call(this);
     // TODO <ADD CODE HERE>
 }
 
-LinearGradientStyle.prototype = Object.create(Style.prototype);
+LinearGradientStyle.prototype = Object.create(GradientStyle.prototype);
 Style.register(LinearGradientStyle, "LinearGradient");
-
-/**
- * Add a new color stop defined by an offset and a color to the gradient.
- *
- * If the offset is not between 0 and 1 inclusive, or if color can't be parsed as a CSS color, an error is raised.
- *
- * @param {number} offset Offset of the color stop between 0 and 1 inclusive.
- * @param {string} color CSS color value.
- */
-LinearGradientStyle.prototype.addColorStop = function(offset, color)
-{
-    // TODO <ADD CODE HERE>
-};
 
 LinearGradientStyle.prototype.get = function(context)
 {
