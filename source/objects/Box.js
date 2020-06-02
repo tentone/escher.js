@@ -37,6 +37,8 @@ function Box()
 	 * Background color of the box.
 	 *
 	 * If set null it is ignored.
+	 *
+	 * @param {Style}
 	 */
 	this.fillStyle = new ColorStyle("#FFFFFF");
 }

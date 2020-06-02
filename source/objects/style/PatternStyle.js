@@ -1,4 +1,5 @@
 import {Style} from "./Style";
+import {GradientStyle} from "./GradientStyle";
 
 /**
  * Pattern style represents an opaque object describing a pattern, based on an image, a canvas, or a video.
@@ -11,6 +12,8 @@ import {Style} from "./Style";
  */
 function PatternStyle(source)
 {
+    Style.call(this);
+
     /**
      * Source of the pattern style. Can be a image, video or another canvas element
      *
@@ -38,7 +41,7 @@ function PatternStyle(source)
      *
      * @type {Matrix}
      */
-    this.transform = new Matrix();
+    this.matrix = new Matrix();
 }
 
 PatternStyle.prototype = Object.create(Style.prototype);
@@ -57,20 +60,31 @@ PatternStyle.prototype.setTransform = function(transform)
 PatternStyle.prototype.get = function(context)
 {
     var style = context.createPattern(this.source, this.repetition);
-
-    // style.setTransform(this.transform);
-
+    style.setTransform(this.matrix.cssTransform());
     return style;
 };
 
 PatternStyle.prototype.serialize = function ()
 {
-    // TODO <ADD CODE HERE>
+    var data = GradientStyle.prototype.serialize.call(this);
+
+    Object.assign(data, {
+        type: "Pattern",
+        matrix: this.matrix.m,
+        repetition: this.repetition,
+        source: this.source
+    });
+
+    return data;
 };
 
 PatternStyle.prototype.parse = function (data)
 {
-    // TODO <ADD CODE HERE>
+    GradientStyle.prototype.parse.call(this, data);
+
+    this.matrix = new Matrix(data.matrix);
+    this.repetition = data.repetition;
+    this.source = data.source;
 };
 
 export {PatternStyle};

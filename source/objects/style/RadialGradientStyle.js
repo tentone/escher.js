@@ -49,7 +49,14 @@ Style.register(RadialGradientStyle, "RadialGradient");
 
 RadialGradientStyle.prototype.get = function(context)
 {
-    return context.createRadialGradient(this.start.x, this.start.y, this.startRadius, this.end.x, this.end.y, this.endRadius);
+    var style = context.createRadialGradient(this.start.x, this.start.y, this.startRadius, this.end.x, this.end.y, this.endRadius);
+
+    for(var i = 0; i < this.colors.length; i++)
+    {
+        style.addColorStop(this.colors[i].offset, this.colors[i].color);
+    }
+
+    return style;
 };
 
 RadialGradientStyle.prototype.serialize = function ()

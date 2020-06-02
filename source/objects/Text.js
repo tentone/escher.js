@@ -1,4 +1,5 @@
 import {Object2D} from "../Object2D.js";
+import {ColorStyle} from "./style/ColorStyle";
 
 /**
  * Text element, used to draw single line text into the canvas.
@@ -29,7 +30,7 @@ function Text()
 	/**
 	 * Style of the object border line. If set null it is ignored.
 	 *
-	 * @type {string}
+	 * @type {Style}
 	 */
 	this.strokeStyle = null;
 
@@ -43,9 +44,9 @@ function Text()
 	/**
 	 * CSS background color of the box. If set null it is ignored.
 	 *
-	 * @type {string}
+	 * @type {Style}
 	 */
-	this.fillStyle = "#000000";
+	this.fillStyle = new ColorStyle("#000000");
 
 	/**
 	 * Text align property. Same values as used for canvas text applies
@@ -75,17 +76,17 @@ Text.prototype.draw = function(context, viewport, canvas)
 {
 	context.font = this.font;
 	context.textAlign = this.textAlign;
-	context.textBaseline = this.textBaseline ;
+	context.textBaseline = this.textBaseline;
 	
 	if(this.fillStyle !== null)
 	{
-		context.fillStyle = this.fillStyle;
+		context.fillStyle = this.fillStyle.get();
 		context.fillText(this.text, 0, 0);
 	}
 
 	if(this.strokeStyle !== null)
 	{
-		context.strokeStyle = this.strokeStyle;
+		context.strokeStyle = this.strokeStyle.get();
 		context.strokeText(this.text, 0, 0);
 	}
 };
@@ -96,9 +97,9 @@ Text.prototype.serialize = function(recursive)
 
 	data.text = this.text;
 	data.font = this.font;
-	data.strokeStyle = this.strokeStyle;
+	data.strokeStyle = this.strokeStyle.serialize();
 	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle;
+	data.fillStyle = this.fillStyle.serialize();
 	data.textAlign = this.textAlign;
 	data.textBaseline = this.textBaseline;
 
@@ -111,9 +112,9 @@ Text.prototype.parse = function(data, root)
 
 	this.text = data.text;
 	this.font = data.font;
-	this.strokeStyle = data.strokeStyle;
+	this.strokeStyle = Style.parse(data.strokeStyle);
 	this.lineWidth = data.lineWidth;
-	this.fillStyle = data.fillStyle;
+	this.fillStyle = Style.parse(data.fillStyle);
 	this.textAlign = data.textAlign;
 	this.textBaseline = data.textBaseline;
 };

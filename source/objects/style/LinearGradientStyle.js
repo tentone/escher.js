@@ -35,16 +35,14 @@ Style.register(LinearGradientStyle, "LinearGradient");
 
 LinearGradientStyle.prototype.get = function(context)
 {
-    return context.createLinearGradient(this.start.x, this.start.y, this.end.x, this.end.y);
-};
+    var style = context.createLinearGradient(this.start.x, this.start.y, this.end.x, this.end.y);
 
-LinearGradientStyle.prototype.serialize = function ()
-{
-    return {
-        type: "LinearGradient",
-        start: this.start.toArray(),
-        end: this.end.toArray()
-    };
+    for(var i = 0; i < this.colors.length; i++)
+    {
+        style.addColorStop(this.colors[i].offset, this.colors[i].color);
+    }
+
+    return style;
 };
 
 LinearGradientStyle.prototype.serialize = function ()
@@ -52,7 +50,9 @@ LinearGradientStyle.prototype.serialize = function ()
     var data = GradientStyle.prototype.serialize.call(this);
 
     Object.assign(data, {
-        type: "LinearGradient"
+        type: "LinearGradient",
+        start: this.start.toArray(),
+        end: this.end.toArray()
     });
 
     return data;

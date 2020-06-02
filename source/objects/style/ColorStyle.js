@@ -9,6 +9,8 @@ import {Style} from "./Style";
  */
 function ColorStyle(color)
 {
+    Style.call(this);
+
     /**
      * Color of this style object.
      *

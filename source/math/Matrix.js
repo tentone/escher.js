@@ -205,6 +205,9 @@ Matrix.prototype.getPosition = function()
 
 /**
  * Apply skew to this matrix.
+ *
+ * @param {number} radianX
+ * @param {number} radianY
  */
 Matrix.prototype.skew = function(radianX, radianY)
 {

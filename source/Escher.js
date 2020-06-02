@@ -27,6 +27,14 @@ export {RoundedBox} from "./objects/RoundedBox.js";
 export {Graph} from "./objects/chart/Graph.js";
 export {Gauge} from "./objects/chart/Gauge.js";
 
+export {Style} from "./objects/style/Style.js";
+export {ColorStyle} from "./objects/style/ColorStyle.js";
+export {PatternStyle} from "./objects/style/PatternStyle.js";
+export {GradientStyle} from "./objects/style/GradientStyle.js";
+export {GradientColorStop} from "./objects/style/GradientColorStop.js";
+export {LinearGradientStyle} from "./objects/style/LinearGradientStyle.js";
+export {RadialGradientStyle} from "./objects/style/RadialGradientStyle.js";
+
 export {Node} from "./objects/node/Node.js";
 export {NodeConnector} from "./objects/node/NodeConnector.js";
 export {NodeSocket} from "./objects/node/NodeSocket.js";

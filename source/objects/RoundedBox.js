@@ -56,7 +56,7 @@ RoundedBox.prototype.draw = function(context, viewport, canvas)
 
 	if(this.fillStyle !== null)
 	{	
-		context.fillStyle = this.fillStyle;
+		context.fillStyle = this.fillStyle.get();
 		RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
 		context.fill();
 	}
@@ -64,7 +64,7 @@ RoundedBox.prototype.draw = function(context, viewport, canvas)
 	if(this.strokeStyle !== null)
 	{
 		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
+		context.strokeStyle = this.strokeStyle.get();
 		RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
 		context.stroke();
 	}

@@ -1,5 +1,7 @@
 import {Object2D} from "../Object2D.js";
 import {Vector2} from "../math/Vector2.js";
+import {ColorStyle} from "./style/ColorStyle";
+import {Style} from "./style/Style";
 
 /**
  * Line object draw a line from one point to another without any kind of interpolation.
@@ -45,9 +47,9 @@ function Line()
 	/**
 	 * Style of the object line.
 	 *
-	 * @type {string}
+	 * @type {Style}
 	 */
-	this.strokeStyle = "#000000";
+	this.strokeStyle = new ColorStyle("#000000");
 
 	/**
 	 * Line width of the line.
@@ -65,7 +67,7 @@ Object2D.register(Line, "Line");
 Line.prototype.style = function(context, viewport, canvas)
 {
 	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
+	context.strokeStyle = this.strokeStyle.get();
 	context.setLineDash(this.dashPattern);
 };
 
@@ -84,7 +86,7 @@ Line.prototype.serialize = function(recursive)
 	data.from = this.from.toArray();
 	data.to = this.to.toArray();
 	data.dashPattern = this.dashPattern;
-	data.strokeStyle = this.strokeStyle;
+	data.strokeStyle = this.strokeStyle.serialize();
 	data.lineWidth = this.lineWidth;
 
 	return data;
@@ -97,7 +99,7 @@ Line.prototype.parse = function(data, root)
 	this.to.fromArray(data.to);
 	this.from.fromArray(data.from);
 	this.dashPattern = data.dashPattern;
-	this.strokeStyle = data.strokeStyle;
+	this.strokeStyle = Style.parse(data.strokeStyle);
 	this.lineWidth = data.lineWidth;
 };
 

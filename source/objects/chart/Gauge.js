@@ -1,4 +1,5 @@
 import {Object2D} from "../../Object2D.js";
+import {ColorStyle} from "../style/ColorStyle";
 
 /**
  * Gauge object is used to draw gauge like graphic.
@@ -12,9 +13,25 @@ function Gauge()
 {
 	Object2D.call(this);
 
+	/**
+	 * Value displayed by this gauge. It is displayed based on min and max values.
+	 *
+	 * @type {number}
+	 */
 	this.value = 50;
 
+	/**
+	 * Minimum value of the gauge. Necessary to display the value correctly to scale.
+	 *
+	 * @type {number}
+	 */
 	this.min = 0;
+
+	/**
+	 * Maximum value of the gauge. Necessary to display the value correctly to scale.
+	 *
+	 * @type {number}
+	 */
 	this.max = 100;
 
 	/**
@@ -24,11 +41,26 @@ function Gauge()
 	 */
 	this.radius = 80;
 
+	/**
+	 * The line width of the gauge semi-circle.
+	 *
+	 * @type {number}
+	 */
 	this.lineWidth = 10;
 
+	/**
+	 * Start angle of the gauge.
+	 *
+	 * @type {number}
+	 */
 	this.startAngle = Math.PI;
-	this.endAngle = 2 * Math.PI;
 
+	/**
+	 * End angle of the gauge.
+	 *
+	 * @type {number}
+	 */
+	this.endAngle = 2 * Math.PI;
 
 	/**
 	 * If true draw a circular dial at the end of the gauge bar.
@@ -37,7 +69,12 @@ function Gauge()
 	 */
 	this.dial = false;
 
-	this.baseStyle = "#e9ecf1";
+	/**
+	 * Style of the base of the gauge object, (the background of the gauge bar).
+	 *
+	 * @type {Style}
+	 */
+	this.baseStyle = new ColorStyle("#e9ecf1");
 }
 
 Gauge.prototype = Object.create(Object2D.prototype);
@@ -62,7 +99,7 @@ Gauge.prototype.draw = function(context, viewport, canvas)
 	//Back
 	context.lineWidth = this.lineWidth;
 	context.lineCap = "round";
-	context.strokeStyle = this.baseStyle;
+	context.strokeStyle = this.baseStyle.get();
 	context.beginPath();
 	context.arc(center[0], center[1], this.radius, range[0], range[1]);
 	context.stroke();

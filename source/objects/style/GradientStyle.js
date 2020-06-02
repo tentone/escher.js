@@ -1,5 +1,5 @@
 import {Style} from "./Style";
-import {RadialGradientStyle} from "./RadialGradientStyle";
+import {GradientColorStop} from "./GradientColorStop";
 
 /**
  * Gradient style is used to represent any type of gradient based style.
@@ -11,6 +11,8 @@ import {RadialGradientStyle} from "./RadialGradientStyle";
  */
 function GradientStyle()
 {
+    Style.call(this);
+
     /**
      * List of colors that compose this gradient ordered.
      *
@@ -19,32 +21,6 @@ function GradientStyle()
      * @type {GradientColorStop[]}
      */
     this.colors = [];
-}
-
-/**
- * Gradient color stop is used to create the gradients by their color sections.
- *
- * The gradients are ordered, each stop has a target color that becomes solid on its offset value triggering the next color stop if there is one.
- *
- * @param offset Offset of the color stop between 0 and 1 inclusive.
- * @param color CSS color value.
- * @constructor
- */
-function GradientColorStop(offset, color)
-{
-    /**
-     * Offset of the color stop between 0 and 1 inclusive.
-     *
-     * @type {number}
-     */
-    this.offset = offset;
-
-    /**
-     * CSS color value.
-     *
-     * @type {string}
-     */
-    this.color = color;
 }
 
 GradientStyle.prototype = Object.create(Style.prototype);
@@ -80,4 +56,4 @@ GradientStyle.prototype.parse = function(data)
 };
 
 
-export {GradientStyle, GradientColorStop};
+export {GradientStyle};

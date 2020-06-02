@@ -707,6 +707,9 @@
 
 	/**
 	 * Apply skew to this matrix.
+	 *
+	 * @param {number} radianX
+	 * @param {number} radianY
 	 */
 	Matrix.prototype.skew = function(radianX, radianY)
 	{
@@ -3149,6 +3152,126 @@
 	};
 
 	/**
+	 * Style represents in a generic way a style applied to canvas drawing.
+	 *
+	 * Some styles (e.g. gradients, patterns) required a context to be generated this provides a generic way to share styles between objects.
+	 *
+	 * @class
+	 */
+	function Style$1()
+	{
+	    /**
+	     * Cached style object pre-generated from previous calls. To avoid regenerating the same style object every cycle.
+	     *
+	     * @type {string | CanvasGradient | CanvasPattern}
+	     */
+	    this.cache = null;
+	    // TODO <USE THIS>
+
+	    /**
+	     * Indicates if the style object needs to be updated, should be used after applying changed to the style in order to generate a new object.
+	     *
+	     * @type {boolean}
+	     */
+	    this.needsUpdate = true;
+	    // TODO <USE THIS>
+	}
+
+	/**
+	 * Get generated style object from style data and the drawing context.
+	 *
+	 * @param {CanvasRenderingContext2D} context Context being used to draw the object.
+	 * @return {string | CanvasGradient | CanvasPattern} Return the canvas style object generated.
+	 */
+	Style$1.prototype.get = function(context) {};
+
+	/**
+	 * Serialize the style to JSON object, called by the objects using these styles.
+	 *
+	 * @return {Object} Serialized style data.
+	 */
+	Style$1.prototype.serialize = function() {};
+
+	/**
+	 * Parse the style attributes from JSON object data created with the serialize() method.
+	 *
+	 * @param {Object} data Serialized style data.
+	 */
+	Style$1.prototype.parse = function(data) {};
+
+	/**
+	 * List of available style types known by the application. Stores the object constructor by object type.
+	 *
+	 * @static
+	 * @type {Map<string, Function>}
+	 */
+	Style$1.types = new Map([]);
+
+	/**
+	 * Register a style type to be serializable. Associates the type string to the object constructor.
+	 *
+	 * @param {Function} constructor Style constructor.
+	 * @param {string} type Style type name.
+	 */
+	Style$1.register = function(constructor, type)
+	{
+	    Style$1.types.set(type, constructor);
+	};
+
+	/**
+	 * Parse style from JSON serialized data, created a style of the correct data type automatically and parses its data.
+	 *
+	 * @param data JSON serialized data.
+	 * @returns {Style} Parsed style from the provided data.
+	 */
+	Style$1.parse = function (data)
+	{
+	    var style = new (Style$1.types.get(data.type))();
+	    style.parse(data);
+	    return style;
+	};
+
+	/**
+	 * Simple solid color style represented and stored as a CSS color.
+	 *
+	 * @class
+	 * @extends {Style}
+	 * @param {string} color Color of the style, if undefined it is set to black.
+	 */
+	function ColorStyle(color)
+	{
+	    Style$1.call(this);
+
+	    /**
+	     * Color of this style object.
+	     *
+	     * @type {string}
+	     */
+	    this.color = color || "#000000";
+	}
+
+	ColorStyle.prototype = Object.create(Style$1.prototype);
+	Style$1.register(ColorStyle, "Color");
+
+	ColorStyle.prototype.get = function(context)
+	{
+	    return this.color;
+	};
+
+	ColorStyle.prototype.serialize = function()
+	{
+	    return {
+	        type: "Color",
+	        color: this.color
+	    };
+	};
+
+	ColorStyle.prototype.parse = function(data)
+	{
+	    this.color = data.color;
+	};
+
+	/**
 	 * Box object draw a rectangular object.
 	 *
 	 * Can be used as a base to implement other box objects, already implements collision for pointer events.
@@ -3170,7 +3293,7 @@
 		 *
 		 * If set null it is ignored.
 		 */
-		this.strokeStyle = "#000000";
+		this.strokeStyle = new ColorStyle("#000000");
 
 		/**
 		 * Line width, only used if a valid strokeStyle is defined.
@@ -3181,8 +3304,10 @@
 		 * Background color of the box.
 		 *
 		 * If set null it is ignored.
+		 *
+		 * @param {Style}
 		 */
-		this.fillStyle = "#FFFFFF";
+		this.fillStyle = new ColorStyle("#FFFFFF");
 	}
 
 	Box.prototype = Object.create(Object2D.prototype);
@@ -3192,12 +3317,12 @@
 
 	Box.prototype.onPointerEnter = function(pointer, viewport)
 	{
-		this.fillStyle = "#CCCCCC";
+		this.fillStyle = new ColorStyle("#CCCCCC");
 	};
 
 	Box.prototype.onPointerLeave = function(pointer, viewport)
 	{
-		this.fillStyle = "#FFFFFF";
+		this.fillStyle = new ColorStyle("#FFFFFF");
 	};
 
 	Box.prototype.isInside = function(point)
@@ -3212,14 +3337,14 @@
 
 		if(this.fillStyle !== null)
 		{	
-			context.fillStyle = this.fillStyle;
+			context.fillStyle = this.fillStyle.get();
 			context.fillRect(this.box.min.x, this.box.min.y, width, height);
 		}
 
 		if(this.strokeStyle !== null)
 		{
 			context.lineWidth = this.lineWidth;
-			context.strokeStyle = this.strokeStyle;
+			context.strokeStyle = this.strokeStyle.get();
 			context.strokeRect(this.box.min.x, this.box.min.y, width, height);
 		}
 	};
@@ -3229,9 +3354,9 @@
 		var data = Object2D.prototype.serialize.call(this, recursive);
 
 		data.box = this.box.toArray();
-		data.strokeStyle = this.strokeStyle;
+		data.strokeStyle = this.strokeStyle.serialize();
 		data.lineWidth = this.lineWidth;
-		data.fillStyle = this.fillStyle;
+		data.fillStyle = this.fillStyle.serialize();
 
 		return data;
 	};
@@ -3241,9 +3366,9 @@
 		Object2D.prototype.parse.call(this, data, root);
 
 		this.box.fromArray(data.box);
-		this.strokeStyle = data.strokeStyle;
+		this.strokeStyle = Style$1.parse(data.strokeStyle);
 		this.lineWidth = data.lineWidth;
-		this.fillStyle = data.fillStyle;
+		this.fillStyle = Style$1.parse(data.fillStyle);
 	};
 
 	/**
@@ -3267,11 +3392,15 @@
 		 * Style of the object border line.
 		 *
 		 * If set null it is ignored.
+		 *
+		 * @type {Style}
 		 */
-		this.strokeStyle = "#000000";
+		this.strokeStyle = new ColorStyle("#000000");
 
 		/**
 		 * Line width, only used if a valid strokeStyle is defined.
+		 *
+		 * @type {number}
 		 */
 		this.lineWidth = 1;
 
@@ -3279,8 +3408,10 @@
 		 * Background color of the circle.
 		 *
 		 * If set null it is ignored.
+		 *
+		 * @type {Style}
 		 */
-		this.fillStyle = "#FFFFFF";
+		this.fillStyle = new ColorStyle("#FFFFFF");
 	}
 
 	Circle.prototype = Object.create(Object2D.prototype);
@@ -3295,12 +3426,12 @@
 
 	Circle.prototype.onPointerEnter = function(pointer, viewport)
 	{
-		this.fillStyle = "#CCCCCC";
+		this.fillStyle = new ColorStyle("#CCCCCC");
 	};
 
 	Circle.prototype.onPointerLeave = function(pointer, viewport)
 	{
-		this.fillStyle = "#FFFFFF";
+		this.fillStyle = new ColorStyle("#FFFFFF");
 	};
 
 	Circle.prototype.draw = function(context, viewport, canvas)
@@ -3310,14 +3441,14 @@
 		
 		if(this.fillStyle !== null)
 		{	
-			context.fillStyle = this.fillStyle;
+			context.fillStyle = this.fillStyle.get();
 			context.fill();
 		}
 
 		if(this.strokeStyle !== null)
 		{
 			context.lineWidth = this.lineWidth;
-			context.strokeStyle = this.strokeStyle;
+			context.strokeStyle = this.strokeStyle.get();
 			context.stroke();
 		}
 	};
@@ -3327,9 +3458,9 @@
 		var data = Object2D.prototype.serialize.call(this, recursive);
 
 		data.radius = this.radius;
-		data.strokeStyle = this.strokeStyle;
+		data.strokeStyle = this.strokeStyle.serialize();
 		data.lineWidth = this.lineWidth;
-		data.fillStyle = this.fillStyle;
+		data.fillStyle = this.fillStyle.serialize();
 
 		return data;
 	};
@@ -3339,9 +3470,9 @@
 		Object2D.prototype.parse.call(this, data, root);
 
 		this.radius = data.radius;
-		this.strokeStyle = data.strokeStyle;
+		this.strokeStyle = Style$1.parse(data.strokeStyle);
 		this.lineWidth = data.lineWidth;
-		this.fillStyle = data.fillStyle;
+		this.fillStyle = Style$1.parse(data.fillStyle);
 	};
 
 	/**
@@ -3388,9 +3519,9 @@
 		/**
 		 * Style of the object line.
 		 *
-		 * @type {string}
+		 * @type {Style}
 		 */
-		this.strokeStyle = "#000000";
+		this.strokeStyle = new ColorStyle("#000000");
 
 		/**
 		 * Line width of the line.
@@ -3408,7 +3539,7 @@
 	Line.prototype.style = function(context, viewport, canvas)
 	{
 		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
+		context.strokeStyle = this.strokeStyle.get();
 		context.setLineDash(this.dashPattern);
 	};
 
@@ -3427,7 +3558,7 @@
 		data.from = this.from.toArray();
 		data.to = this.to.toArray();
 		data.dashPattern = this.dashPattern;
-		data.strokeStyle = this.strokeStyle;
+		data.strokeStyle = this.strokeStyle.serialize();
 		data.lineWidth = this.lineWidth;
 
 		return data;
@@ -3440,7 +3571,7 @@
 		this.to.fromArray(data.to);
 		this.from.fromArray(data.from);
 		this.dashPattern = data.dashPattern;
-		this.strokeStyle = data.strokeStyle;
+		this.strokeStyle = Style$1.parse(data.strokeStyle);
 		this.lineWidth = data.lineWidth;
 	};
 
@@ -3473,7 +3604,7 @@
 		/**
 		 * Style of the object border line. If set null it is ignored.
 		 *
-		 * @type {string}
+		 * @type {Style}
 		 */
 		this.strokeStyle = null;
 
@@ -3487,9 +3618,9 @@
 		/**
 		 * CSS background color of the box. If set null it is ignored.
 		 *
-		 * @type {string}
+		 * @type {Style}
 		 */
-		this.fillStyle = "#000000";
+		this.fillStyle = new ColorStyle("#000000");
 
 		/**
 		 * Text align property. Same values as used for canvas text applies
@@ -3519,17 +3650,17 @@
 	{
 		context.font = this.font;
 		context.textAlign = this.textAlign;
-		context.textBaseline = this.textBaseline ;
+		context.textBaseline = this.textBaseline;
 		
 		if(this.fillStyle !== null)
 		{
-			context.fillStyle = this.fillStyle;
+			context.fillStyle = this.fillStyle.get();
 			context.fillText(this.text, 0, 0);
 		}
 
 		if(this.strokeStyle !== null)
 		{
-			context.strokeStyle = this.strokeStyle;
+			context.strokeStyle = this.strokeStyle.get();
 			context.strokeText(this.text, 0, 0);
 		}
 	};
@@ -3540,9 +3671,9 @@
 
 		data.text = this.text;
 		data.font = this.font;
-		data.strokeStyle = this.strokeStyle;
+		data.strokeStyle = this.strokeStyle.serialize();
 		data.lineWidth = this.lineWidth;
-		data.fillStyle = this.fillStyle;
+		data.fillStyle = this.fillStyle.serialize();
 		data.textAlign = this.textAlign;
 		data.textBaseline = this.textBaseline;
 
@@ -3555,9 +3686,9 @@
 
 		this.text = data.text;
 		this.font = data.font;
-		this.strokeStyle = data.strokeStyle;
+		this.strokeStyle = Style.parse(data.strokeStyle);
 		this.lineWidth = data.lineWidth;
-		this.fillStyle = data.fillStyle;
+		this.fillStyle = Style.parse(data.fillStyle);
 		this.textAlign = data.textAlign;
 		this.textBaseline = data.textBaseline;
 	};
@@ -3958,13 +4089,13 @@
 			{
 				if(this.fillStyle !== null)
 				{
-					context.fillStyle = this.fillStyle;
+					context.fillStyle = this.fillStyle.get();
 					context.fillText(sublines[j], this.position.x, this.position.y + offsetY);
 				}
 
 				if(this.strokeStyle !== null)
 				{
-					context.strokeStyle = this.strokeStyle;
+					context.strokeStyle = this.strokeStyle.get();
 					context.strokeText(sublines[j], this.position.x, this.position.y + offsetY);
 				}
 
@@ -4227,7 +4358,7 @@
 
 		if(this.fillStyle !== null)
 		{	
-			context.fillStyle = this.fillStyle;
+			context.fillStyle = this.fillStyle.get();
 			RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
 			context.fill();
 		}
@@ -4235,7 +4366,7 @@
 		if(this.strokeStyle !== null)
 		{
 			context.lineWidth = this.lineWidth;
-			context.strokeStyle = this.strokeStyle;
+			context.strokeStyle = this.strokeStyle.get();
 			RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
 			context.stroke();
 		}
@@ -4393,9 +4524,25 @@
 	{
 		Object2D.call(this);
 
+		/**
+		 * Value displayed by this gauge. It is displayed based on min and max values.
+		 *
+		 * @type {number}
+		 */
 		this.value = 50;
 
+		/**
+		 * Minimum value of the gauge. Necessary to display the value correctly to scale.
+		 *
+		 * @type {number}
+		 */
 		this.min = 0;
+
+		/**
+		 * Maximum value of the gauge. Necessary to display the value correctly to scale.
+		 *
+		 * @type {number}
+		 */
 		this.max = 100;
 
 		/**
@@ -4405,11 +4552,26 @@
 		 */
 		this.radius = 80;
 
+		/**
+		 * The line width of the gauge semi-circle.
+		 *
+		 * @type {number}
+		 */
 		this.lineWidth = 10;
 
+		/**
+		 * Start angle of the gauge.
+		 *
+		 * @type {number}
+		 */
 		this.startAngle = Math.PI;
-		this.endAngle = 2 * Math.PI;
 
+		/**
+		 * End angle of the gauge.
+		 *
+		 * @type {number}
+		 */
+		this.endAngle = 2 * Math.PI;
 
 		/**
 		 * If true draw a circular dial at the end of the gauge bar.
@@ -4418,7 +4580,12 @@
 		 */
 		this.dial = false;
 
-		this.baseStyle = "#e9ecf1";
+		/**
+		 * Style of the base of the gauge object, (the background of the gauge bar).
+		 *
+		 * @type {Style}
+		 */
+		this.baseStyle = new ColorStyle("#e9ecf1");
 	}
 
 	Gauge.prototype = Object.create(Object2D.prototype);
@@ -4443,13 +4610,13 @@
 		//Back
 		context.lineWidth = this.lineWidth;
 		context.lineCap = "round";
-		context.strokeStyle = this.baseStyle;
+		context.strokeStyle = this.baseStyle.get();
 		context.beginPath();
 		context.arc(center[0], center[1], this.radius, range[0], range[1]);
 		context.stroke();
 
 		// Fill gradient
-		var gradient = context.createLinearGradient(0, 0, width, 0);
+		var gradient = context.createLinearGradient(-this.radius, 0, this.radius, 0);
 		gradient.addColorStop(0, "#61ff50");
 		gradient.addColorStop(0.5, "#ffbb50");
 		gradient.addColorStop(1, "#ff3269");
