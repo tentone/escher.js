@@ -97,9 +97,9 @@ Text.prototype.serialize = function(recursive)
 
 	data.text = this.text;
 	data.font = this.font;
-	data.strokeStyle = this.strokeStyle.serialize();
+	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle.serialize();
+	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 	data.textAlign = this.textAlign;
 	data.textBaseline = this.textBaseline;
 
@@ -112,9 +112,9 @@ Text.prototype.parse = function(data, root)
 
 	this.text = data.text;
 	this.font = data.font;
-	this.strokeStyle = Style.parse(data.strokeStyle);
+	this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
 	this.lineWidth = data.lineWidth;
-	this.fillStyle = Style.parse(data.fillStyle);
+	this.fillStyle = data.fillStyle !== null ? Style.parse(data.fillStyle) : null;
 	this.textAlign = data.textAlign;
 	this.textBaseline = data.textBaseline;
 };

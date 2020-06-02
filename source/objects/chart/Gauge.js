@@ -75,6 +75,16 @@ function Gauge()
 	 * @type {Style}
 	 */
 	this.baseStyle = new ColorStyle("#e9ecf1");
+
+	/**
+	 * Style of the gauge bar.
+	 *
+	 * @type {Style}
+	 */
+	this.barStyle = new LinearGradientStyle();
+	this.barStyle.addColorStop(0, "#61ff50");
+	this.barStyle.addColorStop(0.5, "#ffbb50");
+	this.barStyle.addColorStop(1, "#ff3269");
 }
 
 Gauge.prototype = Object.create(Object2D.prototype);
@@ -99,17 +109,15 @@ Gauge.prototype.draw = function(context, viewport, canvas)
 	//Back
 	context.lineWidth = this.lineWidth;
 	context.lineCap = "round";
-	context.strokeStyle = this.baseStyle.get();
+	context.strokeStyle = this.baseStyle.get(context);
 	context.beginPath();
 	context.arc(center[0], center[1], this.radius, range[0], range[1]);
 	context.stroke();
 
 	// Fill gradient
 	var gradient = context.createLinearGradient(-this.radius, 0, this.radius, 0);
-	gradient.addColorStop(0, "#61ff50");
-	gradient.addColorStop(0.5, "#ffbb50");
-	gradient.addColorStop(1, "#ff3269");
-	context.strokeStyle = gradient;
+
+	context.strokeStyle = this.barStyle.get(context);
 
 	context.lineWidth = this.lineWidth;
 	context.beginPath();

@@ -87,9 +87,9 @@ Box.prototype.serialize = function(recursive)
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
 	data.box = this.box.toArray();
-	data.strokeStyle = this.strokeStyle.serialize();
+	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle.serialize();
+	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 
 	return data;
 };
@@ -99,9 +99,9 @@ Box.prototype.parse = function(data, root)
 	Object2D.prototype.parse.call(this, data, root);
 
 	this.box.fromArray(data.box);
-	this.strokeStyle = Style.parse(data.strokeStyle);
+	this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
 	this.lineWidth = data.lineWidth;
-	this.fillStyle = Style.parse(data.fillStyle);
+	this.fillStyle = data.fillStyle !== null ? Style.parse(data.fillStyle) : null;
 };
 
 export {Box};

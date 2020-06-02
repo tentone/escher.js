@@ -86,7 +86,7 @@ Line.prototype.serialize = function(recursive)
 	data.from = this.from.toArray();
 	data.to = this.to.toArray();
 	data.dashPattern = this.dashPattern;
-	data.strokeStyle = this.strokeStyle.serialize();
+	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 	data.lineWidth = this.lineWidth;
 
 	return data;
@@ -99,7 +99,7 @@ Line.prototype.parse = function(data, root)
 	this.to.fromArray(data.to);
 	this.from.fromArray(data.from);
 	this.dashPattern = data.dashPattern;
-	this.strokeStyle = Style.parse(data.strokeStyle);
+	this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
 	this.lineWidth = data.lineWidth;
 };
 

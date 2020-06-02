@@ -22,7 +22,7 @@ function Graph()
 	/**
 	 * Color of the box border line.
 	 */
-	this.strokeStyle = "rgb(0, 153, 255)";
+	this.strokeStyle = new ColorStyle("rgb(0, 153, 255)");
 
 	/**
 	 * Line width.
@@ -32,7 +32,7 @@ function Graph()
 	/**
 	 * Background color of the box.
 	 */
-	this.fillStyle = "rgba(0, 153, 255, 0.3)";
+	this.fillStyle = new ColorStyle("rgba(0, 153, 255, 0.3)");
 
 	/**
 	 * Minimum value of the graph.
@@ -73,7 +73,7 @@ Graph.prototype.draw = function(context, viewport, canvas)
 	var height = this.box.max.y - this.box.min.y;
 
 	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
+	context.strokeStyle = this.strokeStyle.get(context);
 	context.beginPath();
 		
 	var step = width / (this.data.length - 1);
@@ -90,7 +90,7 @@ Graph.prototype.draw = function(context, viewport, canvas)
 
 	if(this.fillStyle !== null)
 	{
-		context.fillStyle = this.fillStyle;
+		context.fillStyle = this.fillStyle.get(context);
 
 		context.lineTo(this.box.max.x, this.box.max.y);
 		context.lineTo(this.box.min.x, this.box.max.y);
@@ -103,9 +103,9 @@ Graph.prototype.serialize = function(recursive)
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
 	data.box = this.box.toArray();
-	data.strokeStyle = this.strokeStyle;
+	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle;
+	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 	data.min = this.min;
 	data.max = this.max;
 	data.data = this.data;
@@ -118,9 +118,9 @@ Graph.prototype.parse = function(data, root)
 	Object2D.prototype.parse.call(this, data, root);
 
 	this.box.fromArray(data.box);
-	this.strokeStyle = data.strokeStyle;
+	this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
 	this.lineWidth = data.lineWidth;
-	this.fillStyle = data.fillStyle;
+	this.fillStyle = data.fillStyle !== null ? Style.parse(data.fillStyle) : null;
 	this.min = data.min;
 	this.max = data.max;
 	this.data = data.data;
