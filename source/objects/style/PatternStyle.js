@@ -1,5 +1,6 @@
 import {Style} from "./Style";
 import {GradientStyle} from "./GradientStyle";
+import {Matrix} from "../../math/Matrix";
 
 /**
  * Pattern style represents an opaque object describing a pattern, based on an image, a canvas, or a video.
@@ -54,14 +55,20 @@ Style.register(PatternStyle, "Pattern");
  */
 PatternStyle.prototype.setTransform = function(transform)
 {
-    // TODO <ADD CODE HERE>
+    this.matrix.m = transform;
+    this.needsUpdate = true;
 };
 
 PatternStyle.prototype.get = function(context)
 {
-    var style = context.createPattern(this.source, this.repetition);
-    style.setTransform(this.matrix.cssTransform());
-    return style;
+    if(this.needsUpdate || this.cache === null)
+    {
+        this.cache = context.createPattern(this.source, this.repetition);
+        this.cache.setTransform(this.matrix.cssTransform());
+        this.needsUpdate = false;
+    }
+
+    return this.cache;
 };
 
 PatternStyle.prototype.serialize = function ()

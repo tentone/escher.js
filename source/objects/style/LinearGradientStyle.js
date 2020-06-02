@@ -1,5 +1,6 @@
 import {Style} from "./Style";
 import {GradientStyle} from "./GradientStyle";
+import {Vector2} from "../../math/Vector2";
 
 /**
  * Linear gradient style, represents a gradient of colors from a point to another interpolating in between.
@@ -20,14 +21,14 @@ function LinearGradientStyle()
      *
      * @type {Vector2}
      */
-    this.start = new Vector2(0, 0);
+    this.start = new Vector2(-100, 0);
 
     /**
      * The coordinates of the ending point of the gradient.
      *
      * @type {Vector2}
      */
-    this.end = new Vector2(0, 0);
+    this.end = new Vector2(100, 0);
 }
 
 LinearGradientStyle.prototype = Object.create(GradientStyle.prototype);

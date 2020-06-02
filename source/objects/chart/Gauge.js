@@ -1,5 +1,7 @@
 import {Object2D} from "../../Object2D.js";
 import {ColorStyle} from "../style/ColorStyle";
+import {LinearGradientStyle} from "../style/LinearGradientStyle";
+import {Vector2} from "../../math/Vector2";
 
 /**
  * Gauge object is used to draw gauge like graphic.
@@ -82,9 +84,11 @@ function Gauge()
 	 * @type {Style}
 	 */
 	this.barStyle = new LinearGradientStyle();
-	this.barStyle.addColorStop(0, "#61ff50");
-	this.barStyle.addColorStop(0.5, "#ffbb50");
-	this.barStyle.addColorStop(1, "#ff3269");
+	this.barStyle.start.set(-100, 0);
+	this.barStyle.end.set(100, 0);
+	this.barStyle.addColorStop(0, "#e5ff50");
+	this.barStyle.addColorStop(0.5, "#50ff67");
+	this.barStyle.addColorStop(1, "#32adff");
 }
 
 Gauge.prototype = Object.create(Object2D.prototype);

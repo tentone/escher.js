@@ -1,5 +1,6 @@
 import {GradientStyle} from "./GradientStyle";
 import {Style} from "./Style";
+import {Vector2} from "../../math/Vector2";
 
 /**
  * Radial gradient interpolates colors from a point to another point around up to a starting and finishing radius value.
@@ -49,6 +50,7 @@ Style.register(RadialGradientStyle, "RadialGradient");
 
 RadialGradientStyle.prototype.get = function(context)
 {
+
     var style = context.createRadialGradient(this.start.x, this.start.y, this.startRadius, this.end.x, this.end.y, this.endRadius);
 
     for(var i = 0; i < this.colors.length; i++)

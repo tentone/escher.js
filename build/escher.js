@@ -77,7 +77,7 @@
 	 * @param {number} x
 	 * @param {number} y
 	 */
-	function Vector2$1(x, y)
+	function Vector2(x, y)
 	{
 		this.x = x || 0;
 		this.y = y || 0;
@@ -89,7 +89,7 @@
 	 * @param {number} x
 	 * @param {number} y
 	 */
-	Vector2$1.prototype.set = function(x, y)
+	Vector2.prototype.set = function(x, y)
 	{
 		this.x = x;
 		this.y = y;
@@ -98,7 +98,7 @@
 	/**
 	 * Set a scalar value into the x and y values.
 	 */
-	Vector2$1.prototype.setScalar = function(scalar)
+	Vector2.prototype.setScalar = function(scalar)
 	{
 		this.x = scalar;
 		this.y = scalar;
@@ -107,9 +107,9 @@
 	/**
 	 * Create a clone of this vector object.
 	 */
-	Vector2$1.prototype.clone = function()
+	Vector2.prototype.clone = function()
 	{
-		return new Vector2$1(this.x, this.y);
+		return new Vector2(this.x, this.y);
 	};
 
 	/**
@@ -117,7 +117,7 @@
 	 *
 	 * @param {Vector2} v
 	 */
-	Vector2$1.prototype.copy = function(v)
+	Vector2.prototype.copy = function(v)
 	{
 		this.x = v.x;
 		this.y = v.y;
@@ -128,7 +128,7 @@
 	 *
 	 * @param {Vector2} v
 	 */
-	Vector2$1.prototype.add = function(v)
+	Vector2.prototype.add = function(v)
 	{
 		this.x += v.x;
 		this.y += v.y;
@@ -139,7 +139,7 @@
 	 *
 	 * @param {number} s
 	 */
-	Vector2$1.prototype.addScalar = function(s)
+	Vector2.prototype.addScalar = function(s)
 	{
 		this.x += s;
 		this.y += s;
@@ -151,7 +151,7 @@
 	 * @param {Vector2} a
 	 * @param {Vector2} b
 	 */
-	Vector2$1.prototype.addVectors = function(a, b)
+	Vector2.prototype.addVectors = function(a, b)
 	{
 		this.x = a.x + b.x;
 		this.y = a.y + b.y;
@@ -163,7 +163,7 @@
 	 * @param {Vector2} v
 	 * @param {number} s
 	 */
-	Vector2$1.prototype.addScaledVector = function(v, s)
+	Vector2.prototype.addScaledVector = function(v, s)
 	{
 		this.x += v.x * s;
 		this.y += v.y * s;
@@ -174,7 +174,7 @@
 	 *
 	 * @param {Vector2} v
 	 */
-	Vector2$1.prototype.sub = function(v)
+	Vector2.prototype.sub = function(v)
 	{
 		this.x -= v.x;
 		this.y -= v.y;
@@ -185,7 +185,7 @@
 	 *
 	 * @param {number} s
 	 */
-	Vector2$1.prototype.subScalar = function(s)
+	Vector2.prototype.subScalar = function(s)
 	{
 		this.x -= s;
 		this.y -= s;
@@ -197,7 +197,7 @@
 	 * @param {Vector2} a
 	 * @param {Vector2} b
 	 */
-	Vector2$1.prototype.subVectors = function(a, b)
+	Vector2.prototype.subVectors = function(a, b)
 	{
 		this.x = a.x - b.x;
 		this.y = a.y - b.y;
@@ -208,7 +208,7 @@
 	 *
 	 * @param {Vector2} v
 	 */
-	Vector2$1.prototype.multiply = function(v)
+	Vector2.prototype.multiply = function(v)
 	{
 		this.x *= v.x;
 		this.y *= v.y;
@@ -219,7 +219,7 @@
 	 *
 	 * @param {number} scalar
 	 */
-	Vector2$1.prototype.multiplyScalar = function(scalar)
+	Vector2.prototype.multiplyScalar = function(scalar)
 	{
 		this.x *= scalar;
 		this.y *= scalar;
@@ -231,7 +231,7 @@
 	 *
 	 * @param {Vector2} v
 	 */
-	Vector2$1.prototype.divide = function(v)
+	Vector2.prototype.divide = function(v)
 	{
 		this.x /= v.x;
 		this.y /= v.y;
@@ -242,7 +242,7 @@
 	 *
 	 * @param {number} s
 	 */
-	Vector2$1.prototype.divideScalar = function(scalar)
+	Vector2.prototype.divideScalar = function(scalar)
 	{
 		return this.multiplyScalar(1 / scalar);
 	};
@@ -254,7 +254,7 @@
 	 *
 	 * @param {Vector2} v
 	 */
-	Vector2$1.prototype.min = function(v)
+	Vector2.prototype.min = function(v)
 	{
 		this.x = Math.min(this.x, v.x);
 		this.y = Math.min(this.y, v.y);
@@ -267,26 +267,26 @@
 	 *
 	 * @param {Vector2} v
 	 */
-	Vector2$1.prototype.max = function(v)
+	Vector2.prototype.max = function(v)
 	{
 		this.x = Math.max(this.x, v.x);
 		this.y = Math.max(this.y, v.y);
 	};
 
-	Vector2$1.prototype.clamp = function(min, max)
+	Vector2.prototype.clamp = function(min, max)
 	{
 		// assumes min < max, componentwise
 		this.x = Math.max(min.x, Math.min(max.x, this.x));
 		this.y = Math.max(min.y, Math.min(max.y, this.y));
 	};
 
-	Vector2$1.prototype.clampScalar = function(minVal, maxVal)
+	Vector2.prototype.clampScalar = function(minVal, maxVal)
 	{
 		this.x = Math.max(minVal, Math.min(maxVal, this.x));
 		this.y = Math.max(minVal, Math.min(maxVal, this.y));
 	};
 
-	Vector2$1.prototype.clampLength = function(min, max)
+	Vector2.prototype.clampLength = function(min, max)
 	{
 		var length = this.length();
 
@@ -296,7 +296,7 @@
 	/**
 	 * Round the vector coordinates to integer by flooring to the smaller integer.
 	 */ 
-	Vector2$1.prototype.floor = function()
+	Vector2.prototype.floor = function()
 	{
 		this.x = Math.floor(this.x);
 		this.y = Math.floor(this.y);
@@ -305,7 +305,7 @@
 	/**
 	 * Round the vector coordinates to integer by ceiling to the bigger integer.
 	 */ 
-	Vector2$1.prototype.ceil = function()
+	Vector2.prototype.ceil = function()
 	{
 		this.x = Math.ceil(this.x);
 		this.y = Math.ceil(this.y);
@@ -314,7 +314,7 @@
 	/**
 	 * Round the vector coordinates to their closest integer.
 	 */
-	Vector2$1.prototype.round = function()
+	Vector2.prototype.round = function()
 	{
 		this.x = Math.round(this.x);
 		this.y = Math.round(this.y);
@@ -323,7 +323,7 @@
 	/**
 	 * Negate the coordinates of this vector.
 	 */
-	Vector2$1.prototype.negate = function()
+	Vector2.prototype.negate = function()
 	{
 		this.x = -this.x;
 		this.y = -this.y;
@@ -337,7 +337,7 @@
 	 * @param {Vector2} vector
 	 * @return {number} Result of the dot multiplication.
 	 */
-	Vector2$1.prototype.dot = function(v)
+	Vector2.prototype.dot = function(v)
 	{
 		return this.x * v.x + this.y * v.y;
 	};
@@ -348,7 +348,7 @@
 	 * @param {Vector2} vector
 	 * @return {number} Result of the cross multiplication.
 	 */
-	Vector2$1.prototype.cross = function(v)
+	Vector2.prototype.cross = function(v)
 	{
 		return this.x * v.y - this.y * v.x;
 	};
@@ -358,7 +358,7 @@
 	 *
 	 * Faster for comparions.
 	 */
-	Vector2$1.prototype.lengthSq = function()
+	Vector2.prototype.lengthSq = function()
 	{
 		return this.x * this.x + this.y * this.y;
 	};
@@ -366,7 +366,7 @@
 	/**
 	 * Length of the vector.
 	 */
-	Vector2$1.prototype.length = function()
+	Vector2.prototype.length = function()
 	{
 		return Math.sqrt(this.x * this.x + this.y * this.y);
 	};
@@ -374,7 +374,7 @@
 	/**
 	 * Manhattan length of the vector.
 	 */
-	Vector2$1.prototype.manhattanLength = function()
+	Vector2.prototype.manhattanLength = function()
 	{
 		return Math.abs(this.x) + Math.abs(this.y);
 	};
@@ -382,7 +382,7 @@
 	/**
 	 * Normalize the vector (make it length one).
 	 */
-	Vector2$1.prototype.normalize = function()
+	Vector2.prototype.normalize = function()
 	{
 		return this.divideScalar(this.length() || 1);
 	};
@@ -390,7 +390,7 @@
 	/**
 	 * Computes the angle in radians with respect to the positive x-axis
 	 */
-	Vector2$1.prototype.angle = function()
+	Vector2.prototype.angle = function()
 	{
 		var angle = Math.atan2(this.y, this.x);
 
@@ -405,7 +405,7 @@
 	/**
 	 * Distance between two vector positions.
 	 */
-	Vector2$1.prototype.distanceTo = function(v)
+	Vector2.prototype.distanceTo = function(v)
 	{
 		return Math.sqrt(this.distanceToSquared(v));
 	};
@@ -415,7 +415,7 @@
 	 *
 	 * Faster for comparisons.
 	 */
-	Vector2$1.prototype.distanceToSquared = function(v)
+	Vector2.prototype.distanceToSquared = function(v)
 	{
 		var dx = this.x - v.x;
 		var dy = this.y - v.y;
@@ -426,7 +426,7 @@
 	/**
 	 * Manhattan distance between two vector positions.
 	 */
-	Vector2$1.prototype.manhattanDistanceTo = function(v)
+	Vector2.prototype.manhattanDistanceTo = function(v)
 	{
 		return Math.abs(this.x - v.x) + Math.abs(this.y - v.y);
 	};
@@ -434,18 +434,18 @@
 	/**
 	 * Scale the vector to have a defined length value.
 	 */
-	Vector2$1.prototype.setLength = function(length)
+	Vector2.prototype.setLength = function(length)
 	{
 		return this.normalize().multiplyScalar(length);
 	};
 
-	Vector2$1.prototype.lerp = function(v, alpha)
+	Vector2.prototype.lerp = function(v, alpha)
 	{
 		this.x += (v.x - this.x) * alpha;
 		this.y += (v.y - this.y) * alpha;
 	};
 
-	Vector2$1.prototype.lerpVectors = function(v1, v2, alpha)
+	Vector2.prototype.lerpVectors = function(v1, v2, alpha)
 	{
 		return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
 	};
@@ -455,7 +455,7 @@
 	 *
 	 * @param {Vector2} v
 	 */
-	Vector2$1.prototype.equals = function(v)
+	Vector2.prototype.equals = function(v)
 	{
 		return ((v.x === this.x) && (v.y === this.y));
 	};
@@ -467,7 +467,7 @@
 	 *
 	 * @param {number[]} array
 	 */
-	Vector2$1.prototype.fromArray = function(array)
+	Vector2.prototype.fromArray = function(array)
 	{
 		this.set(array[0], array[1]);
 	};
@@ -479,7 +479,7 @@
 	 *
 	 * @return {number[]} Array containing the values of the vector.
 	 */
-	Vector2$1.prototype.toArray = function()
+	Vector2.prototype.toArray = function()
 	{
 		return [this.x, this.y];
 	};
@@ -490,7 +490,7 @@
 	 * @param {Vector2} center
 	 * @param {number} angle
 	 */
-	Vector2$1.prototype.rotateAround = function(center, angle)
+	Vector2.prototype.rotateAround = function(center, angle)
 	{
 		var c = Math.cos(angle);
 		var s = Math.sin(angle);
@@ -510,7 +510,7 @@
 	 * @class
 	 * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values.
 	 */
-	function Matrix$1(values)
+	function Matrix(values)
 	{
 		if(values !== undefined)
 		{
@@ -534,7 +534,7 @@
 	 *
 	 * @param {Matrix} mat Matrix to copy values from.
 	 */
-	Matrix$1.prototype.copy = function(mat)
+	Matrix.prototype.copy = function(mat)
 	{
 		this.m = mat.m.slice(0);
 	};
@@ -544,15 +544,15 @@
 	 *
 	 * @return {Matrix} Copy of this matrix.
 	 */
-	Matrix$1.prototype.clone = function()
+	Matrix.prototype.clone = function()
 	{
-		return new Matrix$1(this.m.slice(0))
+		return new Matrix(this.m.slice(0))
 	};
 
 	/**
 	 * Reset this matrix to identity.
 	 */
-	Matrix$1.prototype.identity = function()
+	Matrix.prototype.identity = function()
 	{
 		this.m = [1, 0, 0, 1, 0, 0];
 	};
@@ -562,7 +562,7 @@
 	 *
 	 * @param {Matrix} mat
 	 */
-	Matrix$1.prototype.multiply = function(mat)
+	Matrix.prototype.multiply = function(mat)
 	{
 		var m0 = this.m[0] * mat.m[0] + this.m[2] * mat.m[1];
 		var m1 = this.m[1] * mat.m[0] + this.m[3] * mat.m[1];
@@ -579,7 +579,7 @@
 	 *
 	 * @param {Matrix} mat
 	 */
-	Matrix$1.prototype.premultiply = function(mat)
+	Matrix.prototype.premultiply = function(mat)
 	{
 		var m0 = mat.m[0] * this.m[0] + mat.m[2] * this.m[1];
 		var m1 = mat.m[1] * this.m[0] + mat.m[3] * this.m[1];
@@ -602,7 +602,7 @@
 	 * @param {number} oy Origin Y (applied before scale and rotation)
 	 * @param {number} a Rotation angle (radians).
 	 */
-	Matrix$1.prototype.compose = function(px, py, sx, sy, ox, oy, a)
+	Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, a)
 	{
 		this.m = [1, 0, 0, 1, px, py];
 
@@ -610,7 +610,7 @@
 		{		
 			var c = Math.cos(a);
 			var s = Math.sin(a);
-			this.multiply(new Matrix$1([c, s, -s, c, 0, 0]));
+			this.multiply(new Matrix([c, s, -s, c, 0, 0]));
 		}
 
 		if(sx !== 1 || sy !== 1)
@@ -620,7 +620,7 @@
 
 		if(ox !== 0 || oy !== 0)
 		{	
-			this.multiply(new Matrix$1([1, 0, 0, 1, -ox, -oy]));
+			this.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));
 		}
 	};
 
@@ -632,7 +632,7 @@
 	 * @param {number} x
 	 * @param {number} y
 	 */
-	Matrix$1.prototype.translate = function(x, y)
+	Matrix.prototype.translate = function(x, y)
 	{
 		this.m[4] += this.m[0] * x + this.m[2] * y;
 		this.m[5] += this.m[1] * x + this.m[3] * y;
@@ -643,7 +643,7 @@
 	 *
 	 * @param {number} rad Angle to rotate the matrix in radians.
 	 */
-	Matrix$1.prototype.rotate = function(rad)
+	Matrix.prototype.rotate = function(rad)
 	{
 		var c = Math.cos(rad);
 		var s = Math.sin(rad);
@@ -665,7 +665,7 @@
 	 * @param {number} sx
 	 * @param {number} sy
 	 */
-	Matrix$1.prototype.scale = function(sx, sy)
+	Matrix.prototype.scale = function(sx, sy)
 	{
 		this.m[0] *= sx;
 		this.m[1] *= sx;
@@ -679,7 +679,7 @@
 	 * @param {number} x
 	 * @param {number} y
 	 */
-	Matrix$1.prototype.setPosition = function(x, y)
+	Matrix.prototype.setPosition = function(x, y)
 	{
 		this.m[4] = x;
 		this.m[5] = y;
@@ -690,9 +690,9 @@
 	 *
 	 * @return {Vector2} Scale of the matrix transformation.
 	 */
-	Matrix$1.prototype.getScale = function()
+	Matrix.prototype.getScale = function()
 	{
-		return new Vector2$1(this.m[0], this.m[3]);
+		return new Vector2(this.m[0], this.m[3]);
 	};
 
 	/**
@@ -700,9 +700,9 @@
 	 *
 	 * @return {Vector2} Position of the matrix transformation.
 	 */
-	Matrix$1.prototype.getPosition = function()
+	Matrix.prototype.getPosition = function()
 	{
-		return new Vector2$1(this.m[4], this.m[5]);
+		return new Vector2(this.m[4], this.m[5]);
 	};
 
 	/**
@@ -711,9 +711,9 @@
 	 * @param {number} radianX
 	 * @param {number} radianY
 	 */
-	Matrix$1.prototype.skew = function(radianX, radianY)
+	Matrix.prototype.skew = function(radianX, radianY)
 	{
-		this.multiply(new Matrix$1([1, Math.tan(radianY), Math.tan(radianX), 1, 0, 0]));
+		this.multiply(new Matrix([1, Math.tan(radianY), Math.tan(radianX), 1, 0, 0]));
 	};
 
 	/**
@@ -721,7 +721,7 @@
 	 *
 	 * @return {number} Determinant of this matrix.
 	 */
-	Matrix$1.prototype.determinant = function()
+	Matrix.prototype.determinant = function()
 	{
 		return 1 / (this.m[0] * this.m[3] - this.m[1] * this.m[2]);
 	};
@@ -731,11 +731,11 @@
 	 *
 	 * @return {Matrix} New matrix instance containing the inverse matrix.
 	 */
-	Matrix$1.prototype.getInverse = function()
+	Matrix.prototype.getInverse = function()
 	{
 		var d = this.determinant();
 
-		return new Matrix$1([this.m[3] * d, -this.m[1] * d, -this.m[2] * d, this.m[0] * d, d * (this.m[2] * this.m[5] - this.m[3] * this.m[4]), d * (this.m[1] * this.m[4] - this.m[0] * this.m[5])]);
+		return new Matrix([this.m[3] * d, -this.m[1] * d, -this.m[2] * d, this.m[0] * d, d * (this.m[2] * this.m[5] - this.m[3] * this.m[4]), d * (this.m[1] * this.m[4] - this.m[0] * this.m[5])]);
 	};
 
 	/**
@@ -744,12 +744,12 @@
 	 * @param {Vector2} p Point to be transformed.
 	 * @return {Vector2} Transformed point.
 	 */
-	Matrix$1.prototype.transformPoint = function(p)
+	Matrix.prototype.transformPoint = function(p)
 	{
 		var px = p.x * this.m[0] + p.y * this.m[2] + this.m[4];
 		var py = p.x * this.m[1] + p.y * this.m[3] + this.m[5];
 
-		return new Vector2$1(px, py);
+		return new Vector2(px, py);
 	};
 
 	/**
@@ -757,7 +757,7 @@
 	 *
 	 * @param {CanvasRenderingContext2D} context Canvas context to apply this matrix transform.
 	 */
-	Matrix$1.prototype.setContextTransform = function(context)
+	Matrix.prototype.setContextTransform = function(context)
 	{
 		context.setTransform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
 	};
@@ -767,7 +767,7 @@
 	 *
 	 * @param {CanvasRenderingContext2D} context Canvas context to apply this matrix transform.
 	 */
-	Matrix$1.prototype.tranformContext = function(context)
+	Matrix.prototype.tranformContext = function(context)
 	{
 		context.transform(this.m[0], this.m[1], this.m[2], this.m[3], this.m[4], this.m[5]);
 	};
@@ -777,7 +777,7 @@
 	 *
 	 * @returns {string} CSS transform matrix.
 	 */
-	Matrix$1.prototype.cssTransform = function()
+	Matrix.prototype.cssTransform = function()
 	{
 		return "matrix(" + this.m[0] + "," + this.m[1] + "," + this.m[2] + "," + this.m[3] + "," + this.m[4] + "," + this.m[5] + ")";
 	};
@@ -867,14 +867,14 @@
 		 *
 		 * @type {Vector2}
 		 */
-		this.position = new Vector2$1(0, 0);
+		this.position = new Vector2(0, 0);
 
 		/**
 		 * Origin of the object used as point of rotation.
 		 *
 		 * @type {Vector2}
 		 */
-		this.origin = new Vector2$1(0, 0);
+		this.origin = new Vector2(0, 0);
 
 		/**
 		 * Scale of the object.
@@ -883,7 +883,7 @@
 		 *
 		 * @type {Vector2}
 		 */
-		this.scale = new Vector2$1(1, 1);
+		this.scale = new Vector2(1, 1);
 
 		/**
 		 * Rotation of the object relative to its center.
@@ -915,7 +915,7 @@
 		 *
 		 * @type {Matrix}
 		 */
-		this.matrix = new Matrix$1();
+		this.matrix = new Matrix();
 
 		/**
 		 * Global transformation matrix multiplied by the parent matrix.
@@ -924,7 +924,7 @@
 		 *
 		 * @type {Matrix}
 		 */
-		this.globalMatrix = new Matrix$1();
+		this.globalMatrix = new Matrix();
 
 		/**
 		 * Inverse of the global (world) transform matrix.
@@ -933,7 +933,7 @@
 		 *
 		 * @type {Matrix}
 		 */
-		this.inverseGlobalMatrix = new Matrix$1();
+		this.inverseGlobalMatrix = new Matrix();
 
 		/**
 		 * Mask objects being applied to this object. Used to mask/subtract portions of this object when rendering.
@@ -1488,9 +1488,9 @@
 		this.rotation = data.rotation;
 		this.visible = data.visible;
 		this.layer = data.layer;
-		this.matrix = new Matrix$1(data.matrix);
-		this.globalMatrix = new Matrix$1(data.globalMatrix);
-		this.inverseGlobalMatrix = new Matrix$1(data.inverseGlobalMatrix);
+		this.matrix = new Matrix(data.matrix);
+		this.globalMatrix = new Matrix(data.globalMatrix);
+		this.inverseGlobalMatrix = new Matrix(data.inverseGlobalMatrix);
 		this.matrixAutoUpdate = data.matrixAutoUpdate;
 		this.draggable = data.draggable;
 		this.pointerEvents = data.pointerEvents;
@@ -1654,9 +1654,9 @@
 	{
 		//Raw data
 		this._keys = new Array(5);
-		this._position = new Vector2$1(0, 0);
+		this._position = new Vector2(0, 0);
 		this._positionUpdated = false;
-		this._delta = new Vector2$1(0, 0);
+		this._delta = new Vector2(0, 0);
 		this._wheel = 0;
 		this._wheelUpdated = false;
 		this._doubleClicked = new Array(5);
@@ -1675,7 +1675,7 @@
 		 *
 		 * @type {Vector2}
 		 */
-		this.position = new Vector2$1(0, 0);
+		this.position = new Vector2(0, 0);
 
 		/**
 		 * Pointer movement (coordinates in window space). Since the last update.
@@ -1684,7 +1684,7 @@
 		 *
 		 * @type {Vector2}
 		 */
-		this.delta = new Vector2$1(0, 0);
+		this.delta = new Vector2(0, 0);
 
 		/**
 		 * Pointer scroll wheel movement, since the last update.
@@ -1773,7 +1773,7 @@
 		if(window.ontouchstart !== undefined || navigator.msMaxTouchPoints > 0)
 		{
 			//Auxiliar variables to calculate touch delta
-			var lastTouch = new Vector2$1(0, 0);
+			var lastTouch = new Vector2(0, 0);
 
 			//Touch start event
 			this.events.add(this.domElement, "touchstart", function(event)
@@ -2099,7 +2099,7 @@
 		/**
 		 * Position of the object.
 		 */
-		this.position = new Vector2$1(0, 0);
+		this.position = new Vector2(0, 0);
 
 		/**
 		 * Scale of the object.
@@ -2114,12 +2114,12 @@
 		/**
 		 * Local transformation matrix applied to the object. 
 		 */
-		this.matrix = new Matrix$1();
+		this.matrix = new Matrix();
 
 		/**
 		 * Inverse of the local transformation matrix.
 		 */
-		this.inverseMatrix = new Matrix$1();
+		this.inverseMatrix = new Matrix();
 
 		/**
 		 * If true the matrix is updated before rendering the object.
@@ -2156,7 +2156,7 @@
 			{		
 				var c = Math.cos(this.rotation);
 				var s = Math.sin(this.rotation);
-				this.matrix.multiply(new Matrix$1([c, s, -s, c, 0, 0]));
+				this.matrix.multiply(new Matrix([c, s, -s, c, 0, 0]));
 			}
 
 			if(this.scale !== 1)
@@ -2179,7 +2179,7 @@
 	 */
 	Viewport.prototype.centerObject = function(object, canvas)
 	{
-		var position = object.globalMatrix.transformPoint(new Vector2$1());
+		var position = object.globalMatrix.transformPoint(new Vector2());
 		position.multiplyScalar(-this.scale);
 		position.x += canvas.width / 2;
 		position.y += canvas.height / 2;
@@ -2280,7 +2280,7 @@
 
 				var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
 
-				var centerWorld = new Vector2$1(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
+				var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
 				centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
 
 				var delta = pointerWorld.clone();
@@ -2777,8 +2777,8 @@
 	 */
 	function Box2(min, max)
 	{
-		this.min = (min !== undefined) ? min : new Vector2$1();
-		this.max = (max !== undefined) ? max : new Vector2$1();
+		this.min = (min !== undefined) ? min : new Vector2();
+		this.max = (max !== undefined) ? max : new Vector2();
 	}
 
 	/**
@@ -2802,8 +2802,8 @@
 	 */
 	Box2.prototype.setFromPoints = function(points)
 	{
-		this.min = new Vector2$1(+Infinity, +Infinity);
-		this.max = new Vector2$1(-Infinity, -Infinity);
+		this.min = new Vector2(+Infinity, +Infinity);
+		this.max = new Vector2(-Infinity, -Infinity);
 
 		for(var i = 0, il = points.length; i < il; i++)
 		{
@@ -2821,7 +2821,7 @@
 	 */
 	Box2.prototype.setFromCenterAndSize = function(center, size)
 	{
-		var v1 = new Vector2$1();
+		var v1 = new Vector2();
 		var halfSize = v1.copy(size).multiplyScalar(0.5);
 		this.min.copy(center).sub(halfSize);
 		this.max.copy(center).add(halfSize);
@@ -2876,7 +2876,7 @@
 	{
 		if(target === undefined)
 		{
-			target = new Vector2$1();
+			target = new Vector2();
 		}
 
 		this.isEmpty() ? target.set(0, 0) : target.addVectors(this.min, this.max).multiplyScalar(0.5);
@@ -2894,7 +2894,7 @@
 	{
 		if(target === undefined)
 		{
-			target = new Vector2$1();
+			target = new Vector2();
 		}
 
 		this.isEmpty() ? target.set(0, 0) : target.subVectors(this.max, this.min);
@@ -2982,7 +2982,7 @@
 	 */
 	Box2.prototype.distanceToPoint = function(point)
 	{
-		var v = new Vector2$1();
+		var v = new Vector2();
 		var clampedPoint = v.copy(point).clamp(this.min, this.max);
 		return clampedPoint.sub(point).length();
 	};
@@ -3109,7 +3109,7 @@
 		 *
 		 * @type {Box2}
 		 */
-		this.box = new Box2(new Vector2$1(-50, -35), new Vector2$1(50, 35));
+		this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 		/**
 		 * If inverted the mask considers the outside of the box instead of the inside.
@@ -3238,7 +3238,7 @@
 	 * @extends {Style}
 	 * @param {string} color Color of the style, if undefined it is set to black.
 	 */
-	function ColorStyle$1(color)
+	function ColorStyle(color)
 	{
 	    Style$1.call(this);
 
@@ -3250,15 +3250,15 @@
 	    this.color = color || "#000000";
 	}
 
-	ColorStyle$1.prototype = Object.create(Style$1.prototype);
-	Style$1.register(ColorStyle$1, "Color");
+	ColorStyle.prototype = Object.create(Style$1.prototype);
+	Style$1.register(ColorStyle, "Color");
 
-	ColorStyle$1.prototype.get = function(context)
+	ColorStyle.prototype.get = function(context)
 	{
 	    return this.color;
 	};
 
-	ColorStyle$1.prototype.serialize = function()
+	ColorStyle.prototype.serialize = function()
 	{
 	    return {
 	        type: "Color",
@@ -3266,7 +3266,7 @@
 	    };
 	};
 
-	ColorStyle$1.prototype.parse = function(data)
+	ColorStyle.prototype.parse = function(data)
 	{
 	    this.color = data.color;
 	};
@@ -3286,14 +3286,14 @@
 		/**
 		 * Box object containing the size of the object.
 		 */
-		this.box = new Box2(new Vector2$1(-50, -50), new Vector2$1(50, 50));
+		this.box = new Box2(new Vector2(-50, -50), new Vector2(50, 50));
 
 		/**
 		 * Style of the object border line.
 		 *
 		 * If set null it is ignored.
 		 */
-		this.strokeStyle = new ColorStyle$1("#000000");
+		this.strokeStyle = new ColorStyle("#000000");
 
 		/**
 		 * Line width, only used if a valid strokeStyle is defined.
@@ -3307,7 +3307,7 @@
 		 *
 		 * @param {Style}
 		 */
-		this.fillStyle = new ColorStyle$1("#FFFFFF");
+		this.fillStyle = new ColorStyle("#FFFFFF");
 	}
 
 	Box.prototype = Object.create(Object2D.prototype);
@@ -3317,12 +3317,12 @@
 
 	Box.prototype.onPointerEnter = function(pointer, viewport)
 	{
-		this.fillStyle = new ColorStyle$1("#CCCCCC");
+		this.fillStyle = new ColorStyle("#CCCCCC");
 	};
 
 	Box.prototype.onPointerLeave = function(pointer, viewport)
 	{
-		this.fillStyle = new ColorStyle$1("#FFFFFF");
+		this.fillStyle = new ColorStyle("#FFFFFF");
 	};
 
 	Box.prototype.isInside = function(point)
@@ -3337,14 +3337,14 @@
 
 		if(this.fillStyle !== null)
 		{	
-			context.fillStyle = this.fillStyle.get();
+			context.fillStyle = this.fillStyle.get(context);
 			context.fillRect(this.box.min.x, this.box.min.y, width, height);
 		}
 
 		if(this.strokeStyle !== null)
 		{
 			context.lineWidth = this.lineWidth;
-			context.strokeStyle = this.strokeStyle.get();
+			context.strokeStyle = this.strokeStyle.get(context);
 			context.strokeRect(this.box.min.x, this.box.min.y, width, height);
 		}
 	};
@@ -3354,9 +3354,9 @@
 		var data = Object2D.prototype.serialize.call(this, recursive);
 
 		data.box = this.box.toArray();
-		data.strokeStyle = this.strokeStyle.serialize();
+		data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 		data.lineWidth = this.lineWidth;
-		data.fillStyle = this.fillStyle.serialize();
+		data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 
 		return data;
 	};
@@ -3366,9 +3366,9 @@
 		Object2D.prototype.parse.call(this, data, root);
 
 		this.box.fromArray(data.box);
-		this.strokeStyle = Style$1.parse(data.strokeStyle);
+		this.strokeStyle = data.strokeStyle !== null ? Style$1.parse(data.strokeStyle) : null;
 		this.lineWidth = data.lineWidth;
-		this.fillStyle = Style$1.parse(data.fillStyle);
+		this.fillStyle = data.fillStyle !== null ? Style$1.parse(data.fillStyle) : null;
 	};
 
 	/**
@@ -3395,7 +3395,7 @@
 		 *
 		 * @type {Style}
 		 */
-		this.strokeStyle = new ColorStyle$1("#000000");
+		this.strokeStyle = new ColorStyle("#000000");
 
 		/**
 		 * Line width, only used if a valid strokeStyle is defined.
@@ -3411,7 +3411,7 @@
 		 *
 		 * @type {Style}
 		 */
-		this.fillStyle = new ColorStyle$1("#FFFFFF");
+		this.fillStyle = new ColorStyle("#FFFFFF");
 	}
 
 	Circle.prototype = Object.create(Object2D.prototype);
@@ -3426,12 +3426,12 @@
 
 	Circle.prototype.onPointerEnter = function(pointer, viewport)
 	{
-		this.fillStyle = new ColorStyle$1("#CCCCCC");
+		this.fillStyle = new ColorStyle("#CCCCCC");
 	};
 
 	Circle.prototype.onPointerLeave = function(pointer, viewport)
 	{
-		this.fillStyle = new ColorStyle$1("#FFFFFF");
+		this.fillStyle = new ColorStyle("#FFFFFF");
 	};
 
 	Circle.prototype.draw = function(context, viewport, canvas)
@@ -3441,14 +3441,14 @@
 		
 		if(this.fillStyle !== null)
 		{	
-			context.fillStyle = this.fillStyle.get();
+			context.fillStyle = this.fillStyle.get(context);
 			context.fill();
 		}
 
 		if(this.strokeStyle !== null)
 		{
 			context.lineWidth = this.lineWidth;
-			context.strokeStyle = this.strokeStyle.get();
+			context.strokeStyle = this.strokeStyle.get(context);
 			context.stroke();
 		}
 	};
@@ -3458,9 +3458,9 @@
 		var data = Object2D.prototype.serialize.call(this, recursive);
 
 		data.radius = this.radius;
-		data.strokeStyle = this.strokeStyle.serialize();
+		data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 		data.lineWidth = this.lineWidth;
-		data.fillStyle = this.fillStyle.serialize();
+		data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 
 		return data;
 	};
@@ -3470,9 +3470,9 @@
 		Object2D.prototype.parse.call(this, data, root);
 
 		this.radius = data.radius;
-		this.strokeStyle = Style$1.parse(data.strokeStyle);
+		this.strokeStyle = data.strokeStyle !== null ? Style$1.parse(data.strokeStyle) : null;
 		this.lineWidth = data.lineWidth;
-		this.fillStyle = Style$1.parse(data.fillStyle);
+		this.fillStyle = data.fillStyle !== null ? Style$1.parse(data.fillStyle) : null;
 	};
 
 	/**
@@ -3494,7 +3494,7 @@
 		 *
 		 * @type {Vector2}
 		 */
-		this.from = new Vector2$1();
+		this.from = new Vector2();
 
 		/**
 		 * Final point of the line.
@@ -3503,7 +3503,7 @@
 		 *
 		 * @type {Vector2}
 		 */
-		this.to = new Vector2$1();
+		this.to = new Vector2();
 
 		/**
 		 * Dash line pattern to be used, if empty draws a solid line.
@@ -3521,7 +3521,7 @@
 		 *
 		 * @type {Style}
 		 */
-		this.strokeStyle = new ColorStyle$1("#000000");
+		this.strokeStyle = new ColorStyle("#000000");
 
 		/**
 		 * Line width of the line.
@@ -3539,7 +3539,7 @@
 	Line.prototype.style = function(context, viewport, canvas)
 	{
 		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle.get();
+		context.strokeStyle = this.strokeStyle.get(context);
 		context.setLineDash(this.dashPattern);
 	};
 
@@ -3558,7 +3558,7 @@
 		data.from = this.from.toArray();
 		data.to = this.to.toArray();
 		data.dashPattern = this.dashPattern;
-		data.strokeStyle = this.strokeStyle.serialize();
+		data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 		data.lineWidth = this.lineWidth;
 
 		return data;
@@ -3571,7 +3571,7 @@
 		this.to.fromArray(data.to);
 		this.from.fromArray(data.from);
 		this.dashPattern = data.dashPattern;
-		this.strokeStyle = Style$1.parse(data.strokeStyle);
+		this.strokeStyle = data.strokeStyle !== null ? Style$1.parse(data.strokeStyle) : null;
 		this.lineWidth = data.lineWidth;
 	};
 
@@ -3620,7 +3620,7 @@
 		 *
 		 * @type {Style}
 		 */
-		this.fillStyle = new ColorStyle$1("#000000");
+		this.fillStyle = new ColorStyle("#000000");
 
 		/**
 		 * Text align property. Same values as used for canvas text applies
@@ -3654,13 +3654,13 @@
 		
 		if(this.fillStyle !== null)
 		{
-			context.fillStyle = this.fillStyle.get();
+			context.fillStyle = this.fillStyle.get(context);
 			context.fillText(this.text, 0, 0);
 		}
 
 		if(this.strokeStyle !== null)
 		{
-			context.strokeStyle = this.strokeStyle.get();
+			context.strokeStyle = this.strokeStyle.get(context);
 			context.strokeText(this.text, 0, 0);
 		}
 	};
@@ -3671,9 +3671,9 @@
 
 		data.text = this.text;
 		data.font = this.font;
-		data.strokeStyle = this.strokeStyle.serialize();
+		data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 		data.lineWidth = this.lineWidth;
-		data.fillStyle = this.fillStyle.serialize();
+		data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 		data.textAlign = this.textAlign;
 		data.textBaseline = this.textBaseline;
 
@@ -3686,9 +3686,9 @@
 
 		this.text = data.text;
 		this.font = data.font;
-		this.strokeStyle = Style.parse(data.strokeStyle);
+		this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
 		this.lineWidth = data.lineWidth;
-		this.fillStyle = Style.parse(data.fillStyle);
+		this.fillStyle = data.fillStyle !== null ? Style.parse(data.fillStyle) : null;
 		this.textAlign = data.textAlign;
 		this.textBaseline = data.textBaseline;
 	};
@@ -3818,7 +3818,7 @@
 		/**
 		 * Size of the DOM element (in world coordinates).
 		 */
-		this.size = new Vector2$1(100, 100);
+		this.size = new Vector2(100, 100);
 	}
 
 	DOM.prototype = Object.create(Object2D.prototype);
@@ -4089,13 +4089,14 @@
 			{
 				if(this.fillStyle !== null)
 				{
-					context.fillStyle = this.fillStyle.get();
+					context.fillStyle = this.fillStyle.get(context);
 					context.fillText(sublines[j], this.position.x, this.position.y + offsetY);
 				}
 
 				if(this.strokeStyle !== null)
 				{
-					context.strokeStyle = this.strokeStyle.get();
+					context.lineWidth = this.lineWidth;
+					context.strokeStyle = this.strokeStyle.get(context);
 					context.strokeText(sublines[j], this.position.x, this.position.y + offsetY);
 				}
 
@@ -4137,14 +4138,14 @@
 		 *
 		 * @type {Vector2}
 		 */
-		this.fromCp = new Vector2$1();
+		this.fromCp = new Vector2();
 
 		/**
 		 * Final position control point, indicates the tangent of the bezier curve on the last point.
 		 *
 		 * @type {Vector2}
 		 */
-		this.toCp = new Vector2$1();
+		this.toCp = new Vector2();
 	}
 
 	BezierCurve.prototype = Object.create(Line.prototype);
@@ -4238,7 +4239,7 @@
 		 *
 		 * @type {Vector2}
 		 */
-		this.controlPoint = new Vector2$1();
+		this.controlPoint = new Vector2();
 	}
 
 	QuadraticCurve.prototype = Object.create(Line.prototype);
@@ -4358,7 +4359,7 @@
 
 		if(this.fillStyle !== null)
 		{	
-			context.fillStyle = this.fillStyle.get();
+			context.fillStyle = this.fillStyle.get(context);
 			RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
 			context.fill();
 		}
@@ -4366,7 +4367,7 @@
 		if(this.strokeStyle !== null)
 		{
 			context.lineWidth = this.lineWidth;
-			context.strokeStyle = this.strokeStyle.get();
+			context.strokeStyle = this.strokeStyle.get(context);
 			RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
 			context.stroke();
 		}
@@ -4403,7 +4404,7 @@
 		/**
 		 * Graph object containing the size of the object.
 		 */
-		this.box = new Box2(new Vector2$1(-50, -35), new Vector2$1(50, 35));
+		this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 		/**
 		 * Color of the box border line.
@@ -4489,9 +4490,9 @@
 		var data = Object2D.prototype.serialize.call(this, recursive);
 
 		data.box = this.box.toArray();
-		data.strokeStyle = this.strokeStyle.serialize();
+		data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 		data.lineWidth = this.lineWidth;
-		data.fillStyle = this.fillStyle.serialize();
+		data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 		data.min = this.min;
 		data.max = this.max;
 		data.data = this.data;
@@ -4504,170 +4505,12 @@
 		Object2D.prototype.parse.call(this, data, root);
 
 		this.box.fromArray(data.box);
-		this.strokeStyle = Style.parse(data.strokeStyle);
+		this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
 		this.lineWidth = data.lineWidth;
-		this.fillStyle = Style.parse(data.fillStyle);
+		this.fillStyle = data.fillStyle !== null ? Style.parse(data.fillStyle) : null;
 		this.min = data.min;
 		this.max = data.max;
 		this.data = data.data;
-	};
-
-	/**
-	 * Gauge object is used to draw gauge like graphic.
-	 *
-	 * It has a defined range, start angle, end angle and style controls.
-	 *
-	 * @class
-	 * @extends {Object2D}
-	 */
-	function Gauge()
-	{
-		Object2D.call(this);
-
-		/**
-		 * Value displayed by this gauge. It is displayed based on min and max values.
-		 *
-		 * @type {number}
-		 */
-		this.value = 50;
-
-		/**
-		 * Minimum value of the gauge. Necessary to display the value correctly to scale.
-		 *
-		 * @type {number}
-		 */
-		this.min = 0;
-
-		/**
-		 * Maximum value of the gauge. Necessary to display the value correctly to scale.
-		 *
-		 * @type {number}
-		 */
-		this.max = 100;
-
-		/**
-		 * Radius of the gauge object.
-		 *
-		 * @type {number}
-		 */
-		this.radius = 80;
-
-		/**
-		 * The line width of the gauge semi-circle.
-		 *
-		 * @type {number}
-		 */
-		this.lineWidth = 10;
-
-		/**
-		 * Start angle of the gauge.
-		 *
-		 * @type {number}
-		 */
-		this.startAngle = Math.PI;
-
-		/**
-		 * End angle of the gauge.
-		 *
-		 * @type {number}
-		 */
-		this.endAngle = 2 * Math.PI;
-
-		/**
-		 * If true draw a circular dial at the end of the gauge bar.
-		 *
-		 * @type {boolean}
-		 */
-		this.dial = false;
-
-		/**
-		 * Style of the base of the gauge object, (the background of the gauge bar).
-		 *
-		 * @type {Style}
-		 */
-		this.baseStyle = new ColorStyle$1("#e9ecf1");
-
-		/**
-		 * Style of the gauge bar.
-		 *
-		 * @type {Style}
-		 */
-		this.barStyle = new LinearGradientStyle();
-		this.barStyle.addColorStop(0, "#61ff50");
-		this.barStyle.addColorStop(0.5, "#ffbb50");
-		this.barStyle.addColorStop(1, "#ff3269");
-	}
-
-	Gauge.prototype = Object.create(Object2D.prototype);
-	Gauge.prototype.constructor = Gauge;
-	Gauge.prototype.type = "Gauge";
-	Object2D.register(Gauge, "Gauge");
-
-	Gauge.prototype.isInside = function(point)
-	{
-		return point.length() <= this.radius;
-	};
-
-	Gauge.prototype.draw = function(context, viewport, canvas)
-	{
-		var percentage = this.value / (this.max - this.min);
-
-		var range = [this.startAngle, this.endAngle];
-		var diff = range[1] - range[0];
-		var angle = range[0] + diff * percentage;
-		var center = [0, 0];
-
-		//Back
-		context.lineWidth = this.lineWidth;
-		context.lineCap = "round";
-		context.strokeStyle = this.baseStyle.get(context);
-		context.beginPath();
-		context.arc(center[0], center[1], this.radius, range[0], range[1]);
-		context.stroke();
-
-		// Fill gradient
-		var gradient = context.createLinearGradient(-this.radius, 0, this.radius, 0);
-
-		context.strokeStyle = this.barStyle.get(context);
-
-		context.lineWidth = this.lineWidth;
-		context.beginPath();
-		context.arc(center[0], center[1], this.radius, range[0], angle);
-		context.stroke();
-
-		if(this.dial)
-		{
-			var dialAngle = (this.startAngle - this.endAngle) * percentage;
-			var dialCenter = [Math.cos(dialAngle) * this.radius, Math.sin(dialAngle) * this.radius];
-			dialCenter[0] = dialCenter[0] - center[0];
-			dialCenter[1] = dialCenter[1] - center[1];
-
-			context.fillStyle = "#FFFFFF";
-			context.beginPath();
-			context.arc(dialCenter[0], dialCenter[1], this.lineWidth / 2, 0, 2 * Math.PI);
-			context.fill();
-
-			context.fillStyle = gradient;
-			context.beginPath();
-			context.arc(dialCenter[0], dialCenter[1], this.lineWidth / 3, 0, 2 * Math.PI);
-			context.fill();
-		}
-	};
-
-	Gauge.prototype.serialize = function(recursive)
-	{
-		var data = Object2D.prototype.serialize.call(this, recursive);
-
-		// TODO <ADD CODE HERE>
-
-		return data;
-	};
-
-	Gauge.prototype.parse = function(data, root)
-	{
-		Object2D.prototype.parse.call(this, data, root);
-
-		// TODO <ADD CODE HERE>
 	};
 
 	/**
@@ -4751,6 +4594,231 @@
 	};
 
 	/**
+	 * Linear gradient style, represents a gradient of colors from a point to another interpolating in between.
+	 *
+	 * Behind the of the two points used the color is solid.
+	 *
+	 * The get method returns a CanvasGradient https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient when generated.
+	 *
+	 * @class
+	 * @extends {GradientStyle}
+	 */
+	function LinearGradientStyle()
+	{
+	    GradientStyle.call(this);
+
+	    /**
+	     * The coordinates of the starting point of the gradient.
+	     *
+	     * @type {Vector2}
+	     */
+	    this.start = new Vector2(-100, 0);
+
+	    /**
+	     * The coordinates of the ending point of the gradient.
+	     *
+	     * @type {Vector2}
+	     */
+	    this.end = new Vector2(100, 0);
+	}
+
+	LinearGradientStyle.prototype = Object.create(GradientStyle.prototype);
+	Style$1.register(LinearGradientStyle, "LinearGradient");
+
+	LinearGradientStyle.prototype.get = function(context)
+	{
+	    var style = context.createLinearGradient(this.start.x, this.start.y, this.end.x, this.end.y);
+
+	    for(var i = 0; i < this.colors.length; i++)
+	    {
+	        style.addColorStop(this.colors[i].offset, this.colors[i].color);
+	    }
+
+	    return style;
+	};
+
+	LinearGradientStyle.prototype.serialize = function ()
+	{
+	    var data = GradientStyle.prototype.serialize.call(this);
+
+	    Object.assign(data, {
+	        type: "LinearGradient",
+	        start: this.start.toArray(),
+	        end: this.end.toArray()
+	    });
+
+	    return data;
+	};
+
+	LinearGradientStyle.prototype.parse = function (data)
+	{
+	    GradientStyle.prototype.parse.call(this, data);
+
+	    this.start.fromArray(data.start);
+	    this.end.fromArray(data.end);
+	};
+
+	/**
+	 * Gauge object is used to draw gauge like graphic.
+	 *
+	 * It has a defined range, start angle, end angle and style controls.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function Gauge()
+	{
+		Object2D.call(this);
+
+		/**
+		 * Value displayed by this gauge. It is displayed based on min and max values.
+		 *
+		 * @type {number}
+		 */
+		this.value = 50;
+
+		/**
+		 * Minimum value of the gauge. Necessary to display the value correctly to scale.
+		 *
+		 * @type {number}
+		 */
+		this.min = 0;
+
+		/**
+		 * Maximum value of the gauge. Necessary to display the value correctly to scale.
+		 *
+		 * @type {number}
+		 */
+		this.max = 100;
+
+		/**
+		 * Radius of the gauge object.
+		 *
+		 * @type {number}
+		 */
+		this.radius = 80;
+
+		/**
+		 * The line width of the gauge semi-circle.
+		 *
+		 * @type {number}
+		 */
+		this.lineWidth = 10;
+
+		/**
+		 * Start angle of the gauge.
+		 *
+		 * @type {number}
+		 */
+		this.startAngle = Math.PI;
+
+		/**
+		 * End angle of the gauge.
+		 *
+		 * @type {number}
+		 */
+		this.endAngle = 2 * Math.PI;
+
+		/**
+		 * If true draw a circular dial at the end of the gauge bar.
+		 *
+		 * @type {boolean}
+		 */
+		this.dial = false;
+
+		/**
+		 * Style of the base of the gauge object, (the background of the gauge bar).
+		 *
+		 * @type {Style}
+		 */
+		this.baseStyle = new ColorStyle("#e9ecf1");
+
+		/**
+		 * Style of the gauge bar.
+		 *
+		 * @type {Style}
+		 */
+		this.barStyle = new LinearGradientStyle();
+		this.barStyle.start.set(-100, 0);
+		this.barStyle.end.set(100, 0);
+		this.barStyle.addColorStop(0, "#e5ff50");
+		this.barStyle.addColorStop(0.5, "#50ff67");
+		this.barStyle.addColorStop(1, "#32adff");
+	}
+
+	Gauge.prototype = Object.create(Object2D.prototype);
+	Gauge.prototype.constructor = Gauge;
+	Gauge.prototype.type = "Gauge";
+	Object2D.register(Gauge, "Gauge");
+
+	Gauge.prototype.isInside = function(point)
+	{
+		return point.length() <= this.radius;
+	};
+
+	Gauge.prototype.draw = function(context, viewport, canvas)
+	{
+		var percentage = this.value / (this.max - this.min);
+
+		var range = [this.startAngle, this.endAngle];
+		var diff = range[1] - range[0];
+		var angle = range[0] + diff * percentage;
+		var center = [0, 0];
+
+		//Back
+		context.lineWidth = this.lineWidth;
+		context.lineCap = "round";
+		context.strokeStyle = this.baseStyle.get(context);
+		context.beginPath();
+		context.arc(center[0], center[1], this.radius, range[0], range[1]);
+		context.stroke();
+
+		// Fill gradient
+		var gradient = context.createLinearGradient(-this.radius, 0, this.radius, 0);
+
+		context.strokeStyle = this.barStyle.get(context);
+
+		context.lineWidth = this.lineWidth;
+		context.beginPath();
+		context.arc(center[0], center[1], this.radius, range[0], angle);
+		context.stroke();
+
+		if(this.dial)
+		{
+			var dialAngle = (this.startAngle - this.endAngle) * percentage;
+			var dialCenter = [Math.cos(dialAngle) * this.radius, Math.sin(dialAngle) * this.radius];
+			dialCenter[0] = dialCenter[0] - center[0];
+			dialCenter[1] = dialCenter[1] - center[1];
+
+			context.fillStyle = "#FFFFFF";
+			context.beginPath();
+			context.arc(dialCenter[0], dialCenter[1], this.lineWidth / 2, 0, 2 * Math.PI);
+			context.fill();
+
+			context.fillStyle = gradient;
+			context.beginPath();
+			context.arc(dialCenter[0], dialCenter[1], this.lineWidth / 3, 0, 2 * Math.PI);
+			context.fill();
+		}
+	};
+
+	Gauge.prototype.serialize = function(recursive)
+	{
+		var data = Object2D.prototype.serialize.call(this, recursive);
+
+		// TODO <ADD CODE HERE>
+
+		return data;
+	};
+
+	Gauge.prototype.parse = function(data, root)
+	{
+		Object2D.prototype.parse.call(this, data, root);
+
+		// TODO <ADD CODE HERE>
+	};
+
+	/**
 	 * Pattern style represents an opaque object describing a pattern, based on an image, a canvas, or a video.
 	 *
 	 * The get method returns a CanvasPattern object https://developer.mozilla.org/en-US/docs/Web/API/CanvasPattern created by the context.createPattern() method.
@@ -4803,14 +4871,20 @@
 	 */
 	PatternStyle.prototype.setTransform = function(transform)
 	{
-	    // TODO <ADD CODE HERE>
+	    this.matrix.m = transform;
+	    this.needsUpdate = true;
 	};
 
 	PatternStyle.prototype.get = function(context)
 	{
-	    var style = context.createPattern(this.source, this.repetition);
-	    style.setTransform(this.matrix.cssTransform());
-	    return style;
+	    if(this.needsUpdate || this.cache === null)
+	    {
+	        this.cache = context.createPattern(this.source, this.repetition);
+	        this.cache.setTransform(this.matrix.cssTransform());
+	        this.needsUpdate = false;
+	    }
+
+	    return this.cache;
 	};
 
 	PatternStyle.prototype.serialize = function ()
@@ -4834,71 +4908,6 @@
 	    this.matrix = new Matrix(data.matrix);
 	    this.repetition = data.repetition;
 	    this.source = data.source;
-	};
-
-	/**
-	 * Linear gradient style, represents a gradient of colors from a point to another interpolating in between.
-	 *
-	 * Behind the of the two points used the color is solid.
-	 *
-	 * The get method returns a CanvasGradient https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient when generated.
-	 *
-	 * @class
-	 * @extends {GradientStyle}
-	 */
-	function LinearGradientStyle$1()
-	{
-	    GradientStyle.call(this);
-
-	    /**
-	     * The coordinates of the starting point of the gradient.
-	     *
-	     * @type {Vector2}
-	     */
-	    this.start = new Vector2(0, 0);
-
-	    /**
-	     * The coordinates of the ending point of the gradient.
-	     *
-	     * @type {Vector2}
-	     */
-	    this.end = new Vector2(0, 0);
-	}
-
-	LinearGradientStyle$1.prototype = Object.create(GradientStyle.prototype);
-	Style$1.register(LinearGradientStyle$1, "LinearGradient");
-
-	LinearGradientStyle$1.prototype.get = function(context)
-	{
-	    var style = context.createLinearGradient(this.start.x, this.start.y, this.end.x, this.end.y);
-
-	    for(var i = 0; i < this.colors.length; i++)
-	    {
-	        style.addColorStop(this.colors[i].offset, this.colors[i].color);
-	    }
-
-	    return style;
-	};
-
-	LinearGradientStyle$1.prototype.serialize = function ()
-	{
-	    var data = GradientStyle.prototype.serialize.call(this);
-
-	    Object.assign(data, {
-	        type: "LinearGradient",
-	        start: this.start.toArray(),
-	        end: this.end.toArray()
-	    });
-
-	    return data;
-	};
-
-	LinearGradientStyle$1.prototype.parse = function (data)
-	{
-	    GradientStyle.prototype.parse.call(this, data);
-
-	    this.start.fromArray(data.start);
-	    this.end.fromArray(data.end);
 	};
 
 	/**
@@ -4949,6 +4958,7 @@
 
 	RadialGradientStyle.prototype.get = function(context)
 	{
+
 	    var style = context.createRadialGradient(this.start.x, this.start.y, this.startRadius, this.end.x, this.end.y, this.endRadius);
 
 	    for(var i = 0; i < this.colors.length; i++)
@@ -5900,7 +5910,7 @@
 	exports.Box2 = Box2;
 	exports.BoxMask = BoxMask;
 	exports.Circle = Circle;
-	exports.ColorStyle = ColorStyle$1;
+	exports.ColorStyle = ColorStyle;
 	exports.DOM = DOM;
 	exports.EventManager = EventManager;
 	exports.FileUtils = FileUtils;
@@ -5912,9 +5922,9 @@
 	exports.Image = Image;
 	exports.Key = Key;
 	exports.Line = Line;
-	exports.LinearGradientStyle = LinearGradientStyle$1;
+	exports.LinearGradientStyle = LinearGradientStyle;
 	exports.Mask = Mask;
-	exports.Matrix = Matrix$1;
+	exports.Matrix = Matrix;
 	exports.MultiLineText = MultiLineText;
 	exports.Node = Node;
 	exports.NodeConnector = NodeConnector;
@@ -5931,7 +5941,7 @@
 	exports.Style = Style$1;
 	exports.Text = Text;
 	exports.UUID = UUID;
-	exports.Vector2 = Vector2$1;
+	exports.Vector2 = Vector2;
 	exports.Viewport = Viewport;
 	exports.ViewportControls = ViewportControls;
 

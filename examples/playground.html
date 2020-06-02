@@ -274,6 +274,12 @@
 		"\t\tline.layer = -1;\n" +
 		"\t\tgroup.add(line);\n" +
 		"\t\tEscher.QuadraticCurve.curveHelper(line);";
+		multiline.fillStyle = new Escher.LinearGradientStyle();
+		multiline.fillStyle.start.set(-500, 0);
+		multiline.fillStyle.end.set(-300, 0);
+		multiline.fillStyle.addColorStop(0, "#e5ff50");
+		multiline.fillStyle.addColorStop(0.5, "#50ff67");
+		multiline.fillStyle.addColorStop(1, "#32adff");
 		group.add(multiline);
 
 		// Boxes group
