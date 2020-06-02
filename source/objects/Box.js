@@ -70,14 +70,14 @@ Box.prototype.draw = function(context, viewport, canvas)
 
 	if(this.fillStyle !== null)
 	{	
-		context.fillStyle = this.fillStyle.get();
+		context.fillStyle = this.fillStyle.get(context);
 		context.fillRect(this.box.min.x, this.box.min.y, width, height);
 	}
 
 	if(this.strokeStyle !== null)
 	{
 		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle.get();
+		context.strokeStyle = this.strokeStyle.get(context);
 		context.strokeRect(this.box.min.x, this.box.min.y, width, height);
 	}
 };

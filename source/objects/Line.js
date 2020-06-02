@@ -67,7 +67,7 @@ Object2D.register(Line, "Line");
 Line.prototype.style = function(context, viewport, canvas)
 {
 	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle.get();
+	context.strokeStyle = this.strokeStyle.get(context);
 	context.setLineDash(this.dashPattern);
 };
 

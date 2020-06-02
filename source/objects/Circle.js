@@ -72,14 +72,14 @@ Circle.prototype.draw = function(context, viewport, canvas)
 	
 	if(this.fillStyle !== null)
 	{	
-		context.fillStyle = this.fillStyle.get();
+		context.fillStyle = this.fillStyle.get(context);
 		context.fill();
 	}
 
 	if(this.strokeStyle !== null)
 	{
 		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle.get();
+		context.strokeStyle = this.strokeStyle.get(context);
 		context.stroke();
 	}
 };

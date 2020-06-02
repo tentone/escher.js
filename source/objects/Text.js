@@ -80,13 +80,13 @@ Text.prototype.draw = function(context, viewport, canvas)
 	
 	if(this.fillStyle !== null)
 	{
-		context.fillStyle = this.fillStyle.get();
+		context.fillStyle = this.fillStyle.get(context);
 		context.fillText(this.text, 0, 0);
 	}
 
 	if(this.strokeStyle !== null)
 	{
-		context.strokeStyle = this.strokeStyle.get();
+		context.strokeStyle = this.strokeStyle.get(context);
 		context.strokeText(this.text, 0, 0);
 	}
 };

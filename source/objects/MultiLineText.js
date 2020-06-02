@@ -83,13 +83,13 @@ MultiLineText.prototype.draw = function(context, viewport, canvas)
 		{
 			if(this.fillStyle !== null)
 			{
-				context.fillStyle = this.fillStyle.get();
+				context.fillStyle = this.fillStyle.get(context);
 				context.fillText(sublines[j], this.position.x, this.position.y + offsetY);
 			}
 
 			if(this.strokeStyle !== null)
 			{
-				context.strokeStyle = this.strokeStyle.get();
+				context.strokeStyle = this.strokeStyle.get(context);
 				context.strokeText(sublines[j], this.position.x, this.position.y + offsetY);
 			}
 
