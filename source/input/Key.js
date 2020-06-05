@@ -27,8 +27,25 @@ function Key()
 	this.justReleased = false;
 }
 
+/**
+ * Key down event.
+ *
+ * @type {number}
+ */
 Key.DOWN = -1;
+
+/**
+ * Key up event.
+ *
+ * @type {number}
+ */
 Key.UP = 1;
+
+/**
+ * Key reset event.
+ *
+ * @type {number}
+ */
 Key.RESET = 0;
 
 Key.prototype.constructor = Key;
@@ -68,6 +85,10 @@ Key.prototype.update = function(action)
 
 /**
  * Set this key attributes manually.
+ *
+ * @param {boolean} justPressed Indicates if the button was just pressed.
+ * @param {boolean} pressed Indicates if the button is currently being pressed.
+ * @param {boolean} justReleased Indicates if the button was just released.
  */
 Key.prototype.set = function(justPressed, pressed, justReleased)
 {
