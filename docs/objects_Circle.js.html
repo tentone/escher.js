@@ -27,6 +27,8 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>import {Object2D} from "../Object2D.js";
+import {ColorStyle} from "./style/ColorStyle";
+import {Style} from "./style/Style";
 
 /**
  * Circle object draw a circular object, into the canvas.
@@ -49,11 +51,15 @@ function Circle()
 	 * Style of the object border line.
 	 *
 	 * If set null it is ignored.
+	 *
+	 * @type {Style}
 	 */
-	this.strokeStyle = "#000000";
+	this.strokeStyle = new ColorStyle("#000000");
 
 	/**
 	 * Line width, only used if a valid strokeStyle is defined.
+	 *
+	 * @type {number}
 	 */
 	this.lineWidth = 1;
 
@@ -61,8 +67,10 @@ function Circle()
 	 * Background color of the circle.
 	 *
 	 * If set null it is ignored.
+	 *
+	 * @type {Style}
 	 */
-	this.fillStyle = "#FFFFFF";
+	this.fillStyle = new ColorStyle("#FFFFFF");
 }
 
 Circle.prototype = Object.create(Object2D.prototype);
@@ -77,12 +85,12 @@ Circle.prototype.isInside = function(point)
 
 Circle.prototype.onPointerEnter = function(pointer, viewport)
 {
-	this.fillStyle = "#CCCCCC";
+	this.fillStyle = new ColorStyle("#CCCCCC");
 };
 
 Circle.prototype.onPointerLeave = function(pointer, viewport)
 {
-	this.fillStyle = "#FFFFFF";
+	this.fillStyle = new ColorStyle("#FFFFFF");
 };
 
 Circle.prototype.draw = function(context, viewport, canvas)
@@ -92,14 +100,14 @@ Circle.prototype.draw = function(context, viewport, canvas)
 	
 	if(this.fillStyle !== null)
 	{	
-		context.fillStyle = this.fillStyle;
+		context.fillStyle = this.fillStyle.get(context);
 		context.fill();
 	}
 
 	if(this.strokeStyle !== null)
 	{
 		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
+		context.strokeStyle = this.strokeStyle.get(context);
 		context.stroke();
 	}
 };
@@ -109,9 +117,9 @@ Circle.prototype.serialize = function(recursive)
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
 	data.radius = this.radius;
-	data.strokeStyle = this.strokeStyle;
+	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle;
+	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 
 	return data;
 };
@@ -121,9 +129,9 @@ Circle.prototype.parse = function(data, root)
 	Object2D.prototype.parse.call(this, data, root);
 
 	this.radius = data.radius;
-	this.strokeStyle = data.strokeStyle;
+	this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
 	this.lineWidth = data.lineWidth;
-	this.fillStyle = data.fillStyle;
+	this.fillStyle = data.fillStyle !== null ? Style.parse(data.fillStyle) : null;
 };
 
 export {Circle};
@@ -137,13 +145,13 @@ export {Circle};
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun May 24 2020 22:40:54 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Jun 14 2020 20:43:33 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

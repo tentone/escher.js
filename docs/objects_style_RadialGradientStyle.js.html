@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: objects/style/RadialGradientStyle.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: objects/style/RadialGradientStyle.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {GradientStyle} from "./GradientStyle";
+import {Style} from "./Style";
+import {Vector2} from "../../math/Vector2";
+
+/**
+ * Radial gradient interpolates colors from a point to another point around up to a starting and finishing radius value.
+ *
+ * If the start and end point are the same it interpolates around the starting and ending radius forming a circle. Outside of the radius the color is solid.
+ *
+ * The get method returns a CanvasGradient https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient when generated.
+ *
+ * @class
+ * @extends {GradientStyle}
+ */
+function RadialGradientStyle()
+{
+    GradientStyle.call(this);
+
+    /**
+     * The coordinates of the starting circle of the gradient.
+     *
+     * @type {Vector2}
+     */
+    this.start = new Vector2(0, 0);
+
+    /**
+     * The radius of the starting circle.
+     *
+     * @type {number}
+     */
+    this.startRadius = 10;
+
+    /**
+     * The coordinates of the ending circle of the gradient.
+     *
+     * @type {Vector2}
+     */
+    this.end = new Vector2(0, 0);
+
+    /**
+     * The radius of the ending circle.
+     *
+     * @type {number}
+     */
+    this.endRadius = 50;
+}
+
+RadialGradientStyle.prototype = Object.create(GradientStyle.prototype);
+Style.register(RadialGradientStyle, "RadialGradient");
+
+RadialGradientStyle.prototype.get = function(context)
+{
+
+    var style = context.createRadialGradient(this.start.x, this.start.y, this.startRadius, this.end.x, this.end.y, this.endRadius);
+
+    for(var i = 0; i &lt; this.colors.length; i++)
+    {
+        style.addColorStop(this.colors[i].offset, this.colors[i].color);
+    }
+
+    return style;
+};
+
+RadialGradientStyle.prototype.serialize = function ()
+{
+    var data = GradientStyle.prototype.serialize.call(this);
+
+    Object.assign(data, {
+        type: "RadialGradient",
+        start: this.start.toArray(),
+        end: this.end.toArray(),
+        startRadius: this.startRadius,
+        endRadius: this.endRadius
+    });
+
+    return data;
+};
+
+RadialGradientStyle.prototype.parse = function (data)
+{
+    GradientStyle.prototype.parse.call(this, data);
+
+    this.start.fromArray(data.start);
+    this.end.fromArray(data.end);
+    this.startRadius = data.startRadius;
+    this.endRadius = data.endRadius;
+};
+
+export {RadialGradientStyle};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Jun 14 2020 20:43:33 GMT+0100 (Western European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

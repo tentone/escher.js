@@ -29,6 +29,7 @@
             <pre class="prettyprint source linenums"><code>import {Object2D} from "../../Object2D.js";
 import {Vector2} from "../../math/Vector2.js";
 import {Box2} from "../../math/Box2.js";
+import {ColorStyle} from "../style/ColorStyle";
 
 /**
  * Graph object is used to draw simple graph data into the canvas.
@@ -50,7 +51,7 @@ function Graph()
 	/**
 	 * Color of the box border line.
 	 */
-	this.strokeStyle = "rgb(0, 153, 255)";
+	this.strokeStyle = new ColorStyle("rgb(0, 153, 255)");
 
 	/**
 	 * Line width.
@@ -60,7 +61,7 @@ function Graph()
 	/**
 	 * Background color of the box.
 	 */
-	this.fillStyle = "rgba(0, 153, 255, 0.3)";
+	this.fillStyle = new ColorStyle("rgba(0, 153, 255, 0.3)");
 
 	/**
 	 * Minimum value of the graph.
@@ -101,7 +102,7 @@ Graph.prototype.draw = function(context, viewport, canvas)
 	var height = this.box.max.y - this.box.min.y;
 
 	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
+	context.strokeStyle = this.strokeStyle.get(context);
 	context.beginPath();
 		
 	var step = width / (this.data.length - 1);
@@ -118,7 +119,7 @@ Graph.prototype.draw = function(context, viewport, canvas)
 
 	if(this.fillStyle !== null)
 	{
-		context.fillStyle = this.fillStyle;
+		context.fillStyle = this.fillStyle.get(context);
 
 		context.lineTo(this.box.max.x, this.box.max.y);
 		context.lineTo(this.box.min.x, this.box.max.y);
@@ -131,9 +132,9 @@ Graph.prototype.serialize = function(recursive)
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
 	data.box = this.box.toArray();
-	data.strokeStyle = this.strokeStyle;
+	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle;
+	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 	data.min = this.min;
 	data.max = this.max;
 	data.data = this.data;
@@ -146,9 +147,9 @@ Graph.prototype.parse = function(data, root)
 	Object2D.prototype.parse.call(this, data, root);
 
 	this.box.fromArray(data.box);
-	this.strokeStyle = data.strokeStyle;
+	this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
 	this.lineWidth = data.lineWidth;
-	this.fillStyle = data.fillStyle;
+	this.fillStyle = data.fillStyle !== null ? Style.parse(data.fillStyle) : null;
 	this.min = data.min;
 	this.max = data.max;
 	this.data = data.data;
@@ -166,13 +167,13 @@ export {Graph};
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun May 24 2020 22:40:54 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Jun 14 2020 20:43:33 GMT+0100 (Western European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

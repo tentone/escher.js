@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: objects/style/PatternStyle.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: objects/style/PatternStyle.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {Style} from "./Style";
+import {GradientStyle} from "./GradientStyle";
+import {Matrix} from "../../math/Matrix";
+
+/**
+ * Pattern style represents an opaque object describing a pattern, based on an image, a canvas, or a video.
+ *
+ * The get method returns a CanvasPattern object https://developer.mozilla.org/en-US/docs/Web/API/CanvasPattern created by the context.createPattern() method.
+ *
+ * @class
+ * @extends {Style}
+ * @param {CanvasImageSource} source Source element of the pattern.
+ */
+function PatternStyle(source)
+{
+    Style.call(this);
+
+    /**
+     * Source of the pattern style. Can be a image, video or another canvas element
+     *
+     * By default a empty image element is created.
+     *
+     * @type {CanvasImageSource}
+     */
+    this.source = source || document.createElement("img");
+
+    /**
+     * Repetition indicates how the pattern image should be repeated.
+     *
+     * Possible values are "repeat", "repeat-x", "repeat-y" or "no-repeat".
+     *
+     * More information about this attribute here https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern.
+     *
+     * @type {string}
+     */
+    this.repetition = "repeat"
+
+    /**
+     * Transformation matrix applied to the pattern.
+     *
+     * The transformation allows to move, rotate and scale the pattern freely
+     *
+     * @type {Matrix}
+     */
+    this.matrix = new Matrix();
+}
+
+PatternStyle.prototype = Object.create(Style.prototype);
+Style.register(PatternStyle, "Pattern");
+
+/**
+ * Applies an 2x3 transformation matrix representing a linear transform to the pattern.
+ *
+ * @param {number[]} transform 2x3 Transformation matrix.
+ */
+PatternStyle.prototype.setTransform = function(transform)
+{
+    this.matrix.m = transform;
+    this.needsUpdate = true;
+};
+
+PatternStyle.prototype.get = function(context)
+{
+    if(this.needsUpdate || this.cache === null)
+    {
+        this.cache = context.createPattern(this.source, this.repetition);
+        this.cache.setTransform(this.matrix.cssTransform());
+        this.needsUpdate = false;
+    }
+
+    return this.cache;
+};
+
+PatternStyle.prototype.serialize = function ()
+{
+    var data = GradientStyle.prototype.serialize.call(this);
+
+    Object.assign(data, {
+        type: "Pattern",
+        matrix: this.matrix.m,
+        repetition: this.repetition,
+        source: this.source
+    });
+
+    return data;
+};
+
+PatternStyle.prototype.parse = function (data)
+{
+    GradientStyle.prototype.parse.call(this, data);
+
+    this.matrix = new Matrix(data.matrix);
+    this.repetition = data.repetition;
+    this.source = data.source;
+};
+
+export {PatternStyle};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Jun 14 2020 20:43:33 GMT+0100 (Western European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

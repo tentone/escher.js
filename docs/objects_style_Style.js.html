@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: objects/style/Style.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: objects/style/Style.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Style represents in a generic way a style applied to canvas drawing.
+ *
+ * Some styles (e.g. gradients, patterns) required a context to be generated this provides a generic way to share styles between objects.
+ *
+ * @class
+ */
+function Style()
+{
+    /**
+     * Cached style object pre-generated from previous calls. To avoid regenerating the same style object every cycle.
+     *
+     * @type {string | CanvasGradient | CanvasPattern}
+     */
+    this.cache = null;
+    // TODO &lt;USE THIS>
+
+    /**
+     * Indicates if the style object needs to be updated, should be used after applying changed to the style in order to generate a new object.
+     *
+     * @type {boolean}
+     */
+    this.needsUpdate = true;
+    // TODO &lt;USE THIS>
+}
+
+/**
+ * Get generated style object from style data and the drawing context.
+ *
+ * @param {CanvasRenderingContext2D} context Context being used to draw the object.
+ * @return {string | CanvasGradient | CanvasPattern} Return the canvas style object generated.
+ */
+Style.prototype.get = function(context) {};
+
+/**
+ * Serialize the style to JSON object, called by the objects using these styles.
+ *
+ * @return {Object} Serialized style data.
+ */
+Style.prototype.serialize = function() {};
+
+/**
+ * Parse the style attributes from JSON object data created with the serialize() method.
+ *
+ * @param {Object} data Serialized style data.
+ */
+Style.prototype.parse = function(data) {};
+
+/**
+ * List of available style types known by the application. Stores the object constructor by object type.
+ *
+ * @static
+ * @type {Map&lt;string, Function>}
+ */
+Style.types = new Map([]);
+
+/**
+ * Register a style type to be serializable. Associates the type string to the object constructor.
+ *
+ * @param {Function} constructor Style constructor.
+ * @param {string} type Style type name.
+ */
+Style.register = function(constructor, type)
+{
+    Style.types.set(type, constructor);
+};
+
+/**
+ * Parse style from JSON serialized data, created a style of the correct data type automatically and parses its data.
+ *
+ * @param data JSON serialized data.
+ * @returns {Style} Parsed style from the provided data.
+ */
+Style.parse = function (data)
+{
+    var style = new (Style.types.get(data.type))();
+    style.parse(data);
+    return style;
+};
+
+export {Style};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Jun 14 2020 20:43:33 GMT+0100 (Western European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

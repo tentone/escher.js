@@ -701,6 +701,9 @@ Matrix.prototype.getPosition = function()
 
 /**
  * Apply skew to this matrix.
+ *
+ * @param {number} radianX
+ * @param {number} radianY
  */
 Matrix.prototype.skew = function(radianX, radianY)
 {
@@ -1573,8 +1576,25 @@ function Key()
 	this.justReleased = false;
 }
 
+/**
+ * Key down event.
+ *
+ * @type {number}
+ */
 Key.DOWN = -1;
+
+/**
+ * Key up event.
+ *
+ * @type {number}
+ */
 Key.UP = 1;
+
+/**
+ * Key reset event.
+ *
+ * @type {number}
+ */
 Key.RESET = 0;
 
 Key.prototype.constructor = Key;
@@ -1614,6 +1634,10 @@ Key.prototype.update = function(action)
 
 /**
  * Set this key attributes manually.
+ *
+ * @param {boolean} justPressed Indicates if the button was just pressed.
+ * @param {boolean} pressed Indicates if the button is currently being pressed.
+ * @param {boolean} justReleased Indicates if the button was just released.
  */
 Key.prototype.set = function(justPressed, pressed, justReleased)
 {
@@ -3143,6 +3167,126 @@ BoxMask.prototype.clip = function(context, viewport, canvas)
 };
 
 /**
+ * Style represents in a generic way a style applied to canvas drawing.
+ *
+ * Some styles (e.g. gradients, patterns) required a context to be generated this provides a generic way to share styles between objects.
+ *
+ * @class
+ */
+function Style$1()
+{
+    /**
+     * Cached style object pre-generated from previous calls. To avoid regenerating the same style object every cycle.
+     *
+     * @type {string | CanvasGradient | CanvasPattern}
+     */
+    this.cache = null;
+    // TODO <USE THIS>
+
+    /**
+     * Indicates if the style object needs to be updated, should be used after applying changed to the style in order to generate a new object.
+     *
+     * @type {boolean}
+     */
+    this.needsUpdate = true;
+    // TODO <USE THIS>
+}
+
+/**
+ * Get generated style object from style data and the drawing context.
+ *
+ * @param {CanvasRenderingContext2D} context Context being used to draw the object.
+ * @return {string | CanvasGradient | CanvasPattern} Return the canvas style object generated.
+ */
+Style$1.prototype.get = function(context) {};
+
+/**
+ * Serialize the style to JSON object, called by the objects using these styles.
+ *
+ * @return {Object} Serialized style data.
+ */
+Style$1.prototype.serialize = function() {};
+
+/**
+ * Parse the style attributes from JSON object data created with the serialize() method.
+ *
+ * @param {Object} data Serialized style data.
+ */
+Style$1.prototype.parse = function(data) {};
+
+/**
+ * List of available style types known by the application. Stores the object constructor by object type.
+ *
+ * @static
+ * @type {Map<string, Function>}
+ */
+Style$1.types = new Map([]);
+
+/**
+ * Register a style type to be serializable. Associates the type string to the object constructor.
+ *
+ * @param {Function} constructor Style constructor.
+ * @param {string} type Style type name.
+ */
+Style$1.register = function(constructor, type)
+{
+    Style$1.types.set(type, constructor);
+};
+
+/**
+ * Parse style from JSON serialized data, created a style of the correct data type automatically and parses its data.
+ *
+ * @param data JSON serialized data.
+ * @returns {Style} Parsed style from the provided data.
+ */
+Style$1.parse = function (data)
+{
+    var style = new (Style$1.types.get(data.type))();
+    style.parse(data);
+    return style;
+};
+
+/**
+ * Simple solid color style represented and stored as a CSS color.
+ *
+ * @class
+ * @extends {Style}
+ * @param {string} color Color of the style, if undefined it is set to black.
+ */
+function ColorStyle(color)
+{
+    Style$1.call(this);
+
+    /**
+     * Color of this style object.
+     *
+     * @type {string}
+     */
+    this.color = color || "#000000";
+}
+
+ColorStyle.prototype = Object.create(Style$1.prototype);
+Style$1.register(ColorStyle, "Color");
+
+ColorStyle.prototype.get = function(context)
+{
+    return this.color;
+};
+
+ColorStyle.prototype.serialize = function()
+{
+    return {
+        type: "Color",
+        color: this.color
+    };
+};
+
+ColorStyle.prototype.parse = function(data)
+{
+    this.color = data.color;
+};
+
+/**
  * Box object draw a rectangular object.
  *
  * Can be used as a base to implement other box objects, already implements collision for pointer events.
@@ -3164,7 +3308,7 @@ function Box()
 	 *
 	 * If set null it is ignored.
 	 */
-	this.strokeStyle = "#000000";
+	this.strokeStyle = new ColorStyle("#000000");
 
 	/**
 	 * Line width, only used if a valid strokeStyle is defined.
@@ -3175,8 +3319,10 @@ function Box()
 	 * Background color of the box.
 	 *
 	 * If set null it is ignored.
+	 *
+	 * @param {Style}
 	 */
-	this.fillStyle = "#FFFFFF";
+	this.fillStyle = new ColorStyle("#FFFFFF");
 }
 
 Box.prototype = Object.create(Object2D.prototype);
@@ -3186,12 +3332,12 @@ Object2D.register(Box, "Box");
 
 Box.prototype.onPointerEnter = function(pointer, viewport)
 {
-	this.fillStyle = "#CCCCCC";
+	this.fillStyle = new ColorStyle("#CCCCCC");
 };
 
 Box.prototype.onPointerLeave = function(pointer, viewport)
 {
-	this.fillStyle = "#FFFFFF";
+	this.fillStyle = new ColorStyle("#FFFFFF");
 };
 
 Box.prototype.isInside = function(point)
@@ -3206,14 +3352,14 @@ Box.prototype.draw = function(context, viewport, canvas)
 
 	if(this.fillStyle !== null)
 	{	
-		context.fillStyle = this.fillStyle;
+		context.fillStyle = this.fillStyle.get(context);
 		context.fillRect(this.box.min.x, this.box.min.y, width, height);
 	}
 
 	if(this.strokeStyle !== null)
 	{
 		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
+		context.strokeStyle = this.strokeStyle.get(context);
 		context.strokeRect(this.box.min.x, this.box.min.y, width, height);
 	}
 };
@@ -3223,9 +3369,9 @@ Box.prototype.serialize = function(recursive)
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
 	data.box = this.box.toArray();
-	data.strokeStyle = this.strokeStyle;
+	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle;
+	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 
 	return data;
 };
@@ -3235,9 +3381,9 @@ Box.prototype.parse = function(data, root)
 	Object2D.prototype.parse.call(this, data, root);
 
 	this.box.fromArray(data.box);
-	this.strokeStyle = data.strokeStyle;
+	this.strokeStyle = data.strokeStyle !== null ? Style$1.parse(data.strokeStyle) : null;
 	this.lineWidth = data.lineWidth;
-	this.fillStyle = data.fillStyle;
+	this.fillStyle = data.fillStyle !== null ? Style$1.parse(data.fillStyle) : null;
 };
 
 /**
@@ -3261,11 +3407,15 @@ function Circle()
 	 * Style of the object border line.
 	 *
 	 * If set null it is ignored.
+	 *
+	 * @type {Style}
 	 */
-	this.strokeStyle = "#000000";
+	this.strokeStyle = new ColorStyle("#000000");
 
 	/**
 	 * Line width, only used if a valid strokeStyle is defined.
+	 *
+	 * @type {number}
 	 */
 	this.lineWidth = 1;
 
@@ -3273,8 +3423,10 @@ function Circle()
 	 * Background color of the circle.
 	 *
 	 * If set null it is ignored.
+	 *
+	 * @type {Style}
 	 */
-	this.fillStyle = "#FFFFFF";
+	this.fillStyle = new ColorStyle("#FFFFFF");
 }
 
 Circle.prototype = Object.create(Object2D.prototype);
@@ -3289,12 +3441,12 @@ Circle.prototype.isInside = function(point)
 
 Circle.prototype.onPointerEnter = function(pointer, viewport)
 {
-	this.fillStyle = "#CCCCCC";
+	this.fillStyle = new ColorStyle("#CCCCCC");
 };
 
 Circle.prototype.onPointerLeave = function(pointer, viewport)
 {
-	this.fillStyle = "#FFFFFF";
+	this.fillStyle = new ColorStyle("#FFFFFF");
 };
 
 Circle.prototype.draw = function(context, viewport, canvas)
@@ -3304,14 +3456,14 @@ Circle.prototype.draw = function(context, viewport, canvas)
 	
 	if(this.fillStyle !== null)
 	{	
-		context.fillStyle = this.fillStyle;
+		context.fillStyle = this.fillStyle.get(context);
 		context.fill();
 	}
 
 	if(this.strokeStyle !== null)
 	{
 		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
+		context.strokeStyle = this.strokeStyle.get(context);
 		context.stroke();
 	}
 };
@@ -3321,9 +3473,9 @@ Circle.prototype.serialize = function(recursive)
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
 	data.radius = this.radius;
-	data.strokeStyle = this.strokeStyle;
+	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle;
+	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 
 	return data;
 };
@@ -3333,9 +3485,9 @@ Circle.prototype.parse = function(data, root)
 	Object2D.prototype.parse.call(this, data, root);
 
 	this.radius = data.radius;
-	this.strokeStyle = data.strokeStyle;
+	this.strokeStyle = data.strokeStyle !== null ? Style$1.parse(data.strokeStyle) : null;
 	this.lineWidth = data.lineWidth;
-	this.fillStyle = data.fillStyle;
+	this.fillStyle = data.fillStyle !== null ? Style$1.parse(data.fillStyle) : null;
 };
 
 /**
@@ -3382,9 +3534,9 @@ function Line()
 	/**
 	 * Style of the object line.
 	 *
-	 * @type {string}
+	 * @type {Style}
 	 */
-	this.strokeStyle = "#000000";
+	this.strokeStyle = new ColorStyle("#000000");
 
 	/**
 	 * Line width of the line.
@@ -3402,7 +3554,7 @@ Object2D.register(Line, "Line");
 Line.prototype.style = function(context, viewport, canvas)
 {
 	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
+	context.strokeStyle = this.strokeStyle.get(context);
 	context.setLineDash(this.dashPattern);
 };
 
@@ -3421,7 +3573,7 @@ Line.prototype.serialize = function(recursive)
 	data.from = this.from.toArray();
 	data.to = this.to.toArray();
 	data.dashPattern = this.dashPattern;
-	data.strokeStyle = this.strokeStyle;
+	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 	data.lineWidth = this.lineWidth;
 
 	return data;
@@ -3434,7 +3586,7 @@ Line.prototype.parse = function(data, root)
 	this.to.fromArray(data.to);
 	this.from.fromArray(data.from);
 	this.dashPattern = data.dashPattern;
-	this.strokeStyle = data.strokeStyle;
+	this.strokeStyle = data.strokeStyle !== null ? Style$1.parse(data.strokeStyle) : null;
 	this.lineWidth = data.lineWidth;
 };
 
@@ -3467,7 +3619,7 @@ function Text()
 	/**
 	 * Style of the object border line. If set null it is ignored.
 	 *
-	 * @type {string}
+	 * @type {Style}
 	 */
 	this.strokeStyle = null;
 
@@ -3481,9 +3633,9 @@ function Text()
 	/**
 	 * CSS background color of the box. If set null it is ignored.
 	 *
-	 * @type {string}
+	 * @type {Style}
 	 */
-	this.fillStyle = "#000000";
+	this.fillStyle = new ColorStyle("#000000");
 
 	/**
 	 * Text align property. Same values as used for canvas text applies
@@ -3513,17 +3665,17 @@ Text.prototype.draw = function(context, viewport, canvas)
 {
 	context.font = this.font;
 	context.textAlign = this.textAlign;
-	context.textBaseline = this.textBaseline ;
+	context.textBaseline = this.textBaseline;
 	
 	if(this.fillStyle !== null)
 	{
-		context.fillStyle = this.fillStyle;
+		context.fillStyle = this.fillStyle.get(context);
 		context.fillText(this.text, 0, 0);
 	}
 
 	if(this.strokeStyle !== null)
 	{
-		context.strokeStyle = this.strokeStyle;
+		context.strokeStyle = this.strokeStyle.get(context);
 		context.strokeText(this.text, 0, 0);
 	}
 };
@@ -3534,9 +3686,9 @@ Text.prototype.serialize = function(recursive)
 
 	data.text = this.text;
 	data.font = this.font;
-	data.strokeStyle = this.strokeStyle;
+	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle;
+	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 	data.textAlign = this.textAlign;
 	data.textBaseline = this.textBaseline;
 
@@ -3549,9 +3701,9 @@ Text.prototype.parse = function(data, root)
 
 	this.text = data.text;
 	this.font = data.font;
-	this.strokeStyle = data.strokeStyle;
+	this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
 	this.lineWidth = data.lineWidth;
-	this.fillStyle = data.fillStyle;
+	this.fillStyle = data.fillStyle !== null ? Style.parse(data.fillStyle) : null;
 	this.textAlign = data.textAlign;
 	this.textBaseline = data.textBaseline;
 };
@@ -3871,130 +4023,6 @@ Pattern.prototype.parse = function(data, root)
 };
 
 /**
- * Graph object is used to draw simple graph data into the canvas.
- *
- * Graph data is composed of X, Y values.
- *
- * @class
- * @extends {Object2D}
- */
-function Graph()
-{
-	Object2D.call(this);
-
-	/**
-	 * Graph object containing the size of the object.
-	 */
-	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
-
-	/**
-	 * Color of the box border line.
-	 */
-	this.strokeStyle = "rgb(0, 153, 255)";
-
-	/**
-	 * Line width.
-	 */
-	this.lineWidth = 1;
-
-	/**
-	 * Background color of the box.
-	 */
-	this.fillStyle = "rgba(0, 153, 255, 0.3)";
-
-	/**
-	 * Minimum value of the graph.
-	 */
-	this.min = 0;
-
-	/**
-	 * Maximum value of the graph.
-	 */
-	this.max = 10;
-
-	/**
-	 * Data to be presented in the graph.
-	 *
-	 * The array should store numeric values.
-	 */
-	this.data = [];
-}
-
-Graph.prototype = Object.create(Object2D.prototype);
-Graph.prototype.constructor = Graph;
-Graph.prototype.type = "Graph";
-Object2D.register(Graph, "Graph");
-
-Graph.prototype.isInside = function(point)
-{
-	return this.box.containsPoint(point);
-};
-
-Graph.prototype.draw = function(context, viewport, canvas)
-{
-	if(this.data.length === 0)
-	{
-		return;
-	}
-	
-	var width = this.box.max.x - this.box.min.x;
-	var height = this.box.max.y - this.box.min.y;
-
-	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle;
-	context.beginPath();
-		
-	var step = width / (this.data.length - 1);
-	var gamma = this.max - this.min;
-
-	context.moveTo(this.box.min.x, this.box.max.y - ((this.data[0] - this.min) / gamma) * height);
-	
-	for(var i = 1, s = step; i < this.data.length; s += step, i++)
-	{
-		context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
-	}
-
-	context.stroke();
-
-	if(this.fillStyle !== null)
-	{
-		context.fillStyle = this.fillStyle;
-
-		context.lineTo(this.box.max.x, this.box.max.y);
-		context.lineTo(this.box.min.x, this.box.max.y);
-		context.fill();
-	}
-};
-
-Graph.prototype.serialize = function(recursive)
-{
-	var data = Object2D.prototype.serialize.call(this, recursive);
-
-	data.box = this.box.toArray();
-	data.strokeStyle = this.strokeStyle;
-	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle;
-	data.min = this.min;
-	data.max = this.max;
-	data.data = this.data;
-
-	return data;
-};
-
-Graph.prototype.parse = function(data, root)
-{
-	Object2D.prototype.parse.call(this, data, root);
-
-	this.box.fromArray(data.box);
-	this.strokeStyle = data.strokeStyle;
-	this.lineWidth = data.lineWidth;
-	this.fillStyle = data.fillStyle;
-	this.min = data.min;
-	this.max = data.max;
-	this.data = data.data;
-};
-
-/**
  * Multiple line text drawing directly into the canvas.
  *
  * Has support for basic text indent and alignment.
@@ -4076,13 +4104,14 @@ MultiLineText.prototype.draw = function(context, viewport, canvas)
 		{
 			if(this.fillStyle !== null)
 			{
-				context.fillStyle = this.fillStyle;
+				context.fillStyle = this.fillStyle.get(context);
 				context.fillText(sublines[j], this.position.x, this.position.y + offsetY);
 			}
 
 			if(this.strokeStyle !== null)
 			{
-				context.strokeStyle = this.strokeStyle;
+				context.lineWidth = this.lineWidth;
+				context.strokeStyle = this.strokeStyle.get(context);
 				context.strokeText(sublines[j], this.position.x, this.position.y + offsetY);
 			}
 
@@ -4345,7 +4374,7 @@ RoundedBox.prototype.draw = function(context, viewport, canvas)
 
 	if(this.fillStyle !== null)
 	{	
-		context.fillStyle = this.fillStyle;
+		context.fillStyle = this.fillStyle.get(context);
 		RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
 		context.fill();
 	}
@@ -4353,7 +4382,7 @@ RoundedBox.prototype.draw = function(context, viewport, canvas)
 	if(this.strokeStyle !== null)
 	{
 		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle;
+		context.strokeStyle = this.strokeStyle.get(context);
 		RoundedBox.roundRect(context, this.box.min.x, this.box.min.y, width, height, this.radius);
 		context.stroke();
 	}
@@ -4373,6 +4402,611 @@ RoundedBox.prototype.parse = function(data, root)
 	Box.prototype.parse.call(this, data, root);
 
 	this.radius = data.radius;
+};
+
+/**
+ * Graph object is used to draw simple graph data into the canvas.
+ *
+ * Graph data is composed of X, Y values.
+ *
+ * @class
+ * @extends {Object2D}
+ */
+function Graph()
+{
+	Object2D.call(this);
+
+	/**
+	 * Graph object containing the size of the object.
+	 */
+	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
+
+	/**
+	 * Color of the box border line.
+	 */
+	this.strokeStyle = new ColorStyle("rgb(0, 153, 255)");
+
+	/**
+	 * Line width.
+	 */
+	this.lineWidth = 1;
+
+	/**
+	 * Background color of the box.
+	 */
+	this.fillStyle = new ColorStyle("rgba(0, 153, 255, 0.3)");
+
+	/**
+	 * Minimum value of the graph.
+	 */
+	this.min = 0;
+
+	/**
+	 * Maximum value of the graph.
+	 */
+	this.max = 10;
+
+	/**
+	 * Data to be presented in the graph.
+	 *
+	 * The array should store numeric values.
+	 */
+	this.data = [];
+}
+
+Graph.prototype = Object.create(Object2D.prototype);
+Graph.prototype.constructor = Graph;
+Graph.prototype.type = "Graph";
+Object2D.register(Graph, "Graph");
+
+Graph.prototype.isInside = function(point)
+{
+	return this.box.containsPoint(point);
+};
+
+Graph.prototype.draw = function(context, viewport, canvas)
+{
+	if(this.data.length === 0)
+	{
+		return;
+	}
+	
+	var width = this.box.max.x - this.box.min.x;
+	var height = this.box.max.y - this.box.min.y;
+
+	context.lineWidth = this.lineWidth;
+	context.strokeStyle = this.strokeStyle.get(context);
+	context.beginPath();
+		
+	var step = width / (this.data.length - 1);
+	var gamma = this.max - this.min;
+
+	context.moveTo(this.box.min.x, this.box.max.y - ((this.data[0] - this.min) / gamma) * height);
+	
+	for(var i = 1, s = step; i < this.data.length; s += step, i++)
+	{
+		context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
+	}
+
+	context.stroke();
+
+	if(this.fillStyle !== null)
+	{
+		context.fillStyle = this.fillStyle.get(context);
+
+		context.lineTo(this.box.max.x, this.box.max.y);
+		context.lineTo(this.box.min.x, this.box.max.y);
+		context.fill();
+	}
+};
+
+Graph.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.box = this.box.toArray();
+	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
+	data.lineWidth = this.lineWidth;
+	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
+	data.min = this.min;
+	data.max = this.max;
+	data.data = this.data;
+
+	return data;
+};
+
+Graph.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.box.fromArray(data.box);
+	this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
+	this.lineWidth = data.lineWidth;
+	this.fillStyle = data.fillStyle !== null ? Style.parse(data.fillStyle) : null;
+	this.min = data.min;
+	this.max = data.max;
+	this.data = data.data;
+};
+
+/**
+ * Gradient color stop is used to create the gradients by their color sections.
+ *
+ * The gradients are ordered, each stop has a target color that becomes solid on its offset value triggering the next color stop if there is one.
+ *
+ * @param offset Offset of the color stop between 0 and 1 inclusive.
+ * @param color CSS color value.
+ * @constructor
+ */
+function GradientColorStop(offset, color)
+{
+    /**
+     * Offset of the color stop between 0 and 1 inclusive.
+     *
+     * @type {number}
+     */
+    this.offset = offset;
+
+    /**
+     * CSS color value.
+     *
+     * @type {string}
+     */
+    this.color = color;
+}
+
+/**
+ * Gradient style is used to represent any type of gradient based style.
+ *
+ * It handles any gradient based operations and should be used as base for other gradient styles.
+ *
+ * @class
+ * @extends {Style}
+ */
+function GradientStyle()
+{
+    Style$1.call(this);
+
+    /**
+     * List of colors that compose this gradient ordered.
+     *
+     * You need to add at least one color stop to have a visible gradient.
+     *
+     * @type {GradientColorStop[]}
+     */
+    this.colors = [];
+}
+
+GradientStyle.prototype = Object.create(Style$1.prototype);
+
+/**
+ * Add a new color stop defined by an offset and a color to the gradient.
+ *
+ * If the offset is not between 0 and 1 inclusive, or if color can't be parsed as a CSS color, an error is raised.
+ *
+ * @param {number} offset Offset of the color stop between 0 and 1 inclusive.
+ * @param {string} color CSS color value.
+ */
+GradientStyle.prototype.addColorStop = function(offset, color)
+{
+    this.colors.push(new GradientColorStop(offset, color));
+};
+
+GradientStyle.prototype.serialize = function()
+{
+    return {
+        colors: this.colors
+    };
+};
+
+GradientStyle.prototype.parse = function(data)
+{
+    var colors = [];
+    for(var i = 0; i < data.colors.length; i++)
+    {
+        colors.push(new GradientColorStop(data.colors[i].offset, data.colors[i].color));
+    }
+    this.colors = colors;
+};
+
+/**
+ * Linear gradient style, represents a gradient of colors from a point to another interpolating in between.
+ *
+ * Behind the of the two points used the color is solid.
+ *
+ * The get method returns a CanvasGradient https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient when generated.
+ *
+ * @class
+ * @extends {GradientStyle}
+ */
+function LinearGradientStyle()
+{
+    GradientStyle.call(this);
+
+    /**
+     * The coordinates of the starting point of the gradient.
+     *
+     * @type {Vector2}
+     */
+    this.start = new Vector2(-100, 0);
+
+    /**
+     * The coordinates of the ending point of the gradient.
+     *
+     * @type {Vector2}
+     */
+    this.end = new Vector2(100, 0);
+}
+
+LinearGradientStyle.prototype = Object.create(GradientStyle.prototype);
+Style$1.register(LinearGradientStyle, "LinearGradient");
+
+LinearGradientStyle.prototype.get = function(context)
+{
+    var style = context.createLinearGradient(this.start.x, this.start.y, this.end.x, this.end.y);
+
+    for(var i = 0; i < this.colors.length; i++)
+    {
+        style.addColorStop(this.colors[i].offset, this.colors[i].color);
+    }
+
+    return style;
+};
+
+LinearGradientStyle.prototype.serialize = function ()
+{
+    var data = GradientStyle.prototype.serialize.call(this);
+
+    Object.assign(data, {
+        type: "LinearGradient",
+        start: this.start.toArray(),
+        end: this.end.toArray()
+    });
+
+    return data;
+};
+
+LinearGradientStyle.prototype.parse = function (data)
+{
+    GradientStyle.prototype.parse.call(this, data);
+
+    this.start.fromArray(data.start);
+    this.end.fromArray(data.end);
+};
+
+/**
+ * Gauge object is used to draw gauge like graphic.
+ *
+ * It has a defined range, start angle, end angle and style controls.
+ *
+ * @class
+ * @extends {Object2D}
+ */
+function Gauge()
+{
+	Object2D.call(this);
+
+	/**
+	 * Value displayed by this gauge. It is displayed based on min and max values.
+	 *
+	 * @type {number}
+	 */
+	this.value = 50;
+
+	/**
+	 * Minimum value of the gauge. Necessary to display the value correctly to scale.
+	 *
+	 * @type {number}
+	 */
+	this.min = 0;
+
+	/**
+	 * Maximum value of the gauge. Necessary to display the value correctly to scale.
+	 *
+	 * @type {number}
+	 */
+	this.max = 100;
+
+	/**
+	 * Radius of the gauge object.
+	 *
+	 * @type {number}
+	 */
+	this.radius = 80;
+
+	/**
+	 * The line width of the gauge semi-circle.
+	 *
+	 * @type {number}
+	 */
+	this.lineWidth = 10;
+
+	/**
+	 * Start angle of the gauge.
+	 *
+	 * @type {number}
+	 */
+	this.startAngle = Math.PI;
+
+	/**
+	 * End angle of the gauge.
+	 *
+	 * @type {number}
+	 */
+	this.endAngle = 2 * Math.PI;
+
+	/**
+	 * If true draw a circular dial at the end of the gauge bar.
+	 *
+	 * @type {boolean}
+	 */
+	this.dial = false;
+
+	/**
+	 * Style of the base of the gauge object, (the background of the gauge bar).
+	 *
+	 * @type {Style}
+	 */
+	this.baseStyle = new ColorStyle("#e9ecf1");
+
+	/**
+	 * Style of the gauge bar.
+	 *
+	 * @type {Style}
+	 */
+	this.barStyle = new LinearGradientStyle();
+	this.barStyle.start.set(-100, 0);
+	this.barStyle.end.set(100, 0);
+	this.barStyle.addColorStop(0, "#e5ff50");
+	this.barStyle.addColorStop(0.5, "#50ff67");
+	this.barStyle.addColorStop(1, "#32adff");
+}
+
+Gauge.prototype = Object.create(Object2D.prototype);
+Gauge.prototype.constructor = Gauge;
+Gauge.prototype.type = "Gauge";
+Object2D.register(Gauge, "Gauge");
+
+Gauge.prototype.isInside = function(point)
+{
+	return point.length() <= this.radius;
+};
+
+Gauge.prototype.draw = function(context, viewport, canvas)
+{
+	var percentage = this.value / (this.max - this.min);
+
+	var range = [this.startAngle, this.endAngle];
+	var diff = range[1] - range[0];
+	var angle = range[0] + diff * percentage;
+	var center = [0, 0];
+
+	//Back
+	context.lineWidth = this.lineWidth;
+	context.lineCap = "round";
+	context.strokeStyle = this.baseStyle.get(context);
+	context.beginPath();
+	context.arc(center[0], center[1], this.radius, range[0], range[1]);
+	context.stroke();
+
+	// Fill gradient
+	var gradient = context.createLinearGradient(-this.radius, 0, this.radius, 0);
+
+	context.strokeStyle = this.barStyle.get(context);
+
+	context.lineWidth = this.lineWidth;
+	context.beginPath();
+	context.arc(center[0], center[1], this.radius, range[0], angle);
+	context.stroke();
+
+	if(this.dial)
+	{
+		var dialAngle = (this.startAngle - this.endAngle) * percentage;
+		var dialCenter = [Math.cos(dialAngle) * this.radius, Math.sin(dialAngle) * this.radius];
+		dialCenter[0] = dialCenter[0] - center[0];
+		dialCenter[1] = dialCenter[1] - center[1];
+
+		context.fillStyle = "#FFFFFF";
+		context.beginPath();
+		context.arc(dialCenter[0], dialCenter[1], this.lineWidth / 2, 0, 2 * Math.PI);
+		context.fill();
+
+		context.fillStyle = gradient;
+		context.beginPath();
+		context.arc(dialCenter[0], dialCenter[1], this.lineWidth / 3, 0, 2 * Math.PI);
+		context.fill();
+	}
+};
+
+Gauge.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	// TODO <ADD CODE HERE>
+
+	return data;
+};
+
+Gauge.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	// TODO <ADD CODE HERE>
+};
+
+/**
+ * Pattern style represents an opaque object describing a pattern, based on an image, a canvas, or a video.
+ *
+ * The get method returns a CanvasPattern object https://developer.mozilla.org/en-US/docs/Web/API/CanvasPattern created by the context.createPattern() method.
+ *
+ * @class
+ * @extends {Style}
+ * @param {CanvasImageSource} source Source element of the pattern.
+ */
+function PatternStyle(source)
+{
+    Style$1.call(this);
+
+    /**
+     * Source of the pattern style. Can be a image, video or another canvas element
+     *
+     * By default a empty image element is created.
+     *
+     * @type {CanvasImageSource}
+     */
+    this.source = source || document.createElement("img");
+
+    /**
+     * Repetition indicates how the pattern image should be repeated.
+     *
+     * Possible values are "repeat", "repeat-x", "repeat-y" or "no-repeat".
+     *
+     * More information about this attribute here https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern.
+     *
+     * @type {string}
+     */
+    this.repetition = "repeat";
+
+    /**
+     * Transformation matrix applied to the pattern.
+     *
+     * The transformation allows to move, rotate and scale the pattern freely
+     *
+     * @type {Matrix}
+     */
+    this.matrix = new Matrix();
+}
+
+PatternStyle.prototype = Object.create(Style$1.prototype);
+Style$1.register(PatternStyle, "Pattern");
+
+/**
+ * Applies an 2x3 transformation matrix representing a linear transform to the pattern.
+ *
+ * @param {number[]} transform 2x3 Transformation matrix.
+ */
+PatternStyle.prototype.setTransform = function(transform)
+{
+    this.matrix.m = transform;
+    this.needsUpdate = true;
+};
+
+PatternStyle.prototype.get = function(context)
+{
+    if(this.needsUpdate || this.cache === null)
+    {
+        this.cache = context.createPattern(this.source, this.repetition);
+        this.cache.setTransform(this.matrix.cssTransform());
+        this.needsUpdate = false;
+    }
+
+    return this.cache;
+};
+
+PatternStyle.prototype.serialize = function ()
+{
+    var data = GradientStyle.prototype.serialize.call(this);
+
+    Object.assign(data, {
+        type: "Pattern",
+        matrix: this.matrix.m,
+        repetition: this.repetition,
+        source: this.source
+    });
+
+    return data;
+};
+
+PatternStyle.prototype.parse = function (data)
+{
+    GradientStyle.prototype.parse.call(this, data);
+
+    this.matrix = new Matrix(data.matrix);
+    this.repetition = data.repetition;
+    this.source = data.source;
+};
+
+/**
+ * Radial gradient interpolates colors from a point to another point around up to a starting and finishing radius value.
+ *
+ * If the start and end point are the same it interpolates around the starting and ending radius forming a circle. Outside of the radius the color is solid.
+ *
+ * The get method returns a CanvasGradient https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient when generated.
+ *
+ * @class
+ * @extends {GradientStyle}
+ */
+function RadialGradientStyle()
+{
+    GradientStyle.call(this);
+
+    /**
+     * The coordinates of the starting circle of the gradient.
+     *
+     * @type {Vector2}
+     */
+    this.start = new Vector2(0, 0);
+
+    /**
+     * The radius of the starting circle.
+     *
+     * @type {number}
+     */
+    this.startRadius = 10;
+
+    /**
+     * The coordinates of the ending circle of the gradient.
+     *
+     * @type {Vector2}
+     */
+    this.end = new Vector2(0, 0);
+
+    /**
+     * The radius of the ending circle.
+     *
+     * @type {number}
+     */
+    this.endRadius = 50;
+}
+
+RadialGradientStyle.prototype = Object.create(GradientStyle.prototype);
+Style$1.register(RadialGradientStyle, "RadialGradient");
+
+RadialGradientStyle.prototype.get = function(context)
+{
+
+    var style = context.createRadialGradient(this.start.x, this.start.y, this.startRadius, this.end.x, this.end.y, this.endRadius);
+
+    for(var i = 0; i < this.colors.length; i++)
+    {
+        style.addColorStop(this.colors[i].offset, this.colors[i].color);
+    }
+
+    return style;
+};
+
+RadialGradientStyle.prototype.serialize = function ()
+{
+    var data = GradientStyle.prototype.serialize.call(this);
+
+    Object.assign(data, {
+        type: "RadialGradient",
+        start: this.start.toArray(),
+        end: this.end.toArray(),
+        startRadius: this.startRadius,
+        endRadius: this.endRadius
+    });
+
+    return data;
+};
+
+RadialGradientStyle.prototype.parse = function (data)
+{
+    GradientStyle.prototype.parse.call(this, data);
+
+    this.start.fromArray(data.start);
+    this.end.fromArray(data.end);
+    this.startRadius = data.startRadius;
+    this.endRadius = data.endRadius;
 };
 
 /**
@@ -5285,4 +5919,4 @@ FileUtils.select = function(onLoad, filter)
 	chooser.click();
 };
 
-export { AnimationTimer, BezierCurve, Box, Box2, BoxMask, Circle, DOM, EventManager, FileUtils, Graph, Helpers, Image, Key, Line, Mask, Matrix, MultiLineText, Node, NodeConnector, NodeGraph, NodeSocket, Object2D, Pattern, Pointer, QuadraticCurve, Renderer, RoundedBox, Text, UUID, Vector2, Viewport, ViewportControls };
+export { AnimationTimer, BezierCurve, Box, Box2, BoxMask, Circle, ColorStyle, DOM, EventManager, FileUtils, Gauge, GradientColorStop, GradientStyle, Graph, Helpers, Image, Key, Line, LinearGradientStyle, Mask, Matrix, MultiLineText, Node, NodeConnector, NodeGraph, NodeSocket, Object2D, Pattern, PatternStyle, Pointer, QuadraticCurve, RadialGradientStyle, Renderer, RoundedBox, Style$1 as Style, Text, UUID, Vector2, Viewport, ViewportControls };
