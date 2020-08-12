@@ -77,10 +77,25 @@ group.add(circle);
 var viewport = new Escher.Viewport(canvas);
 
 var renderer = new Escher.Renderer(canvas);
+
 renderer.createRenderLoop(group, viewport);
 ```
 
 ![graph](<https://tentone.github.io/escher.js/readme/hello.png>)
+
+- Alternatively you can create the render loop manually, the render loop should be called at the same rate as the screen is refreshed using the [requestAnimationFrame()](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) method or a `AnimationTimer` object from the library.
+
+```javascript
+var renderer = new Escher.Renderer(canvas);
+var controls = new ViewportControls(viewport);
+
+var timer = new AnimationTimer(function()
+{
+    controls.update(renderer.pointer);
+    renderer.update(group, viewport);
+});
+timer.start();
+```
 
 - If the application is not running a full screen canvas there might be some problems with the page scrolling around or showing context menu while interacting to prevent this we can disable/prevent these browser events.
   - In the example we use the `EventManager` object to create and manage these events but we could also create these directly attached to the DOM elements.
