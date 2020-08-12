@@ -1,7 +1,6 @@
 import {Object2D} from "../../Object2D.js";
 import {ColorStyle} from "../style/ColorStyle";
 import {LinearGradientStyle} from "../style/LinearGradientStyle";
-import {Vector2} from "../../math/Vector2";
 
 /**
  * Gauge object is used to draw gauge like graphic.
