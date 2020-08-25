@@ -44,7 +44,7 @@
 			Escher.Circle.call(this);
 
 			this.strokeStyle = null;
-			this.fillStyle = Math.random() > 0.5 ? "#00FF00" : "#0000FF";
+			this.fillStyle = Math.random() > 0.5 ? new Escher.ColorStyle("#00FF00") : new Escher.ColorStyle("#0000FF");
 
 			this.radius = 1.0;
 
@@ -85,7 +85,7 @@
 
 		var plane = new Escher.Box();
 		plane.strokeStyle = null;
-		plane.fillStyle = "#556677";
+		plane.fillStyle = new Escher.ColorStyle("#556677");
 		plane.onPointerLeave = null;
 		plane.onPointerEnter = null;
 		plane.box.min.set(-1000, 0);
