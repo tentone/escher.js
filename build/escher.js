@@ -3336,16 +3336,6 @@
 	Box.prototype.type = "Box";
 	Object2D.register(Box, "Box");
 
-	Box.prototype.onPointerEnter = function(pointer, viewport)
-	{
-		this.fillStyle = new ColorStyle("#CCCCCC");
-	};
-
-	Box.prototype.onPointerLeave = function(pointer, viewport)
-	{
-		this.fillStyle = new ColorStyle("#FFFFFF");
-	};
-
 	Box.prototype.isInside = function(point)
 	{
 		return this.box.containsPoint(point);
@@ -3443,16 +3433,6 @@
 	Circle.prototype.isInside = function(point)
 	{
 		return point.length() <= this.radius;
-	};
-
-	Circle.prototype.onPointerEnter = function(pointer, viewport)
-	{
-		this.fillStyle = new ColorStyle("#CCCCCC");
-	};
-
-	Circle.prototype.onPointerLeave = function(pointer, viewport)
-	{
-		this.fillStyle = new ColorStyle("#FFFFFF");
 	};
 
 	Circle.prototype.draw = function(context, viewport, canvas)
@@ -4827,7 +4807,16 @@
 	{
 		var data = Object2D.prototype.serialize.call(this, recursive);
 
-		// TODO <ADD CODE HERE>
+		data.value = this.value;
+		data.min = this.min;
+		data.max = this.max;
+		data.radius = this.radius;
+		data.lineWidth = this.lineWidth;
+		data.startAngle = this.startAngle;
+		data.endAngle = this.endAngle;
+		data.dial = this.dial;
+		data.baseStyle = this.baseStyle !== null ? this.baseStyle.serialize() : null;
+		data.barStyle = this.barStyle !== null ? this.barStyle.serialize() : null;
 
 		return data;
 	};
@@ -4836,7 +4825,16 @@
 	{
 		Object2D.prototype.parse.call(this, data, root);
 
-		// TODO <ADD CODE HERE>
+		this.value = data.value;
+		this.min = data.min;
+		this.max = data.max;
+		this.radius = data.radius;
+		this.lineWidth = data.lineWidth;
+		this.startAngle = data.startAngle;
+		this.endAngle = data.endAngle;
+		this.dial = data.dial;
+		this.baseStyle = data.baseStyle !== null ? Style.parse(data.baseStyle) : null;
+		this.barStyle = data.barStyle !== null ? Style.parse(data.barStyle) : null;
 	};
 
 	/**
