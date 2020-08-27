@@ -48,16 +48,6 @@ Box.prototype.constructor = Box;
 Box.prototype.type = "Box";
 Object2D.register(Box, "Box");
 
-Box.prototype.onPointerEnter = function(pointer, viewport)
-{
-	this.fillStyle = new ColorStyle("#CCCCCC");
-};
-
-Box.prototype.onPointerLeave = function(pointer, viewport)
-{
-	this.fillStyle = new ColorStyle("#FFFFFF");
-};
-
 Box.prototype.isInside = function(point)
 {
 	return this.box.containsPoint(point);

@@ -150,7 +150,16 @@ Gauge.prototype.serialize = function(recursive)
 {
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
-	// TODO <ADD CODE HERE>
+	data.value = this.value;
+	data.min = this.min;
+	data.max = this.max;
+	data.radius = this.radius;
+	data.lineWidth = this.lineWidth;
+	data.startAngle = this.startAngle;
+	data.endAngle = this.endAngle;
+	data.dial = this.dial;
+	data.baseStyle = this.baseStyle !== null ? this.baseStyle.serialize() : null;
+	data.barStyle = this.barStyle !== null ? this.barStyle.serialize() : null;
 
 	return data;
 };
@@ -159,7 +168,16 @@ Gauge.prototype.parse = function(data, root)
 {
 	Object2D.prototype.parse.call(this, data, root);
 
-	// TODO <ADD CODE HERE>
+	this.value = data.value;
+	this.min = data.min;
+	this.max = data.max;
+	this.radius = data.radius;
+	this.lineWidth = data.lineWidth;
+	this.startAngle = data.startAngle;
+	this.endAngle = data.endAngle;
+	this.dial = data.dial;
+	this.baseStyle = data.baseStyle !== null ? Style.parse(data.baseStyle) : null;
+	this.barStyle = data.barStyle !== null ? Style.parse(data.barStyle) : null;
 };
 
 

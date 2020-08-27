@@ -55,16 +55,6 @@ Circle.prototype.isInside = function(point)
 	return point.length() <= this.radius;
 };
 
-Circle.prototype.onPointerEnter = function(pointer, viewport)
-{
-	this.fillStyle = new ColorStyle("#CCCCCC");
-};
-
-Circle.prototype.onPointerLeave = function(pointer, viewport)
-{
-	this.fillStyle = new ColorStyle("#FFFFFF");
-};
-
 Circle.prototype.draw = function(context, viewport, canvas)
 {
 	context.beginPath();
