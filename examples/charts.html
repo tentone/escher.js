@@ -39,7 +39,6 @@
 		graph.box.min.set(-500, -50);
 		graph.box.max.set(500, 50);
 		graph.position.set(300, 400);
-		graph.strokeStyle = null;
 		graph.draggable = true;
 		group.add(graph);
 
@@ -75,6 +74,11 @@
 		{
 			graph.data.push((Math.cos(i / 3) + 1) * 3);
 		}
+
+		var graph = new Escher.PieChart();
+		graph.position.set(500, 1000);
+		graph.draggable = true;
+		group.add(graph);
 
 		var viewport = new Escher.Viewport(canvas);
 
