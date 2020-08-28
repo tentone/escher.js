@@ -30,6 +30,7 @@
 
 		// Gauge data
 		var gauge = new Escher.Gauge();
+		gauge.radius = 100;
 		gauge.position.set(100, 50);
 		gauge.draggable = true;
 		group.add(gauge);
@@ -48,37 +49,38 @@
 			graph.data.push(Math.random() * 9 + 1);
 		}
 
-		var graph = new Escher.ScatterGraph();
-		graph.radius = 5;
-		graph.box.min.set(-500, -50);
-		graph.box.max.set(500, 50);
-		graph.position.set(800, 600);
-		graph.draggable = true;
-		group.add(graph);
+		var scatter = new Escher.ScatterGraph();
+		scatter.radius = 5;
+		scatter.box.min.set(-500, -50);
+		scatter.box.max.set(500, 50);
+		scatter.position.set(800, 600);
+		scatter.draggable = true;
+		group.add(scatter);
 
-		Escher.Helpers.boxResizeTool(graph);
+		Escher.Helpers.boxResizeTool(scatter);
 		for(var i = 0; i < 100; i++)
 		{
-			graph.data.push((Math.cos(i / 3) + 1) * 3);
+			scatter.data.push((Math.cos(i / 3) + 1) * 3);
 		}
 
-		var graph = new Escher.BarGraph();
-		graph.box.min.set(-500, -50);
-		graph.box.max.set(500, 50);
-		graph.position.set(500, 1000);
-		graph.draggable = true;
-		group.add(graph);
+		var bar = new Escher.BarGraph();
+		bar.box.min.set(-500, -50);
+		bar.box.max.set(500, 50);
+		bar.position.set(500, 1000);
+		bar.draggable = true;
+		group.add(bar);
 
-		Escher.Helpers.boxResizeTool(graph);
+		Escher.Helpers.boxResizeTool(bar);
 		for(var i = 0; i < 100; i++)
 		{
-			graph.data.push((Math.cos(i / 3) + 1) * 3);
+			bar.data.push((Math.cos(i / 3) + 1) * 3);
 		}
 
-		var graph = new Escher.PieChart();
-		graph.position.set(500, 1000);
-		graph.draggable = true;
-		group.add(graph);
+		var pie = new Escher.PieChart();
+		pie.radius = 100;
+		pie.position.set(500, 1000);
+		pie.draggable = true;
+		group.add(pie);
 
 		var viewport = new Escher.Viewport(canvas);
 

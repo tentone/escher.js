@@ -19,9 +19,9 @@ function PieChart()
 	 * Each element should use the following structure {value: 0.0, fillStyle: ..., strokestyle: ...}.
 	 */
 	this.data = [
-		{value: 10, fillStyle: new ColorStyle("#FD5748"), strokeStyle: new ColorStyle("#AAAAAA")},
+		{value: 10, fillStyle: new ColorStyle("#FD5748"), strokeStyle: null},
 		{value: 15, fillStyle: new ColorStyle("#23AB48"), strokeStyle: new ColorStyle("#AAAAAA")},
-		{value: 5, fillStyle: new ColorStyle("#6285F8"), strokeStyle: new ColorStyle("#AAAAAA")}
+		{value: 5, fillStyle: new ColorStyle("#6285F8"), strokeStyle: null}
 	];
 
 	/**
@@ -76,26 +76,42 @@ PieChart.prototype.draw = function(context)
 	var angleRange = this.endAngle - this.startAngle;
 	var angle = this.startAngle;
 
+	// Fill
 	for(var i = 0; i < this.data.length; i++)
 	{
 		var section = angleRange * (this.data[i].value / sum);
-		
-		context.beginPath();
-		context.arc(0, 0, this.radius, angle, section);
-		
+
+		if(this.data[i].fillStyle)
+		{
+			context.beginPath();
+			context.moveTo(0, 0);
+			context.arc(0, 0, this.radius, angle, angle + section);
+			context.moveTo(0, 0);
+
+			context.fillStyle = this.data[i].fillStyle.get(context);
+			context.fill();
+		}
+
 		angle += section;
+	}
+
+	// Stroke
+	for(var i = 0; i < this.data.length; i++)
+	{
+		var section = angleRange * (this.data[i].value / sum);
 
 		if(this.data[i].strokeStyle)
 		{
+			context.beginPath();
+			context.moveTo(0, 0);
+			context.arc(0, 0, this.radius, angle, angle + section);
+			context.moveTo(0, 0);
+
 			context.strokeStyle = this.data[i].strokeStyle.get(context);
 			context.stroke();
 		}
 
-		if(this.data[i].fillStyle)
-		{
-			context.fillStyle = this.data[i].fillStyle.get(context);
-			context.fill();
-		}
+		angle += section;
 	}
 };
 
