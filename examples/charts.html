@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Charts</title>
+</head>
+<body style="font-size:30px; font-family: Arial;">
+	<!-- Page -->
+	<div style="position:absolute; width:100%; height:100%; top:0px; left:0px; overflow: hidden;">
+		<!-- Canvas -->
+		<canvas id="canvas" style="position:absolute; width:100%; height:100%; top:0px; left:0px;"></canvas>
+	</div>
+
+	<!-- Code -->
+	<script type="text/javascript" src="../build/escher.js"></script>
+	<script type="text/javascript">
+		// Canvas
+		var canvas = document.getElementById("canvas");
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+
+		// Resize canvas on window resize
+		window.onresize = function()
+		{
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		};
+
+		var group = new Escher.Object2D();
+
+		// Gauge data
+		var gauge = new Escher.Gauge();
+		gauge.position.set(100, 50);
+		gauge.draggable = true;
+		group.add(gauge);
+
+		// Graph data
+		var graph = new Escher.Graph();
+		graph.box.min.set(-500, -50);
+		graph.box.max.set(500, 50);
+		graph.position.set(300, 400);
+		graph.draggable = true;
+		group.add(graph);
+
+		Escher.Helpers.boxResizeTool(graph);
+		for(var i = 0; i < 300; i++)
+		{
+			graph.data.push(Math.random() * 9 + 1);
+		}
+
+		var viewport = new Escher.Viewport(canvas);
+
+		var renderer = new Escher.Renderer(canvas);
+		renderer.createRenderLoop(group, viewport);
+	</script>
+</body>
+</html>
