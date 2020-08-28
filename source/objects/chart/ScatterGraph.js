@@ -14,7 +14,7 @@ function ScatterGraph()
 	/**
 	 * Radius of each point represented in the scatter plot.
 	 */
-	this.radius = 3.0;
+	this.radius = 5.0;
 }
 
 ScatterGraph.prototype = Object.create(Graph.prototype);
