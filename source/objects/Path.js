@@ -1,6 +1,4 @@
 import {Object2D} from "../Object2D.js";
-import {Vector2} from "../math/Vector2.js";
-import {Box2} from "../math/Box2.js";
 import {ColorStyle} from "./style/ColorStyle";
 import {Style} from "./style/Style";
 
@@ -50,7 +48,7 @@ Path.prototype.constructor = Path;
 Path.prototype.type = "Path";
 Object2D.register(Path, "Path");
 
-Path.prototype.draw = function(context, viewport, canvas)
+Path.prototype.draw = function(context)
 {
 	if(this.fillStyle !== null)
 	{	

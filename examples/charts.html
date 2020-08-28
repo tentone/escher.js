@@ -83,6 +83,8 @@
 		group.add(pie);
 
 		var path = new Path2D("M10 10 h 80 v 80 h -80 Z");
+		var shape = new Escher.Path(path);
+		group.add(shape);
 
 		var viewport = new Escher.Viewport(canvas);
 
