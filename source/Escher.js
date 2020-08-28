@@ -29,6 +29,7 @@ export {ScatterGraph} from "./objects/chart/ScatterGraph.js";
 export {BarGraph} from "./objects/chart/BarGraph.js";
 export {Gauge} from "./objects/chart/Gauge.js";
 export {PieChart} from "./objects/chart/PieChart.js";
+export {Path} from "./objects/Path.js";
 
 export {Style} from "./objects/style/Style.js";
 export {ColorStyle} from "./objects/style/ColorStyle.js";
