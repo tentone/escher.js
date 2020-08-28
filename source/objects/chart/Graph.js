@@ -4,9 +4,9 @@ import {Box2} from "../../math/Box2.js";
 import {ColorStyle} from "../style/ColorStyle";
 
 /**
- * Graph object is used to draw simple graph data into the canvas.
+ * Graph object is used to plot numeric graph data into the canvas.
  *
- * Graph data is composed of X, Y values.
+ * Graph data is composed of Y values that are interpolated across the X axis.
  *
  * @class
  * @extends {Object2D}
@@ -74,9 +74,9 @@ Graph.prototype.draw = function(context, viewport, canvas)
 	var height = this.box.max.y - this.box.min.y;
 
 	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle.get(context);
+
 	context.beginPath();
-		
+			
 	var step = width / (this.data.length - 1);
 	var gamma = this.max - this.min;
 
@@ -87,12 +87,15 @@ Graph.prototype.draw = function(context, viewport, canvas)
 		context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
 	}
 
-	context.stroke();
+	if(this.strokeStyle !== null)
+	{
+		context.strokeStyle = this.strokeStyle.get(context);
+		context.stroke();
+	}
 
 	if(this.fillStyle !== null)
 	{
 		context.fillStyle = this.fillStyle.get(context);
-
 		context.lineTo(this.box.max.x, this.box.max.y);
 		context.lineTo(this.box.min.x, this.box.max.y);
 		context.fill();

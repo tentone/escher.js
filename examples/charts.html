@@ -39,6 +39,20 @@
 		graph.box.min.set(-500, -50);
 		graph.box.max.set(500, 50);
 		graph.position.set(300, 400);
+		graph.strokeStyle = null;
+		graph.draggable = true;
+		group.add(graph);
+
+		Escher.Helpers.boxResizeTool(graph);
+		for(var i = 0; i < 300; i++)
+		{
+			graph.data.push(Math.random() * 9 + 1);
+		}
+
+		var graph = new Escher.ScatterGraph();
+		graph.box.min.set(-500, -50);
+		graph.box.max.set(500, 50);
+		graph.position.set(800, 600);
 		graph.draggable = true;
 		group.add(graph);
 

@@ -4391,9 +4391,9 @@
 	};
 
 	/**
-	 * Graph object is used to draw simple graph data into the canvas.
+	 * Graph object is used to plot numeric graph data into the canvas.
 	 *
-	 * Graph data is composed of X, Y values.
+	 * Graph data is composed of Y values that are interpolated across the X axis.
 	 *
 	 * @class
 	 * @extends {Object2D}
@@ -4461,9 +4461,9 @@
 		var height = this.box.max.y - this.box.min.y;
 
 		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle.get(context);
+
 		context.beginPath();
-			
+				
 		var step = width / (this.data.length - 1);
 		var gamma = this.max - this.min;
 
@@ -4474,12 +4474,15 @@
 			context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
 		}
 
-		context.stroke();
+		if(this.strokeStyle !== null)
+		{
+			context.strokeStyle = this.strokeStyle.get(context);
+			context.stroke();
+		}
 
 		if(this.fillStyle !== null)
 		{
 			context.fillStyle = this.fillStyle.get(context);
-
 			context.lineTo(this.box.max.x, this.box.max.y);
 			context.lineTo(this.box.min.x, this.box.max.y);
 			context.fill();
@@ -4512,6 +4515,79 @@
 		this.min = data.min;
 		this.max = data.max;
 		this.data = data.data;
+	};
+
+	/**
+	 * Scatter graph can be used to draw numeric data as points.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function ScatterGraph()
+	{
+		Graph.call(this);
+
+		/**
+		 * Radius of each point represented in the scatter plot.
+		 */
+		this.radius = 1.0;
+	}
+
+	ScatterGraph.prototype = Object.create(Graph.prototype);
+	ScatterGraph.prototype.constructor = ScatterGraph;
+	ScatterGraph.prototype.type = "BarGraph";
+	Object2D.register(ScatterGraph, "BarGraph");
+
+	ScatterGraph.prototype.draw = function(context, viewport, canvas)
+	{
+		if(this.data.length === 0)
+		{
+			return;
+		}
+		
+		var width = this.box.max.x - this.box.min.x;
+		var height = this.box.max.y - this.box.min.y;
+
+		var step = width / (this.data.length - 1);
+		var gamma = this.max - this.min;
+
+		context.beginPath();
+
+		for(var i = 0, s = step; i < this.data.length; s += step, i++)
+		{
+			var y = this.box.max.y - ((this.data[i] - this.min) / gamma) * height;
+
+			context.moveTo(this.box.min.x + s, y);
+			context.arc(this.box.min.x + s, y, this.radius, 0, Math.PI * 2, true);
+		}
+
+		if(this.strokeStyle !== null)
+		{
+			context.strokeStyle = this.strokeStyle.get(context);
+			context.stroke();
+		}
+
+		if(this.fillStyle !== null)
+		{
+			context.fillStyle = this.fillStyle.get(context);
+			context.fill();
+		}
+	};
+
+	ScatterGraph.prototype.serialize = function(recursive)
+	{
+		var data = Graph.prototype.serialize.call(this, recursive);
+
+		data.radius = this.radius;
+
+		return data;
+	};
+
+	ScatterGraph.prototype.parse = function(data, root)
+	{
+		Graph.prototype.parse.call(this, data, root);
+
+		this.radius = data.radius;
 	};
 
 	/**
@@ -5957,6 +6033,7 @@
 	exports.RadialGradientStyle = RadialGradientStyle;
 	exports.Renderer = Renderer;
 	exports.RoundedBox = RoundedBox;
+	exports.ScatterGraph = ScatterGraph;
 	exports.Style = Style$1;
 	exports.Text = Text;
 	exports.UUID = UUID;
