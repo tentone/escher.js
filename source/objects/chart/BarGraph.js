@@ -23,8 +23,34 @@ BarGraph.prototype.draw = function(context, viewport, canvas)
 		return;
 	}
 	
+	var width = this.box.max.x - this.box.min.x;
+	var height = this.box.max.y - this.box.min.y;
 
-	// TODO <ADD CODE HERE>
+	var step = width / (this.data.length - 1);
+	var gamma = this.max - this.min;
+
+	context.lineWidth = this.lineWidth;
+	context.beginPath();
+
+	for(var i = 0, s = 0; i < this.data.length; s += step, i++)
+	{
+		var y = this.box.max.y - ((this.data[i] - this.min) / gamma) * height;
+
+		context.moveTo(this.box.min.x + s + this.radius, y);
+		context.arc(this.box.min.x + s, y, this.radius, 0, Math.PI * 2, true);
+	}
+
+	if(this.strokeStyle !== null)
+	{
+		context.strokeStyle = this.strokeStyle.get(context);
+		context.stroke();
+	}
+
+	if(this.fillStyle !== null)
+	{
+		context.fillStyle = this.fillStyle.get(context);
+		context.fill();
+	}
 };
 
 BarGraph.prototype.serialize = function(recursive)

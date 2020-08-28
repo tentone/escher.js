@@ -38,11 +38,11 @@ ScatterGraph.prototype.draw = function(context, viewport, canvas)
 	context.lineWidth = this.lineWidth;
 	context.beginPath();
 
-	for(var i = 0, s = step; i < this.data.length; s += step, i++)
+	for(var i = 0, s = 0; i < this.data.length; s += step, i++)
 	{
 		var y = this.box.max.y - ((this.data[i] - this.min) / gamma) * height;
 
-		context.moveTo(this.box.min.x + s, y);
+		context.moveTo(this.box.min.x + s + this.radius, y);
 		context.arc(this.box.min.x + s, y, this.radius, 0, Math.PI * 2, true);
 	}
 
