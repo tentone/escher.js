@@ -4636,9 +4636,8 @@
 		{
 			var y = this.box.max.y - ((this.data[i] - this.min) / gamma) * height;
 
-
-			context.moveTo(this.box.min.x + s, y);
-			context.rect(this.box.min.x + s - barHalfWidth, y, barWidth, height);
+			context.moveTo(this.box.min.x + s - barHalfWidth, y);
+			context.rect(this.box.min.x + s - barHalfWidth, y, barWidth, this.box.max.y - y);
 		}
 
 		if(this.strokeStyle !== null)
