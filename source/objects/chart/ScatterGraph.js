@@ -14,7 +14,7 @@ function ScatterGraph()
 	/**
 	 * Radius of each point represented in the scatter plot.
 	 */
-	this.radius = 1.0;
+	this.radius = 3.0;
 }
 
 ScatterGraph.prototype = Object.create(Graph.prototype);
@@ -35,6 +35,7 @@ ScatterGraph.prototype.draw = function(context, viewport, canvas)
 	var step = width / (this.data.length - 1);
 	var gamma = this.max - this.min;
 
+	context.lineWidth = this.lineWidth;
 	context.beginPath();
 
 	for(var i = 0, s = step; i < this.data.length; s += step, i++)

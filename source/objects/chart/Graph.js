@@ -26,9 +26,9 @@ function Graph()
 	this.strokeStyle = new ColorStyle("rgb(0, 153, 255)");
 
 	/**
-	 * Line width.
+	 * Line width used to stroke the graph data.
 	 */
-	this.lineWidth = 1;
+	this.lineWidth = 1.0;
 
 	/**
 	 * Background color of the box.
@@ -74,7 +74,6 @@ Graph.prototype.draw = function(context, viewport, canvas)
 	var height = this.box.max.y - this.box.min.y;
 
 	context.lineWidth = this.lineWidth;
-
 	context.beginPath();
 			
 	var step = width / (this.data.length - 1);
