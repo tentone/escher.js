@@ -26,6 +26,7 @@ export {QuadraticCurve} from "./objects/QuadraticCurve.js";
 export {RoundedBox} from "./objects/RoundedBox.js";
 export {Graph} from "./objects/chart/Graph.js";
 export {ScatterGraph} from "./objects/chart/ScatterGraph.js";
+export {BarGraph} from "./objects/chart/BarGraph.js";
 export {Gauge} from "./objects/chart/Gauge.js";
 
 export {Style} from "./objects/style/Style.js";

@@ -4591,6 +4591,82 @@
 	};
 
 	/**
+	 * Bar graph can be used to plot bar data into the canvas.
+	 *
+	 * @class
+	 * @extends {Object2D}
+	 */
+	function BarGraph()
+	{
+		Graph.call(this);
+
+		/**
+		 * Width of each bar in the graph.
+		 * 
+		 * If set null is automatically calculated from the graph size and number of points.
+		 */
+		this.barWidth = null;
+	}
+
+	BarGraph.prototype = Object.create(Graph.prototype);
+	BarGraph.prototype.constructor = BarGraph;
+	BarGraph.prototype.type = "BarGraph";
+	Object2D.register(BarGraph, "BarGraph");
+
+	BarGraph.prototype.draw = function(context, viewport, canvas)
+	{
+		if(this.data.length === 0)
+		{
+			return;
+		}
+		
+		var width = this.box.max.x - this.box.min.x;
+		var height = this.box.max.y - this.box.min.y;
+
+		var step = width / (this.data.length - 1);
+		var gamma = this.max - this.min;
+
+		context.lineWidth = this.lineWidth;
+		context.beginPath();
+
+		var barWidth = this.barWidth !== null ? this.barWidth : width / this.data.length;
+		var barHalfWidth = barWidth / 2.0;
+
+		for(var i = 0, s = 0; i < this.data.length; s += step, i++)
+		{
+			var y = this.box.max.y - ((this.data[i] - this.min) / gamma) * height;
+
+
+			context.moveTo(this.box.min.x + s, y);
+			context.rect(this.box.min.x + s - barHalfWidth, y, barWidth, height);
+		}
+
+		if(this.strokeStyle !== null)
+		{
+			context.strokeStyle = this.strokeStyle.get(context);
+			context.stroke();
+		}
+
+		if(this.fillStyle !== null)
+		{
+			context.fillStyle = this.fillStyle.get(context);
+			context.fill();
+		}
+	};
+
+	BarGraph.prototype.serialize = function(recursive)
+	{
+		var data = Graph.prototype.serialize.call(this, recursive);
+
+		return data;
+	};
+
+	BarGraph.prototype.parse = function(data, root)
+	{
+		Graph.prototype.parse.call(this, data, root);
+	};
+
+	/**
 	 * Gradient color stop is used to create the gradients by their color sections.
 	 *
 	 * The gradients are ordered, each stop has a target color that becomes solid on its offset value triggering the next color stop if there is one.
@@ -6000,6 +6076,7 @@
 	};
 
 	exports.AnimationTimer = AnimationTimer;
+	exports.BarGraph = BarGraph;
 	exports.BezierCurve = BezierCurve;
 	exports.Box = Box;
 	exports.Box2 = Box2;

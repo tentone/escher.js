@@ -1,4 +1,5 @@
 import {Object2D} from "../../Object2D.js";
+import {Graph} from "./Graph.js";
 
 /**
  * Bar graph can be used to plot bar data into the canvas.
@@ -9,6 +10,13 @@ import {Object2D} from "../../Object2D.js";
 function BarGraph()
 {
 	Graph.call(this);
+
+	/**
+	 * Width of each bar in the graph.
+	 * 
+	 * If set null is automatically calculated from the graph size and number of points.
+	 */
+	this.barWidth = null;
 }
 
 BarGraph.prototype = Object.create(Graph.prototype);
@@ -32,12 +40,16 @@ BarGraph.prototype.draw = function(context, viewport, canvas)
 	context.lineWidth = this.lineWidth;
 	context.beginPath();
 
+	var barWidth = this.barWidth !== null ? this.barWidth : width / this.data.length;
+	var barHalfWidth = barWidth / 2.0;
+
 	for(var i = 0, s = 0; i < this.data.length; s += step, i++)
 	{
 		var y = this.box.max.y - ((this.data[i] - this.min) / gamma) * height;
 
-		context.moveTo(this.box.min.x + s + this.radius, y);
-		context.arc(this.box.min.x + s, y, this.radius, 0, Math.PI * 2, true);
+
+		context.moveTo(this.box.min.x + s, y);
+		context.rect(this.box.min.x + s - barHalfWidth, y, barWidth, height);
 	}
 
 	if(this.strokeStyle !== null)
@@ -64,6 +76,5 @@ BarGraph.prototype.parse = function(data, root)
 {
 	Graph.prototype.parse.call(this, data, root);
 };
-
 
 export {BarGraph};
