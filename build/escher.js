@@ -4996,7 +4996,7 @@
 	 * @class
 	 * @extends {Object2D}
 	 */
-	function PieChart()
+	function PieChart(data)
 	{
 		Object2D.call(this);
 
@@ -5005,11 +5005,14 @@
 		 * 
 		 * Each element should use the following structure {value: 0.0, fillStyle: ..., strokestyle: ...}.
 		 */
-		this.data = [
-			{value: 10, fillStyle: new ColorStyle("#FD5748"), strokeStyle: null},
-			{value: 15, fillStyle: new ColorStyle("#23AB48"), strokeStyle: new ColorStyle("#AAAAAA")},
-			{value: 5, fillStyle: new ColorStyle("#6285F8"), strokeStyle: null}
-		];
+		this.data = data !== undefined ? data : [];
+
+		/**
+		 * Variable pie slice size based on their value compared to the biggest value.
+		 *
+		 * @type {boolean}
+		 */
+		this.sliceSize = false;
 
 		/**
 		 * Radius of the pie chart object.
@@ -5052,10 +5055,22 @@
 
 	PieChart.prototype.draw = function(context)
 	{
+		if(this.data.length === 0)
+		{
+			return;
+		}
+
 		var sum = 0;
+		var max = this.data[0].value;
+
 		for(var i = 0; i < this.data.length; i++)
 		{
 			sum += this.data[i].value;
+
+			if(this.data[i].value > max)
+			{
+				max = this.data[i].value;
+			}
 		}
 
 		context.lineWidth = this.lineWidth;
@@ -5072,7 +5087,9 @@
 			{
 				context.beginPath();
 				context.moveTo(0, 0);
-				context.arc(0, 0, this.radius, angle, angle + section);
+
+				var radius = this.sliceSize ? ((this.data[i].value / max) * this.radius) : this.radius;
+				context.arc(0, 0, radius, angle, angle + section);
 				context.moveTo(0, 0);
 
 				context.fillStyle = this.data[i].fillStyle.get(context);
@@ -5091,7 +5108,9 @@
 			{
 				context.beginPath();
 				context.moveTo(0, 0);
-				context.arc(0, 0, this.radius, angle, angle + section);
+
+				var radius = this.sliceSize ? ((this.data[i].value / max) * this.radius) : this.radius;
+				context.arc(0, 0, radius, angle, angle + section);
 				context.moveTo(0, 0);
 
 				context.strokeStyle = this.data[i].strokeStyle.get(context);
@@ -5110,6 +5129,7 @@
 		data.lineWidth = this.lineWidth;
 		data.startAngle = this.startAngle;
 		data.endAngle = this.endAngle;
+		data.sliceSize = this.sliceSize;
 
 		return data;
 	};
@@ -5122,6 +5142,7 @@
 		this.lineWidth = data.lineWidth;
 		this.startAngle = data.startAngle;
 		this.endAngle = data.endAngle;
+		this.sliceSize = data.sliceSize;
 	};
 
 	/**
@@ -5170,7 +5191,7 @@
 	Path.prototype.type = "Path";
 	Object2D.register(Path, "Path");
 
-	Path.prototype.draw = function(context, viewport, canvas)
+	Path.prototype.draw = function(context)
 	{
 		if(this.fillStyle !== null)
 		{	

@@ -76,9 +76,22 @@
 			bar.data.push((Math.cos(i / 3) + 1) * 3);
 		}
 
-		var pie = new Escher.PieChart();
+		var pieData = [
+			{value: 10, fillStyle: new Escher.ColorStyle("#FD5748"), strokeStyle: null},
+			{value: 15, fillStyle: new Escher.ColorStyle("#23AB48"), strokeStyle: null},
+			{value: 5, fillStyle: new Escher.ColorStyle("#6285F8"), strokeStyle: null}
+		];
+
+		var pie = new Escher.PieChart(pieData);
 		pie.radius = 100;
-		pie.position.set(500, 1000);
+		pie.position.set(1000, 1000);
+		pie.draggable = true;
+		group.add(pie);
+
+		var pie = new Escher.PieChart(pieData);
+		pie.sliceSize = true;
+		pie.radius = 200;
+		pie.position.set(500, 800);
 		pie.draggable = true;
 		group.add(pie);
 
