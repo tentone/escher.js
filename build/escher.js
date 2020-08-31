@@ -1,7 +1,7 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Escher = {}));
+	(global = global || self, factory(global.Escher = {}));
 }(this, (function (exports) { 'use strict';
 
 	/**
@@ -4530,6 +4530,11 @@
 		 * Radius of each point represented in the scatter plot.
 		 */
 		this.radius = 5.0;
+
+		/**
+		 * Draw lines betwen the points of the scatter graph.
+		 */
+		this.drawLine = false;
 	}
 
 	ScatterGraph.prototype = Object.create(Graph.prototype);
@@ -4551,6 +4556,26 @@
 		var gamma = this.max - this.min;
 
 		context.lineWidth = this.lineWidth;
+		
+		// Draw line
+		if(this.drawLine)
+		{
+			context.beginPath();
+			context.moveTo(this.box.min.x, this.box.max.y - ((this.data[0] - this.min) / gamma) * height);
+			
+			for(var i = 1, s = step; i < this.data.length; s += step, i++)
+			{
+				context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
+			}
+		
+			if(this.strokeStyle !== null)
+			{
+				context.strokeStyle = this.strokeStyle.get(context);
+				context.stroke();
+			}
+		}
+
+		// Draw circles
 		context.beginPath();
 
 		for(var i = 0, s = 0; i < this.data.length; s += step, i++)

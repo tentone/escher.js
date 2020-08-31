@@ -3330,16 +3330,6 @@ Box.prototype.constructor = Box;
 Box.prototype.type = "Box";
 Object2D.register(Box, "Box");
 
-Box.prototype.onPointerEnter = function(pointer, viewport)
-{
-	this.fillStyle = new ColorStyle("#CCCCCC");
-};
-
-Box.prototype.onPointerLeave = function(pointer, viewport)
-{
-	this.fillStyle = new ColorStyle("#FFFFFF");
-};
-
 Box.prototype.isInside = function(point)
 {
 	return this.box.containsPoint(point);
@@ -3437,16 +3427,6 @@ Object2D.register(Circle, "Circle");
 Circle.prototype.isInside = function(point)
 {
 	return point.length() <= this.radius;
-};
-
-Circle.prototype.onPointerEnter = function(pointer, viewport)
-{
-	this.fillStyle = new ColorStyle("#CCCCCC");
-};
-
-Circle.prototype.onPointerLeave = function(pointer, viewport)
-{
-	this.fillStyle = new ColorStyle("#FFFFFF");
 };
 
 Circle.prototype.draw = function(context, viewport, canvas)
@@ -4405,9 +4385,9 @@ RoundedBox.prototype.parse = function(data, root)
 };
 
 /**
- * Graph object is used to draw simple graph data into the canvas.
+ * Graph object is used to plot numeric graph data into the canvas.
  *
- * Graph data is composed of X, Y values.
+ * Graph data is composed of Y values that are interpolated across the X axis.
  *
  * @class
  * @extends {Object2D}
@@ -4427,9 +4407,9 @@ function Graph()
 	this.strokeStyle = new ColorStyle("rgb(0, 153, 255)");
 
 	/**
-	 * Line width.
+	 * Line width used to stroke the graph data.
 	 */
-	this.lineWidth = 1;
+	this.lineWidth = 1.0;
 
 	/**
 	 * Background color of the box.
@@ -4475,9 +4455,8 @@ Graph.prototype.draw = function(context, viewport, canvas)
 	var height = this.box.max.y - this.box.min.y;
 
 	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle.get(context);
 	context.beginPath();
-		
+			
 	var step = width / (this.data.length - 1);
 	var gamma = this.max - this.min;
 
@@ -4488,12 +4467,15 @@ Graph.prototype.draw = function(context, viewport, canvas)
 		context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
 	}
 
-	context.stroke();
+	if(this.strokeStyle !== null)
+	{
+		context.strokeStyle = this.strokeStyle.get(context);
+		context.stroke();
+	}
 
 	if(this.fillStyle !== null)
 	{
 		context.fillStyle = this.fillStyle.get(context);
-
 		context.lineTo(this.box.max.x, this.box.max.y);
 		context.lineTo(this.box.min.x, this.box.max.y);
 		context.fill();
@@ -4526,6 +4508,180 @@ Graph.prototype.parse = function(data, root)
 	this.min = data.min;
 	this.max = data.max;
 	this.data = data.data;
+};
+
+/**
+ * Scatter graph can be used to draw numeric data as points.
+ *
+ * @class
+ * @extends {Object2D}
+ */
+function ScatterGraph()
+{
+	Graph.call(this);
+
+	/**
+	 * Radius of each point represented in the scatter plot.
+	 */
+	this.radius = 5.0;
+
+	/**
+	 * Draw lines betwen the points of the scatter graph.
+	 */
+	this.drawLine = false;
+}
+
+ScatterGraph.prototype = Object.create(Graph.prototype);
+ScatterGraph.prototype.constructor = ScatterGraph;
+ScatterGraph.prototype.type = "BarGraph";
+Object2D.register(ScatterGraph, "BarGraph");
+
+ScatterGraph.prototype.draw = function(context, viewport, canvas)
+{
+	if(this.data.length === 0)
+	{
+		return;
+	}
+	
+	var width = this.box.max.x - this.box.min.x;
+	var height = this.box.max.y - this.box.min.y;
+
+	var step = width / (this.data.length - 1);
+	var gamma = this.max - this.min;
+
+	context.lineWidth = this.lineWidth;
+	
+	// Draw line
+	if(this.drawLine)
+	{
+		context.beginPath();
+		context.moveTo(this.box.min.x, this.box.max.y - ((this.data[0] - this.min) / gamma) * height);
+		
+		for(var i = 1, s = step; i < this.data.length; s += step, i++)
+		{
+			context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
+		}
+	
+		if(this.strokeStyle !== null)
+		{
+			context.strokeStyle = this.strokeStyle.get(context);
+			context.stroke();
+		}
+	}
+
+	// Draw circles
+	context.beginPath();
+
+	for(var i = 0, s = 0; i < this.data.length; s += step, i++)
+	{
+		var y = this.box.max.y - ((this.data[i] - this.min) / gamma) * height;
+
+		context.moveTo(this.box.min.x + s + this.radius, y);
+		context.arc(this.box.min.x + s, y, this.radius, 0, Math.PI * 2, true);
+	}
+
+	if(this.strokeStyle !== null)
+	{
+		context.strokeStyle = this.strokeStyle.get(context);
+		context.stroke();
+	}
+
+	if(this.fillStyle !== null)
+	{
+		context.fillStyle = this.fillStyle.get(context);
+		context.fill();
+	}
+};
+
+ScatterGraph.prototype.serialize = function(recursive)
+{
+	var data = Graph.prototype.serialize.call(this, recursive);
+
+	data.radius = this.radius;
+
+	return data;
+};
+
+ScatterGraph.prototype.parse = function(data, root)
+{
+	Graph.prototype.parse.call(this, data, root);
+
+	this.radius = data.radius;
+};
+
+/**
+ * Bar graph can be used to plot bar data into the canvas.
+ *
+ * @class
+ * @extends {Object2D}
+ */
+function BarGraph()
+{
+	Graph.call(this);
+
+	/**
+	 * Width of each bar in the graph.
+	 * 
+	 * If set null is automatically calculated from the graph size and number of points.
+	 */
+	this.barWidth = null;
+}
+
+BarGraph.prototype = Object.create(Graph.prototype);
+BarGraph.prototype.constructor = BarGraph;
+BarGraph.prototype.type = "BarGraph";
+Object2D.register(BarGraph, "BarGraph");
+
+BarGraph.prototype.draw = function(context, viewport, canvas)
+{
+	if(this.data.length === 0)
+	{
+		return;
+	}
+	
+	var width = this.box.max.x - this.box.min.x;
+	var height = this.box.max.y - this.box.min.y;
+
+	var step = width / (this.data.length - 1);
+	var gamma = this.max - this.min;
+
+	context.lineWidth = this.lineWidth;
+	context.beginPath();
+
+	var barWidth = this.barWidth !== null ? this.barWidth : width / this.data.length;
+	var barHalfWidth = barWidth / 2.0;
+
+	for(var i = 0, s = 0; i < this.data.length; s += step, i++)
+	{
+		var y = this.box.max.y - ((this.data[i] - this.min) / gamma) * height;
+
+		context.moveTo(this.box.min.x + s - barHalfWidth, y);
+		context.rect(this.box.min.x + s - barHalfWidth, y, barWidth, this.box.max.y - y);
+	}
+
+	if(this.strokeStyle !== null)
+	{
+		context.strokeStyle = this.strokeStyle.get(context);
+		context.stroke();
+	}
+
+	if(this.fillStyle !== null)
+	{
+		context.fillStyle = this.fillStyle.get(context);
+		context.fill();
+	}
+};
+
+BarGraph.prototype.serialize = function(recursive)
+{
+	var data = Graph.prototype.serialize.call(this, recursive);
+
+	return data;
+};
+
+BarGraph.prototype.parse = function(data, root)
+{
+	Graph.prototype.parse.call(this, data, root);
 };
 
 /**
@@ -4821,7 +4977,16 @@ Gauge.prototype.serialize = function(recursive)
 {
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
-	// TODO <ADD CODE HERE>
+	data.value = this.value;
+	data.min = this.min;
+	data.max = this.max;
+	data.radius = this.radius;
+	data.lineWidth = this.lineWidth;
+	data.startAngle = this.startAngle;
+	data.endAngle = this.endAngle;
+	data.dial = this.dial;
+	data.baseStyle = this.baseStyle !== null ? this.baseStyle.serialize() : null;
+	data.barStyle = this.barStyle !== null ? this.barStyle.serialize() : null;
 
 	return data;
 };
@@ -4830,7 +4995,255 @@ Gauge.prototype.parse = function(data, root)
 {
 	Object2D.prototype.parse.call(this, data, root);
 
-	// TODO <ADD CODE HERE>
+	this.value = data.value;
+	this.min = data.min;
+	this.max = data.max;
+	this.radius = data.radius;
+	this.lineWidth = data.lineWidth;
+	this.startAngle = data.startAngle;
+	this.endAngle = data.endAngle;
+	this.dial = data.dial;
+	this.baseStyle = data.baseStyle !== null ? Style.parse(data.baseStyle) : null;
+	this.barStyle = data.barStyle !== null ? Style.parse(data.barStyle) : null;
+};
+
+/**
+ * Pie chart represents a set of data in a pie like chart graph.
+ * 
+ * The values are drawn in porportion relative to their sum.
+ *
+ * @class
+ * @extends {Object2D}
+ */
+function PieChart(data)
+{
+	Object2D.call(this);
+
+	/**
+	 * Data to be displayed on the pie chart. Each element should store a value and a stroke/fill styles.
+	 * 
+	 * Each element should use the following structure {value: 0.0, fillStyle: ..., strokestyle: ...}.
+	 */
+	this.data = data !== undefined ? data : [];
+
+	/**
+	 * Variable pie slice size based on their value compared to the biggest value.
+	 *
+	 * @type {boolean}
+	 */
+	this.sliceSize = false;
+
+	/**
+	 * Radius of the pie chart object.
+	 *
+	 * @type {number}
+	 */
+	this.radius = 50;
+
+	/**
+	 * The line width of each pie chart section.
+	 *
+	 * @type {number}
+	 */
+	this.lineWidth = 1.0;
+
+	/**
+	 * Start angle of the pie chart.
+	 *
+	 * @type {number}
+	 */
+	this.startAngle = 0;
+
+	/**
+	 * End angle of the pie chart.
+	 *
+	 * @type {number}
+	 */
+	this.endAngle = 2 * Math.PI;
+}
+
+PieChart.prototype = Object.create(Object2D.prototype);
+PieChart.prototype.constructor = PieChart;
+PieChart.prototype.type = "PieChart";
+Object2D.register(PieChart, "PieChart");
+
+PieChart.prototype.isInside = function(point)
+{
+	return point.length() <= this.radius;
+};
+
+PieChart.prototype.draw = function(context)
+{
+	if(this.data.length === 0)
+	{
+		return;
+	}
+
+	var sum = 0;
+	var max = this.data[0].value;
+
+	for(var i = 0; i < this.data.length; i++)
+	{
+		sum += this.data[i].value;
+
+		if(this.data[i].value > max)
+		{
+			max = this.data[i].value;
+		}
+	}
+
+	context.lineWidth = this.lineWidth;
+	
+	var angleRange = this.endAngle - this.startAngle;
+	var angle = this.startAngle;
+
+	// Fill
+	for(var i = 0; i < this.data.length; i++)
+	{
+		var section = angleRange * (this.data[i].value / sum);
+
+		if(this.data[i].fillStyle)
+		{
+			context.beginPath();
+			context.moveTo(0, 0);
+
+			var radius = this.sliceSize ? ((this.data[i].value / max) * this.radius) : this.radius;
+			context.arc(0, 0, radius, angle, angle + section);
+			context.moveTo(0, 0);
+
+			context.fillStyle = this.data[i].fillStyle.get(context);
+			context.fill();
+		}
+
+		angle += section;
+	}
+
+	// Stroke
+	for(var i = 0; i < this.data.length; i++)
+	{
+		var section = angleRange * (this.data[i].value / sum);
+
+		if(this.data[i].strokeStyle)
+		{
+			context.beginPath();
+			context.moveTo(0, 0);
+
+			var radius = this.sliceSize ? ((this.data[i].value / max) * this.radius) : this.radius;
+			context.arc(0, 0, radius, angle, angle + section);
+			context.moveTo(0, 0);
+
+			context.strokeStyle = this.data[i].strokeStyle.get(context);
+			context.stroke();
+		}
+
+		angle += section;
+	}
+};
+
+PieChart.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.radius = this.radius;
+	data.lineWidth = this.lineWidth;
+	data.startAngle = this.startAngle;
+	data.endAngle = this.endAngle;
+	data.sliceSize = this.sliceSize;
+
+	return data;
+};
+
+PieChart.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.radius = data.radius;
+	this.lineWidth = data.lineWidth;
+	this.startAngle = data.startAngle;
+	this.endAngle = data.endAngle;
+	this.sliceSize = data.sliceSize;
+};
+
+/**
+ * Path object can be used to draw paths build from commands into the canvas.
+ * 
+ * These paths can be also obtained from SVG files as a SVG command list.
+ *
+ * @class
+ * @extends {Object2D}
+ */
+function Path(path)
+{
+	Object2D.call(this);
+
+	/**
+	 * Path2D object containing the commands to draw the shape into the canvas.
+	 * 
+	 * Check https://developer.mozilla.org/en-US/docs/Web/API/Path2D/Path2D for more details. 
+	 */
+	this.path = path !== undefined ? path : new Path2D("M10 10 h 80 v 80 h -80 Z");
+
+	/**
+	 * Style of the object border line.
+	 *
+	 * If set null it is ignored.
+	 */
+	this.strokeStyle = new ColorStyle("#000000");
+
+	/**
+	 * Line width, only used if a valid strokeStyle is defined.
+	 */
+	this.lineWidth = 1;
+
+	/**
+	 * Background color of the path.
+	 *
+	 * If set null it is ignored.
+	 *
+	 * @param {Style}
+	 */
+	this.fillStyle = new ColorStyle("#FFFFFF");
+}
+
+Path.prototype = Object.create(Object2D.prototype);
+Path.prototype.constructor = Path;
+Path.prototype.type = "Path";
+Object2D.register(Path, "Path");
+
+Path.prototype.draw = function(context)
+{
+	if(this.fillStyle !== null)
+	{	
+		context.fillStyle = this.fillStyle.get(context);
+		context.fill(this.path);
+	}
+
+	if(this.strokeStyle !== null)
+	{
+		context.lineWidth = this.lineWidth;
+		context.strokeStyle = this.strokeStyle.get(context);
+		context.stroke(this.path);
+	}
+};
+
+Path.prototype.serialize = function(recursive)
+{
+	var data = Object2D.prototype.serialize.call(this, recursive);
+
+	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
+	data.lineWidth = this.lineWidth;
+	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
+
+	return data;
+};
+
+Path.prototype.parse = function(data, root)
+{
+	Object2D.prototype.parse.call(this, data, root);
+
+	this.strokeStyle = data.strokeStyle !== null ? Style$1.parse(data.strokeStyle) : null;
+	this.lineWidth = data.lineWidth;
+	this.fillStyle = data.fillStyle !== null ? Style$1.parse(data.fillStyle) : null;
 };
 
 /**
@@ -5919,4 +6332,4 @@ FileUtils.select = function(onLoad, filter)
 	chooser.click();
 };
 
-export { AnimationTimer, BezierCurve, Box, Box2, BoxMask, Circle, ColorStyle, DOM, EventManager, FileUtils, Gauge, GradientColorStop, GradientStyle, Graph, Helpers, Image, Key, Line, LinearGradientStyle, Mask, Matrix, MultiLineText, Node, NodeConnector, NodeGraph, NodeSocket, Object2D, Pattern, PatternStyle, Pointer, QuadraticCurve, RadialGradientStyle, Renderer, RoundedBox, Style$1 as Style, Text, UUID, Vector2, Viewport, ViewportControls };
+export { AnimationTimer, BarGraph, BezierCurve, Box, Box2, BoxMask, Circle, ColorStyle, DOM, EventManager, FileUtils, Gauge, GradientColorStop, GradientStyle, Graph, Helpers, Image, Key, Line, LinearGradientStyle, Mask, Matrix, MultiLineText, Node, NodeConnector, NodeGraph, NodeSocket, Object2D, Path, Pattern, PatternStyle, PieChart, Pointer, QuadraticCurve, RadialGradientStyle, Renderer, RoundedBox, ScatterGraph, Style$1 as Style, Text, UUID, Vector2, Viewport, ViewportControls };
