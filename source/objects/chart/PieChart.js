@@ -1,5 +1,4 @@
 import {Object2D} from "../../Object2D.js";
-import { ColorStyle } from "../style/ColorStyle.js";
 
 /**
  * Pie chart represents a set of data in a pie like chart graph.
