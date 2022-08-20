@@ -6,7 +6,7 @@ import {Vector2} from "./Vector2.js";
  * The values of the matrix are stored as numeric array. The matrix can be applied to the canvas or DOM elements using CSS transforms.
  *
  * @class
- * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values.
+ * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values. Default is the identity matrix.
  */
 function Matrix(values)
 {
@@ -58,7 +58,7 @@ Matrix.prototype.identity = function()
 /**
  * Multiply another matrix by this one and store the result.
  *
- * @param {Matrix} mat
+ * @param {Matrix} mat Matrix to multiply by.
  */
 Matrix.prototype.multiply = function(mat)
 {
@@ -75,7 +75,7 @@ Matrix.prototype.multiply = function(mat)
 /**
  * Premultiply another matrix by this one and store the result.
  *
- * @param {Matrix} mat
+ * @param {Matrix} mat Matrix to premultiply by.
  */
 Matrix.prototype.premultiply = function(mat)
 {

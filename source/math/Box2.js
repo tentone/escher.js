@@ -6,20 +6,31 @@ import {Vector2} from "./Vector2.js";
  * Can be used for collision detection with points and other boxes.
  *
  * @class
- * @param {Vector2} min
- * @param {Vector2} max
+ * @param {Vector2} min Minimum point of the box.
+ * @param {Vector2} max Maximum point of the box.
  */
 function Box2(min, max)
 {
+	/**
+	 * Minimum point of the box.
+	 * 
+	 * @type {Vector2}
+	 */
 	this.min = (min !== undefined) ? min : new Vector2();
+
+	/**
+	 * Maximum point of the box.
+	 * 
+	 * @type {Vector2}
+	 */
 	this.max = (max !== undefined) ? max : new Vector2();
 }
 
 /**
  * Set the box values.
  *
- * @param {Vector2} min
- * @param {Vector2} max
+ * @param {Vector2} min Minimum point of the box.
+ * @param {Vector2} max Maximum point of the box.
  */
 Box2.prototype.set = function(min, max)
 {

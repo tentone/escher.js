@@ -118,7 +118,11 @@ Viewport.prototype.updateMatrix = function()
 		{
 			this.matrix.scale(this.scale, this.scale);
 		}
-
+		
+		if(this.center.x !== 0 && this.center.y !== 0) {
+			this.matrix.multiply(new Matrix([1, 0, 0, 1, this.center.x, this.center.y]));
+		}
+		
 		this.inverseMatrix = this.matrix.getInverse();
 		this.matrixNeedsUpdate = false;
 	}
@@ -129,6 +133,8 @@ Viewport.prototype.updateMatrix = function()
  *
  * The position of the object is used a central point, this method does not consider "box" attributes or other strucures in the object.
  *
+ * Uses the object's local transformation matrix and the canvas size to calculate the new position of the viewport.
+ * 
  * @param {Object2D} object Object to be centered on the viewport.
  * @param {Element} canvas Canvas element where the image is drawn.
  */
