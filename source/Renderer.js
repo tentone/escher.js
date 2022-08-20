@@ -1,6 +1,7 @@
 import {Pointer} from "./input/Pointer.js";
 import {ViewportControls} from "./controls/ViewportControls.js";
 import {AnimationTimer} from "./utils/AnimationTimer";
+import {EventManager} from "./utils/EventManager";
 
 /**
  * The renderer is responsible for drawing the objects structure into the canvas element and manage its rendering state.
@@ -20,11 +21,30 @@ function Renderer(canvas, options)
 		options =
 		{
 			alpha: true,
+			disableContextMenu: true,
 			imageSmoothingEnabled: true,
 			imageSmoothingQuality: "low",
 			globalCompositeOperation: "source-over"
 		};
 	}
+
+	/**
+	 * Event manager for DOM events created by the renderer.
+	 * 
+	 * Created automatically when the renderer is created. Disposed automatically when the renderer is destroyed.
+	 * 
+	 * @type {EventManager}
+	 */
+	this.manager = new EventManager();
+
+	if(options.disableContextMenu) {
+		this.manager.add(canvas, "contextmenu", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+		}); 
+	}
+
+	this.manager.create();
 
 	/**
 	 * Canvas DOM element, the user needs to manage the canvas state.
@@ -128,6 +148,7 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
  */
 Renderer.prototype.dispose = function(group, viewport, onUpdate)
 {
+	this.manager.destroy();
 	this.pointer.dispose();
 };
 

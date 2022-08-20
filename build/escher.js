@@ -508,7 +508,7 @@
 	 * The values of the matrix are stored as numeric array. The matrix can be applied to the canvas or DOM elements using CSS transforms.
 	 *
 	 * @class
-	 * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values.
+	 * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values. Default is the identity matrix.
 	 */
 	function Matrix(values)
 	{
@@ -560,7 +560,7 @@
 	/**
 	 * Multiply another matrix by this one and store the result.
 	 *
-	 * @param {Matrix} mat
+	 * @param {Matrix} mat Matrix to multiply by.
 	 */
 	Matrix.prototype.multiply = function(mat)
 	{
@@ -577,7 +577,7 @@
 	/**
 	 * Premultiply another matrix by this one and store the result.
 	 *
-	 * @param {Matrix} mat
+	 * @param {Matrix} mat Matrix to premultiply by.
 	 */
 	Matrix.prototype.premultiply = function(mat)
 	{
@@ -2129,7 +2129,7 @@
 		this.position = new Vector2(0, 0);
 		
 		/**
-		 * Center point of the viewport.
+		 * Center point of the viewport. Relative to the size of the canvas.
 		 * 
 		 * Rotation and zoom is applied relative to this point.
 		 * 
@@ -2202,6 +2202,15 @@
 		{
 			this.matrix.m = [1, 0, 0, 1, this.position.x, this.position.y];
 
+			// if(this.center.x !== 0 && this.center.y !== 0) {
+			// 	this.matrix.multiply(new Matrix([1, 0, 0, 1, -this.center.x, -this.center.y]));
+			// }
+
+			if(this.scale !== 1)
+			{
+				this.matrix.scale(this.scale, this.scale);
+			}
+			
 			if(this.rotation !== 0)
 			{		
 				var c = Math.cos(this.rotation);
@@ -2209,11 +2218,10 @@
 				this.matrix.multiply(new Matrix([c, s, -s, c, 0, 0]));
 			}
 
-			if(this.scale !== 1)
-			{
-				this.matrix.scale(this.scale, this.scale);
+			if(this.center.x !== 0 && this.center.y !== 0) {
+				this.matrix.multiply(new Matrix([1, 0, 0, 1, this.center.x, this.center.y]));
 			}
-
+			
 			this.inverseMatrix = this.matrix.getInverse();
 			this.matrixNeedsUpdate = false;
 		}
@@ -2224,6 +2232,8 @@
 	 *
 	 * The position of the object is used a central point, this method does not consider "box" attributes or other strucures in the object.
 	 *
+	 * Uses the object's local transformation matrix and the canvas size to calculate the new position of the viewport.
+	 * 
 	 * @param {Object2D} object Object to be centered on the viewport.
 	 * @param {Element} canvas Canvas element where the image is drawn.
 	 */
@@ -2273,6 +2283,8 @@
 
 		/**
 		 * Flag to indicate if the viewport should move when scalling.
+		 * 
+		 * The viewport will simulataniously move to the pointer position while scalling.
 		 *
 		 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
 		 *
@@ -2291,6 +2303,8 @@
 
 		/**
 		 * Value of the initial point of rotation if the viewport is being rotated.
+		 * 
+		 * Is the value of the pointer position when the rotation starts.
 		 *
 		 * Is set to null when the viewport is not being rotated.
 		 *
@@ -2300,6 +2314,8 @@
 
 		/**
 		 * Initial rotation of the viewport.
+		 * 
+		 * Is set to the current rotation of the viewport when the rotation starts.
 		 *
 		 * @type {number}
 		 */
@@ -2460,11 +2476,31 @@
 			options =
 			{
 				alpha: true,
+				disableContextMenu: true,
 				imageSmoothingEnabled: true,
 				imageSmoothingQuality: "low",
 				globalCompositeOperation: "source-over"
 			};
 		}
+
+		/**
+		 * Event manager for DOM events created by the renderer.
+		 * 
+		 * Created automatically when the renderer is created. Disposed automatically when the renderer is destroyed.
+		 * 
+		 * @type {EventManager}
+		 */
+		this.manager = new EventManager();
+
+		if(options.disableContextMenu) {
+			this.manager.add(canvas,"contextmenu",function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				return false;
+			}); 
+		}
+
+		this.manager.create();
 
 		/**
 		 * Canvas DOM element, the user needs to manage the canvas state.
@@ -2568,6 +2604,7 @@
 	 */
 	Renderer.prototype.dispose = function(group, viewport, onUpdate)
 	{
+		this.manager.destroy();
 		this.pointer.dispose();
 	};
 
@@ -2822,20 +2859,31 @@
 	 * Can be used for collision detection with points and other boxes.
 	 *
 	 * @class
-	 * @param {Vector2} min
-	 * @param {Vector2} max
+	 * @param {Vector2} min Minimum point of the box.
+	 * @param {Vector2} max Maximum point of the box.
 	 */
 	function Box2(min, max)
 	{
+		/**
+		 * Minimum point of the box.
+		 * 
+		 * @type {Vector2}
+		 */
 		this.min = (min !== undefined) ? min : new Vector2();
+
+		/**
+		 * Maximum point of the box.
+		 * 
+		 * @type {Vector2}
+		 */
 		this.max = (max !== undefined) ? max : new Vector2();
 	}
 
 	/**
 	 * Set the box values.
 	 *
-	 * @param {Vector2} min
-	 * @param {Vector2} max
+	 * @param {Vector2} min Minimum point of the box.
+	 * @param {Vector2} max Maximum point of the box.
 	 */
 	Box2.prototype.set = function(min, max)
 	{

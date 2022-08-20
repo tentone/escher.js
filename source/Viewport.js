@@ -34,7 +34,7 @@ function Viewport(canvas)
 	this.position = new Vector2(0, 0);
 	
 	/**
-	 * Center point of the viewport. Reative to the size of the canvas.
+	 * Center point of the viewport. Relative to the size of the canvas.
 	 * 
 	 * Rotation and zoom is applied relative to this point.
 	 * 
@@ -107,6 +107,15 @@ Viewport.prototype.updateMatrix = function()
 	{
 		this.matrix.m = [1, 0, 0, 1, this.position.x, this.position.y];
 
+		// if(this.center.x !== 0 && this.center.y !== 0) {
+		// 	this.matrix.multiply(new Matrix([1, 0, 0, 1, -this.center.x, -this.center.y]));
+		// }
+
+		if(this.scale !== 1)
+		{
+			this.matrix.scale(this.scale, this.scale);
+		}
+		
 		if(this.rotation !== 0)
 		{		
 			var c = Math.cos(this.rotation);
@@ -114,11 +123,6 @@ Viewport.prototype.updateMatrix = function()
 			this.matrix.multiply(new Matrix([c, s, -s, c, 0, 0]));
 		}
 
-		if(this.scale !== 1)
-		{
-			this.matrix.scale(this.scale, this.scale);
-		}
-		
 		if(this.center.x !== 0 && this.center.y !== 0) {
 			this.matrix.multiply(new Matrix([1, 0, 0, 1, this.center.x, this.center.y]));
 		}
