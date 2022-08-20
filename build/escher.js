@@ -273,6 +273,14 @@
 		this.y = Math.max(this.y, v.y);
 	};
 
+	/**
+	 * Clamp the vector coordinates to the range defined by two vectors.
+	 * 
+	 * Applied to x and y independently.
+	 * 
+	 * @param {Vector2} min Minimum value.
+	 * @param {Vector2} max Maximum value.
+	 */
 	Vector2.prototype.clamp = function(min, max)
 	{
 		// assumes min < max, componentwise
@@ -280,6 +288,12 @@
 		this.y = Math.max(min.y, Math.min(max.y, this.y));
 	};
 
+	/**
+	 * Clamp the vector coordinates to the range defined by two scalars.
+	 * 
+	 * @param {number} minVal Minimum value.
+	 * @param {number} maxVal Maximum value.
+	 */
 	Vector2.prototype.clampScalar = function(minVal, maxVal)
 	{
 		this.x = Math.max(minVal, Math.min(maxVal, this.x));
@@ -388,13 +402,16 @@
 	};
 
 	/**
-	 * Computes the angle in radians with respect to the positive x-axis
+	 * Computes the angle in radians with respect to the positive x-axis.
+	 * 
+	 * @param {boolean} forcePositive If true, the angle will be forced to be positive.
+	 * @return {number} Angle in radians.
 	 */
-	Vector2.prototype.angle = function()
+	Vector2.prototype.angle = function(forcePositive)
 	{
 		var angle = Math.atan2(this.y, this.x);
 
-		if(angle < 0)
+		if(forcePositive && angle < 0)
 		{
 			angle += 2 * Math.PI;
 		}
@@ -404,6 +421,9 @@
 
 	/**
 	 * Distance between two vector positions.
+	 * 
+	 * @param {Vector2} v Vector to compute the distance to.
+	 * @return {number} Distance between the two vectors.
 	 */
 	Vector2.prototype.distanceTo = function(v)
 	{
@@ -414,6 +434,9 @@
 	 * Distance between two vector positions squared.
 	 *
 	 * Faster for comparisons.
+	 * 
+	 * @param {Vector2} v Vector to compute the distance to.
+	 * @return {number} Distance between the two vectors squared.
 	 */
 	Vector2.prototype.distanceToSquared = function(v)
 	{
@@ -425,6 +448,9 @@
 
 	/**
 	 * Manhattan distance between two vector positions.
+	 * 
+	 * @param {Vector2} v Vector to compute the distance to.
+	 * @return {number} Manhattan distance between the two vectors.
 	 */
 	Vector2.prototype.manhattanDistanceTo = function(v)
 	{
@@ -433,6 +459,9 @@
 
 	/**
 	 * Scale the vector to have a defined length value.
+	 * 
+	 * @param {number} length Length to scale the vector to.
+	 * @return {Vector2} This vector.
 	 */
 	Vector2.prototype.setLength = function(length)
 	{
