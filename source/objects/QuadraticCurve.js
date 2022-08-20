@@ -4,7 +4,9 @@ import {Circle} from "./Circle.js";
 import {Line} from "./Line.js";
 
 /**
- * Bezier curve object draw as bezier curve between two points.
+ * Quadratic curve object draw as quadratic curve between two points.
+ * 
+ * Quadratic curve data is composed of two anchor points, one for the start of the curve and one for the end of the curve.
  *
  * @class
  * @extends {Object2D}

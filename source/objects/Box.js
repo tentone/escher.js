@@ -18,6 +18,8 @@ function Box()
 
 	/**
 	 * Box object containing the size of the object.
+	 * 
+	 * @type {Box2}
 	 */
 	this.box = new Box2(new Vector2(-50, -50), new Vector2(50, 50));
 
@@ -25,11 +27,15 @@ function Box()
 	 * Style of the object border line.
 	 *
 	 * If set null it is ignored.
+	 * 
+	 * @type {Style}
 	 */
 	this.strokeStyle = new ColorStyle("#000000");
 
 	/**
 	 * Line width, only used if a valid strokeStyle is defined.
+	 * 
+	 * @type {number}
 	 */
 	this.lineWidth = 1;
 
@@ -38,7 +44,7 @@ function Box()
 	 *
 	 * If set null it is ignored.
 	 *
-	 * @param {Style}
+	 * @type {Style}
 	 */
 	this.fillStyle = new ColorStyle("#FFFFFF");
 }

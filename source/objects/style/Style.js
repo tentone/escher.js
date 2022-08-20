@@ -10,18 +10,20 @@ function Style()
     /**
      * Cached style object pre-generated from previous calls. To avoid regenerating the same style object every cycle.
      *
+     * Inherited classes should write their own get method that returns the style object and stores it in this property.
+     * 
      * @type {string | CanvasGradient | CanvasPattern}
      */
     this.cache = null;
-    // TODO <USE THIS>
 
     /**
      * Indicates if the style object needs to be updated, should be used after applying changed to the style in order to generate a new object.
      *
+     * Inherited classes should implement this functionality.
+     * 
      * @type {boolean}
      */
     this.needsUpdate = true;
-    // TODO <USE THIS>
 }
 
 /**

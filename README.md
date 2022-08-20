@@ -1,15 +1,16 @@
 # escher.js
 [![npm version](https://badge.fury.io/js/escher.js.svg)](https://badge.fury.io/js/escher.js)[![GitHub version](https://badge.fury.io/gh/tentone%2Fescher.js.svg)](https://badge.fury.io/gh/tentone%2Fescher.js)[![GitHub stars](https://img.shields.io/github/stars/tentone/escher.js.svg)](https://github.com/tentone/escher.js/stargazers)
 
- - Web based 2D graph building framework.
- - Entity based diagram build system, entities are stores as a tree. Compose complex animated canvas objects using parent-children transforms.
+ - Web based 2D graphics framework on top of the canvas API.
+ - Entity based diagram build system, entities are stores as a tree.
+ - Interactive 2D graphics with complex pointer events and viewport controls.
+ - Compose complex animated canvas objects using parent-children transforms.
  - Extensible using already existing canvas based visualization libs. 
  - Base objects boxes, circle, custom shapes, lines, that can be used to compose more complex objects.
  - Support for DOM elements using CSS transforms (Useful for text input and more complex user interaction).
  - Built in viewport controls with drag, zoom and move functions. Supports mobile web browsers.
 
 ![graph](<https://tentone.github.io/escher.js/readme/example.png>)
-
 
 
 ### Examples / Documentation

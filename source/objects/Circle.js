@@ -16,6 +16,8 @@ function Circle()
 
 	/**
 	 * Radius of the circle.
+	 * 
+	 * @type {number}
 	 */
 	this.radius = 10.0;
 

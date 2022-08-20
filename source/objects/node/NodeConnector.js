@@ -16,6 +16,11 @@ function NodeConnector()
 {
 	BezierCurve.call(this);
 
+	/**
+	 * Width of the connector line.
+	 * 
+	 * @type {number}
+	 */
 	this.lineWidth = 2;
 
 	/**

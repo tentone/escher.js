@@ -116,6 +116,7 @@ Object2D.register(NodeSocket, "NodeSocket");
  * Is used to read data from the output.
  *
  * @type {number}
+ * @constant
  */
 NodeSocket.INPUT = 1;
 
@@ -125,6 +126,7 @@ NodeSocket.INPUT = 1;
  * Writes data to the output.
  *
  * @type {number}
+ * @constant
  */
 NodeSocket.OUTPUT = 2;
 

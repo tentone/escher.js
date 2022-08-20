@@ -14,11 +14,15 @@ function Image(src)
 	
 	/**
 	 * Box object containing the size of the object.
+	 * 
+	 * @type {Box2}
 	 */
 	this.box = new Box2();
 
 	/**
 	 * Image source DOM element.
+	 * 
+	 * @type {HTMLImageElement}
 	 */
 	this.image = document.createElement("img");
 

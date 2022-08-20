@@ -15,6 +15,8 @@ function BarGraph()
 	 * Width of each bar in the graph.
 	 * 
 	 * If set null is automatically calculated from the graph size and number of points.
+	 * 
+	 * @type {number}
 	 */
 	this.barWidth = null;
 }

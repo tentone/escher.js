@@ -14,41 +14,70 @@ function Viewport(canvas)
 {
 	/**
 	 * UUID of the object.
+	 * 
+	 * @type {string}
 	 */
 	this.uuid = UUID.generate(); 
 
 	/**
 	 * Canvas DOM element where the viewport is being rendered.
+	 * 
+	 * @type {Element}
 	 */
 	this.canvas = canvas;
 
 	/**
-	 * Position of the object.
+	 * Position of the viewport.
+	 * 
+	 * @type {Vector2}
 	 */
 	this.position = new Vector2(0, 0);
+	
+	/**
+	 * Center point of the viewport.
+	 * 
+	 * Rotation and zoom is applied relative to this point.
+	 * 
+	 * @type {Vector2}
+	 */
+	this.center = new Vector2(0, 0);
 
 	/**
 	 * Scale of the object.
+	 * 
+	 * @type {number}
 	 */
 	this.scale = 1.0
 
 	/**
 	 * Rotation of the object relative to its center.
+	 * 
+	 * @type {number}
 	 */
 	this.rotation = 0.0;
 
 	/**
-	 * Local transformation matrix applied to the object. 
+	 * Local transformation matrix applied to the object.
+	 * 
+	 * @type {Matrix}
 	 */
 	this.matrix = new Matrix();
 
 	/**
 	 * Inverse of the local transformation matrix.
+	 * 
+	 * Used to transform points from local to global coordinates.
+	 * 
+	 * @type {Matrix}
 	 */
 	this.inverseMatrix = new Matrix();
 
 	/**
 	 * If true the matrix is updated before rendering the object.
+	 * 
+	 * Disable this if you want to update the matrix manually.
+	 * 
+	 * @type {boolean}
 	 */
 	this.matrixNeedsUpdate = true;
 

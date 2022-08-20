@@ -16,6 +16,8 @@ function PieChart(data)
 	 * Data to be displayed on the pie chart. Each element should store a value and a stroke/fill styles.
 	 * 
 	 * Each element should use the following structure {value: 0.0, fillStyle: ..., strokestyle: ...}.
+	 * 
+	 * @type {Array<{value: number, fillStyle: ColorStyle, strokeStyle: ColorStyle}>}
 	 */
 	this.data = data !== undefined ? data : [];
 

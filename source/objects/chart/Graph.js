@@ -17,31 +17,43 @@ function Graph()
 
 	/**
 	 * Graph object containing the size of the object.
+	 * 
+	 * @type {Box2}
 	 */
 	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 	/**
 	 * Color of the box border line.
+	 * 
+	 * @type {ColorStyle}
 	 */
 	this.strokeStyle = new ColorStyle("rgb(0, 153, 255)");
 
 	/**
 	 * Line width used to stroke the graph data.
+	 * 
+	 * @type {number}
 	 */
 	this.lineWidth = 1.0;
 
 	/**
 	 * Background color of the box.
+	 * 
+	 * @type {ColorStyle}
 	 */
 	this.fillStyle = new ColorStyle("rgba(0, 153, 255, 0.3)");
 
 	/**
 	 * Minimum value of the graph.
+	 * 
+	 * @type {number}
 	 */
 	this.min = 0;
 
 	/**
 	 * Maximum value of the graph.
+	 * 
+	 * @type {number}
 	 */
 	this.max = 10;
 
@@ -49,6 +61,8 @@ function Graph()
 	 * Data to be presented in the graph.
 	 *
 	 * The array should store numeric values.
+	 * 
+	 * @type {Array<number>}
 	 */
 	this.data = [];
 }

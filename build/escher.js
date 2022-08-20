@@ -2109,41 +2109,70 @@
 	{
 		/**
 		 * UUID of the object.
+		 * 
+		 * @type {string}
 		 */
 		this.uuid = UUID.generate(); 
 
 		/**
 		 * Canvas DOM element where the viewport is being rendered.
+		 * 
+		 * @type {Element}
 		 */
 		this.canvas = canvas;
 
 		/**
-		 * Position of the object.
+		 * Position of the viewport.
+		 * 
+		 * @type {Vector2}
 		 */
 		this.position = new Vector2(0, 0);
+		
+		/**
+		 * Center point of the viewport.
+		 * 
+		 * Rotation and zoom is applied relative to this point.
+		 * 
+		 * @type {Vector2}
+		 */
+		this.center = new Vector2(0, 0);
 
 		/**
 		 * Scale of the object.
+		 * 
+		 * @type {number}
 		 */
 		this.scale = 1.0;
 
 		/**
 		 * Rotation of the object relative to its center.
+		 * 
+		 * @type {number}
 		 */
 		this.rotation = 0.0;
 
 		/**
-		 * Local transformation matrix applied to the object. 
+		 * Local transformation matrix applied to the object.
+		 * 
+		 * @type {Matrix}
 		 */
 		this.matrix = new Matrix();
 
 		/**
 		 * Inverse of the local transformation matrix.
+		 * 
+		 * Used to transform points from local to global coordinates.
+		 * 
+		 * @type {Matrix}
 		 */
 		this.inverseMatrix = new Matrix();
 
 		/**
 		 * If true the matrix is updated before rendering the object.
+		 * 
+		 * Disable this if you want to update the matrix manually.
+		 * 
+		 * @type {boolean}
 		 */
 		this.matrixNeedsUpdate = true;
 
@@ -3184,18 +3213,20 @@
 	    /**
 	     * Cached style object pre-generated from previous calls. To avoid regenerating the same style object every cycle.
 	     *
+	     * Inherited classes should write their own get method that returns the style object and stores it in this property.
+	     * 
 	     * @type {string | CanvasGradient | CanvasPattern}
 	     */
 	    this.cache = null;
-	    // TODO <USE THIS>
 
 	    /**
 	     * Indicates if the style object needs to be updated, should be used after applying changed to the style in order to generate a new object.
 	     *
+	     * Inherited classes should implement this functionality.
+	     * 
 	     * @type {boolean}
 	     */
 	    this.needsUpdate = true;
-	    // TODO <USE THIS>
 	}
 
 	/**
@@ -3254,6 +3285,8 @@
 
 	/**
 	 * Simple solid color style represented and stored as a CSS color.
+	 * 
+	 * Example value formats supported "rgb(0, 153, 255)" or "rgba(0, 153, 255, 0.3)" or "#0099ff" or "#0099ffaa" or "red".
 	 *
 	 * @class
 	 * @extends {Style}
@@ -3306,6 +3339,8 @@
 
 		/**
 		 * Box object containing the size of the object.
+		 * 
+		 * @type {Box2}
 		 */
 		this.box = new Box2(new Vector2(-50, -50), new Vector2(50, 50));
 
@@ -3313,11 +3348,15 @@
 		 * Style of the object border line.
 		 *
 		 * If set null it is ignored.
+		 * 
+		 * @type {Style}
 		 */
 		this.strokeStyle = new ColorStyle("#000000");
 
 		/**
 		 * Line width, only used if a valid strokeStyle is defined.
+		 * 
+		 * @type {number}
 		 */
 		this.lineWidth = 1;
 
@@ -3326,7 +3365,7 @@
 		 *
 		 * If set null it is ignored.
 		 *
-		 * @param {Style}
+		 * @type {Style}
 		 */
 		this.fillStyle = new ColorStyle("#FFFFFF");
 	}
@@ -3396,6 +3435,8 @@
 
 		/**
 		 * Radius of the circle.
+		 * 
+		 * @type {number}
 		 */
 		this.radius = 10.0;
 
@@ -3707,11 +3748,15 @@
 		
 		/**
 		 * Box object containing the size of the object.
+		 * 
+		 * @type {Box2}
 		 */
 		this.box = new Box2();
 
 		/**
 		 * Image source DOM element.
+		 * 
+		 * @type {HTMLImageElement}
 		 */
 		this.image = document.createElement("img");
 
@@ -3817,7 +3862,11 @@
 		this.element.style.pointerEvents = "none";
 		
 		/**
-		 * Size of the DOM element (in world coordinates).
+		 * Size of the DOM element, in world coordinates.
+		 * 
+		 * Size is used to set the width and height of the DOM element.
+		 * 
+		 * @type {Vector2}
 		 */
 		this.size = new Vector2(100, 100);
 	}
@@ -4126,6 +4175,8 @@
 
 	/**
 	 * Bezier curve object draw as bezier curve between two points.
+	 * 
+	 * Bezier curve data is composed of two anchor points, one for the start of the curve and one for the end of the curve.
 	 *
 	 * @class
 	 * @extends {Line}
@@ -4224,7 +4275,9 @@
 	};
 
 	/**
-	 * Bezier curve object draw as bezier curve between two points.
+	 * Quadratic curve object draw as quadratic curve between two points.
+	 * 
+	 * Quadratic curve data is composed of two anchor points, one for the start of the curve and one for the end of the curve.
 	 *
 	 * @class
 	 * @extends {Object2D}
@@ -4404,31 +4457,43 @@
 
 		/**
 		 * Graph object containing the size of the object.
+		 * 
+		 * @type {Box2}
 		 */
 		this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 		/**
 		 * Color of the box border line.
+		 * 
+		 * @type {ColorStyle}
 		 */
 		this.strokeStyle = new ColorStyle("rgb(0, 153, 255)");
 
 		/**
 		 * Line width used to stroke the graph data.
+		 * 
+		 * @type {number}
 		 */
 		this.lineWidth = 1.0;
 
 		/**
 		 * Background color of the box.
+		 * 
+		 * @type {ColorStyle}
 		 */
 		this.fillStyle = new ColorStyle("rgba(0, 153, 255, 0.3)");
 
 		/**
 		 * Minimum value of the graph.
+		 * 
+		 * @type {number}
 		 */
 		this.min = 0;
 
 		/**
 		 * Maximum value of the graph.
+		 * 
+		 * @type {number}
 		 */
 		this.max = 10;
 
@@ -4436,6 +4501,8 @@
 		 * Data to be presented in the graph.
 		 *
 		 * The array should store numeric values.
+		 * 
+		 * @type {Array<number>}
 		 */
 		this.data = [];
 	}
@@ -4528,11 +4595,15 @@
 
 		/**
 		 * Radius of each point represented in the scatter plot.
+		 * 
+		 * @type {number}
 		 */
 		this.radius = 5.0;
 
 		/**
 		 * Draw lines betwen the points of the scatter graph.
+		 * 
+		 * @type {boolean}
 		 */
 		this.drawLine = false;
 	}
@@ -4629,6 +4700,8 @@
 		 * Width of each bar in the graph.
 		 * 
 		 * If set null is automatically calculated from the graph size and number of points.
+		 * 
+		 * @type {number}
 		 */
 		this.barWidth = null;
 	}
@@ -4695,6 +4768,7 @@
 	 *
 	 * The gradients are ordered, each stop has a target color that becomes solid on its offset value triggering the next color stop if there is one.
 	 *
+	 * @class
 	 * @param offset Offset of the color stop between 0 and 1 inclusive.
 	 * @param color CSS color value.
 	 * @constructor
@@ -5029,6 +5103,8 @@
 		 * Data to be displayed on the pie chart. Each element should store a value and a stroke/fill styles.
 		 * 
 		 * Each element should use the following structure {value: 0.0, fillStyle: ..., strokestyle: ...}.
+		 * 
+		 * @type {Array<{value: number, fillStyle: ColorStyle, strokeStyle: ColorStyle}>}
 		 */
 		this.data = data !== undefined ? data : [];
 
@@ -5185,7 +5261,9 @@
 		/**
 		 * Path2D object containing the commands to draw the shape into the canvas.
 		 * 
-		 * Check https://developer.mozilla.org/en-US/docs/Web/API/Path2D/Path2D for more details. 
+		 * Check https://developer.mozilla.org/en-US/docs/Web/API/Path2D/Path2D for more details.
+		 * 
+		 * @type {Path2D}
 		 */
 		this.path = path !== undefined ? path : new Path2D("M10 10 h 80 v 80 h -80 Z");
 
@@ -5193,11 +5271,15 @@
 		 * Style of the object border line.
 		 *
 		 * If set null it is ignored.
+		 * 
+		 * @type {Style}
 		 */
 		this.strokeStyle = new ColorStyle("#000000");
 
 		/**
 		 * Line width, only used if a valid strokeStyle is defined.
+		 * 
+		 * @type {number}
 		 */
 		this.lineWidth = 1;
 
@@ -5498,6 +5580,11 @@
 	{
 		BezierCurve.call(this);
 
+		/**
+		 * Width of the connector line.
+		 * 
+		 * @type {number}
+		 */
 		this.lineWidth = 2;
 
 		/**
@@ -5711,6 +5798,7 @@
 	 * Is used to read data from the output.
 	 *
 	 * @type {number}
+	 * @constant
 	 */
 	NodeSocket.INPUT = 1;
 
@@ -5720,6 +5808,7 @@
 	 * Writes data to the output.
 	 *
 	 * @type {number}
+	 * @constant
 	 */
 	NodeSocket.OUTPUT = 2;
 

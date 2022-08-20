@@ -42,7 +42,11 @@ function DOM(type)
 	this.element.style.pointerEvents = "none";
 	
 	/**
-	 * Size of the DOM element (in world coordinates).
+	 * Size of the DOM element, in world coordinates.
+	 * 
+	 * Size is used to set the width and height of the DOM element.
+	 * 
+	 * @type {Vector2}
 	 */
 	this.size = new Vector2(100, 100);
 }

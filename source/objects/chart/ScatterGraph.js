@@ -13,11 +13,15 @@ function ScatterGraph()
 
 	/**
 	 * Radius of each point represented in the scatter plot.
+	 * 
+	 * @type {number}
 	 */
 	this.radius = 5.0;
 
 	/**
 	 * Draw lines betwen the points of the scatter graph.
+	 * 
+	 * @type {boolean}
 	 */
 	this.drawLine = false;
 }

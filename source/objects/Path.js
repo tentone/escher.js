@@ -17,7 +17,9 @@ function Path(path)
 	/**
 	 * Path2D object containing the commands to draw the shape into the canvas.
 	 * 
-	 * Check https://developer.mozilla.org/en-US/docs/Web/API/Path2D/Path2D for more details. 
+	 * Check https://developer.mozilla.org/en-US/docs/Web/API/Path2D/Path2D for more details.
+	 * 
+	 * @type {Path2D}
 	 */
 	this.path = path !== undefined ? path : new Path2D("M10 10 h 80 v 80 h -80 Z");
 
@@ -25,11 +27,15 @@ function Path(path)
 	 * Style of the object border line.
 	 *
 	 * If set null it is ignored.
+	 * 
+	 * @type {Style}
 	 */
 	this.strokeStyle = new ColorStyle("#000000");
 
 	/**
 	 * Line width, only used if a valid strokeStyle is defined.
+	 * 
+	 * @type {number}
 	 */
 	this.lineWidth = 1;
 

@@ -5,6 +5,8 @@ import {Line} from "./Line.js";
 
 /**
  * Bezier curve object draw as bezier curve between two points.
+ * 
+ * Bezier curve data is composed of two anchor points, one for the start of the curve and one for the end of the curve.
  *
  * @class
  * @extends {Line}
