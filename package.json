@@ -24,10 +24,10 @@
 	"license": "MIT",
 	"dependencies": {},
 	"devDependencies": {
-		"jsdoc": "^3.6.4",
-		"uglify-js": "^3.9.2",
-		"rollup": "^2.9.1",
-		"rollup-plugin-strip": "^1.2.2",
-		"rollup-plugin-serve": "^2.0.0-beta.0"
+		"jsdoc": "~3.6.11",
+		"uglify-js": "~3.17.0",
+		"rollup": "~2.78.1",
+		"rollup-plugin-strip": "~1.2.2",
+		"rollup-plugin-serve": "~2.0.1"
 	}
 }

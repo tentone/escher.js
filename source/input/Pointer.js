@@ -437,5 +437,4 @@ Pointer.dispose = function()
 	this.events.destroy();
 };
 
-
 export {Pointer};
