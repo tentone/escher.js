@@ -34,7 +34,7 @@ function Viewport(canvas)
 	this.position = new Vector2(0, 0);
 	
 	/**
-	 * Center point of the viewport.
+	 * Center point of the viewport. Reative to the size of the canvas.
 	 * 
 	 * Rotation and zoom is applied relative to this point.
 	 * 

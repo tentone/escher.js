@@ -37,6 +37,8 @@ function ViewportControls(viewport)
 
 	/**
 	 * Flag to indicate if the viewport should move when scalling.
+	 * 
+	 * The viewport will simulataniously move to the pointer position while scalling.
 	 *
 	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
 	 *
@@ -55,6 +57,8 @@ function ViewportControls(viewport)
 
 	/**
 	 * Value of the initial point of rotation if the viewport is being rotated.
+	 * 
+	 * Is the value of the pointer position when the rotation starts.
 	 *
 	 * Is set to null when the viewport is not being rotated.
 	 *
@@ -64,6 +68,8 @@ function ViewportControls(viewport)
 
 	/**
 	 * Initial rotation of the viewport.
+	 * 
+	 * Is set to the current rotation of the viewport when the rotation starts.
 	 *
 	 * @type {number}
 	 */
