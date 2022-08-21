@@ -299,6 +299,8 @@ Vector2.prototype.cross = function(v)
  * Squared length of the vector.
  *
  * Faster for comparions.
+ * 
+ * @return {number} Squared length of the vector.
  */
 Vector2.prototype.lengthSq = function()
 {
@@ -307,6 +309,8 @@ Vector2.prototype.lengthSq = function()
 
 /**
  * Length of the vector.
+ * 
+ * @return {number} Length of the vector.
  */
 Vector2.prototype.length = function()
 {
@@ -315,6 +319,8 @@ Vector2.prototype.length = function()
 
 /**
  * Manhattan length of the vector.
+ * 
+ * @return {number} Manhattan length of the vector.
  */
 Vector2.prototype.manhattanLength = function()
 {
@@ -323,6 +329,8 @@ Vector2.prototype.manhattanLength = function()
 
 /**
  * Normalize the vector (make it length one).
+ * 
+ * @return {Vector2} This vector.
  */
 Vector2.prototype.normalize = function()
 {
