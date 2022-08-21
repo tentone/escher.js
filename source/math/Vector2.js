@@ -2,8 +2,8 @@
  * Class representing a 2D vector. A 2D vector is an ordered pair of numbers (labeled x and y), which can be used to represent points in space, directions, etc.
  *
  * @class
- * @param {number} x
- * @param {number} y
+ * @param {number} x X value.
+ * @param {number} y Y value.
  */
 function Vector2(x, y)
 {
@@ -14,8 +14,8 @@ function Vector2(x, y)
 /**
  * Set vector x and y values.
  *
- * @param {number} x
- * @param {number} y
+ * @param {number} x X value.
+ * @param {number} y Y value.
  */
 Vector2.prototype.set = function(x, y)
 {
@@ -25,6 +25,8 @@ Vector2.prototype.set = function(x, y)
 
 /**
  * Set a scalar value into the x and y values.
+ * 
+ * @param {number} scalar Scalar value.
  */
 Vector2.prototype.setScalar = function(scalar)
 {
@@ -34,6 +36,8 @@ Vector2.prototype.setScalar = function(scalar)
 
 /**
  * Create a clone of this vector object.
+ * 
+ * @return {Vector2} A new vector with the same values as this one.
  */
 Vector2.prototype.clone = function()
 {
@@ -54,7 +58,7 @@ Vector2.prototype.copy = function(v)
 /**
  * Add the content of another vector to this one.
  *
- * @param {Vector2} v
+ * @param {Vector2} v The other vector.
  */
 Vector2.prototype.add = function(v)
 {
@@ -65,7 +69,7 @@ Vector2.prototype.add = function(v)
 /**
  * Add a scalar value to booth vector components.
  *
- * @param {number} s
+ * @param {number} s Scalar value.
  */
 Vector2.prototype.addScalar = function(s)
 {
@@ -76,8 +80,8 @@ Vector2.prototype.addScalar = function(s)
 /** 
  * Add two vectors and store the result in this vector.
  *
- * @param {Vector2} a
- * @param {Vector2} b
+ * @param {Vector2} a The first vector.
+ * @param {Vector2} b The second vector.
  */
 Vector2.prototype.addVectors = function(a, b)
 {
@@ -88,8 +92,8 @@ Vector2.prototype.addVectors = function(a, b)
 /**
  * Scale a vector components and add the result to this vector.
  *
- * @param {Vector2} v
- * @param {number} s
+ * @param {Vector2} v The other vector.
+ * @param {number} s Scalar value.
  */
 Vector2.prototype.addScaledVector = function(v, s)
 {
@@ -100,7 +104,7 @@ Vector2.prototype.addScaledVector = function(v, s)
 /**
  * Subtract the content of another vector to this one.
  *
- * @param {Vector2} v
+ * @param {Vector2} v The other vector.
  */
 Vector2.prototype.sub = function(v)
 {
@@ -111,7 +115,7 @@ Vector2.prototype.sub = function(v)
 /**
  * Subtract a scalar value to booth vector components.
  *
- * @param {number} s
+ * @param {number} s Scalar value.
  */
 Vector2.prototype.subScalar = function(s)
 {
@@ -122,8 +126,8 @@ Vector2.prototype.subScalar = function(s)
 /** 
  * Subtract two vectors and store the result in this vector.
  *
- * @param {Vector2} a
- * @param {Vector2} b
+ * @param {Vector2} a The first vector.
+ * @param {Vector2} b The second vector.
  */
 Vector2.prototype.subVectors = function(a, b)
 {
@@ -134,7 +138,7 @@ Vector2.prototype.subVectors = function(a, b)
 /**
  * Multiply the content of another vector to this one.
  *
- * @param {Vector2} v
+ * @param {Vector2} v The other vector.
  */
 Vector2.prototype.multiply = function(v)
 {
@@ -145,7 +149,7 @@ Vector2.prototype.multiply = function(v)
 /**
  * Multiply a scalar value by booth vector components.
  *
- * @param {number} scalar
+ * @param {number} scalar Scalar value.
  */
 Vector2.prototype.multiplyScalar = function(scalar)
 {
@@ -404,12 +408,26 @@ Vector2.prototype.setLength = function(length)
 	return this.normalize().multiplyScalar(length);
 };
 
+/**
+ * Lerp this vector to another vector.
+ * 
+ * @param {Vector2} v Vector to lerp to.
+ * @param {number} alpha Lerp factor.
+ */
 Vector2.prototype.lerp = function(v, alpha)
 {
 	this.x += (v.x - this.x) * alpha;
 	this.y += (v.y - this.y) * alpha;
 };
 
+/**
+ * Lerp between this vector and another vector.
+ * 
+ * @param {Vector2} v1 Vector to lerp from.
+ * @param {Vector2} v2 Vector to lerp to.
+ * @param {number} alpha Lerp factor.
+ * @return {Vector2} This vector.
+ *
 Vector2.prototype.lerpVectors = function(v1, v2, alpha)
 {
 	return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
@@ -418,7 +436,7 @@ Vector2.prototype.lerpVectors = function(v1, v2, alpha)
 /**
  * Check if two vectors are equal.
  *
- * @param {Vector2} v
+ * @param {Vector2} v Vector to compare with.
  */
 Vector2.prototype.equals = function(v)
 {
@@ -430,7 +448,7 @@ Vector2.prototype.equals = function(v)
  *
  * The vector can be converted to array using the toArray() method.
  *
- * @param {number[]} array
+ * @param {number[]} array Array to set the vector value from.
  */
 Vector2.prototype.fromArray = function(array)
 {
@@ -452,8 +470,8 @@ Vector2.prototype.toArray = function()
 /**
  * Rotate the vector around a central point.
  *
- * @param {Vector2} center
- * @param {number} angle
+ * @param {Vector2} center Point to rotate around.
+ * @param {number} angle Angle in radians.
  */
 Vector2.prototype.rotateAround = function(center, angle)
 {
