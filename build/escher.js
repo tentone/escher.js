@@ -2351,6 +2351,16 @@
 		this.moveOnScale = false;
 
 		/**
+		 * Flag to recenter the viewport automatically to the canvas.
+		 * 
+		 * This will ensure that rotation and scaling will not cause the viewport to move around.
+		 * 
+		 * @type {boolean}
+		 * @default true
+		 */
+		this.centerOnCanvas = true;
+
+		/**
 		 * If true allows the viewport to be rotated.
 		 *
 		 * Rotation is performed by holding the RIGHT and LEFT pointer buttons and rotating around the initial point.
@@ -2432,18 +2442,25 @@
 				this.viewport.rotation = this.rotationInitial + point.angle();
 				this.viewport.matrixNeedsUpdate = true;
 			}
+			return;
 		}
-		// Drag
-		else
-		{
-			this.rotationPoint = null;
 
-			if(pointer.buttonPressed(this.dragButton))
-			{
-				this.viewport.position.x += pointer.delta.x;
-				this.viewport.position.y += pointer.delta.y;
-				this.viewport.matrixNeedsUpdate = true;
-			}
+		this.rotationPoint = null;
+
+		// Drag
+		if(pointer.buttonPressed(this.dragButton))
+		{
+			this.viewport.position.add(pointer.delta);
+			this.viewport.matrixNeedsUpdate = true;
+			return;
+		}
+
+		// Automtical center the viewport.
+		if (this.centerOnCanvas && pointer.canvas !== null) {
+			var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
+			centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
+			this.viewport.center.copy(centerWorld);
+			this.viewport.matrixNeedsUpdate = true;
 		}
 	};
 
