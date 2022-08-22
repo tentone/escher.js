@@ -240,6 +240,7 @@ Object2D.types = new Map([[Object2D.prototype.type, Object2D]]);
  *
  * Should be called for every new object class implemented if you want to be able to serialize and parse data.
  *
+ * @static
  * @param {Function} constructor Object constructor.
  * @param {string} type Object type name.
  */
@@ -382,6 +383,8 @@ Object2D.prototype.add = function(object)
 
 /**
  * Remove object from the children list.
+ * 
+ * Resets the parent of the object to null and resets its level.
  *
  * @param {Object2D} children Object to be removed.
  */
