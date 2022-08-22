@@ -74,8 +74,8 @@
 	 * Class representing a 2D vector. A 2D vector is an ordered pair of numbers (labeled x and y), which can be used to represent points in space, directions, etc.
 	 *
 	 * @class
-	 * @param {number} x
-	 * @param {number} y
+	 * @param {number} x X value.
+	 * @param {number} y Y value.
 	 */
 	function Vector2(x, y)
 	{
@@ -86,8 +86,8 @@
 	/**
 	 * Set vector x and y values.
 	 *
-	 * @param {number} x
-	 * @param {number} y
+	 * @param {number} x X value.
+	 * @param {number} y Y value.
 	 */
 	Vector2.prototype.set = function(x, y)
 	{
@@ -97,6 +97,8 @@
 
 	/**
 	 * Set a scalar value into the x and y values.
+	 * 
+	 * @param {number} scalar Scalar value.
 	 */
 	Vector2.prototype.setScalar = function(scalar)
 	{
@@ -106,6 +108,8 @@
 
 	/**
 	 * Create a clone of this vector object.
+	 * 
+	 * @return {Vector2} A new vector with the same values as this one.
 	 */
 	Vector2.prototype.clone = function()
 	{
@@ -126,7 +130,7 @@
 	/**
 	 * Add the content of another vector to this one.
 	 *
-	 * @param {Vector2} v
+	 * @param {Vector2} v The other vector.
 	 */
 	Vector2.prototype.add = function(v)
 	{
@@ -137,7 +141,7 @@
 	/**
 	 * Add a scalar value to booth vector components.
 	 *
-	 * @param {number} s
+	 * @param {number} s Scalar value.
 	 */
 	Vector2.prototype.addScalar = function(s)
 	{
@@ -148,8 +152,8 @@
 	/** 
 	 * Add two vectors and store the result in this vector.
 	 *
-	 * @param {Vector2} a
-	 * @param {Vector2} b
+	 * @param {Vector2} a The first vector.
+	 * @param {Vector2} b The second vector.
 	 */
 	Vector2.prototype.addVectors = function(a, b)
 	{
@@ -160,8 +164,8 @@
 	/**
 	 * Scale a vector components and add the result to this vector.
 	 *
-	 * @param {Vector2} v
-	 * @param {number} s
+	 * @param {Vector2} v The other vector.
+	 * @param {number} s Scalar value.
 	 */
 	Vector2.prototype.addScaledVector = function(v, s)
 	{
@@ -172,7 +176,7 @@
 	/**
 	 * Subtract the content of another vector to this one.
 	 *
-	 * @param {Vector2} v
+	 * @param {Vector2} v The other vector.
 	 */
 	Vector2.prototype.sub = function(v)
 	{
@@ -183,7 +187,7 @@
 	/**
 	 * Subtract a scalar value to booth vector components.
 	 *
-	 * @param {number} s
+	 * @param {number} s Scalar value.
 	 */
 	Vector2.prototype.subScalar = function(s)
 	{
@@ -194,8 +198,8 @@
 	/** 
 	 * Subtract two vectors and store the result in this vector.
 	 *
-	 * @param {Vector2} a
-	 * @param {Vector2} b
+	 * @param {Vector2} a The first vector.
+	 * @param {Vector2} b The second vector.
 	 */
 	Vector2.prototype.subVectors = function(a, b)
 	{
@@ -206,7 +210,7 @@
 	/**
 	 * Multiply the content of another vector to this one.
 	 *
-	 * @param {Vector2} v
+	 * @param {Vector2} v The other vector.
 	 */
 	Vector2.prototype.multiply = function(v)
 	{
@@ -217,7 +221,7 @@
 	/**
 	 * Multiply a scalar value by booth vector components.
 	 *
-	 * @param {number} scalar
+	 * @param {number} scalar Scalar value.
 	 */
 	Vector2.prototype.multiplyScalar = function(scalar)
 	{
@@ -371,6 +375,8 @@
 	 * Squared length of the vector.
 	 *
 	 * Faster for comparions.
+	 * 
+	 * @return {number} Squared length of the vector.
 	 */
 	Vector2.prototype.lengthSq = function()
 	{
@@ -379,6 +385,8 @@
 
 	/**
 	 * Length of the vector.
+	 * 
+	 * @return {number} Length of the vector.
 	 */
 	Vector2.prototype.length = function()
 	{
@@ -387,6 +395,8 @@
 
 	/**
 	 * Manhattan length of the vector.
+	 * 
+	 * @return {number} Manhattan length of the vector.
 	 */
 	Vector2.prototype.manhattanLength = function()
 	{
@@ -395,6 +405,8 @@
 
 	/**
 	 * Normalize the vector (make it length one).
+	 * 
+	 * @return {Vector2} This vector.
 	 */
 	Vector2.prototype.normalize = function()
 	{
@@ -468,12 +480,26 @@
 		return this.normalize().multiplyScalar(length);
 	};
 
+	/**
+	 * Lerp this vector to another vector.
+	 * 
+	 * @param {Vector2} v Vector to lerp to.
+	 * @param {number} alpha Lerp factor.
+	 */
 	Vector2.prototype.lerp = function(v, alpha)
 	{
 		this.x += (v.x - this.x) * alpha;
 		this.y += (v.y - this.y) * alpha;
 	};
 
+	/**
+	 * Lerp between this vector and another vector.
+	 * 
+	 * @param {Vector2} v1 Vector to lerp from.
+	 * @param {Vector2} v2 Vector to lerp to.
+	 * @param {number} alpha Lerp factor.
+	 * @return {Vector2} This vector.
+	 *
 	Vector2.prototype.lerpVectors = function(v1, v2, alpha)
 	{
 		return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
@@ -482,7 +508,7 @@
 	/**
 	 * Check if two vectors are equal.
 	 *
-	 * @param {Vector2} v
+	 * @param {Vector2} v Vector to compare with.
 	 */
 	Vector2.prototype.equals = function(v)
 	{
@@ -494,7 +520,7 @@
 	 *
 	 * The vector can be converted to array using the toArray() method.
 	 *
-	 * @param {number[]} array
+	 * @param {number[]} array Array to set the vector value from.
 	 */
 	Vector2.prototype.fromArray = function(array)
 	{
@@ -516,8 +542,8 @@
 	/**
 	 * Rotate the vector around a central point.
 	 *
-	 * @param {Vector2} center
-	 * @param {number} angle
+	 * @param {Vector2} center Point to rotate around.
+	 * @param {number} angle Angle in radians.
 	 */
 	Vector2.prototype.rotateAround = function(center, angle)
 	{
@@ -1086,6 +1112,7 @@
 	 *
 	 * Should be called for every new object class implemented if you want to be able to serialize and parse data.
 	 *
+	 * @static
 	 * @param {Function} constructor Object constructor.
 	 * @param {string} type Object type name.
 	 */
@@ -1228,6 +1255,8 @@
 
 	/**
 	 * Remove object from the children list.
+	 * 
+	 * Resets the parent of the object to null and resets its level.
 	 *
 	 * @param {Object2D} children Object to be removed.
 	 */
@@ -2231,9 +2260,9 @@
 		{
 			this.matrix.m = [1, 0, 0, 1, this.position.x, this.position.y];
 
-			// if(this.center.x !== 0 && this.center.y !== 0) {
-			// 	this.matrix.multiply(new Matrix([1, 0, 0, 1, -this.center.x, -this.center.y]));
-			// }
+			if(this.center.x !== 0 && this.center.y !== 0) {
+				this.matrix.multiply(new Matrix([1, 0, 0, 1, this.center.x, this.center.y]));
+			}
 
 			if(this.scale !== 1)
 			{
@@ -2248,7 +2277,7 @@
 			}
 
 			if(this.center.x !== 0 && this.center.y !== 0) {
-				this.matrix.multiply(new Matrix([1, 0, 0, 1, this.center.x, this.center.y]));
+				this.matrix.multiply(new Matrix([1, 0, 0, 1, -this.center.x, -this.center.y]));
 			}
 			
 			this.inverseMatrix = this.matrix.getInverse();

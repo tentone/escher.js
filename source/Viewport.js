@@ -107,9 +107,9 @@ Viewport.prototype.updateMatrix = function()
 	{
 		this.matrix.m = [1, 0, 0, 1, this.position.x, this.position.y];
 
-		// if(this.center.x !== 0 && this.center.y !== 0) {
-		// 	this.matrix.multiply(new Matrix([1, 0, 0, 1, -this.center.x, -this.center.y]));
-		// }
+		if(this.center.x !== 0 && this.center.y !== 0) {
+			this.matrix.multiply(new Matrix([1, 0, 0, 1, this.center.x, this.center.y]));
+		}
 
 		if(this.scale !== 1)
 		{
@@ -124,7 +124,7 @@ Viewport.prototype.updateMatrix = function()
 		}
 
 		if(this.center.x !== 0 && this.center.y !== 0) {
-			this.matrix.multiply(new Matrix([1, 0, 0, 1, this.center.x, this.center.y]));
+			this.matrix.multiply(new Matrix([1, 0, 0, 1, -this.center.x, -this.center.y]));
 		}
 		
 		this.inverseMatrix = this.matrix.getInverse();

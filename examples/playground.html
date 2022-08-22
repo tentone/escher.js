@@ -44,6 +44,9 @@
 			canvas.height = window.innerHeight;
 		};
 
+		// Box index
+		var boxIndex = 0;
+
 		// Create boxes on double click
 		canvas.ondblclick = function(event)
 		{
@@ -56,7 +59,7 @@
 			boxes.add(box);
 
 			var text = new Escher.Text();
-			text.text = "Box";
+			text.text = "Box " + boxIndex++;
 			box.add(text);
 
 			if(boxes.children.length > 1)
@@ -288,6 +291,7 @@
 
 		// Viewport
 		var viewport = new Escher.Viewport(canvas);
+		viewport.center.set(500, 500);
 
 		// Renderer
 		var renderer = new Escher.Renderer(canvas);
