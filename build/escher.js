@@ -2239,7 +2239,7 @@
 		 *
 		 * For some application its easier to focus the target if the viewport moves to the pointer location while scaling.
 		 */
-		this.moveOnScale = false;
+		this.centerOnPointer = false;
 
 		/**
 		 * Value of the initial point of rotation if the viewport is being rotated.
@@ -2279,7 +2279,7 @@
 			if(this.center.x !== 0 && this.center.y !== 0) {
 				this.matrix.multiply(new Matrix([1, 0, 0, 1, -this.center.x, -this.center.y]));
 			}
-			
+
 			this.inverseMatrix = this.matrix.getInverse();
 			this.matrixNeedsUpdate = false;
 		}
@@ -2340,7 +2340,7 @@
 		this.allowScale = true;
 
 		/**
-		 * Flag to indicate if the viewport should move when scalling.
+		 * Flag to indicate if the viewport should automatically cente ron the pointer position.
 		 * 
 		 * The viewport will simulataniously move to the pointer position while scalling.
 		 *
@@ -2348,7 +2348,7 @@
 		 *
 		 * @type {boolean}
 		 */
-		this.moveOnScale = false;
+		this.centerOnPointer = true;
 
 		/**
 		 * Flag to recenter the viewport automatically to the canvas.
@@ -2358,7 +2358,7 @@
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.centerOnCanvas = true;
+		this.centerOnCanvas = false;
 
 		/**
 		 * If true allows the viewport to be rotated.
@@ -2406,24 +2406,6 @@
 
 			this.viewport.scale -= scale;
 			this.viewport.matrixNeedsUpdate = true;
-
-			// Move on scale
-			if(this.moveOnScale && pointer.canvas !== null)
-			{	
-				this.viewport.updateMatrix();
-
-				var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
-
-				var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
-				centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
-
-				var delta = pointerWorld.clone();
-				delta.sub(centerWorld);
-				delta.multiplyScalar(0.1);
-
-				this.viewport.position.sub(delta);
-				this.viewport.matrixNeedsUpdate = true;
-			}
 		}
 
 		// Rotation
@@ -2442,17 +2424,15 @@
 				this.viewport.rotation = this.rotationInitial + point.angle();
 				this.viewport.matrixNeedsUpdate = true;
 			}
-			return;
+		} else {
+			this.rotationPoint = null;
 		}
-
-		this.rotationPoint = null;
 
 		// Drag
 		if(pointer.buttonPressed(this.dragButton))
 		{
 			this.viewport.position.add(pointer.delta);
 			this.viewport.matrixNeedsUpdate = true;
-			return;
 		}
 
 		// Automtical center the viewport.
@@ -2460,6 +2440,13 @@
 			var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
 			centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
 			this.viewport.center.copy(centerWorld);
+			this.viewport.matrixNeedsUpdate = true;
+		} 
+		// Center on pointer
+		else if(this.centerOnPointer && pointer.canvas !== null)
+		{
+			var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
+			this.viewport.center.copy(pointerWorld);
 			this.viewport.matrixNeedsUpdate = true;
 		}
 	};

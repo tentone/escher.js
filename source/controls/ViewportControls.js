@@ -44,7 +44,7 @@ function ViewportControls(viewport)
 	 *
 	 * @type {boolean}
 	 */
-	this.centerOnPointer = true;
+	this.centerOnPointer = false;
 
 	/**
 	 * Flag to recenter the viewport automatically to the canvas.
@@ -54,7 +54,7 @@ function ViewportControls(viewport)
 	 * @type {boolean}
 	 * @default true
 	 */
-	this.centerOnCanvas = false;
+	this.centerOnCanvas = true;
 
 	/**
 	 * If true allows the viewport to be rotated.

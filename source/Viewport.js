@@ -126,7 +126,7 @@ Viewport.prototype.updateMatrix = function()
 		if(this.center.x !== 0 && this.center.y !== 0) {
 			this.matrix.multiply(new Matrix([1, 0, 0, 1, -this.center.x, -this.center.y]));
 		}
-		
+
 		this.inverseMatrix = this.matrix.getInverse();
 		this.matrixNeedsUpdate = false;
 	}
