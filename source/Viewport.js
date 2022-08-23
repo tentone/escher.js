@@ -86,7 +86,7 @@ function Viewport(canvas)
 	 *
 	 * For some application its easier to focus the target if the viewport moves to the pointer location while scaling.
 	 */
-	this.moveOnScale = false;
+	this.centerOnPointer = false;
 
 	/**
 	 * Value of the initial point of rotation if the viewport is being rotated.

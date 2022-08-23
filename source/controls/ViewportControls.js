@@ -36,7 +36,7 @@ function ViewportControls(viewport)
 	this.allowScale = true;
 
 	/**
-	 * Flag to indicate if the viewport should move when scalling.
+	 * Flag to indicate if the viewport should automatically cente ron the pointer position.
 	 * 
 	 * The viewport will simulataniously move to the pointer position while scalling.
 	 *
@@ -44,7 +44,7 @@ function ViewportControls(viewport)
 	 *
 	 * @type {boolean}
 	 */
-	this.moveOnScale = false;
+	this.centerOnPointer = true;
 
 	/**
 	 * Flag to recenter the viewport automatically to the canvas.
@@ -54,7 +54,7 @@ function ViewportControls(viewport)
 	 * @type {boolean}
 	 * @default true
 	 */
-	this.centerOnCanvas = true;
+	this.centerOnCanvas = false;
 
 	/**
 	 * If true allows the viewport to be rotated.
@@ -102,24 +102,6 @@ ViewportControls.prototype.update = function(pointer)
 
 		this.viewport.scale -= scale;
 		this.viewport.matrixNeedsUpdate = true;
-
-		// Move on scale
-		if(this.moveOnScale && pointer.canvas !== null)
-		{	
-			this.viewport.updateMatrix();
-
-			var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
-
-			var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
-			centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
-
-			var delta = pointerWorld.clone();
-			delta.sub(centerWorld);
-			delta.multiplyScalar(0.1);
-
-			this.viewport.position.sub(delta);
-			this.viewport.matrixNeedsUpdate = true;
-		}
 	}
 
 	// Rotation
@@ -154,6 +136,13 @@ ViewportControls.prototype.update = function(pointer)
 		var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
 		centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
 		this.viewport.center.copy(centerWorld);
+		this.viewport.matrixNeedsUpdate = true;
+	} 
+	// Center on pointer
+	else if(this.centerOnPointer && pointer.canvas !== null)
+	{
+		var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position)
+		this.viewport.center.copy(pointerWorld);
 		this.viewport.matrixNeedsUpdate = true;
 	}
 };
