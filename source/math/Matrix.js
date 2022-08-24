@@ -98,24 +98,28 @@ Matrix.prototype.premultiply = function(mat)
  * @param {number} sy Scale Y
  * @param {number} ox Origin X (applied before scale and rotation)
  * @param {number} oy Origin Y (applied before scale and rotation)
- * @param {number} a Rotation angle (radians).
+ * @param {number} rot Rotation angle (radians).
  */
-Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, a)
+Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, rot)
 {
+	// Position
 	this.m = [1, 0, 0, 1, px, py];
 
-	if(a !== 0)
-	{		
-		var c = Math.cos(a);
-		var s = Math.sin(a);
+	// Rotation
+	if(rot !== 0)
+	{
+		var c = Math.cos(rot);
+		var s = Math.sin(rot);
 		this.multiply(new Matrix([c, s, -s, c, 0, 0]));
 	}
 
+	// Scale
 	if(sx !== 1 || sy !== 1)
 	{
 		this.scale(sx, sy);
 	}
 
+	// Origin
 	if(ox !== 0 || oy !== 0)
 	{	
 		this.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));

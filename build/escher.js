@@ -655,24 +655,28 @@
 	 * @param {number} sy Scale Y
 	 * @param {number} ox Origin X (applied before scale and rotation)
 	 * @param {number} oy Origin Y (applied before scale and rotation)
-	 * @param {number} a Rotation angle (radians).
+	 * @param {number} rot Rotation angle (radians).
 	 */
-	Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, a)
+	Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, rot)
 	{
+		// Position
 		this.m = [1, 0, 0, 1, px, py];
 
-		if(a !== 0)
-		{		
-			var c = Math.cos(a);
-			var s = Math.sin(a);
+		// Rotation
+		if(rot !== 0)
+		{
+			var c = Math.cos(rot);
+			var s = Math.sin(rot);
 			this.multiply(new Matrix([c, s, -s, c, 0, 0]));
 		}
 
+		// Scale
 		if(sx !== 1 || sy !== 1)
 		{
 			this.scale(sx, sy);
 		}
 
+		// Origin
 		if(ox !== 0 || oy !== 0)
 		{	
 			this.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));
@@ -2258,25 +2262,25 @@
 	{
 		if(this.matrixNeedsUpdate)
 		{
-			this.matrix.m = [1, 0, 0, 1, this.position.x, this.position.y];
-
-			if(this.center.x !== 0 && this.center.y !== 0) {
+			this.matrix.m = [1, 0, 0, 1, this.position.x , this.position.y];
+			
+			if(this.center.x !== 0.0 || this.center.y !== 0.0) {
 				this.matrix.multiply(new Matrix([1, 0, 0, 1, this.center.x, this.center.y]));
 			}
 
-			if(this.scale !== 1)
-			{
-				this.matrix.scale(this.scale, this.scale);
-			}
-			
-			if(this.rotation !== 0)
+			if(this.rotation !== 0.0)
 			{		
 				var c = Math.cos(this.rotation);
 				var s = Math.sin(this.rotation);
 				this.matrix.multiply(new Matrix([c, s, -s, c, 0, 0]));
 			}
 
-			if(this.center.x !== 0 && this.center.y !== 0) {
+			if(this.scale !== 1.0)
+			{
+				this.matrix.multiply(new Matrix([this.scale, 0, 0, this.scale, 0, 0]));
+			}
+
+			if(this.center.x !== 0.0 || this.center.y !== 0.0) {
 				this.matrix.multiply(new Matrix([1, 0, 0, 1, -this.center.x, -this.center.y]));
 			}
 
@@ -2308,6 +2312,8 @@
 
 	/**
 	 * Viewport controls are used to allow the user to control the viewport.
+	 * 
+	 * The user controls the viewport using pointer input (e.g. mouse, touchscreen)
 	 *
 	 * @class
 	 * @param {Viewport} viewport
@@ -2329,6 +2335,13 @@
 		 * @type {number}
 		 */
 		this.dragButton = Pointer.RIGHT;
+
+		/**
+		 * Button used to rotate the viewport.
+		 *
+		 * @type {number}
+		 */
+		this.rotateButton = Pointer.MIDDLE;
 
 		/**
 		 * Is set to true allow the viewport to be scalled.
@@ -2426,7 +2439,7 @@
 		}
 
 		// Rotation
-		if(this.allowRotation && pointer.buttonPressed(Pointer.RIGHT) && pointer.buttonPressed(Pointer.LEFT))
+		if(this.allowRotation && pointer.buttonPressed(this.rotateButton))
 		{
 			// Rotation pivot
 			if(this.rotationPoint === null)
@@ -2438,9 +2451,12 @@
 			{
 				var point = pointer.position.clone();
 				point.sub(this.rotationPoint);
+
 				this.viewport.rotation = this.rotationInitial + point.angle();
 				this.viewport.matrixNeedsUpdate = true;
 			}
+
+			return;
 		} else {
 			this.rotationPoint = null;
 		}
@@ -2452,7 +2468,6 @@
 			this.viewport.matrixNeedsUpdate = true;
 		}
 
-		
 		if (pointer.canvas === null) {
 			return;
 		}

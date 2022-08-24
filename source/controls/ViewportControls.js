@@ -2,10 +2,10 @@ import {Viewport} from "../Viewport.js";
 import {Pointer} from "../input/Pointer.js";
 import {Vector2} from "../math/Vector2.js";
 
-
-
 /**
  * Viewport controls are used to allow the user to control the viewport.
+ * 
+ * The user controls the viewport using pointer input (e.g. mouse, touchscreen)
  *
  * @class
  * @param {Viewport} viewport
@@ -29,6 +29,13 @@ function ViewportControls(viewport)
 	this.dragButton = Pointer.RIGHT;
 
 	/**
+	 * Button used to rotate the viewport.
+	 *
+	 * @type {number}
+	 */
+	this.rotateButton = Pointer.MIDDLE;
+
+	/**
 	 * Is set to true allow the viewport to be scalled.
 	 *
 	 * Scaling is performed using the pointer scroll.
@@ -44,7 +51,7 @@ function ViewportControls(viewport)
 	 * 
 	 * @type {number}
 	 */
-	this.recenterViewport = ViewportControls.RECENTER_POINTER;
+	this.recenterViewport = ViewportControls.RECENTER_NONE;
 
 	/**
 	 * If true allows the viewport to be rotated.
@@ -124,7 +131,7 @@ ViewportControls.prototype.update = function(pointer)
 	}
 
 	// Rotation
-	if(this.allowRotation && pointer.buttonPressed(Pointer.RIGHT) && pointer.buttonPressed(Pointer.LEFT))
+	if(this.allowRotation && pointer.buttonPressed(this.rotateButton))
 	{
 		// Rotation pivot
 		if(this.rotationPoint === null)
@@ -136,9 +143,12 @@ ViewportControls.prototype.update = function(pointer)
 		{
 			var point = pointer.position.clone();
 			point.sub(this.rotationPoint);
+
 			this.viewport.rotation = this.rotationInitial + point.angle();
 			this.viewport.matrixNeedsUpdate = true;
 		}
+
+		return;
 	} else {
 		this.rotationPoint = null;
 	}
@@ -150,7 +160,6 @@ ViewportControls.prototype.update = function(pointer)
 		this.viewport.matrixNeedsUpdate = true;
 	}
 
-	
 	if (pointer.canvas === null) {
 		return;
 	}
