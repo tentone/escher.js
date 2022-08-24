@@ -2340,25 +2340,13 @@
 		this.allowScale = true;
 
 		/**
-		 * Flag to indicate if the viewport should automatically cente ron the pointer position.
+		 * Flag to indicate if the viewport should automatically be recentered.
 		 * 
-		 * The viewport will simulataniously move to the pointer position while scalling.
-		 *
-		 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
-		 *
-		 * @type {boolean}
+		 * This will cause the viewport center property to be automatically set based on an heuristic defined by the user.
+		 * 
+		 * @type {number}
 		 */
-		this.centerOnPointer = true;
-
-		/**
-		 * Flag to recenter the viewport automatically to the canvas.
-		 * 
-		 * This will ensure that rotation and scaling will not cause the viewport to move around.
-		 * 
-		 * @type {boolean}
-		 * @default true
-		 */
-		this.centerOnCanvas = false;
+		this.recenterViewport = ViewportControls.RECENTER_POINTER;
 
 		/**
 		 * If true allows the viewport to be rotated.
@@ -2389,6 +2377,35 @@
 		 */
 		this.rotationInitial = 0;
 	}
+
+	/**
+	 * Viewport is not automatically recentered.
+	 * 
+	 * The center point can be set manually by the developer.
+	 * 
+	 * @type {number}
+	 */
+	ViewportControls.RECENTER_NONE = 0;
+
+	/**
+	 * Recenter the viewport automatically to the canvas.
+	 * 
+	 * This will ensure that rotation and scaling will not cause the viewport to move around.
+	 * 
+	 * @type {number} 
+	 */
+	ViewportControls.RECENTER_CANVAS = 1;
+
+	/**
+	 * Viewport should automatically cente ron the pointer position.
+	 * 
+	 * The viewport will simulataniously move to the pointer position while scalling.
+	 *
+	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
+	 *
+	 * @type {number} 
+	 */
+	ViewportControls.RECENTER_POINTER = 2;
 
 	/**
 	 * Update the viewport controls using the pointer object.
@@ -2435,15 +2452,20 @@
 			this.viewport.matrixNeedsUpdate = true;
 		}
 
-		// Automtical center the viewport.
-		if (this.centerOnCanvas && pointer.canvas !== null) {
+		
+		if (pointer.canvas === null) {
+			return;
+		}
+
+		// Center viewport on canvas
+		if (this.recenterViewport === ViewportControls.RECENTER_CANVAS) {
 			var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
 			centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
 			this.viewport.center.copy(centerWorld);
 			this.viewport.matrixNeedsUpdate = true;
 		} 
-		// Center on pointer
-		else if(this.centerOnPointer && pointer.canvas !== null)
+		// Center viewport on pointer
+		else if(this.recenterViewport === ViewportControls.RECENTER_POINTER)
 		{
 			var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
 			this.viewport.center.copy(pointerWorld);
