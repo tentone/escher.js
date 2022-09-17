@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Circle.js</title>
+    <title>JSDoc: Source: objects/Path.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Circle.js</h1>
+    <h1 class="page-title">Source: objects/Path.js</h1>
 
     
 
@@ -31,84 +31,77 @@ import {ColorStyle} from "./style/ColorStyle";
 import {Style} from "./style/Style";
 
 /**
- * Circle object draw a circular object, into the canvas.
- *
- * Can be used as a base to implement other circular objects, already implements the circle collision for pointer events.
+ * Path object can be used to draw paths build from commands into the canvas.
+ * 
+ * These paths can be also obtained from SVG files as a SVG command list.
  *
  * @class
  * @extends {Object2D}
  */
-function Circle()
+function Path(path)
 {
 	Object2D.call(this);
 
 	/**
-	 * Radius of the circle.
+	 * Path2D object containing the commands to draw the shape into the canvas.
 	 * 
-	 * @type {number}
+	 * Check https://developer.mozilla.org/en-US/docs/Web/API/Path2D/Path2D for more details.
+	 * 
+	 * @type {Path2D}
 	 */
-	this.radius = 10.0;
+	this.path = path !== undefined ? path : new Path2D("M10 10 h 80 v 80 h -80 Z");
 
 	/**
 	 * Style of the object border line.
 	 *
 	 * If set null it is ignored.
-	 *
+	 * 
 	 * @type {Style}
 	 */
 	this.strokeStyle = new ColorStyle("#000000");
 
 	/**
 	 * Line width, only used if a valid strokeStyle is defined.
-	 *
+	 * 
 	 * @type {number}
 	 */
 	this.lineWidth = 1;
 
 	/**
-	 * Background color of the circle.
+	 * Background color of the path.
 	 *
 	 * If set null it is ignored.
 	 *
-	 * @type {Style}
+	 * @param {Style}
 	 */
 	this.fillStyle = new ColorStyle("#FFFFFF");
 }
 
-Circle.prototype = Object.create(Object2D.prototype);
-Circle.prototype.constructor = Circle;
-Circle.prototype.type = "Circle";
-Object2D.register(Circle, "Circle");
+Path.prototype = Object.create(Object2D.prototype);
+Path.prototype.constructor = Path;
+Path.prototype.type = "Path";
+Object2D.register(Path, "Path");
 
-Circle.prototype.isInside = function(point)
+Path.prototype.draw = function(context)
 {
-	return point.length() &lt;= this.radius;
-};
-
-Circle.prototype.draw = function(context, viewport, canvas)
-{
-	context.beginPath();
-	context.arc(0, 0, this.radius, 0, 2 * Math.PI);
-	
 	if(this.fillStyle !== null)
 	{	
 		context.fillStyle = this.fillStyle.get(context);
-		context.fill();
+		context.fill(this.path);
 	}
 
 	if(this.strokeStyle !== null)
 	{
 		context.lineWidth = this.lineWidth;
 		context.strokeStyle = this.strokeStyle.get(context);
-		context.stroke();
+		context.stroke(this.path);
 	}
 };
 
-Circle.prototype.serialize = function(recursive)
+Path.prototype.serialize = function(recursive)
 {
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
-	data.radius = this.radius;
 	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 	data.lineWidth = this.lineWidth;
 	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
@@ -116,17 +109,16 @@ Circle.prototype.serialize = function(recursive)
 	return data;
 };
 
-Circle.prototype.parse = function(data, root)
+Path.prototype.parse = function(data, root)
 {
 	Object2D.prototype.parse.call(this, data, root);
 
-	this.radius = data.radius;
 	this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
 	this.lineWidth = data.lineWidth;
 	this.fillStyle = data.fillStyle !== null ? Style.parse(data.fillStyle) : null;
 };
 
-export {Circle};
+export {Path};
 </code></pre>
         </article>
     </section>

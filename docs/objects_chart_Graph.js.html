@@ -32,9 +32,9 @@ import {Box2} from "../../math/Box2.js";
 import {ColorStyle} from "../style/ColorStyle";
 
 /**
- * Graph object is used to draw simple graph data into the canvas.
+ * Graph object is used to plot numeric graph data into the canvas.
  *
- * Graph data is composed of X, Y values.
+ * Graph data is composed of Y values that are interpolated across the X axis.
  *
  * @class
  * @extends {Object2D}
@@ -45,31 +45,43 @@ function Graph()
 
 	/**
 	 * Graph object containing the size of the object.
+	 * 
+	 * @type {Box2}
 	 */
 	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 	/**
 	 * Color of the box border line.
+	 * 
+	 * @type {ColorStyle}
 	 */
 	this.strokeStyle = new ColorStyle("rgb(0, 153, 255)");
 
 	/**
-	 * Line width.
+	 * Line width used to stroke the graph data.
+	 * 
+	 * @type {number}
 	 */
-	this.lineWidth = 1;
+	this.lineWidth = 1.0;
 
 	/**
 	 * Background color of the box.
+	 * 
+	 * @type {ColorStyle}
 	 */
 	this.fillStyle = new ColorStyle("rgba(0, 153, 255, 0.3)");
 
 	/**
 	 * Minimum value of the graph.
+	 * 
+	 * @type {number}
 	 */
 	this.min = 0;
 
 	/**
 	 * Maximum value of the graph.
+	 * 
+	 * @type {number}
 	 */
 	this.max = 10;
 
@@ -77,6 +89,8 @@ function Graph()
 	 * Data to be presented in the graph.
 	 *
 	 * The array should store numeric values.
+	 * 
+	 * @type {Array&lt;number>}
 	 */
 	this.data = [];
 }
@@ -102,9 +116,8 @@ Graph.prototype.draw = function(context, viewport, canvas)
 	var height = this.box.max.y - this.box.min.y;
 
 	context.lineWidth = this.lineWidth;
-	context.strokeStyle = this.strokeStyle.get(context);
 	context.beginPath();
-		
+			
 	var step = width / (this.data.length - 1);
 	var gamma = this.max - this.min;
 
@@ -115,12 +128,15 @@ Graph.prototype.draw = function(context, viewport, canvas)
 		context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
 	}
 
-	context.stroke();
+	if(this.strokeStyle !== null)
+	{
+		context.strokeStyle = this.strokeStyle.get(context);
+		context.stroke();
+	}
 
 	if(this.fillStyle !== null)
 	{
 		context.fillStyle = this.fillStyle.get(context);
-
 		context.lineTo(this.box.max.x, this.box.max.y);
 		context.lineTo(this.box.min.x, this.box.max.y);
 		context.fill();
@@ -167,13 +183,13 @@ export {Graph};
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BarGraph.html">BarGraph</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Path.html">Path</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="ScatterGraph.html">ScatterGraph</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Tue Aug 25 2020 17:33:45 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Sep 17 2022 14:24:36 GMT+0100 (Hora de verão da Europa Ocidental)
 </footer>
 
 <script> prettyPrint(); </script>

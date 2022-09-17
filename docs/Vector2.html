@@ -101,7 +101,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">X value.</td>
         </tr>
 
     
@@ -124,7 +124,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Y value.</td>
         </tr>
 
     
@@ -281,7 +281,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">The other vector.</td>
         </tr>
 
     
@@ -322,7 +322,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line59">line 59</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line63">line 63</a>
     </li></ul></dd>
     
 
@@ -418,7 +418,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Scalar value.</td>
         </tr>
 
     
@@ -459,7 +459,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line70">line 70</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line74">line 74</a>
     </li></ul></dd>
     
 
@@ -555,7 +555,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">The other vector.</td>
         </tr>
 
     
@@ -578,7 +578,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Scalar value.</td>
         </tr>
 
     
@@ -619,7 +619,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line94">line 94</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line98">line 98</a>
     </li></ul></dd>
     
 
@@ -715,7 +715,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">The first vector.</td>
         </tr>
 
     
@@ -738,7 +738,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">The second vector.</td>
         </tr>
 
     
@@ -779,7 +779,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line82">line 82</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line86">line 86</a>
     </li></ul></dd>
     
 
@@ -815,7 +815,7 @@
     
 
     
-    <h4 class="name" id="angle"><span class="type-signature"></span>angle<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="angle"><span class="type-signature"></span>angle<span class="signature">(forcePositive)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -823,7 +823,7 @@
 
 
 <div class="description">
-    Computes the angle in radians with respect to the positive x-axis
+    Computes the angle in radians with respect to the positive x-axis.
 </div>
 
 
@@ -832,6 +832,55 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>forcePositive</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">If true, the angle will be forced to be positive.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -867,7 +916,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line321">line 321</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line350">line 350</a>
     </li></ul></dd>
     
 
@@ -892,6 +941,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Angle in radians.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -955,7 +1026,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line236">line 236</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line254">line 254</a>
     </li></ul></dd>
     
 
@@ -991,7 +1062,329 @@
     
 
     
-    <h4 class="name" id="clone"><span class="type-signature"></span>clone<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="clamp"><span class="type-signature"></span>clamp<span class="signature">(min, max)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Clamp the vector coordinates to the range defined by two vectors.
+
+Applied to x and y independently.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>min</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Minimum value.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>max</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Maximum value.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line216">line 216</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="clampScalar"><span class="type-signature"></span>clampScalar<span class="signature">(minVal, maxVal)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Clamp the vector coordinates to the range defined by two scalars.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>minVal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Minimum value.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maxVal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Maximum value.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line229">line 229</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="clone"><span class="type-signature"></span>clone<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Vector2.html">Vector2</a>}</span></h4>
     
 
     
@@ -1043,7 +1436,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line38">line 38</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line42">line 42</a>
     </li></ul></dd>
     
 
@@ -1068,6 +1461,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A new vector with the same values as this one.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1180,7 +1595,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line48">line 48</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line52">line 52</a>
     </li></ul></dd>
     
 
@@ -1317,7 +1732,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line279">line 279</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line297">line 297</a>
     </li></ul></dd>
     
 
@@ -1375,7 +1790,7 @@
     
 
     
-    <h4 class="name" id="distanceTo"><span class="type-signature"></span>distanceTo<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="distanceTo"><span class="type-signature"></span>distanceTo<span class="signature">(v)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -1392,6 +1807,55 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Vector to compute the distance to.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -1427,7 +1891,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line336">line 336</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line368">line 368</a>
     </li></ul></dd>
     
 
@@ -1452,6 +1916,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Distance between the two vectors.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1463,7 +1949,7 @@
     
 
     
-    <h4 class="name" id="distanceToSquared"><span class="type-signature"></span>distanceToSquared<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="distanceToSquared"><span class="type-signature"></span>distanceToSquared<span class="signature">(v)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -1484,6 +1970,55 @@ Faster for comparisons.
 
 
 
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Vector to compute the distance to.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
 
 
 
@@ -1517,7 +2052,7 @@ Faster for comparisons.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line346">line 346</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line381">line 381</a>
     </li></ul></dd>
     
 
@@ -1542,6 +2077,28 @@ Faster for comparisons.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Distance between the two vectors squared.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1654,7 +2211,7 @@ Faster for comparisons.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line162">line 162</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line166">line 166</a>
     </li></ul></dd>
     
 
@@ -1791,7 +2348,7 @@ Faster for comparisons.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line173">line 173</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line177">line 177</a>
     </li></ul></dd>
     
 
@@ -1928,7 +2485,7 @@ Faster for comparisons.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line268">line 268</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line286">line 286</a>
     </li></ul></dd>
     
 
@@ -1986,7 +2543,7 @@ Faster for comparisons.
     
 
     
-    <h4 class="name" id="equals"><span class="type-signature"></span>equals<span class="signature">(v)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="equals"><span class="type-signature"></span>equals<span class="signature">(v1, v2, alpha, v)</span><span class="type-signature"> &rarr; {<a href="Vector2.html">Vector2</a>}</span></h4>
     
 
     
@@ -1994,7 +2551,7 @@ Faster for comparisons.
 
 
 <div class="description">
-    Check if two vectors are equal.
+    Lerp between this vector and another vector.
 </div>
 
 
@@ -2030,6 +2587,75 @@ Faster for comparisons.
 
         <tr>
             
+                <td class="name"><code>v1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Vector to lerp from.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>v2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Vector to lerp to.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>alpha</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Lerp factor.</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>v</code></td>
             
 
@@ -2046,7 +2672,7 @@ Faster for comparisons.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Vector to compare with.</td>
         </tr>
 
     
@@ -2087,7 +2713,7 @@ Faster for comparisons.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line386">line 386</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line441">line 441</a>
     </li></ul></dd>
     
 
@@ -2112,6 +2738,36 @@ Faster for comparisons.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    This vector.
+
+Vector2.prototype.lerpVectors = function(v1, v2, alpha)
+{
+	return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
+};
+
+/**
+Check if two vectors are equal.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -2175,7 +2831,7 @@ Faster for comparisons.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line227">line 227</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line245">line 245</a>
     </li></ul></dd>
     
 
@@ -2273,7 +2929,7 @@ The vector can be converted to array using the toArray() method.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Array to set the vector value from.</td>
         </tr>
 
     
@@ -2314,7 +2970,7 @@ The vector can be converted to array using the toArray() method.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line398">line 398</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line453">line 453</a>
     </li></ul></dd>
     
 
@@ -2350,7 +3006,7 @@ The vector can be converted to array using the toArray() method.
     
 
     
-    <h4 class="name" id="length"><span class="type-signature"></span>length<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="length"><span class="type-signature"></span>length<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -2402,7 +3058,7 @@ The vector can be converted to array using the toArray() method.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line297">line 297</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line319">line 319</a>
     </li></ul></dd>
     
 
@@ -2427,6 +3083,28 @@ The vector can be converted to array using the toArray() method.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Length of the vector.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -2438,7 +3116,7 @@ The vector can be converted to array using the toArray() method.
     
 
     
-    <h4 class="name" id="lengthSq"><span class="type-signature"></span>lengthSq<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="lengthSq"><span class="type-signature"></span>lengthSq<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -2492,7 +3170,7 @@ Faster for comparions.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line289">line 289</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line309">line 309</a>
     </li></ul></dd>
     
 
@@ -2517,6 +3195,28 @@ Faster for comparions.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Squared length of the vector.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -2528,7 +3228,7 @@ Faster for comparions.
     
 
     
-    <h4 class="name" id="manhattanDistanceTo"><span class="type-signature"></span>manhattanDistanceTo<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="lerp"><span class="type-signature"></span>lerp<span class="signature">(v, alpha)</span><span class="type-signature"></span></h4>
     
 
     
@@ -2536,7 +3236,7 @@ Faster for comparions.
 
 
 <div class="description">
-    Manhattan distance between two vector positions.
+    Lerp this vector to another vector.
 </div>
 
 
@@ -2545,6 +3245,78 @@ Faster for comparions.
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Vector to lerp to.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>alpha</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Lerp factor.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -2580,7 +3352,7 @@ Faster for comparions.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line357">line 357</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line417">line 417</a>
     </li></ul></dd>
     
 
@@ -2616,7 +3388,166 @@ Faster for comparions.
     
 
     
-    <h4 class="name" id="manhattanLength"><span class="type-signature"></span>manhattanLength<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="manhattanDistanceTo"><span class="type-signature"></span>manhattanDistanceTo<span class="signature">(v)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Manhattan distance between two vector positions.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Vector to compute the distance to.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line395">line 395</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Manhattan distance between the two vectors.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="manhattanLength"><span class="type-signature"></span>manhattanLength<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -2668,7 +3599,7 @@ Faster for comparions.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line305">line 305</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line329">line 329</a>
     </li></ul></dd>
     
 
@@ -2693,6 +3624,28 @@ Faster for comparions.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Manhattan length of the vector.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -2807,7 +3760,7 @@ X is set as the max between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line198">line 198</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line202">line 202</a>
     </li></ul></dd>
     
 
@@ -2946,7 +3899,7 @@ X is set as the min between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line185">line 185</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line189">line 189</a>
     </li></ul></dd>
     
 
@@ -3042,7 +3995,7 @@ X is set as the min between this vector and the other vector.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">The other vector.</td>
         </tr>
 
     
@@ -3083,7 +4036,7 @@ X is set as the min between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line139">line 139</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line143">line 143</a>
     </li></ul></dd>
     
 
@@ -3179,7 +4132,7 @@ X is set as the min between this vector and the other vector.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Scalar value.</td>
         </tr>
 
     
@@ -3220,7 +4173,7 @@ X is set as the min between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line150">line 150</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line154">line 154</a>
     </li></ul></dd>
     
 
@@ -3308,7 +4261,7 @@ X is set as the min between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line254">line 254</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line272">line 272</a>
     </li></ul></dd>
     
 
@@ -3344,7 +4297,7 @@ X is set as the min between this vector and the other vector.
     
 
     
-    <h4 class="name" id="normalize"><span class="type-signature"></span>normalize<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="normalize"><span class="type-signature"></span>normalize<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Vector2.html">Vector2</a>}</span></h4>
     
 
     
@@ -3396,7 +4349,7 @@ X is set as the min between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line313">line 313</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line339">line 339</a>
     </li></ul></dd>
     
 
@@ -3421,6 +4374,28 @@ X is set as the min between this vector and the other vector.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    This vector.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -3492,7 +4467,7 @@ X is set as the min between this vector and the other vector.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Point to rotate around.</td>
         </tr>
 
     
@@ -3515,7 +4490,7 @@ X is set as the min between this vector and the other vector.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Angle in radians.</td>
         </tr>
 
     
@@ -3556,7 +4531,7 @@ X is set as the min between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line421">line 421</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line476">line 476</a>
     </li></ul></dd>
     
 
@@ -3644,7 +4619,7 @@ X is set as the min between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line245">line 245</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line263">line 263</a>
     </li></ul></dd>
     
 
@@ -3740,7 +4715,7 @@ X is set as the min between this vector and the other vector.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">X value.</td>
         </tr>
 
     
@@ -3763,7 +4738,7 @@ X is set as the min between this vector and the other vector.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Y value.</td>
         </tr>
 
     
@@ -3840,7 +4815,7 @@ X is set as the min between this vector and the other vector.
     
 
     
-    <h4 class="name" id="setLength"><span class="type-signature"></span>setLength<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="setLength"><span class="type-signature"></span>setLength<span class="signature">(length)</span><span class="type-signature"> &rarr; {<a href="Vector2.html">Vector2</a>}</span></h4>
     
 
     
@@ -3857,6 +4832,55 @@ X is set as the min between this vector and the other vector.
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>length</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Length to scale the vector to.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -3892,7 +4916,7 @@ X is set as the min between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line365">line 365</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line406">line 406</a>
     </li></ul></dd>
     
 
@@ -3917,6 +4941,28 @@ X is set as the min between this vector and the other vector.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    This vector.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -3928,7 +4974,7 @@ X is set as the min between this vector and the other vector.
     
 
     
-    <h4 class="name" id="setScalar"><span class="type-signature"></span>setScalar<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="setScalar"><span class="type-signature"></span>setScalar<span class="signature">(scalar)</span><span class="type-signature"></span></h4>
     
 
     
@@ -3945,6 +4991,55 @@ X is set as the min between this vector and the other vector.
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>scalar</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Scalar value.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -3980,7 +5075,7 @@ X is set as the min between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line29">line 29</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line31">line 31</a>
     </li></ul></dd>
     
 
@@ -4076,7 +5171,7 @@ X is set as the min between this vector and the other vector.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">The other vector.</td>
         </tr>
 
     
@@ -4117,7 +5212,7 @@ X is set as the min between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line105">line 105</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line109">line 109</a>
     </li></ul></dd>
     
 
@@ -4213,7 +5308,7 @@ X is set as the min between this vector and the other vector.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Scalar value.</td>
         </tr>
 
     
@@ -4254,7 +5349,7 @@ X is set as the min between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line116">line 116</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line120">line 120</a>
     </li></ul></dd>
     
 
@@ -4350,7 +5445,7 @@ X is set as the min between this vector and the other vector.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">The first vector.</td>
         </tr>
 
     
@@ -4373,7 +5468,7 @@ X is set as the min between this vector and the other vector.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">The second vector.</td>
         </tr>
 
     
@@ -4414,7 +5509,7 @@ X is set as the min between this vector and the other vector.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line128">line 128</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line132">line 132</a>
     </li></ul></dd>
     
 
@@ -4504,7 +5599,7 @@ Values stored as [x, y].
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line410">line 410</a>
+        <a href="math_Vector2.js.html">math/Vector2.js</a>, <a href="math_Vector2.js.html#line465">line 465</a>
     </li></ul></dd>
     
 
@@ -4572,13 +5667,13 @@ Values stored as [x, y].
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BarGraph.html">BarGraph</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Path.html">Path</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="ScatterGraph.html">ScatterGraph</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Tue Aug 25 2020 17:33:46 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Sep 17 2022 14:24:36 GMT+0100 (Hora de verão da Europa Ocidental)
 </footer>
 
 <script> prettyPrint(); </script>

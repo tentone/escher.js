@@ -42,41 +42,70 @@ function Viewport(canvas)
 {
 	/**
 	 * UUID of the object.
+	 * 
+	 * @type {string}
 	 */
 	this.uuid = UUID.generate(); 
 
 	/**
 	 * Canvas DOM element where the viewport is being rendered.
+	 * 
+	 * @type {Element}
 	 */
 	this.canvas = canvas;
 
 	/**
-	 * Position of the object.
+	 * Position of the viewport.
+	 * 
+	 * @type {Vector2}
 	 */
 	this.position = new Vector2(0, 0);
+	
+	/**
+	 * Center point of the viewport. Relative to the size of the canvas.
+	 * 
+	 * Rotation and zoom is applied relative to this point.
+	 * 
+	 * @type {Vector2}
+	 */
+	this.center = new Vector2(0, 0);
 
 	/**
 	 * Scale of the object.
+	 * 
+	 * @type {number}
 	 */
 	this.scale = 1.0
 
 	/**
 	 * Rotation of the object relative to its center.
+	 * 
+	 * @type {number}
 	 */
 	this.rotation = 0.0;
 
 	/**
-	 * Local transformation matrix applied to the object. 
+	 * Local transformation matrix applied to the object.
+	 * 
+	 * @type {Matrix}
 	 */
 	this.matrix = new Matrix();
 
 	/**
 	 * Inverse of the local transformation matrix.
+	 * 
+	 * Used to transform points from local to global coordinates.
+	 * 
+	 * @type {Matrix}
 	 */
 	this.inverseMatrix = new Matrix();
 
 	/**
 	 * If true the matrix is updated before rendering the object.
+	 * 
+	 * Disable this if you want to update the matrix manually.
+	 * 
+	 * @type {boolean}
 	 */
 	this.matrixNeedsUpdate = true;
 
@@ -85,7 +114,7 @@ function Viewport(canvas)
 	 *
 	 * For some application its easier to focus the target if the viewport moves to the pointer location while scaling.
 	 */
-	this.moveOnScale = false;
+	this.centerOnPointer = false;
 
 	/**
 	 * Value of the initial point of rotation if the viewport is being rotated.
@@ -104,18 +133,26 @@ Viewport.prototype.updateMatrix = function()
 {
 	if(this.matrixNeedsUpdate)
 	{
-		this.matrix.m = [1, 0, 0, 1, this.position.x, this.position.y];
+		this.matrix.m = [1, 0, 0, 1, this.position.x , this.position.y];
+		
+		if(this.center.x !== 0.0 || this.center.y !== 0.0) {
+			this.matrix.multiply(new Matrix([1, 0, 0, 1, this.center.x, this.center.y]));
+		}
 
-		if(this.rotation !== 0)
+		if(this.rotation !== 0.0)
 		{		
 			var c = Math.cos(this.rotation);
 			var s = Math.sin(this.rotation);
 			this.matrix.multiply(new Matrix([c, s, -s, c, 0, 0]));
 		}
 
-		if(this.scale !== 1)
+		if(this.scale !== 1.0)
 		{
-			this.matrix.scale(this.scale, this.scale);
+			this.matrix.multiply(new Matrix([this.scale, 0, 0, this.scale, 0, 0]));
+		}
+
+		if(this.center.x !== 0.0 || this.center.y !== 0.0) {
+			this.matrix.multiply(new Matrix([1, 0, 0, 1, -this.center.x, -this.center.y]));
 		}
 
 		this.inverseMatrix = this.matrix.getInverse();
@@ -128,6 +165,8 @@ Viewport.prototype.updateMatrix = function()
  *
  * The position of the object is used a central point, this method does not consider "box" attributes or other strucures in the object.
  *
+ * Uses the object's local transformation matrix and the canvas size to calculate the new position of the viewport.
+ * 
  * @param {Object2D} object Object to be centered on the viewport.
  * @param {Element} canvas Canvas element where the image is drawn.
  */
@@ -153,13 +192,13 @@ export {Viewport};
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BarGraph.html">BarGraph</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Path.html">Path</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="ScatterGraph.html">ScatterGraph</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Tue Aug 25 2020 17:33:45 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Sep 17 2022 14:24:36 GMT+0100 (Hora de verão da Europa Ocidental)
 </footer>
 
 <script> prettyPrint(); </script>

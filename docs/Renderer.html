@@ -169,7 +169,7 @@ Input handling is also performed by the renderer (it is also used for the event 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line16">line 16</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line17">line 17</a>
     </li></ul></dd>
     
 
@@ -275,7 +275,7 @@ If set to false the user should clear the frame before drawing.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line77">line 77</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line97">line 97</a>
     </li></ul></dd>
     
 
@@ -349,7 +349,7 @@ The canvas size (width and height) should always match its actual display size (
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line36">line 36</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line56">line 56</a>
     </li></ul></dd>
     
 
@@ -425,7 +425,7 @@ The DOM container to be used can be obtained using the getDomContainer() method.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line47">line 47</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line67">line 67</a>
     </li></ul></dd>
     
 
@@ -499,7 +499,81 @@ The options passed thought the constructor are applied to the context created.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line56">line 56</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line76">line 76</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="manager"><span class="type-signature"></span>manager<span class="type-signature"> :<a href="EventManager.html">EventManager</a></span></h4>
+
+
+
+
+<div class="description">
+    Event manager for DOM events created by the renderer.
+
+Created automatically when the renderer is created. Disposed automatically when the renderer is destroyed.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="EventManager.html">EventManager</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line38">line 38</a>
     </li></ul></dd>
     
 
@@ -573,7 +647,7 @@ The pointer is attached to the DOM window and to the canvas provided by the user
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line68">line 68</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line88">line 88</a>
     </li></ul></dd>
     
 
@@ -752,7 +826,7 @@ The render loop can be accessed trough the animation timer returned. Should be s
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line104">line 104</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line124">line 124</a>
     </li></ul></dd>
     
 
@@ -864,7 +938,7 @@ Should be called if the renderer is no longer in use to prevent code/memory leak
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line129">line 129</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line149">line 149</a>
     </li></ul></dd>
     
 
@@ -954,7 +1028,7 @@ Can be set using the container attribute, by default the canvas parent element i
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line87">line 87</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line107">line 107</a>
     </li></ul></dd>
     
 
@@ -1142,7 +1216,7 @@ Should be called at a fixed rate preferably using the requestAnimationFrame() me
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line146">line 146</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line167">line 167</a>
     </li></ul></dd>
     
 
@@ -1188,13 +1262,13 @@ Should be called at a fixed rate preferably using the requestAnimationFrame() me
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BarGraph.html">BarGraph</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Path.html">Path</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="ScatterGraph.html">ScatterGraph</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Tue Aug 25 2020 17:33:46 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Sep 17 2022 14:24:36 GMT+0100 (Hora de verão da Europa Ocidental)
 </footer>
 
 <script> prettyPrint(); </script>

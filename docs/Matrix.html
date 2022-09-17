@@ -103,7 +103,7 @@ The values of the matrix are stored as numeric array. The matrix can be applied 
 
             
 
-            <td class="description last">Array of matrix values by row, needs to have exactly 6 values.</td>
+            <td class="description last">Array of matrix values by row, needs to have exactly 6 values. Default is the identity matrix.</td>
         </tr>
 
     
@@ -388,7 +388,7 @@ Matrix can be directly edited by accessing this attribute.
     
 
     
-    <h4 class="name" id="compose"><span class="type-signature"></span>compose<span class="signature">(px, py, sx, sy, ox, oy, a)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="compose"><span class="type-signature"></span>compose<span class="signature">(px, py, sx, sy, ox, oy, rot)</span><span class="type-signature"></span></h4>
     
 
     
@@ -570,7 +570,7 @@ Matrix can be directly edited by accessing this attribute.
 
         <tr>
             
-                <td class="name"><code>a</code></td>
+                <td class="name"><code>rot</code></td>
             
 
             <td class="type">
@@ -852,7 +852,7 @@ Matrix can be directly edited by accessing this attribute.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line278">line 278</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line282">line 282</a>
     </li></ul></dd>
     
 
@@ -962,7 +962,7 @@ Matrix can be directly edited by accessing this attribute.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line222">line 222</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line226">line 226</a>
     </li></ul></dd>
     
 
@@ -1072,7 +1072,7 @@ Matrix can be directly edited by accessing this attribute.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line232">line 232</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line236">line 236</a>
     </li></ul></dd>
     
 
@@ -1182,7 +1182,7 @@ Matrix can be directly edited by accessing this attribute.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line201">line 201</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line205">line 205</a>
     </li></ul></dd>
     
 
@@ -1292,7 +1292,7 @@ Matrix can be directly edited by accessing this attribute.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line191">line 191</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line195">line 195</a>
     </li></ul></dd>
     
 
@@ -1498,7 +1498,7 @@ Matrix can be directly edited by accessing this attribute.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Matrix to multiply by.</td>
         </tr>
 
     
@@ -1635,7 +1635,7 @@ Matrix can be directly edited by accessing this attribute.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">Matrix to premultiply by.</td>
         </tr>
 
     
@@ -1813,7 +1813,7 @@ Matrix can be directly edited by accessing this attribute.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line144">line 144</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line148">line 148</a>
     </li></ul></dd>
     
 
@@ -1973,7 +1973,7 @@ Matrix can be directly edited by accessing this attribute.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line166">line 166</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line170">line 170</a>
     </li></ul></dd>
     
 
@@ -2110,7 +2110,7 @@ Matrix can be directly edited by accessing this attribute.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line258">line 258</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line262">line 262</a>
     </li></ul></dd>
     
 
@@ -2270,7 +2270,7 @@ Matrix can be directly edited by accessing this attribute.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line180">line 180</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line184">line 184</a>
     </li></ul></dd>
     
 
@@ -2430,7 +2430,7 @@ Matrix can be directly edited by accessing this attribute.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line212">line 212</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line216">line 216</a>
     </li></ul></dd>
     
 
@@ -2567,7 +2567,7 @@ Matrix can be directly edited by accessing this attribute.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line268">line 268</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line272">line 272</a>
     </li></ul></dd>
     
 
@@ -2704,7 +2704,7 @@ Matrix can be directly edited by accessing this attribute.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line245">line 245</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line249">line 249</a>
     </li></ul></dd>
     
 
@@ -2888,7 +2888,7 @@ Adds position over the transformation already stored in the matrix.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line133">line 133</a>
+        <a href="math_Matrix.js.html">math/Matrix.js</a>, <a href="math_Matrix.js.html#line137">line 137</a>
     </li></ul></dd>
     
 
@@ -2934,13 +2934,13 @@ Adds position over the transformation already stored in the matrix.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BarGraph.html">BarGraph</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Path.html">Path</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="ScatterGraph.html">ScatterGraph</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Tue Aug 25 2020 17:33:45 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Sep 17 2022 14:24:36 GMT+0100 (Hora de verão da Europa Ocidental)
 </footer>
 
 <script> prettyPrint(); </script>

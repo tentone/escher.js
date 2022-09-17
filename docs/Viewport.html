@@ -194,7 +194,7 @@ The viewport can be moved, rotated and scaled to navigate the virtual canvas.
 
         
             
-<h4 class="name" id="canvas"><span class="type-signature"></span>canvas<span class="type-signature"></span></h4>
+<h4 class="name" id="canvas"><span class="type-signature"></span>canvas<span class="type-signature"> :Element</span></h4>
 
 
 
@@ -205,67 +205,15 @@ The viewport can be moved, rotated and scaled to navigate the virtual canvas.
 
 
 
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line23">line 23</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
+    <h5>Type:</h5>
+    <ul>
+        <li>
             
-<h4 class="name" id="inverseMatrix"><span class="type-signature"></span>inverseMatrix<span class="type-signature"></span></h4>
+<span class="param-type">Element</span>
 
 
-
-
-<div class="description">
-    Inverse of the local transformation matrix.
-</div>
-
-
+        </li>
+    </ul>
 
 
 
@@ -300,7 +248,7 @@ The viewport can be moved, rotated and scaled to navigate the virtual canvas.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line48">line 48</a>
+        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line27">line 27</a>
     </li></ul></dd>
     
 
@@ -318,16 +266,28 @@ The viewport can be moved, rotated and scaled to navigate the virtual canvas.
 
         
             
-<h4 class="name" id="matrix"><span class="type-signature"></span>matrix<span class="type-signature"></span></h4>
+<h4 class="name" id="center"><span class="type-signature"></span>center<span class="type-signature"> :<a href="Vector2.html">Vector2</a></span></h4>
 
 
 
 
 <div class="description">
-    Local transformation matrix applied to the object.
+    Center point of the viewport. Relative to the size of the canvas.
+
+Rotation and zoom is applied relative to this point.
 </div>
 
 
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+        </li>
+    </ul>
 
 
 
@@ -380,69 +340,7 @@ The viewport can be moved, rotated and scaled to navigate the virtual canvas.
 
         
             
-<h4 class="name" id="matrixNeedsUpdate"><span class="type-signature"></span>matrixNeedsUpdate<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    If true the matrix is updated before rendering the object.
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line53">line 53</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="moveOnScale"><span class="type-signature"></span>moveOnScale<span class="type-signature"></span></h4>
+<h4 class="name" id="centerOnPointer"><span class="type-signature"></span>centerOnPointer<span class="type-signature"></span></h4>
 
 
 
@@ -488,7 +386,7 @@ For some application its easier to focus the target if the viewport moves to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line60">line 60</a>
+        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line89">line 89</a>
     </li></ul></dd>
     
 
@@ -506,16 +404,28 @@ For some application its easier to focus the target if the viewport moves to the
 
         
             
-<h4 class="name" id="position"><span class="type-signature"></span>position<span class="type-signature"></span></h4>
+<h4 class="name" id="inverseMatrix"><span class="type-signature"></span>inverseMatrix<span class="type-signature"> :<a href="Matrix.html">Matrix</a></span></h4>
 
 
 
 
 <div class="description">
-    Position of the object.
+    Inverse of the local transformation matrix.
+
+Used to transform points from local to global coordinates.
 </div>
 
 
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="Matrix.html">Matrix</a></span>
+
+
+        </li>
+    </ul>
 
 
 
@@ -550,7 +460,7 @@ For some application its easier to focus the target if the viewport moves to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line28">line 28</a>
+        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line73">line 73</a>
     </li></ul></dd>
     
 
@@ -568,7 +478,225 @@ For some application its easier to focus the target if the viewport moves to the
 
         
             
-<h4 class="name" id="rotation"><span class="type-signature"></span>rotation<span class="type-signature"></span></h4>
+<h4 class="name" id="matrix"><span class="type-signature"></span>matrix<span class="type-signature"> :<a href="Matrix.html">Matrix</a></span></h4>
+
+
+
+
+<div class="description">
+    Local transformation matrix applied to the object.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="Matrix.html">Matrix</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line64">line 64</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="matrixNeedsUpdate"><span class="type-signature"></span>matrixNeedsUpdate<span class="type-signature"> :boolean</span></h4>
+
+
+
+
+<div class="description">
+    If true the matrix is updated before rendering the object.
+
+Disable this if you want to update the matrix manually.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">boolean</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line82">line 82</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="position"><span class="type-signature"></span>position<span class="type-signature"> :<a href="Vector2.html">Vector2</a></span></h4>
+
+
+
+
+<div class="description">
+    Position of the viewport.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="Vector2.html">Vector2</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line34">line 34</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="rotation"><span class="type-signature"></span>rotation<span class="type-signature"> :number</span></h4>
 
 
 
@@ -579,6 +707,16 @@ For some application its easier to focus the target if the viewport moves to the
 
 
 
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
 
 
 
@@ -612,7 +750,7 @@ For some application its easier to focus the target if the viewport moves to the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line38">line 38</a>
+        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line57">line 57</a>
     </li></ul></dd>
     
 
@@ -676,7 +814,7 @@ Is set to null when the viewport is not being rotated.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line67">line 67</a>
+        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line96">line 96</a>
     </li></ul></dd>
     
 
@@ -694,7 +832,7 @@ Is set to null when the viewport is not being rotated.
 
         
             
-<h4 class="name" id="scale"><span class="type-signature"></span>scale<span class="type-signature"></span></h4>
+<h4 class="name" id="scale"><span class="type-signature"></span>scale<span class="type-signature"> :number</span></h4>
 
 
 
@@ -705,6 +843,16 @@ Is set to null when the viewport is not being rotated.
 
 
 
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
 
 
 
@@ -738,7 +886,7 @@ Is set to null when the viewport is not being rotated.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line33">line 33</a>
+        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line50">line 50</a>
     </li></ul></dd>
     
 
@@ -756,7 +904,7 @@ Is set to null when the viewport is not being rotated.
 
         
             
-<h4 class="name" id="uuid"><span class="type-signature"></span>uuid<span class="type-signature"></span></h4>
+<h4 class="name" id="uuid"><span class="type-signature"></span>uuid<span class="type-signature"> :string</span></h4>
 
 
 
@@ -766,6 +914,16 @@ Is set to null when the viewport is not being rotated.
 </div>
 
 
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
+
+
+        </li>
+    </ul>
 
 
 
@@ -800,7 +958,7 @@ Is set to null when the viewport is not being rotated.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line18">line 18</a>
+        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line20">line 20</a>
     </li></ul></dd>
     
 
@@ -839,6 +997,8 @@ Is set to null when the viewport is not being rotated.
     Center the viewport relative to a object.
 
 The position of the object is used a central point, this method does not consider "box" attributes or other strucures in the object.
+
+Uses the object's local transformation matrix and the canvas size to calculate the new position of the viewport.
 </div>
 
 
@@ -954,7 +1114,7 @@ The position of the object is used a central point, this method does not conside
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line106">line 106</a>
+        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line145">line 145</a>
     </li></ul></dd>
     
 
@@ -1044,7 +1204,7 @@ Also updates the inverse matrix of the viewport.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line75">line 75</a>
+        <a href="Viewport.js.html">Viewport.js</a>, <a href="Viewport.js.html#line104">line 104</a>
     </li></ul></dd>
     
 
@@ -1090,13 +1250,13 @@ Also updates the inverse matrix of the viewport.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AnimationTimer.html">AnimationTimer</a></li><li><a href="BarGraph.html">BarGraph</a></li><li><a href="BezierCurve.html">BezierCurve</a></li><li><a href="Box.html">Box</a></li><li><a href="Box2.html">Box2</a></li><li><a href="BoxMask.html">BoxMask</a></li><li><a href="Circle.html">Circle</a></li><li><a href="ColorStyle.html">ColorStyle</a></li><li><a href="DOM.html">DOM</a></li><li><a href="EventManager.html">EventManager</a></li><li><a href="FileUtils.html">FileUtils</a></li><li><a href="Gauge.html">Gauge</a></li><li><a href="GradientColorStop.html">GradientColorStop</a></li><li><a href="GradientStyle.html">GradientStyle</a></li><li><a href="Graph.html">Graph</a></li><li><a href="Helpers.html">Helpers</a></li><li><a href="Image.html">Image</a></li><li><a href="Key.html">Key</a></li><li><a href="Line.html">Line</a></li><li><a href="LinearGradientStyle.html">LinearGradientStyle</a></li><li><a href="Mask.html">Mask</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="MultiLineText.html">MultiLineText</a></li><li><a href="Node.html">Node</a></li><li><a href="NodeConnector.html">NodeConnector</a></li><li><a href="NodeGraph.html">NodeGraph</a></li><li><a href="NodeSocket.html">NodeSocket</a></li><li><a href="Object2D.html">Object2D</a></li><li><a href="Path.html">Path</a></li><li><a href="Pattern.html">Pattern</a></li><li><a href="PatternStyle.html">PatternStyle</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="Pointer.html">Pointer</a></li><li><a href="QuadraticCurve.html">QuadraticCurve</a></li><li><a href="RadialGradientStyle.html">RadialGradientStyle</a></li><li><a href="Renderer.html">Renderer</a></li><li><a href="RoundedBox.html">RoundedBox</a></li><li><a href="ScatterGraph.html">ScatterGraph</a></li><li><a href="Style.html">Style</a></li><li><a href="Text.html">Text</a></li><li><a href="UUID.html">UUID</a></li><li><a href="Vector2.html">Vector2</a></li><li><a href="Viewport.html">Viewport</a></li><li><a href="ViewportControls.html">ViewportControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#writeFile">writeFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Tue Aug 25 2020 17:33:46 GMT+0100 (Western European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Sep 17 2022 14:24:36 GMT+0100 (Hora de verão da Europa Ocidental)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Circle.js</title>
+    <title>JSDoc: Source: objects/chart/PieChart.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Circle.js</h1>
+    <h1 class="page-title">Source: objects/chart/PieChart.js</h1>
 
     
 
@@ -26,107 +26,168 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import {Object2D} from "../Object2D.js";
-import {ColorStyle} from "./style/ColorStyle";
-import {Style} from "./style/Style";
+            <pre class="prettyprint source linenums"><code>import {Object2D} from "../../Object2D.js";
 
 /**
- * Circle object draw a circular object, into the canvas.
- *
- * Can be used as a base to implement other circular objects, already implements the circle collision for pointer events.
+ * Pie chart represents a set of data in a pie like chart graph.
+ * 
+ * The values are drawn in porportion relative to their sum.
  *
  * @class
  * @extends {Object2D}
  */
-function Circle()
+function PieChart(data)
 {
 	Object2D.call(this);
 
 	/**
-	 * Radius of the circle.
+	 * Data to be displayed on the pie chart. Each element should store a value and a stroke/fill styles.
 	 * 
+	 * Each element should use the following structure {value: 0.0, fillStyle: ..., strokestyle: ...}.
+	 * 
+	 * @type {Array&lt;{value: number, fillStyle: ColorStyle, strokeStyle: ColorStyle}>}
+	 */
+	this.data = data !== undefined ? data : [];
+
+	/**
+	 * Variable pie slice size based on their value compared to the biggest value.
+	 *
+	 * @type {boolean}
+	 */
+	this.sliceSize = false;
+
+	/**
+	 * Radius of the pie chart object.
+	 *
 	 * @type {number}
 	 */
-	this.radius = 10.0;
+	this.radius = 50;
 
 	/**
-	 * Style of the object border line.
-	 *
-	 * If set null it is ignored.
-	 *
-	 * @type {Style}
-	 */
-	this.strokeStyle = new ColorStyle("#000000");
-
-	/**
-	 * Line width, only used if a valid strokeStyle is defined.
+	 * The line width of each pie chart section.
 	 *
 	 * @type {number}
 	 */
-	this.lineWidth = 1;
+	this.lineWidth = 1.0;
 
 	/**
-	 * Background color of the circle.
+	 * Start angle of the pie chart.
 	 *
-	 * If set null it is ignored.
-	 *
-	 * @type {Style}
+	 * @type {number}
 	 */
-	this.fillStyle = new ColorStyle("#FFFFFF");
+	this.startAngle = 0;
+
+	/**
+	 * End angle of the pie chart.
+	 *
+	 * @type {number}
+	 */
+	this.endAngle = 2 * Math.PI;
 }
 
-Circle.prototype = Object.create(Object2D.prototype);
-Circle.prototype.constructor = Circle;
-Circle.prototype.type = "Circle";
-Object2D.register(Circle, "Circle");
+PieChart.prototype = Object.create(Object2D.prototype);
+PieChart.prototype.constructor = PieChart;
+PieChart.prototype.type = "PieChart";
+Object2D.register(PieChart, "PieChart");
 
-Circle.prototype.isInside = function(point)
+PieChart.prototype.isInside = function(point)
 {
 	return point.length() &lt;= this.radius;
 };
 
-Circle.prototype.draw = function(context, viewport, canvas)
+PieChart.prototype.draw = function(context)
 {
-	context.beginPath();
-	context.arc(0, 0, this.radius, 0, 2 * Math.PI);
-	
-	if(this.fillStyle !== null)
-	{	
-		context.fillStyle = this.fillStyle.get(context);
-		context.fill();
+	if(this.data.length === 0)
+	{
+		return;
 	}
 
-	if(this.strokeStyle !== null)
+	var sum = 0;
+	var max = this.data[0].value;
+
+	for(var i = 0; i &lt; this.data.length; i++)
 	{
-		context.lineWidth = this.lineWidth;
-		context.strokeStyle = this.strokeStyle.get(context);
-		context.stroke();
+		sum += this.data[i].value;
+
+		if(this.data[i].value > max)
+		{
+			max = this.data[i].value;
+		}
+	}
+
+	context.lineWidth = this.lineWidth;
+	
+	var angleRange = this.endAngle - this.startAngle;
+	var angle = this.startAngle;
+
+	// Fill
+	for(var i = 0; i &lt; this.data.length; i++)
+	{
+		var section = angleRange * (this.data[i].value / sum);
+
+		if(this.data[i].fillStyle)
+		{
+			context.beginPath();
+			context.moveTo(0, 0);
+
+			var radius = this.sliceSize ? ((this.data[i].value / max) * this.radius) : this.radius;
+			context.arc(0, 0, radius, angle, angle + section);
+			context.moveTo(0, 0);
+
+			context.fillStyle = this.data[i].fillStyle.get(context);
+			context.fill();
+		}
+
+		angle += section;
+	}
+
+	// Stroke
+	for(var i = 0; i &lt; this.data.length; i++)
+	{
+		var section = angleRange * (this.data[i].value / sum);
+
+		if(this.data[i].strokeStyle)
+		{
+			context.beginPath();
+			context.moveTo(0, 0);
+
+			var radius = this.sliceSize ? ((this.data[i].value / max) * this.radius) : this.radius;
+			context.arc(0, 0, radius, angle, angle + section);
+			context.moveTo(0, 0);
+
+			context.strokeStyle = this.data[i].strokeStyle.get(context);
+			context.stroke();
+		}
+
+		angle += section;
 	}
 };
 
-Circle.prototype.serialize = function(recursive)
+PieChart.prototype.serialize = function(recursive)
 {
 	var data = Object2D.prototype.serialize.call(this, recursive);
 
 	data.radius = this.radius;
-	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
 	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
+	data.startAngle = this.startAngle;
+	data.endAngle = this.endAngle;
+	data.sliceSize = this.sliceSize;
 
 	return data;
 };
 
-Circle.prototype.parse = function(data, root)
+PieChart.prototype.parse = function(data, root)
 {
 	Object2D.prototype.parse.call(this, data, root);
 
 	this.radius = data.radius;
-	this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
 	this.lineWidth = data.lineWidth;
-	this.fillStyle = data.fillStyle !== null ? Style.parse(data.fillStyle) : null;
+	this.startAngle = data.startAngle;
+	this.endAngle = data.endAngle;
+	this.sliceSize = data.sliceSize;
 };
 
-export {Circle};
+export {PieChart};
 </code></pre>
         </article>
     </section>

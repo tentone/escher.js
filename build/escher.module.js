@@ -68,8 +68,8 @@ EventManager.prototype.destroy = function()
  * Class representing a 2D vector. A 2D vector is an ordered pair of numbers (labeled x and y), which can be used to represent points in space, directions, etc.
  *
  * @class
- * @param {number} x
- * @param {number} y
+ * @param {number} x X value.
+ * @param {number} y Y value.
  */
 function Vector2(x, y)
 {
@@ -80,8 +80,8 @@ function Vector2(x, y)
 /**
  * Set vector x and y values.
  *
- * @param {number} x
- * @param {number} y
+ * @param {number} x X value.
+ * @param {number} y Y value.
  */
 Vector2.prototype.set = function(x, y)
 {
@@ -91,6 +91,8 @@ Vector2.prototype.set = function(x, y)
 
 /**
  * Set a scalar value into the x and y values.
+ * 
+ * @param {number} scalar Scalar value.
  */
 Vector2.prototype.setScalar = function(scalar)
 {
@@ -100,6 +102,8 @@ Vector2.prototype.setScalar = function(scalar)
 
 /**
  * Create a clone of this vector object.
+ * 
+ * @return {Vector2} A new vector with the same values as this one.
  */
 Vector2.prototype.clone = function()
 {
@@ -120,7 +124,7 @@ Vector2.prototype.copy = function(v)
 /**
  * Add the content of another vector to this one.
  *
- * @param {Vector2} v
+ * @param {Vector2} v The other vector.
  */
 Vector2.prototype.add = function(v)
 {
@@ -131,7 +135,7 @@ Vector2.prototype.add = function(v)
 /**
  * Add a scalar value to booth vector components.
  *
- * @param {number} s
+ * @param {number} s Scalar value.
  */
 Vector2.prototype.addScalar = function(s)
 {
@@ -142,8 +146,8 @@ Vector2.prototype.addScalar = function(s)
 /** 
  * Add two vectors and store the result in this vector.
  *
- * @param {Vector2} a
- * @param {Vector2} b
+ * @param {Vector2} a The first vector.
+ * @param {Vector2} b The second vector.
  */
 Vector2.prototype.addVectors = function(a, b)
 {
@@ -154,8 +158,8 @@ Vector2.prototype.addVectors = function(a, b)
 /**
  * Scale a vector components and add the result to this vector.
  *
- * @param {Vector2} v
- * @param {number} s
+ * @param {Vector2} v The other vector.
+ * @param {number} s Scalar value.
  */
 Vector2.prototype.addScaledVector = function(v, s)
 {
@@ -166,7 +170,7 @@ Vector2.prototype.addScaledVector = function(v, s)
 /**
  * Subtract the content of another vector to this one.
  *
- * @param {Vector2} v
+ * @param {Vector2} v The other vector.
  */
 Vector2.prototype.sub = function(v)
 {
@@ -177,7 +181,7 @@ Vector2.prototype.sub = function(v)
 /**
  * Subtract a scalar value to booth vector components.
  *
- * @param {number} s
+ * @param {number} s Scalar value.
  */
 Vector2.prototype.subScalar = function(s)
 {
@@ -188,8 +192,8 @@ Vector2.prototype.subScalar = function(s)
 /** 
  * Subtract two vectors and store the result in this vector.
  *
- * @param {Vector2} a
- * @param {Vector2} b
+ * @param {Vector2} a The first vector.
+ * @param {Vector2} b The second vector.
  */
 Vector2.prototype.subVectors = function(a, b)
 {
@@ -200,7 +204,7 @@ Vector2.prototype.subVectors = function(a, b)
 /**
  * Multiply the content of another vector to this one.
  *
- * @param {Vector2} v
+ * @param {Vector2} v The other vector.
  */
 Vector2.prototype.multiply = function(v)
 {
@@ -211,7 +215,7 @@ Vector2.prototype.multiply = function(v)
 /**
  * Multiply a scalar value by booth vector components.
  *
- * @param {number} scalar
+ * @param {number} scalar Scalar value.
  */
 Vector2.prototype.multiplyScalar = function(scalar)
 {
@@ -267,6 +271,14 @@ Vector2.prototype.max = function(v)
 	this.y = Math.max(this.y, v.y);
 };
 
+/**
+ * Clamp the vector coordinates to the range defined by two vectors.
+ * 
+ * Applied to x and y independently.
+ * 
+ * @param {Vector2} min Minimum value.
+ * @param {Vector2} max Maximum value.
+ */
 Vector2.prototype.clamp = function(min, max)
 {
 	// assumes min < max, componentwise
@@ -274,6 +286,12 @@ Vector2.prototype.clamp = function(min, max)
 	this.y = Math.max(min.y, Math.min(max.y, this.y));
 };
 
+/**
+ * Clamp the vector coordinates to the range defined by two scalars.
+ * 
+ * @param {number} minVal Minimum value.
+ * @param {number} maxVal Maximum value.
+ */
 Vector2.prototype.clampScalar = function(minVal, maxVal)
 {
 	this.x = Math.max(minVal, Math.min(maxVal, this.x));
@@ -351,6 +369,8 @@ Vector2.prototype.cross = function(v)
  * Squared length of the vector.
  *
  * Faster for comparions.
+ * 
+ * @return {number} Squared length of the vector.
  */
 Vector2.prototype.lengthSq = function()
 {
@@ -359,6 +379,8 @@ Vector2.prototype.lengthSq = function()
 
 /**
  * Length of the vector.
+ * 
+ * @return {number} Length of the vector.
  */
 Vector2.prototype.length = function()
 {
@@ -367,6 +389,8 @@ Vector2.prototype.length = function()
 
 /**
  * Manhattan length of the vector.
+ * 
+ * @return {number} Manhattan length of the vector.
  */
 Vector2.prototype.manhattanLength = function()
 {
@@ -375,6 +399,8 @@ Vector2.prototype.manhattanLength = function()
 
 /**
  * Normalize the vector (make it length one).
+ * 
+ * @return {Vector2} This vector.
  */
 Vector2.prototype.normalize = function()
 {
@@ -382,13 +408,16 @@ Vector2.prototype.normalize = function()
 };
 
 /**
- * Computes the angle in radians with respect to the positive x-axis
+ * Computes the angle in radians with respect to the positive x-axis.
+ * 
+ * @param {boolean} forcePositive If true, the angle will be forced to be positive.
+ * @return {number} Angle in radians.
  */
-Vector2.prototype.angle = function()
+Vector2.prototype.angle = function(forcePositive)
 {
 	var angle = Math.atan2(this.y, this.x);
 
-	if(angle < 0)
+	if(forcePositive && angle < 0)
 	{
 		angle += 2 * Math.PI;
 	}
@@ -398,6 +427,9 @@ Vector2.prototype.angle = function()
 
 /**
  * Distance between two vector positions.
+ * 
+ * @param {Vector2} v Vector to compute the distance to.
+ * @return {number} Distance between the two vectors.
  */
 Vector2.prototype.distanceTo = function(v)
 {
@@ -408,6 +440,9 @@ Vector2.prototype.distanceTo = function(v)
  * Distance between two vector positions squared.
  *
  * Faster for comparisons.
+ * 
+ * @param {Vector2} v Vector to compute the distance to.
+ * @return {number} Distance between the two vectors squared.
  */
 Vector2.prototype.distanceToSquared = function(v)
 {
@@ -419,6 +454,9 @@ Vector2.prototype.distanceToSquared = function(v)
 
 /**
  * Manhattan distance between two vector positions.
+ * 
+ * @param {Vector2} v Vector to compute the distance to.
+ * @return {number} Manhattan distance between the two vectors.
  */
 Vector2.prototype.manhattanDistanceTo = function(v)
 {
@@ -427,18 +465,35 @@ Vector2.prototype.manhattanDistanceTo = function(v)
 
 /**
  * Scale the vector to have a defined length value.
+ * 
+ * @param {number} length Length to scale the vector to.
+ * @return {Vector2} This vector.
  */
 Vector2.prototype.setLength = function(length)
 {
 	return this.normalize().multiplyScalar(length);
 };
 
+/**
+ * Lerp this vector to another vector.
+ * 
+ * @param {Vector2} v Vector to lerp to.
+ * @param {number} alpha Lerp factor.
+ */
 Vector2.prototype.lerp = function(v, alpha)
 {
 	this.x += (v.x - this.x) * alpha;
 	this.y += (v.y - this.y) * alpha;
 };
 
+/**
+ * Lerp between this vector and another vector.
+ * 
+ * @param {Vector2} v1 Vector to lerp from.
+ * @param {Vector2} v2 Vector to lerp to.
+ * @param {number} alpha Lerp factor.
+ * @return {Vector2} This vector.
+ *
 Vector2.prototype.lerpVectors = function(v1, v2, alpha)
 {
 	return this.subVectors(v2, v1).multiplyScalar(alpha).add(v1);
@@ -447,7 +502,7 @@ Vector2.prototype.lerpVectors = function(v1, v2, alpha)
 /**
  * Check if two vectors are equal.
  *
- * @param {Vector2} v
+ * @param {Vector2} v Vector to compare with.
  */
 Vector2.prototype.equals = function(v)
 {
@@ -459,7 +514,7 @@ Vector2.prototype.equals = function(v)
  *
  * The vector can be converted to array using the toArray() method.
  *
- * @param {number[]} array
+ * @param {number[]} array Array to set the vector value from.
  */
 Vector2.prototype.fromArray = function(array)
 {
@@ -481,8 +536,8 @@ Vector2.prototype.toArray = function()
 /**
  * Rotate the vector around a central point.
  *
- * @param {Vector2} center
- * @param {number} angle
+ * @param {Vector2} center Point to rotate around.
+ * @param {number} angle Angle in radians.
  */
 Vector2.prototype.rotateAround = function(center, angle)
 {
@@ -502,7 +557,7 @@ Vector2.prototype.rotateAround = function(center, angle)
  * The values of the matrix are stored as numeric array. The matrix can be applied to the canvas or DOM elements using CSS transforms.
  *
  * @class
- * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values.
+ * @param {number[]} values Array of matrix values by row, needs to have exactly 6 values. Default is the identity matrix.
  */
 function Matrix(values)
 {
@@ -554,7 +609,7 @@ Matrix.prototype.identity = function()
 /**
  * Multiply another matrix by this one and store the result.
  *
- * @param {Matrix} mat
+ * @param {Matrix} mat Matrix to multiply by.
  */
 Matrix.prototype.multiply = function(mat)
 {
@@ -571,7 +626,7 @@ Matrix.prototype.multiply = function(mat)
 /**
  * Premultiply another matrix by this one and store the result.
  *
- * @param {Matrix} mat
+ * @param {Matrix} mat Matrix to premultiply by.
  */
 Matrix.prototype.premultiply = function(mat)
 {
@@ -594,24 +649,28 @@ Matrix.prototype.premultiply = function(mat)
  * @param {number} sy Scale Y
  * @param {number} ox Origin X (applied before scale and rotation)
  * @param {number} oy Origin Y (applied before scale and rotation)
- * @param {number} a Rotation angle (radians).
+ * @param {number} rot Rotation angle (radians).
  */
-Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, a)
+Matrix.prototype.compose = function(px, py, sx, sy, ox, oy, rot)
 {
+	// Position
 	this.m = [1, 0, 0, 1, px, py];
 
-	if(a !== 0)
-	{		
-		var c = Math.cos(a);
-		var s = Math.sin(a);
+	// Rotation
+	if(rot !== 0)
+	{
+		var c = Math.cos(rot);
+		var s = Math.sin(rot);
 		this.multiply(new Matrix([c, s, -s, c, 0, 0]));
 	}
 
+	// Scale
 	if(sx !== 1 || sy !== 1)
 	{
 		this.scale(sx, sy);
 	}
 
+	// Origin
 	if(ox !== 0 || oy !== 0)
 	{	
 		this.multiply(new Matrix([1, 0, 0, 1, -ox, -oy]));
@@ -1051,6 +1110,7 @@ Object2D.types = new Map([[Object2D.prototype.type, Object2D]]);
  *
  * Should be called for every new object class implemented if you want to be able to serialize and parse data.
  *
+ * @static
  * @param {Function} constructor Object constructor.
  * @param {string} type Object type name.
  */
@@ -1193,6 +1253,8 @@ Object2D.prototype.add = function(object)
 
 /**
  * Remove object from the children list.
+ * 
+ * Resets the parent of the object to null and resets its level.
  *
  * @param {Object2D} children Object to be removed.
  */
@@ -2103,41 +2165,70 @@ function Viewport(canvas)
 {
 	/**
 	 * UUID of the object.
+	 * 
+	 * @type {string}
 	 */
 	this.uuid = UUID.generate(); 
 
 	/**
 	 * Canvas DOM element where the viewport is being rendered.
+	 * 
+	 * @type {Element}
 	 */
 	this.canvas = canvas;
 
 	/**
-	 * Position of the object.
+	 * Position of the viewport.
+	 * 
+	 * @type {Vector2}
 	 */
 	this.position = new Vector2(0, 0);
+	
+	/**
+	 * Center point of the viewport. Relative to the size of the canvas.
+	 * 
+	 * Rotation and zoom is applied relative to this point.
+	 * 
+	 * @type {Vector2}
+	 */
+	this.center = new Vector2(0, 0);
 
 	/**
 	 * Scale of the object.
+	 * 
+	 * @type {number}
 	 */
 	this.scale = 1.0;
 
 	/**
 	 * Rotation of the object relative to its center.
+	 * 
+	 * @type {number}
 	 */
 	this.rotation = 0.0;
 
 	/**
-	 * Local transformation matrix applied to the object. 
+	 * Local transformation matrix applied to the object.
+	 * 
+	 * @type {Matrix}
 	 */
 	this.matrix = new Matrix();
 
 	/**
 	 * Inverse of the local transformation matrix.
+	 * 
+	 * Used to transform points from local to global coordinates.
+	 * 
+	 * @type {Matrix}
 	 */
 	this.inverseMatrix = new Matrix();
 
 	/**
 	 * If true the matrix is updated before rendering the object.
+	 * 
+	 * Disable this if you want to update the matrix manually.
+	 * 
+	 * @type {boolean}
 	 */
 	this.matrixNeedsUpdate = true;
 
@@ -2146,7 +2237,7 @@ function Viewport(canvas)
 	 *
 	 * For some application its easier to focus the target if the viewport moves to the pointer location while scaling.
 	 */
-	this.moveOnScale = false;
+	this.centerOnPointer = false;
 
 	/**
 	 * Value of the initial point of rotation if the viewport is being rotated.
@@ -2165,18 +2256,26 @@ Viewport.prototype.updateMatrix = function()
 {
 	if(this.matrixNeedsUpdate)
 	{
-		this.matrix.m = [1, 0, 0, 1, this.position.x, this.position.y];
+		this.matrix.m = [1, 0, 0, 1, this.position.x , this.position.y];
+		
+		if(this.center.x !== 0.0 || this.center.y !== 0.0) {
+			this.matrix.multiply(new Matrix([1, 0, 0, 1, this.center.x, this.center.y]));
+		}
 
-		if(this.rotation !== 0)
+		if(this.rotation !== 0.0)
 		{		
 			var c = Math.cos(this.rotation);
 			var s = Math.sin(this.rotation);
 			this.matrix.multiply(new Matrix([c, s, -s, c, 0, 0]));
 		}
 
-		if(this.scale !== 1)
+		if(this.scale !== 1.0)
 		{
-			this.matrix.scale(this.scale, this.scale);
+			this.matrix.multiply(new Matrix([this.scale, 0, 0, this.scale, 0, 0]));
+		}
+
+		if(this.center.x !== 0.0 || this.center.y !== 0.0) {
+			this.matrix.multiply(new Matrix([1, 0, 0, 1, -this.center.x, -this.center.y]));
 		}
 
 		this.inverseMatrix = this.matrix.getInverse();
@@ -2189,6 +2288,8 @@ Viewport.prototype.updateMatrix = function()
  *
  * The position of the object is used a central point, this method does not consider "box" attributes or other strucures in the object.
  *
+ * Uses the object's local transformation matrix and the canvas size to calculate the new position of the viewport.
+ * 
  * @param {Object2D} object Object to be centered on the viewport.
  * @param {Element} canvas Canvas element where the image is drawn.
  */
@@ -2205,6 +2306,8 @@ Viewport.prototype.centerObject = function(object, canvas)
 
 /**
  * Viewport controls are used to allow the user to control the viewport.
+ * 
+ * The user controls the viewport using pointer input (e.g. mouse, touchscreen)
  *
  * @class
  * @param {Viewport} viewport
@@ -2228,6 +2331,13 @@ function ViewportControls(viewport)
 	this.dragButton = Pointer.RIGHT;
 
 	/**
+	 * Button used to rotate the viewport.
+	 *
+	 * @type {number}
+	 */
+	this.rotateButton = Pointer.MIDDLE;
+
+	/**
 	 * Is set to true allow the viewport to be scalled.
 	 *
 	 * Scaling is performed using the pointer scroll.
@@ -2237,13 +2347,13 @@ function ViewportControls(viewport)
 	this.allowScale = true;
 
 	/**
-	 * Flag to indicate if the viewport should move when scalling.
-	 *
-	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
-	 *
-	 * @type {boolean}
+	 * Flag to indicate if the viewport should automatically be recentered.
+	 * 
+	 * This will cause the viewport center property to be automatically set based on an heuristic defined by the user.
+	 * 
+	 * @type {number}
 	 */
-	this.moveOnScale = false;
+	this.recenterViewport = ViewportControls.RECENTER_NONE;
 
 	/**
 	 * If true allows the viewport to be rotated.
@@ -2256,6 +2366,8 @@ function ViewportControls(viewport)
 
 	/**
 	 * Value of the initial point of rotation if the viewport is being rotated.
+	 * 
+	 * Is the value of the pointer position when the rotation starts.
 	 *
 	 * Is set to null when the viewport is not being rotated.
 	 *
@@ -2265,11 +2377,42 @@ function ViewportControls(viewport)
 
 	/**
 	 * Initial rotation of the viewport.
+	 * 
+	 * Is set to the current rotation of the viewport when the rotation starts.
 	 *
 	 * @type {number}
 	 */
 	this.rotationInitial = 0;
 }
+
+/**
+ * Viewport is not automatically recentered.
+ * 
+ * The center point can be set manually by the developer.
+ * 
+ * @type {number}
+ */
+ViewportControls.RECENTER_NONE = 0;
+
+/**
+ * Recenter the viewport automatically to the canvas.
+ * 
+ * This will ensure that rotation and scaling will not cause the viewport to move around.
+ * 
+ * @type {number} 
+ */
+ViewportControls.RECENTER_CANVAS = 1;
+
+/**
+ * Viewport should automatically cente ron the pointer position.
+ * 
+ * The viewport will simulataniously move to the pointer position while scalling.
+ *
+ * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
+ *
+ * @type {number} 
+ */
+ViewportControls.RECENTER_POINTER = 2;
 
 /**
  * Update the viewport controls using the pointer object.
@@ -2287,28 +2430,10 @@ ViewportControls.prototype.update = function(pointer)
 
 		this.viewport.scale -= scale;
 		this.viewport.matrixNeedsUpdate = true;
-
-		// Move on scale
-		if(this.moveOnScale && pointer.canvas !== null)
-		{	
-			this.viewport.updateMatrix();
-
-			var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
-
-			var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
-			centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
-
-			var delta = pointerWorld.clone();
-			delta.sub(centerWorld);
-			delta.multiplyScalar(0.1);
-
-			this.viewport.position.sub(delta);
-			this.viewport.matrixNeedsUpdate = true;
-		}
 	}
 
 	// Rotation
-	if(this.allowRotation && pointer.buttonPressed(Pointer.RIGHT) && pointer.buttonPressed(Pointer.LEFT))
+	if(this.allowRotation && pointer.buttonPressed(this.rotateButton))
 	{
 		// Rotation pivot
 		if(this.rotationPoint === null)
@@ -2320,21 +2445,40 @@ ViewportControls.prototype.update = function(pointer)
 		{
 			var point = pointer.position.clone();
 			point.sub(this.rotationPoint);
+
 			this.viewport.rotation = this.rotationInitial + point.angle();
 			this.viewport.matrixNeedsUpdate = true;
 		}
-	}
-	// Drag
-	else
-	{
-		this.rotationPoint = null;
 
-		if(pointer.buttonPressed(this.dragButton))
-		{
-			this.viewport.position.x += pointer.delta.x;
-			this.viewport.position.y += pointer.delta.y;
-			this.viewport.matrixNeedsUpdate = true;
-		}
+		return;
+	} else {
+		this.rotationPoint = null;
+	}
+
+	// Drag
+	if(pointer.buttonPressed(this.dragButton))
+	{
+		this.viewport.position.add(pointer.delta);
+		this.viewport.matrixNeedsUpdate = true;
+	}
+
+	if (pointer.canvas === null) {
+		return;
+	}
+
+	// Center viewport on canvas
+	if (this.recenterViewport === ViewportControls.RECENTER_CANVAS) {
+		var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
+		centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
+		this.viewport.center.copy(centerWorld);
+		this.viewport.matrixNeedsUpdate = true;
+	} 
+	// Center viewport on pointer
+	else if(this.recenterViewport === ViewportControls.RECENTER_POINTER)
+	{
+		var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
+		this.viewport.center.copy(pointerWorld);
+		this.viewport.matrixNeedsUpdate = true;
 	}
 };
 
@@ -2425,11 +2569,30 @@ function Renderer(canvas, options)
 		options =
 		{
 			alpha: true,
+			disableContextMenu: true,
 			imageSmoothingEnabled: true,
 			imageSmoothingQuality: "low",
 			globalCompositeOperation: "source-over"
 		};
 	}
+
+	/**
+	 * Event manager for DOM events created by the renderer.
+	 * 
+	 * Created automatically when the renderer is created. Disposed automatically when the renderer is destroyed.
+	 * 
+	 * @type {EventManager}
+	 */
+	this.manager = new EventManager();
+
+	if(options.disableContextMenu) {
+		this.manager.add(canvas, "contextmenu", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+		}); 
+	}
+
+	this.manager.create();
 
 	/**
 	 * Canvas DOM element, the user needs to manage the canvas state.
@@ -2533,6 +2696,7 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
  */
 Renderer.prototype.dispose = function(group, viewport, onUpdate)
 {
+	this.manager.destroy();
 	this.pointer.dispose();
 };
 
@@ -2787,20 +2951,31 @@ Renderer.prototype.update = function(object, viewport)
  * Can be used for collision detection with points and other boxes.
  *
  * @class
- * @param {Vector2} min
- * @param {Vector2} max
+ * @param {Vector2} min Minimum point of the box.
+ * @param {Vector2} max Maximum point of the box.
  */
 function Box2(min, max)
 {
+	/**
+	 * Minimum point of the box.
+	 * 
+	 * @type {Vector2}
+	 */
 	this.min = (min !== undefined) ? min : new Vector2();
+
+	/**
+	 * Maximum point of the box.
+	 * 
+	 * @type {Vector2}
+	 */
 	this.max = (max !== undefined) ? max : new Vector2();
 }
 
 /**
  * Set the box values.
  *
- * @param {Vector2} min
- * @param {Vector2} max
+ * @param {Vector2} min Minimum point of the box.
+ * @param {Vector2} max Maximum point of the box.
  */
 Box2.prototype.set = function(min, max)
 {
@@ -3178,18 +3353,20 @@ function Style$1()
     /**
      * Cached style object pre-generated from previous calls. To avoid regenerating the same style object every cycle.
      *
+     * Inherited classes should write their own get method that returns the style object and stores it in this property.
+     * 
      * @type {string | CanvasGradient | CanvasPattern}
      */
     this.cache = null;
-    // TODO <USE THIS>
 
     /**
      * Indicates if the style object needs to be updated, should be used after applying changed to the style in order to generate a new object.
      *
+     * Inherited classes should implement this functionality.
+     * 
      * @type {boolean}
      */
     this.needsUpdate = true;
-    // TODO <USE THIS>
 }
 
 /**
@@ -3248,6 +3425,8 @@ Style$1.parse = function (data)
 
 /**
  * Simple solid color style represented and stored as a CSS color.
+ * 
+ * Example value formats supported "rgb(0, 153, 255)" or "rgba(0, 153, 255, 0.3)" or "#0099ff" or "#0099ffaa" or "red".
  *
  * @class
  * @extends {Style}
@@ -3300,6 +3479,8 @@ function Box()
 
 	/**
 	 * Box object containing the size of the object.
+	 * 
+	 * @type {Box2}
 	 */
 	this.box = new Box2(new Vector2(-50, -50), new Vector2(50, 50));
 
@@ -3307,11 +3488,15 @@ function Box()
 	 * Style of the object border line.
 	 *
 	 * If set null it is ignored.
+	 * 
+	 * @type {Style}
 	 */
 	this.strokeStyle = new ColorStyle("#000000");
 
 	/**
 	 * Line width, only used if a valid strokeStyle is defined.
+	 * 
+	 * @type {number}
 	 */
 	this.lineWidth = 1;
 
@@ -3320,7 +3505,7 @@ function Box()
 	 *
 	 * If set null it is ignored.
 	 *
-	 * @param {Style}
+	 * @type {Style}
 	 */
 	this.fillStyle = new ColorStyle("#FFFFFF");
 }
@@ -3390,6 +3575,8 @@ function Circle()
 
 	/**
 	 * Radius of the circle.
+	 * 
+	 * @type {number}
 	 */
 	this.radius = 10.0;
 
@@ -3701,11 +3888,15 @@ function Image(src)
 	
 	/**
 	 * Box object containing the size of the object.
+	 * 
+	 * @type {Box2}
 	 */
 	this.box = new Box2();
 
 	/**
 	 * Image source DOM element.
+	 * 
+	 * @type {HTMLImageElement}
 	 */
 	this.image = document.createElement("img");
 
@@ -3811,7 +4002,11 @@ function DOM(type)
 	this.element.style.pointerEvents = "none";
 	
 	/**
-	 * Size of the DOM element (in world coordinates).
+	 * Size of the DOM element, in world coordinates.
+	 * 
+	 * Size is used to set the width and height of the DOM element.
+	 * 
+	 * @type {Vector2}
 	 */
 	this.size = new Vector2(100, 100);
 }
@@ -4120,6 +4315,8 @@ MultiLineText.prototype.parse = function(data, root)
 
 /**
  * Bezier curve object draw as bezier curve between two points.
+ * 
+ * Bezier curve data is composed of two anchor points, one for the start of the curve and one for the end of the curve.
  *
  * @class
  * @extends {Line}
@@ -4218,7 +4415,9 @@ BezierCurve.prototype.parse = function(data, root)
 };
 
 /**
- * Bezier curve object draw as bezier curve between two points.
+ * Quadratic curve object draw as quadratic curve between two points.
+ * 
+ * Quadratic curve data is composed of two anchor points, one for the start of the curve and one for the end of the curve.
  *
  * @class
  * @extends {Object2D}
@@ -4398,31 +4597,43 @@ function Graph()
 
 	/**
 	 * Graph object containing the size of the object.
+	 * 
+	 * @type {Box2}
 	 */
 	this.box = new Box2(new Vector2(-50, -35), new Vector2(50, 35));
 
 	/**
 	 * Color of the box border line.
+	 * 
+	 * @type {ColorStyle}
 	 */
 	this.strokeStyle = new ColorStyle("rgb(0, 153, 255)");
 
 	/**
 	 * Line width used to stroke the graph data.
+	 * 
+	 * @type {number}
 	 */
 	this.lineWidth = 1.0;
 
 	/**
 	 * Background color of the box.
+	 * 
+	 * @type {ColorStyle}
 	 */
 	this.fillStyle = new ColorStyle("rgba(0, 153, 255, 0.3)");
 
 	/**
 	 * Minimum value of the graph.
+	 * 
+	 * @type {number}
 	 */
 	this.min = 0;
 
 	/**
 	 * Maximum value of the graph.
+	 * 
+	 * @type {number}
 	 */
 	this.max = 10;
 
@@ -4430,6 +4641,8 @@ function Graph()
 	 * Data to be presented in the graph.
 	 *
 	 * The array should store numeric values.
+	 * 
+	 * @type {Array<number>}
 	 */
 	this.data = [];
 }
@@ -4522,11 +4735,15 @@ function ScatterGraph()
 
 	/**
 	 * Radius of each point represented in the scatter plot.
+	 * 
+	 * @type {number}
 	 */
 	this.radius = 5.0;
 
 	/**
 	 * Draw lines betwen the points of the scatter graph.
+	 * 
+	 * @type {boolean}
 	 */
 	this.drawLine = false;
 }
@@ -4623,6 +4840,8 @@ function BarGraph()
 	 * Width of each bar in the graph.
 	 * 
 	 * If set null is automatically calculated from the graph size and number of points.
+	 * 
+	 * @type {number}
 	 */
 	this.barWidth = null;
 }
@@ -4689,6 +4908,7 @@ BarGraph.prototype.parse = function(data, root)
  *
  * The gradients are ordered, each stop has a target color that becomes solid on its offset value triggering the next color stop if there is one.
  *
+ * @class
  * @param offset Offset of the color stop between 0 and 1 inclusive.
  * @param color CSS color value.
  * @constructor
@@ -5023,6 +5243,8 @@ function PieChart(data)
 	 * Data to be displayed on the pie chart. Each element should store a value and a stroke/fill styles.
 	 * 
 	 * Each element should use the following structure {value: 0.0, fillStyle: ..., strokestyle: ...}.
+	 * 
+	 * @type {Array<{value: number, fillStyle: ColorStyle, strokeStyle: ColorStyle}>}
 	 */
 	this.data = data !== undefined ? data : [];
 
@@ -5179,7 +5401,9 @@ function Path(path)
 	/**
 	 * Path2D object containing the commands to draw the shape into the canvas.
 	 * 
-	 * Check https://developer.mozilla.org/en-US/docs/Web/API/Path2D/Path2D for more details. 
+	 * Check https://developer.mozilla.org/en-US/docs/Web/API/Path2D/Path2D for more details.
+	 * 
+	 * @type {Path2D}
 	 */
 	this.path = path !== undefined ? path : new Path2D("M10 10 h 80 v 80 h -80 Z");
 
@@ -5187,11 +5411,15 @@ function Path(path)
 	 * Style of the object border line.
 	 *
 	 * If set null it is ignored.
+	 * 
+	 * @type {Style}
 	 */
 	this.strokeStyle = new ColorStyle("#000000");
 
 	/**
 	 * Line width, only used if a valid strokeStyle is defined.
+	 * 
+	 * @type {number}
 	 */
 	this.lineWidth = 1;
 
@@ -5492,6 +5720,11 @@ function NodeConnector()
 {
 	BezierCurve.call(this);
 
+	/**
+	 * Width of the connector line.
+	 * 
+	 * @type {number}
+	 */
 	this.lineWidth = 2;
 
 	/**
@@ -5705,6 +5938,7 @@ Object2D.register(NodeSocket, "NodeSocket");
  * Is used to read data from the output.
  *
  * @type {number}
+ * @constant
  */
 NodeSocket.INPUT = 1;
 
@@ -5714,6 +5948,7 @@ NodeSocket.INPUT = 1;
  * Writes data to the output.
  *
  * @type {number}
+ * @constant
  */
 NodeSocket.OUTPUT = 2;
 

@@ -2359,7 +2359,7 @@
 		 * 
 		 * @type {number}
 		 */
-		this.recenterViewport = ViewportControls.RECENTER_POINTER;
+		this.recenterViewport = ViewportControls.RECENTER_NONE;
 
 		/**
 		 * If true allows the viewport to be rotated.

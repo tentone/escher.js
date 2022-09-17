@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: objects/Circle.js</title>
+    <title>JSDoc: Source: objects/chart/ScatterGraph.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: objects/Circle.js</h1>
+    <h1 class="page-title">Source: objects/chart/ScatterGraph.js</h1>
 
     
 
@@ -26,107 +26,113 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import {Object2D} from "../Object2D.js";
-import {ColorStyle} from "./style/ColorStyle";
-import {Style} from "./style/Style";
+            <pre class="prettyprint source linenums"><code>import {Object2D} from "../../Object2D.js";
+import {Graph} from "./Graph.js";
 
 /**
- * Circle object draw a circular object, into the canvas.
- *
- * Can be used as a base to implement other circular objects, already implements the circle collision for pointer events.
+ * Scatter graph can be used to draw numeric data as points.
  *
  * @class
  * @extends {Object2D}
  */
-function Circle()
+function ScatterGraph()
 {
-	Object2D.call(this);
+	Graph.call(this);
 
 	/**
-	 * Radius of the circle.
+	 * Radius of each point represented in the scatter plot.
 	 * 
 	 * @type {number}
 	 */
-	this.radius = 10.0;
+	this.radius = 5.0;
 
 	/**
-	 * Style of the object border line.
-	 *
-	 * If set null it is ignored.
-	 *
-	 * @type {Style}
+	 * Draw lines betwen the points of the scatter graph.
+	 * 
+	 * @type {boolean}
 	 */
-	this.strokeStyle = new ColorStyle("#000000");
-
-	/**
-	 * Line width, only used if a valid strokeStyle is defined.
-	 *
-	 * @type {number}
-	 */
-	this.lineWidth = 1;
-
-	/**
-	 * Background color of the circle.
-	 *
-	 * If set null it is ignored.
-	 *
-	 * @type {Style}
-	 */
-	this.fillStyle = new ColorStyle("#FFFFFF");
+	this.drawLine = false;
 }
 
-Circle.prototype = Object.create(Object2D.prototype);
-Circle.prototype.constructor = Circle;
-Circle.prototype.type = "Circle";
-Object2D.register(Circle, "Circle");
+ScatterGraph.prototype = Object.create(Graph.prototype);
+ScatterGraph.prototype.constructor = ScatterGraph;
+ScatterGraph.prototype.type = "BarGraph";
+Object2D.register(ScatterGraph, "BarGraph");
 
-Circle.prototype.isInside = function(point)
+ScatterGraph.prototype.draw = function(context, viewport, canvas)
 {
-	return point.length() &lt;= this.radius;
-};
-
-Circle.prototype.draw = function(context, viewport, canvas)
-{
-	context.beginPath();
-	context.arc(0, 0, this.radius, 0, 2 * Math.PI);
+	if(this.data.length === 0)
+	{
+		return;
+	}
 	
-	if(this.fillStyle !== null)
-	{	
-		context.fillStyle = this.fillStyle.get(context);
-		context.fill();
+	var width = this.box.max.x - this.box.min.x;
+	var height = this.box.max.y - this.box.min.y;
+
+	var step = width / (this.data.length - 1);
+	var gamma = this.max - this.min;
+
+	context.lineWidth = this.lineWidth;
+	
+	// Draw line
+	if(this.drawLine)
+	{
+		context.beginPath();
+		context.moveTo(this.box.min.x, this.box.max.y - ((this.data[0] - this.min) / gamma) * height);
+		
+		for(var i = 1, s = step; i &lt; this.data.length; s += step, i++)
+		{
+			context.lineTo(this.box.min.x + s, this.box.max.y - ((this.data[i] - this.min) / gamma) * height);
+		}
+	
+		if(this.strokeStyle !== null)
+		{
+			context.strokeStyle = this.strokeStyle.get(context);
+			context.stroke();
+		}
+	}
+
+	// Draw circles
+	context.beginPath();
+
+	for(var i = 0, s = 0; i &lt; this.data.length; s += step, i++)
+	{
+		var y = this.box.max.y - ((this.data[i] - this.min) / gamma) * height;
+
+		context.moveTo(this.box.min.x + s + this.radius, y);
+		context.arc(this.box.min.x + s, y, this.radius, 0, Math.PI * 2, true);
 	}
 
 	if(this.strokeStyle !== null)
 	{
-		context.lineWidth = this.lineWidth;
 		context.strokeStyle = this.strokeStyle.get(context);
 		context.stroke();
 	}
+
+	if(this.fillStyle !== null)
+	{
+		context.fillStyle = this.fillStyle.get(context);
+		context.fill();
+	}
 };
 
-Circle.prototype.serialize = function(recursive)
+ScatterGraph.prototype.serialize = function(recursive)
 {
-	var data = Object2D.prototype.serialize.call(this, recursive);
+	var data = Graph.prototype.serialize.call(this, recursive);
 
 	data.radius = this.radius;
-	data.strokeStyle = this.strokeStyle !== null ? this.strokeStyle.serialize() : null;
-	data.lineWidth = this.lineWidth;
-	data.fillStyle = this.fillStyle !== null ? this.fillStyle.serialize() : null;
 
 	return data;
 };
 
-Circle.prototype.parse = function(data, root)
+ScatterGraph.prototype.parse = function(data, root)
 {
-	Object2D.prototype.parse.call(this, data, root);
+	Graph.prototype.parse.call(this, data, root);
 
 	this.radius = data.radius;
-	this.strokeStyle = data.strokeStyle !== null ? Style.parse(data.strokeStyle) : null;
-	this.lineWidth = data.lineWidth;
-	this.fillStyle = data.fillStyle !== null ? Style.parse(data.fillStyle) : null;
 };
 
-export {Circle};
+export {ScatterGraph};
 </code></pre>
         </article>
     </section>

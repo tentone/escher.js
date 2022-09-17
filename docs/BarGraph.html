@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Text</title>
+    <title>JSDoc: Class: BarGraph</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Text</h1>
+    <h1 class="page-title">Class: BarGraph</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Text<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>BarGraph<span class="signature">()</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="Text"><span class="type-signature"></span>new Text<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="BarGraph"><span class="type-signature"></span>new BarGraph<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -49,9 +49,7 @@
 
 
 <div class="description">
-    Text element, used to draw single line text into the canvas.
-
-For multi line text with support for line break check {MultiLineText} object.
+    Bar graph can be used to plot bar data into the canvas.
 </div>
 
 
@@ -95,7 +93,7 @@ For multi line text with support for line break check {MultiLineText} object.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Text.js.html">objects/Text.js</a>, <a href="objects_Text.js.html#line12">line 12</a>
+        <a href="objects_chart_BarGraph.js.html">objects/chart/BarGraph.js</a>, <a href="objects_chart_BarGraph.js.html#line10">line 10</a>
     </li></ul></dd>
     
 
@@ -153,6 +151,80 @@ For multi line text with support for line break check {MultiLineText} object.
 
     
         <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="barWidth"><span class="type-signature"></span>barWidth<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    Width of each bar in the graph.
+
+If set null is automatically calculated from the graph size and number of points.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objects_chart_BarGraph.js.html">objects/chart/BarGraph.js</a>, <a href="objects_chart_BarGraph.js.html#line21">line 21</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
 
         
             
@@ -441,150 +513,6 @@ Should be implemented by underlying classes.
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line487">line 487</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="fillStyle"><span class="type-signature"></span>fillStyle<span class="type-signature"> :<a href="Style.html">Style</a></span></h4>
-
-
-
-
-<div class="description">
-    CSS background color of the box. If set null it is ignored.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type"><a href="Style.html">Style</a></span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Text.js.html">objects/Text.js</a>, <a href="objects_Text.js.html#line49">line 49</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="font"><span class="type-signature"></span>font<span class="type-signature"> :string</span></h4>
-
-
-
-
-<div class="description">
-    Font of the text.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Text.js.html">objects/Text.js</a>, <a href="objects_Text.js.html#line28">line 28</a>
     </li></ul></dd>
     
 
@@ -978,78 +906,6 @@ The layer value is considered first.
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line44">line 44</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="lineWidth"><span class="type-signature"></span>lineWidth<span class="type-signature"> :number</span></h4>
-
-
-
-
-<div class="description">
-    Line width, only used if a valid strokeStyle is defined.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">number</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Text.js.html">objects/Text.js</a>, <a href="objects_Text.js.html#line42">line 42</a>
     </li></ul></dd>
     
 
@@ -2973,78 +2829,6 @@ Used to prevent duplicate serialization data on custom objects. Should be set fa
 
         
             
-<h4 class="name" id="strokeStyle"><span class="type-signature"></span>strokeStyle<span class="type-signature"> :<a href="Style.html">Style</a></span></h4>
-
-
-
-
-<div class="description">
-    Style of the object border line. If set null it is ignored.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type"><a href="Style.html">Style</a></span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Text.js.html">objects/Text.js</a>, <a href="objects_Text.js.html#line35">line 35</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
 <h4 class="name" id="style"><span class="type-signature"></span>style<span class="type-signature"></span></h4>
 
 
@@ -3099,226 +2883,6 @@ Should be implemented by underlying classes.
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="Object2D.js.html">Object2D.js</a>, <a href="Object2D.js.html#line476">line 476</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="text"><span class="type-signature"></span>text<span class="type-signature"> :string</span></h4>
-
-
-
-
-<div class="description">
-    Text value displayed by this element.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Text.js.html">objects/Text.js</a>, <a href="objects_Text.js.html#line21">line 21</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="textAlign"><span class="type-signature"></span>textAlign<span class="type-signature"> :string</span></h4>
-
-
-
-
-<div class="description">
-    Text align property. Same values as used for canvas text applies
-
-Check documentation at https://developer.mozilla.org/en-US/docs/Web/CSS/text-align for mode details about this property.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Text.js.html">objects/Text.js</a>, <a href="objects_Text.js.html#line58">line 58</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="textBaseline"><span class="type-signature"></span>textBaseline<span class="type-signature"> :string</span></h4>
-
-
-
-
-<div class="description">
-    Text baseline defines the vertical position of the text relative to the imaginary line Y position. Same values as used for canvas text applies
-
-Check documentation at https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textBaseline for mode details about this property.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_Text.js.html">objects/Text.js</a>, <a href="objects_Text.js.html#line67">line 67</a>
     </li></ul></dd>
     
 
