@@ -2410,8 +2410,8 @@
 	ViewportControls.RECENTER_CANVAS = 1;
 
 	/**
-	 * Viewport should automatically cente ron the pointer position.
-	 * 
+	 * Viewport should automatically center on the pointer position.
+	 *
 	 * The viewport will simulataniously move to the pointer position while scalling.
 	 *
 	 * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
@@ -2692,7 +2692,7 @@
 		});
 		timer.start();
 
-		return timer;
+		return {timer: timer, controls: controls};
 	};
 
 	/**

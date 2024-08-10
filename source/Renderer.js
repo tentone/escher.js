@@ -138,7 +138,7 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 	});
 	timer.start();
 
-	return timer;
+	return {timer: timer, controls: controls};
 };
 
 /**
