@@ -16,18 +16,23 @@ import {EventManager} from "./utils/EventManager";
  */
 function Renderer(canvas, options)
 {
-	if(options === undefined)
+	// Default options
+	var defaultOptions =
 	{
-		options =
-		{
-			alpha: true,
-			disableContextMenu: true,
-			imageSmoothingEnabled: true,
-			imageSmoothingQuality: "low",
-			globalCompositeOperation: "source-over"
-		};
-	}
+		alpha: true,
+		disableContextMenu: true,
+		imageSmoothingEnabled: true,
+		imageSmoothingQuality: "low",
+		globalAlpha: 1.0,
+		// "source-over", "source-in", "source-out", "source-atop", "destination-over", "destination-in", "destination-out", "destination-atop", "lighter", "copy", "xor"
+		globalCompositeOperation: "source-over", 
+		 // "auto", "optimizeSpeed", "optimizeLegibility", "geometricPrecision"
+		textRendering: "auto",
+		filter: null
+	};
 
+	options = options ? Object.assign(defaultOptions, options) : defaultOptions;
+	
 	/**
 	 * Event manager for DOM events created by the renderer.
 	 * 
@@ -77,6 +82,9 @@ function Renderer(canvas, options)
 	this.context.imageSmoothingEnabled = options.imageSmoothingEnabled;
 	this.context.imageSmoothingQuality = options.imageSmoothingQuality;
 	this.context.globalCompositeOperation = options.globalCompositeOperation;
+	this.context.globalAlpha = options.globalAlpha;
+	this.context.textRendering = options.textRendering;
+	this.context.filter = options.filter;
 
 	/**
 	 * Pointer input handler object, automatically updated by the renderer.

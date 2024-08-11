@@ -168,13 +168,15 @@ ViewportControls.prototype.update = function(pointer)
 	if (this.recenterViewport === ViewportControls.RECENTER_CANVAS) {
 		var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
 		centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
+		
 		this.viewport.center.copy(centerWorld);
 		this.viewport.matrixNeedsUpdate = true;
 	} 
 	// Center viewport on pointer
 	else if(this.recenterViewport === ViewportControls.RECENTER_POINTER)
 	{
-		var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position)
+		var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
+
 		this.viewport.center.copy(pointerWorld);
 		this.viewport.matrixNeedsUpdate = true;
 	}
