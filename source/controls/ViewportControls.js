@@ -121,14 +121,29 @@ ViewportControls.RECENTER_POINTER = 2;
  */
 ViewportControls.prototype.update = function(pointer)
 {	
-	// Scale
-	if(this.allowScale && pointer.wheel !== 0)
-	{
-		var scale = pointer.wheel * 1e-3 * this.viewport.scale;
+        // Scale
+        if(this.allowScale && pointer.wheel !== 0)
+        {
+                var pointerWorld = null;
 
-		this.viewport.scale -= scale;
-		this.viewport.matrixNeedsUpdate = true;
-	}
+                // Zoom centered on pointer
+                if(this.recenterViewport === ViewportControls.RECENTER_POINTER && pointer.canvas !== null)
+                {
+                        pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
+                }
+
+                var scale = pointer.wheel * 1e-3 * this.viewport.scale;
+
+                this.viewport.scale -= scale;
+
+                if(pointerWorld !== null)
+                {
+                        this.viewport.center.copy(pointerWorld);
+                        this.viewport.position.set(pointer.position.x - pointerWorld.x, pointer.position.y - pointerWorld.y);
+                }
+
+                this.viewport.matrixNeedsUpdate = true;
+        }
 
 	// Rotation
 	if(this.allowRotation && pointer.buttonPressed(this.rotateButton))
@@ -173,13 +188,13 @@ ViewportControls.prototype.update = function(pointer)
 		this.viewport.matrixNeedsUpdate = true;
 	} 
 	// Center viewport on pointer
-	else if(this.recenterViewport === ViewportControls.RECENTER_POINTER)
-	{
-		var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
+        else if(this.recenterViewport === ViewportControls.RECENTER_POINTER && pointer.wheel === 0)
+        {
+                var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
 
-		this.viewport.center.copy(pointerWorld);
-		this.viewport.matrixNeedsUpdate = true;
-	}
+                this.viewport.center.copy(pointerWorld);
+                this.viewport.matrixNeedsUpdate = true;
+        }
 };
 
 export {ViewportControls};

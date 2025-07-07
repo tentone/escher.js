@@ -2404,8 +2404,8 @@ ViewportControls.RECENTER_NONE = 0;
 ViewportControls.RECENTER_CANVAS = 1;
 
 /**
- * Viewport should automatically cente ron the pointer position.
- * 
+ * Viewport should automatically center on the pointer position.
+ *
  * The viewport will simulataniously move to the pointer position while scalling.
  *
  * For some application its easier to focus the target if the viewport moves to the pointer location while scalling.
@@ -2423,14 +2423,29 @@ ViewportControls.RECENTER_POINTER = 2;
  */
 ViewportControls.prototype.update = function(pointer)
 {	
-	// Scale
-	if(this.allowScale && pointer.wheel !== 0)
-	{
-		var scale = pointer.wheel * 1e-3 * this.viewport.scale;
+        // Scale
+        if(this.allowScale && pointer.wheel !== 0)
+        {
+                var pointerWorld = null;
 
-		this.viewport.scale -= scale;
-		this.viewport.matrixNeedsUpdate = true;
-	}
+                // Zoom centered on pointer
+                if(this.recenterViewport === ViewportControls.RECENTER_POINTER && pointer.canvas !== null)
+                {
+                        pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
+                }
+
+                var scale = pointer.wheel * 1e-3 * this.viewport.scale;
+
+                this.viewport.scale -= scale;
+
+                if(pointerWorld !== null)
+                {
+                        this.viewport.center.copy(pointerWorld);
+                        this.viewport.position.set(pointer.position.x - pointerWorld.x, pointer.position.y - pointerWorld.y);
+                }
+
+                this.viewport.matrixNeedsUpdate = true;
+        }
 
 	// Rotation
 	if(this.allowRotation && pointer.buttonPressed(this.rotateButton))
@@ -2470,16 +2485,18 @@ ViewportControls.prototype.update = function(pointer)
 	if (this.recenterViewport === ViewportControls.RECENTER_CANVAS) {
 		var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
 		centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
+		
 		this.viewport.center.copy(centerWorld);
 		this.viewport.matrixNeedsUpdate = true;
 	} 
 	// Center viewport on pointer
-	else if(this.recenterViewport === ViewportControls.RECENTER_POINTER)
-	{
-		var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
-		this.viewport.center.copy(pointerWorld);
-		this.viewport.matrixNeedsUpdate = true;
-	}
+        else if(this.recenterViewport === ViewportControls.RECENTER_POINTER && pointer.wheel === 0)
+        {
+                var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
+
+                this.viewport.center.copy(pointerWorld);
+                this.viewport.matrixNeedsUpdate = true;
+        }
 };
 
 /**
@@ -2564,18 +2581,23 @@ AnimationTimer.prototype.stop = function()
  */
 function Renderer(canvas, options)
 {
-	if(options === undefined)
+	// Default options
+	var defaultOptions =
 	{
-		options =
-		{
-			alpha: true,
-			disableContextMenu: true,
-			imageSmoothingEnabled: true,
-			imageSmoothingQuality: "low",
-			globalCompositeOperation: "source-over"
-		};
-	}
+		alpha: true,
+		disableContextMenu: true,
+		imageSmoothingEnabled: true,
+		imageSmoothingQuality: "low",
+		globalAlpha: 1.0,
+		// "source-over", "source-in", "source-out", "source-atop", "destination-over", "destination-in", "destination-out", "destination-atop", "lighter", "copy", "xor"
+		globalCompositeOperation: "source-over", 
+		 // "auto", "optimizeSpeed", "optimizeLegibility", "geometricPrecision"
+		textRendering: "auto",
+		filter: null
+	};
 
+	options = options ? Object.assign(defaultOptions, options) : defaultOptions;
+	
 	/**
 	 * Event manager for DOM events created by the renderer.
 	 * 
@@ -2625,6 +2647,9 @@ function Renderer(canvas, options)
 	this.context.imageSmoothingEnabled = options.imageSmoothingEnabled;
 	this.context.imageSmoothingQuality = options.imageSmoothingQuality;
 	this.context.globalCompositeOperation = options.globalCompositeOperation;
+	this.context.globalAlpha = options.globalAlpha;
+	this.context.textRendering = options.textRendering;
+	this.context.filter = options.filter;
 
 	/**
 	 * Pointer input handler object, automatically updated by the renderer.
@@ -2686,7 +2711,7 @@ Renderer.prototype.createRenderLoop = function(group, viewport, onUpdate)
 	});
 	timer.start();
 
-	return timer;
+	return {timer: timer, controls: controls};
 };
 
 /**
