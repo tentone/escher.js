@@ -2705,6 +2705,8 @@
 		var self = this;
 
 		var controls = new ViewportControls(viewport);
+		controls.recenterViewport = ViewportControls.RECENTER_POINTER;
+
 		var timer = new AnimationTimer(function()
 		{
 			if(onUpdate !== undefined)
