@@ -2429,14 +2429,28 @@
 	 */
 	ViewportControls.prototype.update = function(pointer)
 	{	
-		// Scale
-		if(this.allowScale && pointer.wheel !== 0)
-		{
-			var scale = pointer.wheel * 1e-3 * this.viewport.scale;
+	       // Scale
+	       if(this.allowScale && pointer.wheel !== 0)
+	       {
+	               // Compute the pointer position in world space before applying the new scale
+	               var pointerWorld = null;
+	               if(this.recenterViewport === ViewportControls.RECENTER_POINTER && pointer.canvas !== null)
+	               {
+	                       pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
+	               }
 
-			this.viewport.scale -= scale;
-			this.viewport.matrixNeedsUpdate = true;
-		}
+	               var scale = pointer.wheel * 1e-3 * this.viewport.scale;
+
+	               this.viewport.scale -= scale;
+	               this.viewport.matrixNeedsUpdate = true;
+
+	               // Recenter viewport on pointer only when zooming
+	               if(pointerWorld !== null)
+	               {
+	                       this.viewport.center.copy(pointerWorld);
+	                       this.viewport.matrixNeedsUpdate = true;
+	               }
+	       }
 
 		// Rotation
 		if(this.allowRotation && pointer.buttonPressed(this.rotateButton))
@@ -2472,22 +2486,14 @@
 			return;
 		}
 
-		// Center viewport on canvas
-		if (this.recenterViewport === ViewportControls.RECENTER_CANVAS) {
-			var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
-			centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
-			
-			this.viewport.center.copy(centerWorld);
-			this.viewport.matrixNeedsUpdate = true;
-		} 
-		// Center viewport on pointer
-		else if(this.recenterViewport === ViewportControls.RECENTER_POINTER)
-		{
-			var pointerWorld = this.viewport.inverseMatrix.transformPoint(pointer.position);
+	       // Center viewport on canvas
+	       if (this.recenterViewport === ViewportControls.RECENTER_CANVAS) {
+	               var centerWorld = new Vector2(pointer.canvas.width / 2.0, pointer.canvas.height / 2.0);
+	               centerWorld = this.viewport.inverseMatrix.transformPoint(centerWorld);
 
-			this.viewport.center.copy(pointerWorld);
-			this.viewport.matrixNeedsUpdate = true;
-		}
+	               this.viewport.center.copy(centerWorld);
+	               this.viewport.matrixNeedsUpdate = true;
+	       }
 	};
 
 	/**
