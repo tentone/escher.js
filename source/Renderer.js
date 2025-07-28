@@ -41,7 +41,7 @@ function Renderer(canvas, options)
 	 * @type {EventManager}
 	 */
 	this.manager = new EventManager();
-
+	
 	if(options.disableContextMenu) {
 		this.manager.add(canvas, "contextmenu", function(e) {
 			e.preventDefault();
