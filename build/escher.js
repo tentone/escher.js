@@ -2447,7 +2447,15 @@
 	               // Recenter viewport on pointer only when zooming
 	               if(pointerWorld !== null)
 	               {
-	                       this.viewport.center.copy(pointerWorld);
+	                       // Rebuild the matrix with the updated scale so we can compute the correction
+	                       this.viewport.updateMatrix();
+
+	                       // Compute where the pointer world position now maps to on screen
+	                       var newPointerScreen = this.viewport.matrix.transformPoint(pointerWorld);
+
+	                       // Adjust viewport position to keep pointer world position at the same screen location
+	                       this.viewport.position.x += pointer.position.x - newPointerScreen.x;
+	                       this.viewport.position.y += pointer.position.y - newPointerScreen.y;
 	                       this.viewport.matrixNeedsUpdate = true;
 	               }
 	       }
