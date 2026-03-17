@@ -84,16 +84,22 @@ NodeConnector.prototype.onUpdate = function()
 	var yDistance = this.to.y - this.from.y;
 	var xDistance = this.to.x - this.from.x;
 
-	// Apply a offset to the control points
-	if(Math.abs(xDistance) > Math.abs(yDistance))
+	// Apply a smooth weighted offset to the control points based on the
+	// ratio of horizontal and vertical distances to avoid snapping between
+	// curve configurations when the dominant axis changes.
+	var absX = Math.abs(xDistance);
+	var absY = Math.abs(yDistance);
+	var total = absX + absY;
+
+	if(total > 0)
 	{
-		this.toCp.x += xDistance * curvature;
-		this.fromCp.x -= xDistance * curvature;
-	}
-	else
-	{
-		this.toCp.y += yDistance * curvature;
-		this.fromCp.y -= yDistance * curvature;
+		var xWeight = absX / total;
+		var yWeight = absY / total;
+
+		this.toCp.x += xDistance * curvature * xWeight;
+		this.fromCp.x -= xDistance * curvature * xWeight;
+		this.toCp.y += yDistance * curvature * yWeight;
+		this.fromCp.y -= yDistance * curvature * yWeight;
 	}
 };
 
