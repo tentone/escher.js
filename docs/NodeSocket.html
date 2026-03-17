@@ -49,9 +49,7 @@
 
 
 <div class="description">
-    Represents a node hook point. Is attached to the node element and represented visually.
-
-Can be used as a node input, output or as a bidirectional connection.
+    Represents a node hook point. Is attached to the node element and represented visually.Can be used as a node input, output or as a bidirectional connection.
 </div>
 
 
@@ -280,9 +278,7 @@ Can be used as a node input, output or as a bidirectional connection.
 
 
 <div class="description">
-    Input hook can only be connected to an output.
-
-Is used to read data from the output.
+    Input hook can only be connected to an output.Is used to read data from the output.
 </div>
 
 
@@ -354,9 +350,7 @@ Is used to read data from the output.
 
 
 <div class="description">
-    Output hook can only be connected to an input.
-
-Writes data to the output.
+    Output hook can only be connected to an input.Writes data to the output.
 </div>
 
 
@@ -505,9 +499,7 @@ Writes data to the output.
 
 
 <div class="description">
-    Category of data available from this socket. Only sockets of the same category can be connected.
-
-Should directly store the data type name (e.g. "string", "number", "Object", etc).
+    Category of data available from this socket. Only sockets of the same category can be connected.Should directly store the data type name (e.g. "string", "number", "Object", etc).
 </div>
 
 
@@ -656,9 +648,7 @@ Should directly store the data type name (e.g. "string", "number", "Object", etc
 
 
 <div class="description">
-    Node connector used to connect this socket to another node socket.
-
-Can be used to access the adjacent node. If the socket allows for multiple connections this array can have multiple elements.
+    Node connector used to connect this socket to another node socket.Can be used to access the adjacent node. If the socket allows for multiple connections this array can have multiple elements.
 </div>
 
 
@@ -802,9 +792,7 @@ Can be used to access the adjacent node. If the socket allows for multiple conne
 
 
 <div class="description">
-    Direction of the node hook, indicates the data flow of the socket.
-
-Can be INPUT or OUTPUT.
+    Direction of the node hook, indicates the data flow of the socket.Can be INPUT or OUTPUT.
 </div>
 
 
@@ -876,9 +864,7 @@ Can be INPUT or OUTPUT.
 
 
 <div class="description">
-    Draggable controls if its possible to drag the object around. Set this true to enable dragging events on this object.
-
-The onPointerDrag callback is used to update the state of the object while being dragged, by default it just updates the object position.
+    Draggable controls if its possible to drag the object around. Set this true to enable dragging events on this object.The onPointerDrag callback is used to update the state of the object while being dragged, by default it just updates the object position.
 </div>
 
 
@@ -955,9 +941,7 @@ The onPointerDrag callback is used to update the state of the object while being
 
 
 <div class="description">
-    Draw the object into the canvas, this is called transform() and style(), should be where the content is actually drawn into the canvas.
-
-Should be implemented by underlying classes.
+    Draw the object into the canvas, this is called transform() and style(), should be where the content is actually drawn into the canvas.Should be implemented by underlying classes.
 </div>
 
 
@@ -1024,9 +1008,7 @@ Should be implemented by underlying classes.
 
 
 <div class="description">
-    Background color of the circle.
-
-If set null it is ignored.
+    Background color of the circle.If set null it is ignored.
 </div>
 
 
@@ -1103,9 +1085,7 @@ If set null it is ignored.
 
 
 <div class="description">
-    Global transformation matrix multiplied by the parent matrix.
-
-Used to transform the object before projecting into screen coordinates.
+    Global transformation matrix multiplied by the parent matrix.Used to transform the object before projecting into screen coordinates.
 </div>
 
 
@@ -1259,9 +1239,7 @@ Used to transform the object before projecting into screen coordinates.
 
 
 <div class="description">
-    Inverse of the global (world) transform matrix.
-
-Used to convert pointer input points (viewport space) into object coordinates.
+    Inverse of the global (world) transform matrix.Used to convert pointer input points (viewport space) into object coordinates.
 </div>
 
 
@@ -1338,9 +1316,7 @@ Used to convert pointer input points (viewport space) into object coordinates.
 
 
 <div class="description">
-    Layer of this object, objects are sorted by layer value.
-
-Lower layer value is draw first, higher layer value is drawn on top.
+    Layer of this object, objects are sorted by layer value.Lower layer value is draw first, higher layer value is drawn on top.
 </div>
 
 
@@ -1417,9 +1393,7 @@ Lower layer value is draw first, higher layer value is drawn on top.
 
 
 <div class="description">
-    Depth level in the object tree, objects with higher depth are drawn on top.
-
-The layer value is considered first.
+    Depth level in the object tree, objects with higher depth are drawn on top.The layer value is considered first.
 </div>
 
 
@@ -1573,9 +1547,7 @@ The layer value is considered first.
 
 
 <div class="description">
-    Mask objects being applied to this object. Used to mask/subtract portions of this object when rendering.
-
-Multiple masks can be used simultaneously. Same mask might be reused for multiple objects.
+    Mask objects being applied to this object. Used to mask/subtract portions of this object when rendering.Multiple masks can be used simultaneously. Same mask might be reused for multiple objects.
 </div>
 
 
@@ -1729,9 +1701,7 @@ Multiple masks can be used simultaneously. Same mask might be reused for multipl
 
 
 <div class="description">
-    Indicates if the transform matrix should be automatically updated every frame.
-
-Set this false for better performance. But if you do so dont forget to set matrixNeedsUpdate every time that a transform attribute is changed.
+    Indicates if the transform matrix should be automatically updated every frame.Set this false for better performance. But if you do so dont forget to set matrixNeedsUpdate every time that a transform attribute is changed.
 </div>
 
 
@@ -1808,9 +1778,7 @@ Set this false for better performance. But if you do so dont forget to set matri
 
 
 <div class="description">
-    Indicates if the matrix needs to be updated, should be set true after changes to the object position, scale or rotation.
-
-The matrix is updated before rendering the object, after the matrix is updated this attribute is automatically reset to false.
+    Indicates if the matrix needs to be updated, should be set true after changes to the object position, scale or rotation.The matrix is updated before rendering the object, after the matrix is updated this attribute is automatically reset to false.
 </div>
 
 
@@ -1887,9 +1855,7 @@ The matrix is updated before rendering the object, after the matrix is updated t
 
 
 <div class="description">
-    Allow to connect a OUTPUT node to multiple INPUT sockets.
-
-A INPUT socket can only take one connection, this value is ignored for INPUT sockets.
+    Allow to connect a OUTPUT node to multiple INPUT sockets.A INPUT socket can only take one connection, this value is ignored for INPUT sockets.
 </div>
 
 
@@ -2033,9 +1999,7 @@ A INPUT socket can only take one connection, this value is ignored for INPUT soc
 
 
 <div class="description">
-    Node where this socket is attached to.
-
-Should be used to get data from node GUI and from other sockets.
+    Node where this socket is attached to.Should be used to get data from node GUI and from other sockets.
 </div>
 
 
@@ -2576,9 +2540,7 @@ Should be used to get data from node GUI and from other sockets.
 
 
 <div class="description">
-    Callback method called when the pointer enters the object.
-
-It is not called while the pointer is inside of the object, just on the first time that the pointer enters the object for that use onPointerOver()
+    Callback method called when the pointer enters the object.It is not called while the pointer is inside of the object, just on the first time that the pointer enters the object for that use onPointerOver()
 </div>
 
 
@@ -2846,11 +2808,7 @@ It is not called while the pointer is inside of the object, just on the first ti
 
 
 <div class="description">
-    Callback method called every time before the object is draw into the canvas.
-
-Should be used to run object logic, any preparation code, move the object, etc.
-
-This method is called for every object before rendering.
+    Callback method called every time before the object is draw into the canvas.Should be used to run object logic, any preparation code, move the object, etc.This method is called for every object before rendering.
 </div>
 
 
@@ -3071,9 +3029,7 @@ This method is called for every object before rendering.
 
 
 <div class="description">
-    Indicates if this object uses pointer events.
-
-Can be set false to skip the pointer interaction events, better performance if pointer events are not required.
+    Indicates if this object uses pointer events.Can be set false to skip the pointer interaction events, better performance if pointer events are not required.
 </div>
 
 
@@ -3150,9 +3106,7 @@ Can be set false to skip the pointer interaction events, better performance if p
 
 
 <div class="description">
-    Flag indicating if the pointer is inside of the element.
-
-Used to control object event.
+    Flag indicating if the pointer is inside of the element.Used to control object event.
 </div>
 
 
@@ -3229,9 +3183,7 @@ Used to control object event.
 
 
 <div class="description">
-    Position of the object.
-
-The world position of the object is affected by its parent transform.
+    Position of the object.The world position of the object is affected by its parent transform.
 </div>
 
 
@@ -3462,9 +3414,7 @@ The world position of the object is affected by its parent transform.
 
 
 <div class="description">
-    Rotation of the object relative to its center.
-
-The world rotation of the object is affected by the parent transform.
+    Rotation of the object relative to its center.The world rotation of the object is affected by the parent transform.
 </div>
 
 
@@ -3618,9 +3568,7 @@ The world rotation of the object is affected by the parent transform.
 
 
 <div class="description">
-    Scale of the object.
-
-The world scale of the object is affected by the parent transform.
+    Scale of the object.The world scale of the object is affected by the parent transform.
 </div>
 
 
@@ -3697,9 +3645,7 @@ The world scale of the object is affected by the parent transform.
 
 
 <div class="description">
-    Indicates if the object should be serialized or not as a child of another object.
-
-Used to prevent duplicate serialization data on custom objects. Should be set false for objects added on constructor.
+    Indicates if the object should be serialized or not as a child of another object.Used to prevent duplicate serialization data on custom objects. Should be set false for objects added on constructor.
 </div>
 
 
@@ -3776,9 +3722,7 @@ Used to prevent duplicate serialization data on custom objects. Should be set fa
 
 
 <div class="description">
-    Style of the object border line.
-
-If set null it is ignored.
+    Style of the object border line.If set null it is ignored.
 </div>
 
 
@@ -3855,11 +3799,7 @@ If set null it is ignored.
 
 
 <div class="description">
-    Style is called right before draw() it should not draw any content into the canvas, all context styling should be applied here (colors, fonts, etc).
-
-The draw() and style() methods can be  useful for objects that share the same styling attributes but are drawing differently.
-
-Should be implemented by underlying classes.
+    Style is called right before draw() it should not draw any content into the canvas, all context styling should be applied here (colors, fonts, etc).The draw() and style() methods can be  useful for objects that share the same styling attributes but are drawing differently.Should be implemented by underlying classes.
 </div>
 
 
@@ -3926,9 +3866,7 @@ Should be implemented by underlying classes.
 
 
 <div class="description">
-    Text object used to present the name of the socket.
-
-Depending on the socket direction the text is aligned to the left or to the right.
+    Text object used to present the name of the socket.Depending on the socket direction the text is aligned to the left or to the right.
 </div>
 
 
@@ -4000,11 +3938,7 @@ Depending on the socket direction the text is aligned to the left or to the righ
 
 
 <div class="description">
-    Type of the object, used for data serialization and/or checking the object type.
-
-The name used should match the object constructor name. But it is not required.
-
-If this type is from an external library you can add the library name to the object type name to prevent collisions.
+    Type of the object, used for data serialization and/or checking the object type.The name used should match the object constructor name. But it is not required.If this type is from an external library you can add the library name to the object type name to prevent collisions.
 </div>
 
 
@@ -4247,9 +4181,7 @@ If this type is from an external library you can add the library name to the obj
 
 
 <div class="description">
-    Attach a children to this object.
-
-The object is set as children of this object and the transformations applied to this object are traversed to its children.
+    Attach a children to this object.The object is set as children of this object and the transformations applied to this object are traversed to its children.
 </div>
 
 
@@ -4391,9 +4323,7 @@ The object is set as children of this object and the transformations applied to 
 
 
 <div class="description">
-    Attach a node connector to this socket. Sets the correct input/output attributes on the socket and the connector.
-
-Automatically adds the connector to the same parent and the node socket if no parent defined for the connector.
+    Attach a node connector to this socket. Sets the correct input/output attributes on the socket and the connector.Automatically adds the connector to the same parent and the node socket if no parent defined for the connector.
 </div>
 
 
@@ -4530,9 +4460,7 @@ Automatically adds the connector to the same parent and the node socket if no pa
 
 
 <div class="description">
-    Check if this node socket can have a new connector attached to it.
-
-Otherwise it might be necessary to destroy old connectors before adding a new connector.
+    Check if this node socket can have a new connector attached to it.Otherwise it might be necessary to destroy old connectors before adding a new connector.
 </div>
 
 
@@ -4801,9 +4729,7 @@ Otherwise it might be necessary to destroy old connectors before adding a new co
 
 
 <div class="description">
-    Connect this node socket to another socket.
-
-Sockets have to be compatible otherwise the connection cannot be made and an error will be thrown.
+    Connect this node socket to another socket.Sockets have to be compatible otherwise the connection cannot be made and an error will be thrown.
 </div>
 
 
@@ -5055,9 +4981,7 @@ Sockets have to be compatible otherwise the connection cannot be made and an err
 
 
 <div class="description">
-    Destroy all connectors attached to this socket.
-
-Should be called when destroying the object or to clean up the object.
+    Destroy all connectors attached to this socket.Should be called when destroying the object or to clean up the object.
 </div>
 
 
@@ -5309,13 +5233,7 @@ Should be called when destroying the object or to clean up the object.
 
 
 <div class="description">
-    Get value stored or calculated in node socket, it should be the calculated from node logic, node inputs, user input, etc.
-
-For input nodes the value should be fetched trough the connector object that is connected to an output node elsewhere.
-
-By default it the socket is an INPUT it gets the value trough the connector if available. Inputs will recursively propagate the method trough the graph to get their value.
-
-If the socket is an OUTPUT or there is no connection the method returns null by default, in this case the method should be extended by implementations of this class to process data.
+    Get value stored or calculated in node socket, it should be the calculated from node logic, node inputs, user input, etc.For input nodes the value should be fetched trough the connector object that is connected to an output node elsewhere.By default it the socket is an INPUT it gets the value trough the connector if available. Inputs will recursively propagate the method trough the graph to get their value.If the socket is an OUTPUT or there is no connection the method returns null by default, in this case the method should be extended by implementations of this class to process data.
 </div>
 
 
@@ -5612,9 +5530,7 @@ If the socket is an OUTPUT or there is no connection the method returns null by 
 
 
 <div class="description">
-    Check if this socket is compatible (type and direction) with another socket.
-
-For two sockets to be compatible the data flow should be correct (one input and a output) and they should carry the same data type.
+    Check if this socket is compatible (type and direction) with another socket.For two sockets to be compatible the data flow should be correct (one input and a output) and they should carry the same data type.
 </div>
 
 
@@ -5773,11 +5689,7 @@ For two sockets to be compatible the data flow should be correct (one input and 
 
 
 <div class="description">
-    Check if a point is inside of the object. Used by the renderer check for pointer collision (required for the object to properly process pointer events).
-
-Point should be in local object coordinates.
-
-To check if a point in world coordinates intersects the object the inverseGlobalMatrix should be applied to that point before calling this method.
+    Check if a point is inside of the object. Used by the renderer check for pointer collision (required for the object to properly process pointer events).Point should be in local object coordinates.To check if a point in world coordinates intersects the object the inverseGlobalMatrix should be applied to that point before calling this method.
 </div>
 
 
@@ -6128,13 +6040,7 @@ To check if a point in world coordinates intersects the object the inverseGlobal
 
 
 <div class="description">
-    Callback method while the object is being dragged across the screen.
-
-By default is adds the delta value to the object position (making it follow the mouse movement).
-
-Delta is the movement of the pointer already translated into local object coordinates.
-
-To detect when the object drag stops the onPointerDragEnd() method can be used.
+    Callback method while the object is being dragged across the screen.By default is adds the delta value to the object position (making it follow the mouse movement).Delta is the movement of the pointer already translated into local object coordinates.To detect when the object drag stops the onPointerDragEnd() method can be used.
 </div>
 
 
@@ -6345,11 +6251,7 @@ To detect when the object drag stops the onPointerDragEnd() method can be used.
 
 
 <div class="description">
-    Parse serialized object data and fill the object attributes.
-
-Implementations of this method should only load the attributes added to the structure, the based method already loads common attributes.
-
-Dont forget to register object types using the Object2D.register() method.
+    Parse serialized object data and fill the object attributes.Implementations of this method should only load the attributes added to the structure, the based method already loads common attributes.Dont forget to register object types using the Object2D.register() method.
 </div>
 
 
@@ -6514,9 +6416,7 @@ Dont forget to register object types using the Object2D.register() method.
 
 
 <div class="description">
-    Remove object from the children list.
-
-Resets the parent of the object to null and resets its level.
+    Remove object from the children list.Resets the parent of the object to null and resets its level.
 </div>
 
 
@@ -6746,11 +6646,7 @@ Resets the parent of the object to null and resets its level.
 
 
 <div class="description">
-    Serialize the object data into a JSON object. That can be written into a file, sent using HTTP request etc.
-
-All required attributes to recreate the object in its current state should be stored. Relations between children should be stored by their UUID only.
-
-Data has to be parsed back into a usable object.
+    Serialize the object data into a JSON object. That can be written into a file, sent using HTTP request etc.All required attributes to recreate the object in its current state should be stored. Relations between children should be stored by their UUID only.Data has to be parsed back into a usable object.
 </div>
 
 
@@ -6914,9 +6810,7 @@ Data has to be parsed back into a usable object.
 
 
 <div class="description">
-    Apply the transform to the rendering context, it is assumed that the viewport transform is pre-applied to the context.
-
-This is called before style() and draw(). It can also be used for some pre-rendering logic.
+    Apply the transform to the rendering context, it is assumed that the viewport transform is pre-applied to the context.This is called before style() and draw(). It can also be used for some pre-rendering logic.
 </div>
 
 
@@ -7419,7 +7313,7 @@ This is called before style() and draw(). It can also be used for some pre-rende
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Sep 17 2022 14:24:36 GMT+0100 (Hora de verão da Europa Ocidental)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Mar 17 2026 12:24:02 GMT+0000 (Western European Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

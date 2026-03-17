@@ -49,11 +49,7 @@
 
 
 <div class="description">
-    The renderer is responsible for drawing the objects structure into the canvas element and manage its rendering state.
-
-Object are updated by the renderer before drawing, the renderer sorts the objects by layer, checks for pointer events and draw the objects into the screen.
-
-Input handling is also performed by the renderer (it is also used for the event handling).
+    The renderer is responsible for drawing the objects structure into the canvas element and manage its rendering state.Object are updated by the renderer before drawing, the renderer sorts the objects by layer, checks for pointer events and draw the objects into the screen.Input handling is also performed by the renderer (it is also used for the event handling).
 </div>
 
 
@@ -225,9 +221,7 @@ Input handling is also performed by the renderer (it is also used for the event 
 
 
 <div class="description">
-    Indicates if the canvas should be automatically cleared before new frame is drawn.
-
-If set to false the user should clear the frame before drawing.
+    Indicates if the canvas should be automatically cleared before new frame is drawn.If set to false the user should clear the frame before drawing.
 </div>
 
 
@@ -275,7 +269,7 @@ If set to false the user should clear the frame before drawing.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line97">line 97</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line105">line 105</a>
     </li></ul></dd>
     
 
@@ -299,9 +293,7 @@ If set to false the user should clear the frame before drawing.
 
 
 <div class="description">
-    Canvas DOM element, the user needs to manage the canvas state.
-
-The canvas size (width and height) should always match its actual display size (adjusted for the device pixel ratio).
+    Canvas DOM element, the user needs to manage the canvas state.The canvas size (width and height) should always match its actual display size (adjusted for the device pixel ratio).
 </div>
 
 
@@ -349,7 +341,7 @@ The canvas size (width and height) should always match its actual display size (
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line56">line 56</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line61">line 61</a>
     </li></ul></dd>
     
 
@@ -373,11 +365,7 @@ The canvas size (width and height) should always match its actual display size (
 
 
 <div class="description">
-    Division where DOM and SVG objects should be placed at. This division should be perfectly aligned whit the canvas element.
-
-If no division is defined the canvas parent element is used by default to place these objects.
-
-The DOM container to be used can be obtained using the getDomContainer() method.
+    Division where DOM and SVG objects should be placed at. This division should be perfectly aligned whit the canvas element.If no division is defined the canvas parent element is used by default to place these objects.The DOM container to be used can be obtained using the getDomContainer() method.
 </div>
 
 
@@ -425,7 +413,7 @@ The DOM container to be used can be obtained using the getDomContainer() method.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line67">line 67</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line72">line 72</a>
     </li></ul></dd>
     
 
@@ -449,9 +437,7 @@ The DOM container to be used can be obtained using the getDomContainer() method.
 
 
 <div class="description">
-    Canvas 2D rendering context used to draw content.
-
-The options passed thought the constructor are applied to the context created.
+    Canvas 2D rendering context used to draw content.The options passed thought the constructor are applied to the context created.
 </div>
 
 
@@ -499,7 +485,7 @@ The options passed thought the constructor are applied to the context created.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line76">line 76</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line81">line 81</a>
     </li></ul></dd>
     
 
@@ -523,9 +509,7 @@ The options passed thought the constructor are applied to the context created.
 
 
 <div class="description">
-    Event manager for DOM events created by the renderer.
-
-Created automatically when the renderer is created. Disposed automatically when the renderer is destroyed.
+    Event manager for DOM events created by the renderer.Created automatically when the renderer is created. Disposed automatically when the renderer is destroyed.
 </div>
 
 
@@ -573,7 +557,7 @@ Created automatically when the renderer is created. Disposed automatically when 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line38">line 38</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line43">line 43</a>
     </li></ul></dd>
     
 
@@ -597,9 +581,7 @@ Created automatically when the renderer is created. Disposed automatically when 
 
 
 <div class="description">
-    Pointer input handler object, automatically updated by the renderer.
-
-The pointer is attached to the DOM window and to the canvas provided by the user.
+    Pointer input handler object, automatically updated by the renderer.The pointer is attached to the DOM window and to the canvas provided by the user.
 </div>
 
 
@@ -647,7 +629,7 @@ The pointer is attached to the DOM window and to the canvas provided by the user
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line88">line 88</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line96">line 96</a>
     </li></ul></dd>
     
 
@@ -683,11 +665,7 @@ The pointer is attached to the DOM window and to the canvas provided by the user
 
 
 <div class="description">
-    Creates a infinite render loop to render the group into a viewport each frame.
-
-Automatically creates a viewport controls object, used for the user to control the viewport.
-
-The render loop can be accessed trough the animation timer returned. Should be stopped when no longer necessary to prevent memory/code leaks.
+    Creates a infinite render loop to render the group into a viewport each frame.Automatically creates a viewport controls object, used for the user to control the viewport.The render loop can be accessed trough the animation timer returned. Should be stopped when no longer necessary to prevent memory/code leaks.
 </div>
 
 
@@ -826,7 +804,7 @@ The render loop can be accessed trough the animation timer returned. Should be s
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line124">line 124</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line132">line 132</a>
     </li></ul></dd>
     
 
@@ -892,9 +870,7 @@ The render loop can be accessed trough the animation timer returned. Should be s
 
 
 <div class="description">
-    Dispose the renderer object, clears the pointer events attached to the window/canvas.
-
-Should be called if the renderer is no longer in use to prevent code/memory leaks.
+    Dispose the renderer object, clears the pointer events attached to the window/canvas.Should be called if the renderer is no longer in use to prevent code/memory leaks.
 </div>
 
 
@@ -938,7 +914,7 @@ Should be called if the renderer is no longer in use to prevent code/memory leak
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line149">line 149</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line157">line 157</a>
     </li></ul></dd>
     
 
@@ -982,9 +958,7 @@ Should be called if the renderer is no longer in use to prevent code/memory leak
 
 
 <div class="description">
-    Get the DOM container to be used to store DOM and SVG objects.
-
-Can be set using the container attribute, by default the canvas parent element is used.
+    Get the DOM container to be used to store DOM and SVG objects.Can be set using the container attribute, by default the canvas parent element is used.
 </div>
 
 
@@ -1028,7 +1002,7 @@ Can be set using the container attribute, by default the canvas parent element i
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line107">line 107</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line115">line 115</a>
     </li></ul></dd>
     
 
@@ -1094,13 +1068,7 @@ Can be set using the container attribute, by default the canvas parent element i
 
 
 <div class="description">
-    Renders a object using a user defined viewport into a canvas element.
-
-Before rendering automatically updates the input handlers and calculates the objects/viewport transformation matrices.
-
-The canvas state is saved and restored for each individual object, ensuring that the code of one object does not affect another one.
-
-Should be called at a fixed rate preferably using the requestAnimationFrame() method, its also possible to use the createRenderLoop() method, that automatically creates a infinite render loop.
+    Renders a object using a user defined viewport into a canvas element.Before rendering automatically updates the input handlers and calculates the objects/viewport transformation matrices.The canvas state is saved and restored for each individual object, ensuring that the code of one object does not affect another one.Should be called at a fixed rate preferably using the requestAnimationFrame() method, its also possible to use the createRenderLoop() method, that automatically creates a infinite render loop.
 </div>
 
 
@@ -1216,7 +1184,7 @@ Should be called at a fixed rate preferably using the requestAnimationFrame() me
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line167">line 167</a>
+        <a href="Renderer.js.html">Renderer.js</a>, <a href="Renderer.js.html#line175">line 175</a>
     </li></ul></dd>
     
 
@@ -1268,7 +1236,7 @@ Should be called at a fixed rate preferably using the requestAnimationFrame() me
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Sep 17 2022 14:24:36 GMT+0100 (Hora de verão da Europa Ocidental)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Mar 17 2026 12:24:02 GMT+0000 (Western European Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
